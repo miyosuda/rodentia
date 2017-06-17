@@ -89,7 +89,7 @@ public:
 		return x*v.x + y*v.y + z*v.z + w*v.w;
 	}
 
-	// 3ŸŒ³‚Ìcross
+	// 3æ¬¡å…ƒã®cross
 	void cross(const Vector4f& v0, const Vector4f& v1) {
         set( v0.y * v1.z - v0.z * v1.y,
 			 v0.z * v1.x - v0.x * v1.z,
@@ -99,7 +99,7 @@ public:
 	
 	void normalize() {
 		float d = length();
-		// ƒ[ƒœZ‚Ì‰Â”\«‚ ‚è.
+		// ã‚¼ãƒ­é™¤ç®—ã®å¯èƒ½æ€§ã‚ã‚Š.
 		x /= d;
 		y /= d;
 		z /= d;
@@ -133,7 +133,7 @@ public:
 	}
 
 	void operator/=(float f) {
-		// ƒ[ƒœZ‚Ì‰Â”\«‚ ‚è.
+		// ã‚¼ãƒ­é™¤ç®—ã®å¯èƒ½æ€§ã‚ã‚Š.
 		x /= f;
 		y /= f;
 		z /= f;

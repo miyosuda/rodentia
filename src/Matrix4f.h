@@ -12,8 +12,8 @@ class Quat4f;
 //====================================
 //            [Matrix4f]
 // 
-// ƒƒ“ƒo‚Ì•À‚Ñ•û‚ÍAm00, m10, ...
-// ‚Æc—ñ’PˆÊ‚É‚È‚Á‚Ä‚¢‚é.
+// ãƒ¡ãƒ³ãƒã®ä¸¦ã³æ–¹ã¯ã€m00, m10, ...
+// ã¨ç¸¦åˆ—å˜ä½ã«ãªã£ã¦ã„ã‚‹.
 // +------------------+
 // |m00, m01, m02, m03|
 // |m10, m11, m12, m13|
@@ -23,10 +23,10 @@ class Quat4f;
 //====================================
 class Matrix4f {
 public:
-	float m00; // 1s1—ñ
-	float m10; // 2s1—ñ
-	float m20; // 3s1—ñ
-	float m30; // 4s1—ñ
+	float m00; // 1è¡Œ1åˆ—
+	float m10; // 2è¡Œ1åˆ—
+	float m20; // 3è¡Œ1åˆ—
+	float m30; // 4è¡Œ1åˆ—
 				
 	float m01;
 	float m11;
@@ -95,11 +95,11 @@ public:
 		m03=v3.x; m13=v3.y; m23=v3.z; m33=v3.w;
 	}
 
-	// [‰º‚Å’è‹`]
+	// [ä¸‹ã§å®šç¾©]
 	void set(const Quat4f& q);
 
 	void setElement(unsigned int row, unsigned int column, float f) {
-		// assert•K—v‚©.
+		// assertå¿…è¦ã‹.
 		float* p = &m00;
 		p[4*column + row] = f;
 	}
@@ -125,7 +125,7 @@ public:
 	}
 
 	void setRow(unsigned int row, const Vector4f& v) {
-		// assert•K—v‚©.
+		// assertå¿…è¦ã‹.
 		float* p = &m00;
 		p[row     ] = v.x;
 		p[row + 4 ] = v.y;
@@ -134,7 +134,7 @@ public:
 	}
 
 	void setColumn(unsigned int column, const Vector4f& v) {
-		// assert•K—v‚©.
+		// assertå¿…è¦ã‹.
 		float* pbase = &m00;
 		float* p = pbase + 4 * column;
 		p[0] = v.x;
@@ -144,7 +144,7 @@ public:
 	}
 
 	void getRow(unsigned int row, Vector4f& v) const {
-		// assert•K—v‚©.
+		// assertå¿…è¦ã‹.
 		const float* p = &m00;
 		v.x = p[row     ];
 		v.y = p[row + 4 ];
@@ -153,7 +153,7 @@ public:
 	}
 
 	void getColumn(unsigned int column, Vector4f& v) const {
-		// assert•K—v‚©.
+		// assertå¿…è¦ã‹.
 		const float* pbase = &m00;
 		const float* p = pbase + 4 * column;
 		v.x = p[0];
@@ -162,9 +162,9 @@ public:
 		v.w = p[3];
 	}
 
-	// ‹Lq‚ª‚ ‚â‚µ‚¢‹C‚ª‚·‚é.
+	// è¨˜è¿°ãŒã‚ã‚„ã—ã„æ°—ãŒã™ã‚‹.
 	const Vector4f& getColumnRef(unsigned int column) const {
-		// assert•K—v‚©.
+		// assertå¿…è¦ã‹.
 		return *( (const Vector4f*)(&m00 + 4*column) );
 	}
 
@@ -331,14 +331,14 @@ public:
 		(*this)*=s;
 	}
 
-	// ‰ñ“]+•½sˆÚ“®s—ñê—p‚Ì‹ts—ñŒvZ
+	// å›è»¢+å¹³è¡Œç§»å‹•è¡Œåˆ—å°‚ç”¨ã®é€†è¡Œåˆ—è¨ˆç®—
 	void invertRT() {
 		invertR();
 		float tx = -(m00 * m03 + m01 * m13 + m02 * m23);
 		float ty = -(m10 * m03 + m11 * m13 + m12 * m23);
 		float tz = -(m20 * m03 + m21 * m13 + m22 * m23);
 		m03 = tx; m13 = ty; m23 = tz;
-		// ˆÈ‰º‚Í‚·‚Å‚Éİ’è‚³‚ê‚Ä‚¢‚éƒnƒY.
+		// ä»¥ä¸‹ã¯ã™ã§ã«è¨­å®šã•ã‚Œã¦ã„ã‚‹ãƒã‚º.
 		// m30=m31=m32=0.0f; m33=1.0f;
 	}
 	void invertRT(const Matrix4f& m) {
@@ -350,13 +350,13 @@ public:
 		m33 = 1.0f;
 	}
 
-	// ‰ñ“](•½sˆÚ“®¬•ª–³‚µ)s—ñê—p‚Ì‹ts—ñŒvZ
+	// å›è»¢(å¹³è¡Œç§»å‹•æˆåˆ†ç„¡ã—)è¡Œåˆ—å°‚ç”¨ã®é€†è¡Œåˆ—è¨ˆç®—
 	void invertR() {
 		float tmp;
 		tmp = m01;  m01 = m10;  m10 = tmp;
 		tmp = m02;	m02 = m20;	m20 = tmp;
 		tmp = m12;	m12 = m21;	m21 = tmp;
-		// ˆÈ‰º‚Í‚·‚Å‚Éİ’è‚³‚ê‚Ä‚¢‚éƒnƒY.
+		// ä»¥ä¸‹ã¯ã™ã§ã«è¨­å®šã•ã‚Œã¦ã„ã‚‹ãƒã‚º.
 		// m03 = m13 = m23 = 0.0f;
 		// m30 = m31 = m32 = 0.0f; 
 		// m33 = 1.0f;
@@ -489,19 +489,19 @@ public:
 		float y1 = q.y;
 		float z1 = q.z;
 		float w1 = q.w;
-		// ƒ[ƒœZ‚Ì‰Â”\«‚ ‚è.
+		// ã‚¼ãƒ­é™¤ç®—ã®å¯èƒ½æ€§ã‚ã‚Š.
 		float n = f / q.lengthSquared();
 		Vector4f::set( -x1 * n, -y1 * n, -z1 * n, w1 * n );
 	}
 
 	void set(const Matrix4f& m) {
-		// m‚Ìs—ñ®‚Ìâ‘Î’l
+		// mã®è¡Œåˆ—å¼ã®çµ¶å¯¾å€¤
 		const float dt = fabsf( m.determinant() );
-		// ƒXƒP[ƒ‹‚ğæ‚èœ‚¢‚½m
+		// ã‚¹ã‚±ãƒ¼ãƒ«ã‚’å–ã‚Šé™¤ã„ãŸm
 		Matrix4f o(m);
 		o *= (1.0f/dt);
-		// float s = sqrtf(dt);	          // dt ‚Ì•½•ûª
-		float tr = o.m00 + o.m11 + o.m22; // o ‚ÌƒgƒŒ[ƒX
+		// float s = sqrtf(dt);	          // dt ã®å¹³æ–¹æ ¹
+		float tr = o.m00 + o.m11 + o.m22; // o ã®ãƒˆãƒ¬ãƒ¼ã‚¹
 		float f0;
 
 		if( tr >= 0.0f ) {
@@ -515,7 +515,7 @@ public:
 			int	i;
 			float max;
 			i = 0;
-			// x , y , z ‚Ì‚Ç‚Ì²‚ªÅ‚à‰ñ“]²‚É‹ß‚¢‚©’T‚·
+			// x , y , z ã®ã©ã®è»¸ãŒæœ€ã‚‚å›è»¢è»¸ã«è¿‘ã„ã‹æ¢ã™
 			max = o.m00;
 			if( o.m11 > max ) {
 				i = 1;
@@ -526,18 +526,18 @@ public:
 			}
 			switch(i) {
 			case 0 :
-				// x ²‚ªˆê”Ô‹ß‚¢
+				// x è»¸ãŒä¸€ç•ªè¿‘ã„
 				// cout << "x" << endl;
 				f0 = sqrtf( o.m00 - o.m11 - o.m22 + 1.0f );
 				x  = 0.5f * f0;
 				f0 = 0.5f / f0;
-				// ‚±‚Ì‚ ‚½‚è‹t‚©‚à‚µ‚ê‚È‚¢.
+				// ã“ã®ã‚ãŸã‚Šé€†ã‹ã‚‚ã—ã‚Œãªã„.
 				y = ( o.m01 + o.m10 ) * f0;
 				z = ( o.m20 + o.m02 ) * f0;
 				w = ( o.m21 - o.m12 ) * f0;
 				break;
 			case 1 :
-				// y ²‚ªˆê”Ô‹ß‚¢
+				// y è»¸ãŒä¸€ç•ªè¿‘ã„
 				// cout << "y" << endl;
 				f0 = sqrtf( o.m11 - o.m22 - o.m00 + 1.0f );
 				y  = 0.5f * f0;
@@ -547,7 +547,7 @@ public:
 				w = ( o.m02 - o.m20 ) * f0;
 				break;
 			case 2 :
-				// z ²‚ªˆê”Ô‹ß‚¢
+				// z è»¸ãŒä¸€ç•ªè¿‘ã„
 				// cout << "z" << endl;
 				f0 = sqrtf( o.m22 - o.m00 - o.m11 + 1.0f );
 				z  = 0.5f * f0;

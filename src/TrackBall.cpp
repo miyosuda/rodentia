@@ -22,7 +22,7 @@ static void setQuatFromAxisAngle(Quat4f& q,
 /**
  * TrackBall():
  *
- * pitchAngle = ˜ëŠp(+‚¾‚Æã‚ğŒü‚­•ûŒü)
+ * pitchAngle = ä¿¯è§’(+ã ã¨ä¸Šã‚’å‘ãæ–¹å‘)
  */
 TrackBall::TrackBall(float eyex_, float eyey_, float eyez_, 
 					 float pitchAngle) {
@@ -64,7 +64,7 @@ void TrackBall::getMat(Matrix4f& mat) const {
  * startRotation():
  */
 void TrackBall::startRotation(int x, int y) {
-	// ƒhƒ‰ƒbƒO‚ÌÅ‰‚É‹…–Êã‚Ì“_lastpos‚ğo‚µ‚Ä‚¨‚­
+	// ãƒ‰ãƒ©ãƒƒã‚°ã®æœ€åˆã«çƒé¢ä¸Šã®ç‚¹lastposã‚’å‡ºã—ã¦ãŠã
 	sphericalMap(x, y, lastSpherialPos);
 }
 
@@ -88,11 +88,11 @@ void TrackBall::startTrans(int x, int y) {
  * dragRotation():
  */
 void TrackBall::dragRotation(int x, int y) {
-	// x, y‚ğ‹…–Êã‚Ì“_‚Éƒ}ƒbƒsƒ“ƒO‚µA
-	// ‘O‰ñ‚Ìƒ}ƒbƒsƒ“ƒO“_‚Æ‚Ì‹——£‚¨‚æ‚ÑŠOÏ‚©‚ç
-	// axis‚ğo‚·.
-	// axis[]²‚Éangle“x‰ñ“]‚µ‚½‚à‚Ì‚ÆAq‚ğ
-	// ‚©‚¯‚ÄV‚µ‚¢q‚É‚·‚é.
+	// x, yã‚’çƒé¢ä¸Šã®ç‚¹ã«ãƒãƒƒãƒ”ãƒ³ã‚°ã—ã€
+	// å‰å›ã®ãƒãƒƒãƒ”ãƒ³ã‚°ç‚¹ã¨ã®è·é›¢ãŠã‚ˆã³å¤–ç©ã‹ã‚‰
+	// axisã‚’å‡ºã™.
+	// axis[]è»¸ã«angleåº¦å›è»¢ã—ãŸã‚‚ã®ã¨ã€qã‚’
+	// ã‹ã‘ã¦æ–°ã—ã„qã«ã™ã‚‹.
 	Vector4f axis;
 	float angle;
 	calcAxisAngle(x, y, axis, angle);
@@ -109,7 +109,7 @@ void TrackBall::dragRotation(int x, int y) {
  * dragZoom():
  */
 void TrackBall::dragZoom(int x, int y) {
-	// translationƒ}ƒgƒŠƒNƒX‚ğXV‚·‚é.
+	// translationãƒãƒˆãƒªã‚¯ã‚¹ã‚’æ›´æ–°ã™ã‚‹.
 	float len = ZOOM_RATE * (float)(y - lastY);
 
 	float transZ = trans.getElement(2, 3);
@@ -143,9 +143,9 @@ void TrackBall::dragTrans(int x, int y) {
 /**
  * calcAxisAngle():
  *
- * x, y‚ğsphericalMap‚É‚Ä‹…ã‚Ì“_(curpos)‚É•ÏŠ·‚µA
- * lastpos‚Æ‚Ì‹——£‚É‚æ‚èangle‚ğA
- * lastpos‚Æ‚ÌŠOÏ‚É‚æ‚èaxis‚ğ‹‚ß‚é.
+ * x, yã‚’sphericalMapã«ã¦çƒä¸Šã®ç‚¹(curpos)ã«å¤‰æ›ã—ã€
+ * lastposã¨ã®è·é›¢ã«ã‚ˆã‚Šangleã‚’ã€
+ * lastposã¨ã®å¤–ç©ã«ã‚ˆã‚Šaxisã‚’æ±‚ã‚ã‚‹.
  */
 void TrackBall::calcAxisAngle(int x, int y, 
 							  Vector4f& axis,
@@ -166,7 +166,7 @@ void TrackBall::calcAxisAngle(int x, int y,
 /**
  * sphericalMap():
  * 
- * [x, y‚ğ”¼Œa1.0‚Ì‹…ã‚Ì3ŸŒ³“_‚É‘Î‰‚³‚¹‚é]
+ * [x, yã‚’åŠå¾„1.0ã®çƒä¸Šã®3æ¬¡å…ƒç‚¹ã«å¯¾å¿œã•ã›ã‚‹]
  *
  *      -1.0x        +1.0x
  *        +-----+-----+   1.0y
@@ -175,10 +175,10 @@ void TrackBall::calcAxisAngle(int x, int y,
  *        +     +     +
  *        +-----+-----+  -1.0y
  *
- *    è‘O+z•ûŒü‚ÅAè‘O‚É”¼‹…–Ê‚ª‚ ‚éƒCƒ[ƒW
+ *    æ‰‹å‰+zæ–¹å‘ã§ã€æ‰‹å‰ã«åŠçƒé¢ãŒã‚ã‚‹ã‚¤ãƒ¡ãƒ¼ã‚¸
  */
 void TrackBall::sphericalMap(int x, int y, Vector4f& v) {
-	// windows‚Ìã’[‚ªy=0‚Å—ˆ‚é.
+	// windowsã®ä¸Šç«¯ãŒy=0ã§æ¥ã‚‹.
 	float d;
 	v.x =  (2.0f * x - width)  / width;
 	v.y = -(2.0f * y - height) / height;

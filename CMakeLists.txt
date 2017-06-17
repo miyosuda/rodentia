@@ -13,7 +13,6 @@ include_directories("${PROJECT_SOURCE_DIR}")
 
 add_executable(rodent
 	${PROJECT_SOURCE_DIR}/main.cpp
-	${PROJECT_SOURCE_DIR}/Graphics.cpp
 	${PROJECT_SOURCE_DIR}/TrackBall.cpp
 	${PROJECT_SOURCE_DIR}/play.cpp
 	${PROJECT_SOURCE_DIR}/rigid.cpp

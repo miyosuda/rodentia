@@ -5,11 +5,11 @@
 #include "common.h"
 
 enum {
-	MOUSE_LELFT_BUTTON,
+	MOUSE_LEFT_BUTTON,
 	MOUSE_RIGHT_BUTTON
 };
 
-// windows specific�Ȋ֐�
+// windows specificな関数
 void playReshape(int width, int height);
 void playMouseDown(int x, int y, int button);
 void playMouseDrag(int x, int y, int button);

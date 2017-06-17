@@ -39,7 +39,7 @@ static void init() {
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
 	
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
 	playInit();
 }
@@ -95,7 +95,7 @@ static void mouseDown(int button, int state, int x, int y) {
 
 		int playButton = 0;
 		if(button == GLUT_LEFT_BUTTON) {
-			playButton = MOUSE_LELFT_BUTTON;
+			playButton = MOUSE_LEFT_BUTTON;
 		} else if(button == GLUT_RIGHT_BUTTON) {
 			playButton = MOUSE_RIGHT_BUTTON;
 		}
@@ -114,7 +114,7 @@ static void mouseDrag(int x, int y) {
 
 	int playButton = 0;
 	if(curButton == GLUT_LEFT_BUTTON) {
-		playButton = MOUSE_LELFT_BUTTON;
+		playButton = MOUSE_LEFT_BUTTON;
 	} else if(curButton == GLUT_RIGHT_BUTTON) {
 		playButton = MOUSE_RIGHT_BUTTON;
 	}

@@ -14,7 +14,7 @@ private:
 	Quat4f   q;
 	Matrix4f trans;
 
-	Vector4f lastSpherialPos; // ‹…–Ê‚Émap‚³‚ê‚½“_(w=0)
+	Vector4f lastSpherialPos; // çƒé¢ã«mapã•ã‚ŒãŸç‚¹(w=0)
 	int lastX, lastY;
 	int width, height;
 	void sphericalMap(int x, int y, Vector4f& sphericalPos);
