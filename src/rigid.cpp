@@ -41,10 +41,8 @@ void DebugDrawer::drawLine(const btVector3 &from,
 						   const btVector3 &color) {
 	Graphics& g = Graphics::getGraphics();
 
-	const float scale = 100.0f;
-
-	const Vector4f from_(from.x() * scale, from.y() * scale, from.z() * scale, 1.0f);
-	const Vector4f to_(to.x() * scale, to.y() * scale, to.z() * scale, 1.0f);
+	const Vector4f from_(from.x(), from.y(), from.z(), 1.0f);
+	const Vector4f to_(to.x(), to.y(), to.z(), 1.0f);
 	//const Vector4f color_(color.x(), color.y(), color.z(), 1.0f);
 	const Vector4f color_(0.0f, 0.0f, 0.0f, 1.0f);
 	

@@ -6,7 +6,7 @@
 
 #include "rigid.h"
 
-static TrackBall trackBall(0.0f, 0.0f, -800.0f, -0.3f);
+static TrackBall trackBall(0.0f, 0.0f, -8.0f, -0.3f);
 static RigidManager rigidManager; //..
 
 /**
@@ -59,8 +59,8 @@ void playLoop() {
 	Graphics::getGraphics().setCamera( camera );
 
 	//..
-#define FIELD_MAXX 1600.0f
-#define FIELD_MAXZ 1600.0f
+#define FIELD_MAXX 16.0f
+#define FIELD_MAXZ 16.0f
 	const Vector4f black(0.0f, 0.0f, 0.0f, 0.0f);
 	const Vector4f red(1.0f, 0.0f, 0.0f, 0.0f);
 

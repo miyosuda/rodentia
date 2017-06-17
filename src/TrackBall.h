@@ -11,7 +11,6 @@
 class TrackBall {
 private:
 	float eyex, eyey, eyez;
-	float angle;
 	Quat4f   q;
 	Matrix4f trans;
 

@@ -26,12 +26,12 @@ static void setProjection(float width, float height) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	glFrustum(-0.5f*aspect * DEFAULT_SCREEN_HEIGHT * 0.1f, 
-			   0.5f*aspect * DEFAULT_SCREEN_HEIGHT * 0.1f,
-			  -0.5f        * DEFAULT_SCREEN_HEIGHT * 0.1f,
-			   0.5f        * DEFAULT_SCREEN_HEIGHT* 0.1f,
-			   512.0f * 0.1f,
-			  12000.0f);
+	glFrustum(-0.5f*aspect * DEFAULT_SCREEN_HEIGHT * 0.001f, 
+			   0.5f*aspect * DEFAULT_SCREEN_HEIGHT * 0.001f,
+			  -0.5f        * DEFAULT_SCREEN_HEIGHT * 0.001f,
+			   0.5f        * DEFAULT_SCREEN_HEIGHT * 0.001f,
+			   512.0f * 0.001f,
+			  12000.0f * 0.001f);
 
 	glMatrixMode(GL_MODELVIEW);
 }
@@ -44,8 +44,8 @@ static void init() {
 
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
-	glPolygonOffset(0.4, 0.5);
-	glEnable(GL_POLYGON_OFFSET_FILL); 
+	//glPolygonOffset(0.4, 0.5);
+	//glEnable(GL_POLYGON_OFFSET_FILL); 
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	playInit();
@@ -103,7 +103,7 @@ static void mouseDown(int button, int state, int x, int y) {
 	   button == GLUT_MIDDLE_BUTTON || 
 	   button == GLUT_RIGHT_BUTTON) {
 
-		int playButton;
+		int playButton = 0;
 		if(button == GLUT_LEFT_BUTTON) {
 			playButton = MOUSE_LELFT_BUTTON;
 		} else if(button == GLUT_RIGHT_BUTTON) {
@@ -122,7 +122,7 @@ static void mouseDown(int button, int state, int x, int y) {
  */
 static void mouseDrag(int x, int y) {
 
-	int playButton;
+	int playButton = 0;
 	if(curButton == GLUT_LEFT_BUTTON) {
 		playButton = MOUSE_LELFT_BUTTON;
 	} else if(curButton == GLUT_RIGHT_BUTTON) {
