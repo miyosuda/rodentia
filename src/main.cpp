@@ -12,12 +12,6 @@
 
 static int curButton = 0;
 
-// 座標系をGL形式に直す為のマトリクス.
-static Matrix4f crdFlipMat( 1.0f, 0.0f, 0.0f, 0.0f,
-							0.0f,-1.0f, 0.0f, 0.0f,
-							0.0f, 0.0f,-1.0f, 0.0f,
-							0.0f, 0.0f, 0.0f, 1.0f );
-
 /**
  * setProjection():
  */
@@ -30,8 +24,8 @@ static void setProjection(float width, float height) {
 			   0.5f*aspect * DEFAULT_SCREEN_HEIGHT * 0.001f,
 			  -0.5f        * DEFAULT_SCREEN_HEIGHT * 0.001f,
 			   0.5f        * DEFAULT_SCREEN_HEIGHT * 0.001f,
-			   512.0f * 0.001f,
-			  12000.0f * 0.001f);
+			  512.0f * 0.001f,
+			  120000.0f * 0.001f);
 
 	glMatrixMode(GL_MODELVIEW);
 }
@@ -44,8 +38,7 @@ static void init() {
 
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
-	//glPolygonOffset(0.4, 0.5);
-	//glEnable(GL_POLYGON_OFFSET_FILL); 
+	
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	playInit();
@@ -63,12 +56,9 @@ static void release() {
  */
 static void paint() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glPushMatrix();
-	glMultMatrixf( (const float*)&crdFlipMat );
-
+	
 	playLoop();
 
-	glPopMatrix();
 	glutSwapBuffers();
 	
 	glutPostRedisplay();

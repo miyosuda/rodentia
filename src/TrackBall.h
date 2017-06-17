@@ -33,7 +33,7 @@ public:
 	void dragRotation(int x, int y);
 	void dragZoom(int x, int y);
 	void dragTrans(int x, int y);
-	void getMat(Matrix4f& mat);
+	void getMat(Matrix4f& mat) const;
 };
 
 #endif

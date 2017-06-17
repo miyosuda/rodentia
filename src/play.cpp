@@ -6,7 +6,7 @@
 
 #include "rigid.h"
 
-static TrackBall trackBall(0.0f, 0.0f, -8.0f, -0.3f);
+static TrackBall trackBall(0.0f, 0.0f, 8.0f, -0.3f);
 static RigidManager rigidManager; //..
 
 /**

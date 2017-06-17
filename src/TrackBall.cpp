@@ -1,9 +1,8 @@
 #include <math.h>
 #include "TrackBall.h"
 
-#define TRANS_RATE        (1.5f)
-#define ZOOM_RATE         (4.0f)
-#define FRUSTUM_ZOOM_RATE (2.0f)
+#define TRANS_RATE        (0.15f)
+#define ZOOM_RATE         (0.04f)
 
 static void setQuatFromAxisAngle(Quat4f& q,
 								 const Vector4f& axis,
@@ -51,7 +50,7 @@ void TrackBall::resize(int width_, int height_) {
 /**
  * getMat():
  */
-void TrackBall::getMat(Matrix4f& mat) {
+void TrackBall::getMat(Matrix4f& mat) const {
 	Matrix4f eyeTrans;
 	eyeTrans.setIdentity();
 	eyeTrans.setColumn(3, Vector4f(eyex, eyey, eyez, 1.0f));
@@ -98,12 +97,11 @@ void TrackBall::dragRotation(int x, int y) {
 	float angle;
 	calcAxisAngle(x, y, axis, angle);
 
-	//axis *= -1.0f;
-	axis *= -3.0f; // このrateはこれでいいのか？
+	axis *= -3.0f;
 
 	Quat4f dq;
 	setQuatFromAxisAngle(dq, axis, angle);
-	q *= dq;	
+	q *= dq;
 	q.normalize();
 }
 
@@ -115,7 +113,7 @@ void TrackBall::dragZoom(int x, int y) {
 	float len = ZOOM_RATE * (float)(y - lastY);
 
 	float transZ = trans.getElement(2, 3);
-	transZ += len;
+	transZ -= len;
 	trans.setElement(2, 3, transZ);
 
 	lastX = x;
@@ -158,6 +156,7 @@ void TrackBall::calcAxisAngle(int x, int y,
 
 	sphericalMap(x, y, curSphericalPos);
 	dv.sub(curSphericalPos, lastSpherialPos);
+	
 	angle = PI * 0.5f * dv.length();
 	axis.cross(lastSpherialPos, curSphericalPos);
 
@@ -170,23 +169,24 @@ void TrackBall::calcAxisAngle(int x, int y,
  * [x, yを半径1.0の球上の3次元点に対応させる]
  *
  *      -1.0x        +1.0x
- *        +-----+-----+  -1.0y
+ *        +-----+-----+   1.0y
  *        +     +     +
  *        +-----+-----+
  *        +     +     +
- *        +-----+-----+  +1.0y
+ *        +-----+-----+  -1.0y
  *
- *    手前-z方向で、手前に半球面があるイメージ
+ *    手前+z方向で、手前に半球面があるイメージ
  */
 void TrackBall::sphericalMap(int x, int y, Vector4f& v) {
+	// windowsの上端がy=0で来る.
 	float d;
-	v.x = (2.0f * x - width) / width;
-	v.y = (2.0f * y - height) / height;
+	v.x =  (2.0f * x - width)  / width;
+	v.y = -(2.0f * y - height) / height;
 	d = sqrtf(v.x*v.x + v.y*v.y);
 	if(d >= 1.0f) {
 		d = 1.0f;
 	}
-	v.z = -cosf(PI * 0.5f * d);
+	v.z = cosf(PI * 0.5f * d);
 	v.w = 0.0f;
 
 	v.normalize();
