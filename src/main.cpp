@@ -29,7 +29,7 @@ static void setProjection(float width, float height) {
 	glFrustum(-0.5f*aspect * DEFAULT_SCREEN_HEIGHT * 0.1f, 
 			   0.5f*aspect * DEFAULT_SCREEN_HEIGHT * 0.1f,
 			  -0.5f        * DEFAULT_SCREEN_HEIGHT * 0.1f,
-			   0.5f        * DEFAULT_SCREEN_HEIGHT * 0.1f,
+			   0.5f        * DEFAULT_SCREEN_HEIGHT* 0.1f,
 			   512.0f * 0.1f,
 			  12000.0f);
 
