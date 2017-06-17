@@ -1,11 +1,14 @@
 #include "play.h"
 #include <assert.h>
+
 #include "Graphics.h"
 #include "TrackBall.h"
 
-TrackBall trackBall(0.0f, 0.0f, -800.0f, -0.3f);
+#include "rigid.h"
 
-// platform specificÇ»ä÷êî===========================================
+static TrackBall trackBall(0.0f, 0.0f, -800.0f, -0.3f);
+static RigidManager rigidManager; //..
+
 /**
  * reshape():
  */
@@ -22,7 +25,6 @@ void playMouseDown(int x, int y, int button) {
 	} else if(button == MOUSE_RIGHT_BUTTON) {
 		trackBall.startZoom(x, y);
 	}
-	//trackBall.startTrans(x, y);
 }
 
 /**
@@ -34,44 +36,59 @@ void playMouseDrag(int x, int y, int button) {
 	} else if(button == MOUSE_RIGHT_BUTTON) {
 		trackBall.dragZoom(x, y);
 	}
-	//trackBall.dragTrans(x, y);
 }
 
-//===============================================================
 /**
  * playInit():
  */
 void playInit() {
 	Graphics::getGraphics().init();
 
-	//ModelSet::init(filename);
+	rigidManager.initPhysics();
 }
 
 /**
  * playLoop():
  */
 void playLoop() {
+	rigidManager.stepSimulation(1.0f/60.0f); //..
+	
 	Matrix4f camera;
 	trackBall.getMat(camera);
 
 	Graphics::getGraphics().setCamera( camera );
 
-	/*
-	ModelSet::update();
-	ModelSet::draw();
-	Renderer::renderGrid();
-	Status::endFrame();
-	
-	sprintf(buffer, "generation %d", ModelSet::getGeneration()+1);
-	Renderer::drawString( buffer,
-						  -400.0f, -148.0f, 300.0f,
-						  3.0f );	
-	*/
+	//..
+#define FIELD_MAXX 1600.0f
+#define FIELD_MAXZ 1600.0f
+	const Vector4f black(0.0f, 0.0f, 0.0f, 0.0f);
+	const Vector4f red(1.0f, 0.0f, 0.0f, 0.0f);
+
+	const Vector4f p0(-FIELD_MAXX, 0.0f, -FIELD_MAXZ, 1.0f);
+	const Vector4f p1(-FIELD_MAXX, 0.0f,  FIELD_MAXZ, 1.0f);
+	const Vector4f p2( FIELD_MAXX, 0.0f,  FIELD_MAXZ, 1.0f);
+	const Vector4f p3( FIELD_MAXX, 0.0f, -FIELD_MAXZ, 1.0f);
+
+	Graphics& g = Graphics::getGraphics();
+
+	g.drawLine(p0, p1, black);
+	g.drawLine(p1, p2, black);
+	g.drawLine(p2, p3, black);
+	g.drawLine(p3, p0, black);
+
+	g.drawLine( Vector4f(-FIELD_MAXX, 0.0f, 0.0f, 1.0f),
+				Vector4f( FIELD_MAXX, 0.0f, 0.0f, 1.0f),
+				black );
+
+	g.drawLine( Vector4f(0.0f, 0.0f, -FIELD_MAXZ, 1.0f),
+				Vector4f(0.0f, 0.0f,  FIELD_MAXZ, 1.0f),
+				red );
+	//..
 }
 
 /**
  * playFinalize():
  */
 void playFinalize() {
-//	ModelSet::release();
+	rigidManager.exitPhysics();
 }

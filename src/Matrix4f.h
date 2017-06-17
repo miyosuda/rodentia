@@ -415,11 +415,6 @@ public:
 		return reinterpret_cast<const float*>(this);
 	}
 
-	float ( * getSCEPointer() )[4] { 
-		return (float(*)[4])( this ); 
-		//return (float(*)[4])( const_cast<Matrix4f*>(this)->v) ; 
-	}
-
 	float* getPointer() {
 		//return (float*)(this);
 		return reinterpret_cast<float*>(this);
@@ -499,7 +494,6 @@ public:
 		Vector4f::set( -x1 * n, -y1 * n, -z1 * n, w1 * n );
 	}
 
-	// 現在 こってり屋==>津田さんのを参考にしている.
 	void set(const Matrix4f& m) {
 		// mの行列式の絶対値
 		const float dt = fabsf( m.determinant() );
@@ -518,17 +512,6 @@ public:
 			y = ( o.m02 - o.m20 ) * f0;
 			z = ( o.m10 - o.m01 ) * f0;
 		} else {
-			//==============================================================
-			// こちらの分岐にくる条件
-			// (tr-1)/2 = cos(θ) , tr=2*cos(θ)+1 より
-			// tr >= 0 |-> cos(θ) >= -1/2 |-> -120 < θ || θ > 120
-			// 半角公式がつかえないので厄介である
-			// ***** 改善余地あり ******
-			// 改善方針 PS2 では外積が 5 クロックで確保できる
-			// これを利用する事にする。
-			// 原点 (cosθ,sinθ)+(1,0) 間による二等分のための補助線を
-			// 外積の示す方向にすれば分岐とムダな計算を減らす事ができそうだ
-			//==============================================================
 			int	i;
 			float max;
 			i = 0;

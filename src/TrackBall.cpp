@@ -5,9 +5,9 @@
 #define ZOOM_RATE         (4.0f)
 #define FRUSTUM_ZOOM_RATE (2.0f)
 
-static void setQuatFromAxisAngle( Quat4f& q,
-								  const Vector4f& axis,
-								  float angle) {
+static void setQuatFromAxisAngle(Quat4f& q,
+								 const Vector4f& axis,
+								 float angle) {
 	const float halfAngle = angle * 0.5f;
 
 	float sin = sinf(halfAngle);
@@ -18,7 +18,6 @@ static void setQuatFromAxisAngle( Quat4f& q,
 	if( q.lengthSquared() == 0.0f) {
 		q.set(0.0f, 0.0f, 0.0f, 1.0f);
 	}
-	//q.normalize();
 }
 
 /**
@@ -35,7 +34,7 @@ TrackBall::TrackBall(float eyex_, float eyey_, float eyez_,
 	lastX = lastY = 0;
 	trans.setIdentity();
 
-	Vector4f axisX(1.0f, 0.0f, 0.0f, 0.0f);
+	const Vector4f axisX(1.0f, 0.0f, 0.0f, 0.0f);
 
 	setQuatFromAxisAngle(q, axisX, pitchAngle);
 	width = height = 0;
@@ -191,12 +190,4 @@ void TrackBall::sphericalMap(int x, int y, Vector4f& v) {
 	v.w = 0.0f;
 
 	v.normalize();
-}
-
-/**
- * dump():
- */
-void TrackBall::dump() {
-	printf("q: ");
-	q.dump();
 }

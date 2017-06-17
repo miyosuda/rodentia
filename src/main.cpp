@@ -1,19 +1,16 @@
 #include "common.h"
-#include <GLUT/glut.h>
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <GLUT/glut.h>
+
 #include "play.h"
-#include "TrackBall.h"
 #include "Matrix4f.h"
 
-#define WIDTH 640
-#define HEIGHT 480
+#define DEFAULT_SCREEN_WIDTH   640
+#define DEFAULT_SCREEN_HEIGHT  480
 
-#define DEFAULT_SCREEN_WIDTH   WIDTH
-#define DEFAULT_SCREEN_HEIGHT  HEIGHT
-
-int curButton = 0;
-extern TrackBall trackBall;// externでないようにすること.
+static int curButton = 0;
 
 // 座標系をGL形式に直す為のマトリクス.
 static Matrix4f crdFlipMat( 1.0f, 0.0f, 0.0f, 0.0f,
@@ -32,11 +29,11 @@ static void setProjection(float width, float height) {
 	glFrustum(-0.5f*aspect * DEFAULT_SCREEN_HEIGHT * 0.1f, 
 			   0.5f*aspect * DEFAULT_SCREEN_HEIGHT * 0.1f,
 			  -0.5f        * DEFAULT_SCREEN_HEIGHT * 0.1f,
-			   0.5f        * DEFAULT_SCREEN_HEIGHT* 0.1f,
+			   0.5f        * DEFAULT_SCREEN_HEIGHT * 0.1f,
 			   512.0f * 0.1f,
 			  12000.0f);
 
-	glMatrixMode(GL_MODELVIEW);	
+	glMatrixMode(GL_MODELVIEW);
 }
 
 /**
@@ -147,7 +144,7 @@ static void idle() {
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH );
-	glutInitWindowSize(WIDTH, HEIGHT); 
+	glutInitWindowSize(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
 	glutInitWindowPosition(50, 50);
 	glutCreateWindow( argv[0] );
 	
