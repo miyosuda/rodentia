@@ -21,7 +21,7 @@
 #endif
 
 
-#define NUM_LEGS 6
+#define NUM_LEGS 4
 #define BODYPART_COUNT 2 * NUM_LEGS + 1
 #define JOINT_COUNT BODYPART_COUNT - 1
 
@@ -57,11 +57,10 @@ private:
 	}
 
 public:
-	Rig(btDynamicsWorld* ownerWorld,
-		const btVector3& positionOffset,
-		bool bFixed)
+	Rig(btDynamicsWorld* world_,
+		const btVector3& positionOffset)
 		:
-		world (ownerWorld) {
+		world(world_) {
 		
 		const btVector3 vUp(0, 1, 0);
 
@@ -85,19 +84,14 @@ public:
 		offset.setOrigin(positionOffset);
 
 		// root
-		btVector3 vRoot = btVector3(btScalar(0.), btScalar(height), btScalar(0.));
+		btVector3 vRoot = btVector3(btScalar(0.0), btScalar(height), btScalar(0.0));
 		btTransform transform;
 		transform.setIdentity();
 		transform.setOrigin(vRoot);
-		if(bFixed) {
-			bodies[0] = localCreateRigidBody(btScalar(0.0),
-											 offset * transform,
-											 shapes[0]);
-		} else {
-			bodies[0] = localCreateRigidBody(btScalar(1.0),
-											 offset * transform,
-											 shapes[0]);
-		}
+		
+		bodies[0] = localCreateRigidBody(btScalar(1.0),
+										 offset * transform,
+										 shapes[0]);
 		
 		// legs
 		for(int i=0; i<NUM_LEGS; ++i) {
@@ -116,17 +110,17 @@ public:
 			btVector3 vAxis = vToBone.cross(vUp);			
 			transform.setRotation(btQuaternion(vAxis, M_PI_2));
 			bodies[1+2*i] = localCreateRigidBody(btScalar(1.),
-												   offset*transform,
-												   shapes[1+2*i]);
+												 offset*transform,
+												 shapes[1+2*i]);
 
 			// shin
 			transform.setIdentity();
 			transform.setOrigin(btVector3(btScalar(fCos*(bodySize+legLength)),
 										  btScalar(height-0.5*foreLegLength),
 										  btScalar(fSin*(bodySize+legLength))));
-			bodies[2+2*i] = localCreateRigidBody(btScalar(1.),
-												   offset*transform,
-												   shapes[2+2*i]);
+			bodies[2+2*i] = localCreateRigidBody(btScalar(1.0),
+												 offset*transform,
+												 shapes[2+2*i]);
 		}
 
 		// Setup some damping on the bodies
@@ -168,7 +162,7 @@ public:
 			localC.setIdentity();
 			localA.getBasis().setEulerZYX(0,-fAngle,0);
 			localA.setOrigin(btVector3(btScalar(fCos*(bodySize+legLength)),
-									   btScalar(0.),
+									   btScalar(0.0),
 									   btScalar(fSin*(bodySize+legLength))));
 			localB = bodies[1+2*i]->getWorldTransform().inverse() *
 				bodies[0]->getWorldTransform() * localA;
@@ -274,7 +268,7 @@ public:
 	void initPhysics();
 	void exitPhysics();
 	
-	void spawnRig(const btVector3& startOffset, bool bFixed);
+	void spawnRig(const btVector3& startOffset);
 	void setMotorTargets(btScalar deltaTime);
 };
 

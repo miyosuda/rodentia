@@ -101,16 +101,14 @@ void RigidManager::initPhysics() {
 	solver = new btSequentialImpulseConstraintSolver;
 
 	world = new btDiscreteDynamicsWorld(dispatcher,
-												  broadPhase,
-												  solver,
-												  configuration);
+										broadPhase,
+										solver,
+										configuration);
 
 	world->setInternalTickCallback(motorPreTickCallback, this, true);
 
-	//..
-	world->setDebugDrawer(new DebugDrawer()); //.. TODO: testing
+	world->setDebugDrawer(new DebugDrawer()); //..
 	world->getDebugDrawer()->setDebugMode(true); //..
-	//..
 	
 	// Setup a big ground box
 	{
@@ -126,7 +124,7 @@ void RigidManager::initPhysics() {
 
 	// Spawn one ragdoll
 	btVector3 startOffset(0, 0.5, 0);
-	spawnRig(startOffset, false);
+	spawnRig(startOffset);
 }
 
 void RigidManager::exitPhysics() {
@@ -155,6 +153,9 @@ void RigidManager::exitPhysics() {
 		delete shape;
 	}
 
+	auto debugDrawer = world->getDebugDrawer();
+	delete debugDrawer;
+
 	delete world;
 	delete solver;
 	delete broadPhase;
@@ -162,8 +163,8 @@ void RigidManager::exitPhysics() {
 	delete configuration;
 }
 
-void RigidManager::spawnRig(const btVector3& startOffset, bool bFixed) {
-	Rig* rig = new Rig(world, startOffset, bFixed);
+void RigidManager::spawnRig(const btVector3& startOffset) {
+	Rig* rig = new Rig(world, startOffset);
 	rigs.push_back(rig);
 }
 
