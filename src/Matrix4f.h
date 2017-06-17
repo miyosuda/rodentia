@@ -12,8 +12,9 @@ class Quat4f;
 //====================================
 //            [Matrix4f]
 // 
-// メンバの並び方は、m00, m10, ...
-// と縦列単位になっている.
+// Member order is
+//    [m00, m10, ....]
+// Column major order.
 // +------------------+
 // |m00, m01, m02, m03|
 // |m10, m11, m12, m13|
@@ -23,28 +24,28 @@ class Quat4f;
 //====================================
 class Matrix4f {
 public:
-	float m00; // 1行1列
-	float m10; // 2行1列
-	float m20; // 3行1列
-	float m30; // 4行1列
-				
+	float m00; // row1 colum1
+	float m10; // row2 colum1
+	float m20; // row3 colum1
+	float m30; // row4 colum1
+	
 	float m01;
 	float m11;
 	float m21;
 	float m31;
-
+	
 	float m02;
 	float m12;
 	float m22;
 	float m32;
-		
+	
 	float m03;
 	float m13;
 	float m23;
 	float m33;
-
+	
 	Matrix4f() {}
-
+	
 	Matrix4f(const Matrix4f& m) {
 		set(m);
 	}
@@ -86,20 +87,19 @@ public:
 	}
 
 	void set( const Vector4f v0, 
-						const Vector4f v1,
-						const Vector4f v2,
-						const Vector4f v3 ) {
+			  const Vector4f v1,
+			  const Vector4f v2,
+			  const Vector4f v3 ) {
 		m00=v0.x; m10=v0.y; m20=v0.z; m30=v0.w;
 		m01=v1.x; m11=v1.y; m21=v1.z; m31=v1.w;
 		m02=v2.x; m12=v2.y; m22=v2.z; m32=v2.w;
 		m03=v3.x; m13=v3.y; m23=v3.z; m33=v3.w;
 	}
 
-	// [下で定義]
+	// Implemented below
 	void set(const Quat4f& q);
 
 	void setElement(unsigned int row, unsigned int column, float f) {
-		// assert必要か.
 		float* p = &m00;
 		p[4*column + row] = f;
 	}
@@ -296,8 +296,10 @@ public:
 	void invert() {
 		float s = determinant();
 		if (s == 0.0f) {
+			printf("matrix was singular\n");
 			return;
 		}
+		
 		s = 1.0f/s;
 		set(
 			m11*(m22*m33 - m23*m32) + m12*(m23*m31 - m21*m33) + m13*(m21*m32 - m22*m31),
@@ -321,18 +323,16 @@ public:
 			m00*(m11*m22 - m12*m21) + m01*(m12*m20 - m10*m22) + m02*(m10*m21 - m11*m20)
 			);
 
-		// OK?
-		(*this)*=s;
+		(*this) *= s;
 	}
 
-	// 回転+平行移動行列専用の逆行列計算
+	// invert calculation of rot + trans matrix.
 	void invertRT() {
 		invertR();
 		float tx = -(m00 * m03 + m01 * m13 + m02 * m23);
 		float ty = -(m10 * m03 + m11 * m13 + m12 * m23);
 		float tz = -(m20 * m03 + m21 * m13 + m22 * m23);
 		m03 = tx; m13 = ty; m23 = tz;
-		// 以下はすでに設定されているハズ.
 		// m30=m31=m32=0.0f; m33=1.0f;
 	}
 	void invertRT(const Matrix4f& m) {
@@ -344,13 +344,12 @@ public:
 		m33 = 1.0f;
 	}
 
-	// 回転(平行移動成分無し)行列専用の逆行列計算
+	// invert calculation for rotation matrix (without trans)
 	void invertR() {
 		float tmp;
 		tmp = m01; m01 = m10; m10 = tmp;
 		tmp = m02; m02 = m20; m20 = tmp;
 		tmp = m12; m12 = m21; m21 = tmp;
-		// 以下はすでに設定されているハズ.
 		// m03 = m13 = m23 = 0.0f;
 		// m30 = m31 = m32 = 0.0f; 
 		// m33 = 1.0f;
@@ -381,7 +380,7 @@ public:
 		set( 1.0f, 0.0f, 0.0f, 0.0f,
 			 0.0f,    c,    s, 0.0f,
 			 0.0f,   -s,    c ,0.0f,
-			 0.0f, 0.0f, 0.0f, 1.0f );		
+			 0.0f, 0.0f, 0.0f, 1.0f );
 	}
 	
 	void setRotationY(float angle) {
@@ -405,16 +404,14 @@ public:
 	}
 
 	const float* getPointer() const {
-		//return (const float*)(this);
 		return reinterpret_cast<const float*>(this);
 	}
 
 	float* getPointer() {
-		//return (float*)(this);
 		return reinterpret_cast<float*>(this);
 	}
 
-	void dump() const {
+	void debugDump() const {
 		printf( "[ [%f, %f, %f, %f ]\n"
 				"  [%f, %f, %f, %f ]\n"
 				"  [%f, %f, %f, %f ]\n"
@@ -483,19 +480,18 @@ public:
 		float y1 = q.y;
 		float z1 = q.z;
 		float w1 = q.w;
-		// ゼロ除算の可能性あり.
+		// Zero division may occur.
 		float n = f / q.lengthSquared();
 		Vector4f::set( -x1 * n, -y1 * n, -z1 * n, w1 * n );
 	}
 
 	void set(const Matrix4f& m) {
-		// mの行列式の絶対値
+		// Absolute deteminant of m
 		const float dt = fabsf( m.determinant() );
-		// スケールを取り除いたm
+		// m without scale.
 		Matrix4f o(m);
 		o *= (1.0f/dt);
-		// float s = sqrtf(dt);	          // dt の平方根
-		float tr = o.m00 + o.m11 + o.m22; // o のトレース
+		float tr = o.m00 + o.m11 + o.m22; // trace of o
 		float f0;
 
 		if( tr >= 0.0f ) {
@@ -509,7 +505,7 @@ public:
 			int	i;
 			float max;
 			i = 0;
-			// x , y , z のどの軸が最も回転軸に近いか探す
+			// Which axis x, y, z is nearest to rotation axis.
 			max = o.m00;
 			if( o.m11 > max ) {
 				i = 1;
@@ -520,19 +516,16 @@ public:
 			}
 			switch(i) {
 			case 0 :
-				// x 軸が一番近い
-				// cout << "x" << endl;
+				// axis x is nearest
 				f0 = sqrtf( o.m00 - o.m11 - o.m22 + 1.0f );
 				x  = 0.5f * f0;
 				f0 = 0.5f / f0;
-				// このあたり逆かもしれない.
 				y = ( o.m01 + o.m10 ) * f0;
 				z = ( o.m20 + o.m02 ) * f0;
 				w = ( o.m21 - o.m12 ) * f0;
 				break;
 			case 1 :
-				// y 軸が一番近い
-				// cout << "y" << endl;
+				// axis y is nearest
 				f0 = sqrtf( o.m11 - o.m22 - o.m00 + 1.0f );
 				y  = 0.5f * f0;
 				f0 = 0.5f / f0;
@@ -541,8 +534,7 @@ public:
 				w = ( o.m02 - o.m20 ) * f0;
 				break;
 			case 2 :
-				// z 軸が一番近い
-				// cout << "z" << endl;
+				// axis z is nearest
 				f0 = sqrtf( o.m22 - o.m00 - o.m11 + 1.0f );
 				z  = 0.5f * f0;
 				f0 = 0.5f / f0;

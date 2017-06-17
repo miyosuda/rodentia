@@ -5,30 +5,9 @@ add_definitions("-Wno-deprecated-declarations")
 
 project(rodent)
 
-set(PROJECT_SOURCE_DIR     ${CMAKE_BINARY_DIR}/src)
-set(CMAKE_BINARY_DIR       ${CMAKE_SOURCE_DIR}/bin)
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
-include_directories("${PROJECT_SOURCE_DIR}")
+add_subdirectory(src)
+add_subdirectory(test)
 
-add_executable(rodent
-	${PROJECT_SOURCE_DIR}/main.cpp
-	${PROJECT_SOURCE_DIR}/TrackBall.cpp
-	${PROJECT_SOURCE_DIR}/play.cpp
-	${PROJECT_SOURCE_DIR}/rigid.cpp
-	)
 
-find_package(BULLET REQUIRED)
-find_package(OpenGL REQUIRED)
-find_package(GLUT REQUIRED)
-
-include_directories( ${OPENGL_INCLUDE_DIRS}
-					 ${GLUT_INCLUDE_DIRS}
-					 ${BULLET_INCLUDE_DIRS}
-					 )
-
-target_link_libraries(rodent
-					${OPENGL_LIBRARIES}
-					${GLUT_LIBRARY}
-					${BULLET_LIBRARIES}
-					)

@@ -174,7 +174,7 @@ public:
 		return reinterpret_cast<int*>(this);
 	}
 
-	void dump() const {
+	void debugDump() const {
 		printf("( %f, %f, %f, %f )\n", x, y, z, w);		
 	}
 } __attribute__ ( (aligned(16)) ) ;
