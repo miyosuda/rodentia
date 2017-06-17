@@ -125,7 +125,6 @@ public:
 	}
 
 	void setRow(unsigned int row, const Vector4f& v) {
-		// assert必要か.
 		float* p = &m00;
 		p[row     ] = v.x;
 		p[row + 4 ] = v.y;
@@ -134,7 +133,6 @@ public:
 	}
 
 	void setColumn(unsigned int column, const Vector4f& v) {
-		// assert必要か.
 		float* pbase = &m00;
 		float* p = pbase + 4 * column;
 		p[0] = v.x;
@@ -144,7 +142,6 @@ public:
 	}
 
 	void getRow(unsigned int row, Vector4f& v) const {
-		// assert必要か.
 		const float* p = &m00;
 		v.x = p[row     ];
 		v.y = p[row + 4 ];
@@ -153,7 +150,6 @@ public:
 	}
 
 	void getColumn(unsigned int column, Vector4f& v) const {
-		// assert必要か.
 		const float* pbase = &m00;
 		const float* p = pbase + 4 * column;
 		v.x = p[0];
@@ -162,9 +158,7 @@ public:
 		v.w = p[3];
 	}
 
-	// 記述があやしい気がする.
 	const Vector4f& getColumnRef(unsigned int column) const {
-		// assert必要か.
 		return *( (const Vector4f*)(&m00 + 4*column) );
 	}
 
@@ -353,9 +347,9 @@ public:
 	// 回転(平行移動成分無し)行列専用の逆行列計算
 	void invertR() {
 		float tmp;
-		tmp = m01;  m01 = m10;  m10 = tmp;
-		tmp = m02;	m02 = m20;	m20 = tmp;
-		tmp = m12;	m12 = m21;	m21 = tmp;
+		tmp = m01; m01 = m10; m10 = tmp;
+		tmp = m02; m02 = m20; m20 = tmp;
+		tmp = m12; m12 = m21; m21 = tmp;
 		// 以下はすでに設定されているハズ.
 		// m03 = m13 = m23 = 0.0f;
 		// m30 = m31 = m32 = 0.0f; 

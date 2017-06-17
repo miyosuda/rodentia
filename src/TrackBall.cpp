@@ -157,7 +157,7 @@ void TrackBall::calcAxisAngle(int x, int y,
 	sphericalMap(x, y, curSphericalPos);
 	dv.sub(curSphericalPos, lastSpherialPos);
 	
-	angle = PI * 0.5f * dv.length();
+	angle = M_PI * 0.5f * dv.length();
 	axis.cross(lastSpherialPos, curSphericalPos);
 
 	lastSpherialPos = curSphericalPos;
@@ -186,7 +186,7 @@ void TrackBall::sphericalMap(int x, int y, Vector4f& v) {
 	if(d >= 1.0f) {
 		d = 1.0f;
 	}
-	v.z = cosf(PI * 0.5f * d);
+	v.z = cosf(M_PI * 0.5f * d);
 	v.w = 0.0f;
 
 	v.normalize();

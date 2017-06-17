@@ -2,8 +2,6 @@
 #ifndef PLAY_HEADER
 #define PLAY_HEADER
 
-#include "common.h"
-
 enum {
 	MOUSE_LEFT_BUTTON,
 	MOUSE_RIGHT_BUTTON

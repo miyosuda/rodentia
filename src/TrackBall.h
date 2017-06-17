@@ -1,7 +1,6 @@
 #ifndef TRACKBALL_HEADER
 #define TRACKBALL_HEADER
 
-#include "common.h"
 #include "Vector4f.h"
 #include "Matrix4f.h"
 

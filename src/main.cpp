@@ -1,5 +1,3 @@
-#include "common.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <GLUT/glut.h>
@@ -79,7 +77,7 @@ static void reshape(int width, int height) {
  */
 static void keyDown(unsigned char key, int x, int y) {
 	switch(key) {
-    case 0x1b:
+	case 0x1b:
 		exit(0);
 		break;
     }
@@ -104,7 +102,7 @@ static void mouseDown(int button, int state, int x, int y) {
 			playMouseDown(x, y, playButton);
 		}
 		curButton = button;
-    }
+	}
 }
 
 /**

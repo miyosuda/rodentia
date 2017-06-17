@@ -8,8 +8,8 @@ private:
 	
 public:
 	// debug mode functions
-	virtual void setDebugMode(int debugMode) override {
-		this->debugMode = debugMode;
+	virtual void setDebugMode(int debugMode_) override {
+		debugMode = debugMode_;
 	}
 	virtual int getDebugMode() const override {
 		return debugMode;
@@ -26,10 +26,8 @@ public:
 						  const btVector3 &color) override;
 
 	// unused
-	virtual void reportErrorWarning(const char* warningString) override {
-	}
-	virtual void draw3dText(const btVector3 &location, const char* textString) override {
-	}
+	virtual void reportErrorWarning(const char* warningString) override {}
+	virtual void draw3dText(const btVector3 &location, const char* textString) override {}
 	
 	void toggleDebugFlag(int flag);
 };
@@ -55,6 +53,7 @@ void DebugDrawer::drawContactPoint(const btVector3 &pointOnB,
 								   const btVector3 &color) {
 
 	printf(">> drawContactPoint\n");
+	
 	/*
 	// draws a line between two contact points
 	btVector3 const startPoint = pointOnB;
@@ -77,8 +76,8 @@ void DebugDrawer::toggleDebugFlag(int flag) {
 
 
 void motorPreTickCallback(btDynamicsWorld *world, btScalar timeStep) {
-	RigidManager* motorDemo = (RigidManager*)world->getWorldUserInfo();
-	motorDemo->setMotorTargets(timeStep);
+	RigidManager* manager = (RigidManager*)world->getWorldUserInfo();
+	manager->setMotorTargets(timeStep);
 }
 
 void RigidManager::initPhysics() {
@@ -86,7 +85,6 @@ void RigidManager::initPhysics() {
 	time = 0;
 	cyclePeriod = 2000.0f; // in milliseconds
 
-	//	muscleStrength = 0.05f;
 	// new SIMD solver for joints clips accumulated impulse, so the new limits for the motor
 	// should be (numberOfsolverIterations * oldLimits)
 	// currently solver uses 10 iterations, so:
@@ -97,7 +95,7 @@ void RigidManager::initPhysics() {
 	dispatcher = new btCollisionDispatcher(configuration);
 
 	btVector3 worldAabbMin(-10000,-10000,-10000);
-	btVector3 worldAabbMax(10000,10000,10000);
+	btVector3 worldAabbMax( 10000, 10000, 10000);
 	broadPhase = new btAxisSweep3(worldAabbMin, worldAabbMax);
 
 	solver = new btSequentialImpulseConstraintSolver;
@@ -116,9 +114,9 @@ void RigidManager::initPhysics() {
 	
 	// Setup a big ground box
 	{
-		btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(200.),
-																 btScalar(10.),
-																 btScalar(200.)));
+		btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(200.0),
+																 btScalar(10.0),
+																 btScalar(200.0)));
 		collisionShapes.push_back(groundShape);
 		btTransform groundTransform;
 		groundTransform.setIdentity();
@@ -127,11 +125,8 @@ void RigidManager::initPhysics() {
 	}
 
 	// Spawn one ragdoll
-	btVector3 startOffset(1,0.5,0);
+	btVector3 startOffset(0, 0.5, 0);
 	spawnRig(startOffset, false);
-	
-	startOffset.setValue(-2,0.5,0);
-	spawnRig(startOffset, true);
 }
 
 void RigidManager::exitPhysics() {
@@ -164,7 +159,7 @@ void RigidManager::exitPhysics() {
 	delete solver;
 	delete broadPhase;
 	delete dispatcher;
-	delete configuration;	
+	delete configuration;
 }
 
 void RigidManager::spawnRig(const btVector3& startOffset, bool bFixed) {
