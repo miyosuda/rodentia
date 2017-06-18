@@ -2,10 +2,10 @@
 
 cd src
 
-if [ -e pyrodent.so ]; then
-rm pyrodent.so
+if [ -e rodent.so ]; then
+rm rodent.so
 fi
 
-ln -s libpyrodent.dylib pyrodent.so
+ln -s libpyrodent.dylib rodent.so
 
 python check.py

@@ -16,8 +16,8 @@ static PyMethodDef methods[] = {
 	{NULL, NULL, 0, NULL}
 };
 
-static char pyrodent_doc[] = "pyrodent module\n";
+static char rodent_doc[] = "rodent module\n";
 
-void initpyrodent() {
-	Py_InitModule3("pyrodent", methods, pyrodent_doc);
+void initrodent() {
+	Py_InitModule3("rodent", methods, rodent_doc);
 }
