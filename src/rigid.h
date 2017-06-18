@@ -21,16 +21,18 @@ private:
 	btRigidBody*		bodies[BODYPART_COUNT];
 	btTypedConstraint*	joints[JOINT_COUNT];
 
-	btRigidBody* localCreateRigidBody(btScalar mass,
-									  const btTransform& startTransform,
-									  btCollisionShape* shape);
+	btRigidBody* createRigidBody(btScalar mass,
+								 const btTransform& startTransform,
+								 btCollisionShape* shape);
 
 public:
 	Rig(btDynamicsWorld* world_, const btVector3& positionOffset);
 	~Rig();
 
-	btTypedConstraint** getJoints() {
-		return &joints[0];
+	void setMotorTargets(float timeUs, float deltaTimeUs);
+
+	btTypedConstraint* getJoint(int index) {
+		return joints[index];
 	}
 };
 
@@ -44,11 +46,14 @@ class RigidManager {
 	btDefaultCollisionConfiguration* configuration;
 	btDiscreteDynamicsWorld* world;
 
-	float time;
-	float cyclePeriod; // in milliseconds
-	float muscleStrength;
-	
+	float timeUs; // microSec
 	btAlignedObjectArray<class Rig*> rigs;
+
+	btRigidBody* createRigidBody(float mass,
+								 const btTransform& startTransform,
+								 btCollisionShape* shape);
+
+	void spawnRig(const btVector3& startOffset);
 	
 public:
 	RigidManager()
@@ -63,19 +68,10 @@ public:
 	~RigidManager() {
 	}
 
-	void stepSimulation(float deltaTime);
-
-
-	btRigidBody* createRigidBody(float mass,
-								 const btTransform& startTransform,
-								 btCollisionShape* shape,
-								 const btVector4& color = btVector4(1, 0, 0, 1));
-
 	void initPhysics();
 	void exitPhysics();
-	
-	void spawnRig(const btVector3& startOffset);
 	void setMotorTargets(btScalar deltaTime);
+	void stepSimulation(float deltaTime);
 };
 
 #endif

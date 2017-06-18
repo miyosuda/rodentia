@@ -71,7 +71,7 @@ static void drawFloor() {
 
 	glColor3f(1.0f, 0.0f, 0.0f);
 	
-	drawLine( Vector4f(0.0f, 0.0f, -FIELD_MAXZ, 1.0f),
+	drawLine( Vector4f(0.0f, 0.0f,  0.0f,       1.0f),
 			  Vector4f(0.0f, 0.0f,  FIELD_MAXZ, 1.0f) );
 	
 	glEnd();

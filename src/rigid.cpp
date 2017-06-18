@@ -69,12 +69,9 @@ void DebugDrawer::toggleDebugFlag(int flag) {
 	}
 }
 
-
-
-
-btRigidBody* Rig::localCreateRigidBody(btScalar mass,
-									   const btTransform& startTransform,
-									   btCollisionShape* shape) {
+btRigidBody* Rig::createRigidBody(btScalar mass,
+								  const btTransform& startTransform,
+								  btCollisionShape* shape) {
 
 	btVector3 localInertia(0,0,0);
 
@@ -99,70 +96,74 @@ Rig::Rig(btDynamicsWorld* world_,
 		 const btVector3& positionOffset)
 	:
 	world(world_) {
-		
+	
 	const btVector3 vUp(0, 1, 0);
+	const btVector3 vRight(1, 0, 0);
 
 	// Setup geometry
-	const float bodySize  = 0.25f;
-	const float legLength = 0.45f;
-	const float foreLegLength = 0.75f;
-		
-	shapes[0] = new btCapsuleShape(btScalar(bodySize), btScalar(0.10));
-		
+	const float bodyWidth  = 0.3f;
+	const float bodyHeight = 0.1f;
+	const float bodyDepth  = 0.5f;
+	const float legLength = 0.45f;     // つけねの長さ
+	const float foreLegLength = 0.35f; // 足の先の長さ
+	
+	shapes[0] = new btBoxShape(btVector3(btScalar(bodyWidth),
+										 btScalar(bodyHeight),
+										 btScalar(bodyDepth)));
+	
 	for(int i=0; i<NUM_LEGS; ++i) {
 		shapes[1 + 2*i] = new btCapsuleShape(btScalar(0.10),
 											 btScalar(legLength));
-		shapes[2 + 2*i] = new btCapsuleShape(btScalar(0.08),
+		shapes[2 + 2*i] = new btCapsuleShape(btScalar(0.08), // 先の方が少し細い
 											 btScalar(foreLegLength));
 	}
-
+	
 	// Setup rigid bodies
-	const float height = 0.5;
 	btTransform offset; offset.setIdentity();
 	offset.setOrigin(positionOffset);
-
+	
 	// root
+	const float height = 0.5;
 	btVector3 vRoot = btVector3(btScalar(0.0), btScalar(height), btScalar(0.0));
 	btTransform transform;
 	transform.setIdentity();
 	transform.setOrigin(vRoot);
-		
-	bodies[0] = localCreateRigidBody(btScalar(1.0),
-									 offset * transform,
-									 shapes[0]);
-		
+	
+	bodies[0] = createRigidBody(btScalar(5.0), //..
+								offset * transform,
+								shapes[0]);
+	
+	btVector3 vBoneOrigins[4];
+	vBoneOrigins[0].setValue(-bodyWidth, 0.0f, -bodyDepth); // 左奥
+	vBoneOrigins[1].setValue( bodyWidth, 0.0f, -bodyDepth); // 右奥
+	vBoneOrigins[2].setValue(-bodyWidth, 0.0f,  bodyDepth); // 左手前
+	vBoneOrigins[3].setValue( bodyWidth, 0.0f,  bodyDepth); // 右手前
+	
 	// legs
 	for(int i=0; i<NUM_LEGS; ++i) {
-		float fAngle = 2 * M_PI * i / NUM_LEGS;
-		float fSin = sin(fAngle);
-		float fCos = cos(fAngle);
-
+		// thigh (太腿)		
 		transform.setIdentity();
-		btVector3 vBoneOrigin = btVector3(btScalar(fCos*(bodySize+0.5*legLength)),
-										  btScalar(height),
-										  btScalar(fSin*(bodySize+0.5*legLength)));
-		transform.setOrigin(vBoneOrigin);
-
-		// thigh
-		btVector3 vToBone = (vBoneOrigin - vRoot).normalize();
-		btVector3 vAxis = vToBone.cross(vUp);			
-		transform.setRotation(btQuaternion(vAxis, M_PI_2));
-		bodies[1+2*i] = localCreateRigidBody(btScalar(1.),
-											 offset*transform,
-											 shapes[1+2*i]);
-
-		// shin
+		transform.setOrigin( btVector3(vBoneOrigins[i].x(),
+									   height,
+									   vBoneOrigins[i].z() - 0.5 * legLength) );
+		transform.setRotation(btQuaternion(vRight, M_PI_2));
+		bodies[2*i+1] = createRigidBody(btScalar(1.0),
+										offset * transform,
+										shapes[2*i+1]);
+		
+		// shin (すね)
 		transform.setIdentity();
-		transform.setOrigin(btVector3(btScalar(fCos*(bodySize+legLength)),
-									  btScalar(height-0.5*foreLegLength),
-									  btScalar(fSin*(bodySize+legLength))));
-		bodies[2+2*i] = localCreateRigidBody(btScalar(1.0),
-											 offset*transform,
-											 shapes[2+2*i]);
+		transform.setOrigin( btVector3(vBoneOrigins[i].x(),
+									   height,
+									   vBoneOrigins[i].z() - legLength - 0.5 * foreLegLength));
+		transform.setRotation(btQuaternion(vRight, M_PI_2));
+		bodies[2*i+2] = createRigidBody(btScalar(0.5), //..
+										offset * transform,
+										shapes[2*i+2]);
 	}
-
+	
 	// Setup some damping on the bodies
-	for(int i = 0; i < BODYPART_COUNT; ++i) {
+	for(int i=0; i<BODYPART_COUNT; ++i) {
 		bodies[i]->setDamping(0.05, 0.85);
 		bodies[i]->setDeactivationTime(0.8);
 		bodies[i]->setSleepingThresholds(0.5f, 0.5f);
@@ -170,48 +171,55 @@ Rig::Rig(btDynamicsWorld* world_,
 
 	// Setup the constraints
 	btHingeConstraint* hingeC;
-
+	
 	btTransform localA, localB, localC;
-
+	
 	for(int i=0; i<NUM_LEGS; ++i) {
-		float fAngle = 2 * M_PI * i / NUM_LEGS;
-		float fSin = sin(fAngle);
-		float fCos = cos(fAngle);
-
-		// hip joints
+		// hip joints (足の付け根)
 		localA.setIdentity();
 		localB.setIdentity();
-		localA.getBasis().setEulerZYX(0,-fAngle,0);
-		localA.setOrigin(btVector3(btScalar(fCos*bodySize),
-								   btScalar(0.),
-								   btScalar(fSin*bodySize)));
-		localB = bodies[1+2*i]->getWorldTransform().inverse() *
+		localA.getBasis().setEulerZYX(0, -M_PI_2, 0); // Y軸(垂直軸)での回転 //..
+		// 親側での位置
+		localA.setOrigin(vBoneOrigins[i]);
+		// 子側での位置
+		localB = bodies[2*i+1]->getWorldTransform().inverse() *
 			bodies[0]->getWorldTransform() * localA;
-		hingeC = new btHingeConstraint(*bodies[0], *bodies[1+2*i],
+		hingeC = new btHingeConstraint(*bodies[0], *bodies[2*i+1],
 									   localA, localB);
-		hingeC->setLimit(btScalar(-0.75 * M_PI_4), btScalar(M_PI_8));
+		hingeC->setLimit(btScalar(M_PI * -0.8f), btScalar(M_PI * -0.6f));
 
 		joints[2*i] = hingeC;
 		world->addConstraint(joints[2*i], true);
 
-		// knee joints
+		// knee joints (ヒザ)
 		localA.setIdentity();
 		localB.setIdentity();
 		localC.setIdentity();
-		localA.getBasis().setEulerZYX(0,-fAngle,0);
-		localA.setOrigin(btVector3(btScalar(fCos*(bodySize+legLength)),
-								   btScalar(0.0),
-								   btScalar(fSin*(bodySize+legLength))));
-		localB = bodies[1+2*i]->getWorldTransform().inverse() *
+		localA.getBasis().setEulerZYX(0, -M_PI_2, 0); // Y軸(垂直軸)での回転
+		// A座標系でのヒザの位置
+		btVector3 vTmp;
+		vTmp.setValue( vBoneOrigins[i].x(),
+					   0.0f,
+					   vBoneOrigins[i].z() - legLength );
+		localA.setOrigin(vTmp);
+		// B座標系でのヒザの位置
+		localB = bodies[2*i+1]->getWorldTransform().inverse() *
 			bodies[0]->getWorldTransform() * localA;
-		localC = bodies[2+2*i]->getWorldTransform().inverse() *
+		// C座標系でのヒザの位置
+		localC = bodies[2*i+2]->getWorldTransform().inverse() *
 			bodies[0]->getWorldTransform() * localA;
-		hingeC = new btHingeConstraint(*bodies[1+2*i], *bodies[2+2*i],
+		hingeC = new btHingeConstraint(*bodies[2*i+1], *bodies[2*i+2],
 									   localB, localC);
-			
-		hingeC->setLimit(btScalar(-M_PI_8), btScalar(0.2));
-		joints[1+2*i] = hingeC;
-		world->addConstraint(joints[1+2*i], true);
+
+		if( i < 2 ) {
+			// 前足
+			hingeC->setLimit(btScalar(M_PI * 0.2), btScalar(M_PI * 0.5));
+		} else {
+			// 後ろ足
+			hingeC->setLimit(btScalar(M_PI * 0.2), btScalar(M_PI * 0.5));
+		}
+		joints[2*i+1] = hingeC;
+		world->addConstraint(joints[2*i+1], true);
 	}
 }
 
@@ -219,36 +227,51 @@ Rig::~Rig() {
 	// Remove all constraints
 	for(int i = 0; i < JOINT_COUNT; ++i) {
 		world->removeConstraint(joints[i]);
-		delete joints[i]; joints[i] = 0;
+		delete joints[i]; joints[i] = nullptr;
 	}
 
 	// Remove all bodies and shapes
 	for(int i = 0; i < BODYPART_COUNT; ++i) {
 		world->removeRigidBody(bodies[i]);
-			
+		
 		delete bodies[i]->getMotionState();
-
-		delete bodies[i]; bodies[i] = 0;
-		delete shapes[i]; shapes[i] = 0;
+		
+		delete bodies[i]; bodies[i] = nullptr;
+		delete shapes[i]; shapes[i] = nullptr;
 	}
 }
 
+void Rig::setMotorTargets(float timeUs, float deltaTimeUs) {
+	const float cyclePeriodMs = 2000.0f; // in milliSec
+	// new SIMD solver for joints clips accumulated impulse, so the new limits for the motor
+	// should be (numberOfsolverIterations * oldLimits)
+	// currently solver uses 10 iterations, so:
+	const float muscleStrength = 0.5f;
+	
+	btScalar targetRate =
+		(int(timeUs / 1000) % int(cyclePeriodMs)) / cyclePeriodMs;
+	btScalar targetAngleRate = 0.5 * (1 + sin(2 * M_PI * targetRate));
 
-void motorPreTickCallback(btDynamicsWorld *world, btScalar timeStep) {
+	for(int i=0; i<2*NUM_LEGS; i++) {
+		btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(getJoint(i));
+		btScalar curAngle = hingeC->getHingeAngle();
+		btScalar targetAngle =
+			hingeC->getLowerLimit() + targetAngleRate *
+			(hingeC->getUpperLimit() - hingeC->getLowerLimit());
+		btScalar angleError  = targetAngle - curAngle;
+		btScalar desiredAngularVel = 1000000.0f * angleError/deltaTimeUs;
+		hingeC->enableAngularMotor(true, desiredAngularVel, muscleStrength);
+	}
+}
+
+static void motorPreTickCallback(btDynamicsWorld* world, btScalar timeStep) {
 	RigidManager* manager = (RigidManager*)world->getWorldUserInfo();
 	manager->setMotorTargets(timeStep);
 }
 
 void RigidManager::initPhysics() {
 	// Setup the basic world
-	time = 0;
-	cyclePeriod = 2000.0f; // in milliseconds
-
-	// new SIMD solver for joints clips accumulated impulse, so the new limits for the motor
-	// should be (numberOfsolverIterations * oldLimits)
-	// currently solver uses 10 iterations, so:
-	muscleStrength = 0.5f;
-
+	timeUs = 0;
 	configuration = new btDefaultCollisionConfiguration();
 
 	dispatcher = new btCollisionDispatcher(configuration);
@@ -278,7 +301,7 @@ void RigidManager::initPhysics() {
 		btTransform groundTransform;
 		groundTransform.setIdentity();
 		groundTransform.setOrigin(btVector3(0,-10,0));
-		createRigidBody(btScalar(0.),groundTransform,groundShape);
+		createRigidBody(btScalar(0.0), groundTransform,groundShape);
 	}
 
 	// Spawn one ragdoll
@@ -287,7 +310,7 @@ void RigidManager::initPhysics() {
 }
 
 void RigidManager::exitPhysics() {
-	for(int i=0;i<rigs.size();i++) {
+	for(int i=0; i<rigs.size(); ++i) {
 		Rig* rig = rigs[i];
 		delete rig;
 	}
@@ -296,7 +319,7 @@ void RigidManager::exitPhysics() {
 
 	//remove the rigidbodies from the dynamics world and delete them
 	
-	for(int i=world->getNumCollisionObjects()-1; i>=0 ;i--) {
+	for(int i=world->getNumCollisionObjects()-1; i>=0 ; i--) {
 		btCollisionObject* obj = world->getCollisionObjectArray()[i];
 		btRigidBody* body = btRigidBody::upcast(obj);
 		if(body && body->getMotionState()) {
@@ -307,7 +330,7 @@ void RigidManager::exitPhysics() {
 	}
 
 	//delete collision shapes
-	for(int j=0;j<collisionShapes.size();j++) {
+	for(int j=0; j<collisionShapes.size(); ++j) {
 		btCollisionShape* shape = collisionShapes[j];
 		delete shape;
 	}
@@ -328,31 +351,19 @@ void RigidManager::spawnRig(const btVector3& startOffset) {
 }
 
 void RigidManager::setMotorTargets(btScalar deltaTime) {
-	float ms = deltaTime * 1000000.0f;
-	float minFPS = 1000000.0f/60.f;
-	if(ms > minFPS) {
-		ms = minFPS;
+	// deltaTimeの単位はsecond
+	float deltaTimeUs = deltaTime * 1000000.0f; // microSec
+	const float minDeltaTimeUs = 1000000.0f/60.f;
+
+	if(deltaTimeUs > minDeltaTimeUs) {
+		deltaTimeUs = minDeltaTimeUs;
 	}
 
-	time += ms;
+	timeUs += deltaTimeUs;
 
-	// set per-frame sinusoidal position targets using angular motor (hacky?)
+	// set per-frame sinusoidal position targets using angular motor
 	for(int r=0; r<rigs.size(); r++) {
-		for(int i=0; i<2*NUM_LEGS; i++) {
-			btHingeConstraint* hingeC =
-				static_cast<btHingeConstraint*>(rigs[r]->getJoints()[i]);
-			btScalar curAngle = hingeC->getHingeAngle();
-			
-			btScalar targetPercent =
-				(int(time / 1000) % int(cyclePeriod)) / cyclePeriod;
-			btScalar targetAngle   = 0.5 * (1 + sin(2 * M_PI * targetPercent));
-			btScalar targetLimitAngle =
-				hingeC->getLowerLimit() + targetAngle *
-				(hingeC->getUpperLimit() - hingeC->getLowerLimit());
-			btScalar angleError  = targetLimitAngle - curAngle;
-			btScalar desiredAngularVel = 1000000.f * angleError/ms;
-			hingeC->enableAngularMotor(true, desiredAngularVel, muscleStrength);
-		}
+		rigs[r]->setMotorTargets(timeUs, deltaTimeUs);
 	}
 }
 
@@ -367,14 +378,11 @@ void RigidManager::stepSimulation(float deltaTime) {
 
 btRigidBody* RigidManager::createRigidBody(float mass,
 										   const btTransform& startTransform,
-										   btCollisionShape* shape,
-										   const btVector4& color) {
-	btAssert((!shape || shape->getShapeType() != INVALID_SHAPE_PROXYTYPE));
-
-	//rigidbody is dynamic if and only if mass is non zero, otherwise static
-	bool isDynamic =(mass != 0.f);
-
+										   btCollisionShape* shape) {
+	
 	btVector3 localInertia(0, 0, 0);
+
+	bool isDynamic = (mass != 0.0f);
 	if(isDynamic) {
 		shape->calculateLocalInertia(mass, localInertia);
 	}
@@ -386,8 +394,6 @@ btRigidBody* RigidManager::createRigidBody(float mass,
 												  localInertia);
 
 	btRigidBody* body = new btRigidBody(info);
-
-	body->setUserIndex(-1);
 	world->addRigidBody(body);
 	return body;
 }
