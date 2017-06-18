@@ -30,13 +30,14 @@ endif()
 include_directories( ${OPENGL_INCLUDE_DIRS}
 					 ${GLUT_INCLUDE_DIRS}
 					 ${BULLET_INCLUDE_DIRS}
-					 ${PYTHON_INCLUDES}
-					 ${NUMPY_INCLUDES}
+					 ${PYTHON_INCLUDE_DIRS}
+					 ${PYTHON_NUMPY_INCLUDE_DIR}
 					 )
 
 target_link_libraries(rodent
 					${OPENGL_LIBRARIES}
 					${GLUT_LIBRARY}
 					${BULLET_LIBRARIES}
+					${PYTHON_LIBRARIES}
 					rodent_code
 					)
