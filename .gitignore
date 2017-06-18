@@ -2,5 +2,7 @@
 **/CMakeFiles/
 **/Makefile
 **/*.a
+**/*.dylib
+**/*.so
 bin/
 **/cmake_install.cmake

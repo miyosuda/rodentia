@@ -1,0 +1,3 @@
+import pyrodent
+
+pyrodent.check()

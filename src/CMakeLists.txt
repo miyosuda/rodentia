@@ -8,6 +8,9 @@ add_library(rodent_code STATIC
 
 add_executable(rodent
 	main.cpp
+)
+
+add_library(pyrodent SHARED
 	pyrodent.c
 )
 
@@ -27,6 +30,19 @@ else()
 	message("NumPy not found")
 endif()
 
+message(${PYTHON_NUMPY_INCLUDE_DIR})
+
+# workaround for brew environment
+#set(PYTHON_EXECUTABLE "/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/bin/python2")
+set(PYTHON_INCLUDE_DIRS "/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/include/python2.7")
+set(PYTHON_LIBRARIES "/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/lib/libpython2.7.dylib")
+set(NUMPY_INCLUDES "/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/core/include")
+
+#..
+#message("python incude dir:" ${PYTHON_INCLUDE_DIRS})
+#message("python lib dir:"    ${PYTHON_LIBRARIES})
+#..
+
 include_directories( ${OPENGL_INCLUDE_DIRS}
 					 ${GLUT_INCLUDE_DIRS}
 					 ${BULLET_INCLUDE_DIRS}
@@ -35,6 +51,13 @@ include_directories( ${OPENGL_INCLUDE_DIRS}
 					 )
 
 target_link_libraries(rodent
+					${OPENGL_LIBRARIES}
+					${GLUT_LIBRARY}
+					${BULLET_LIBRARIES}
+					rodent_code
+					)
+
+target_link_libraries(pyrodent
 					${OPENGL_LIBRARIES}
 					${GLUT_LIBRARY}
 					${BULLET_LIBRARIES}

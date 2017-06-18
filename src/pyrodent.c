@@ -6,14 +6,18 @@
 
 #include <numpy/arrayobject.h>
 
-static PyMethodDef SpamMethods[] = {
-	{NULL, NULL, 0, NULL} /* Sentinel */
-};
-
-PyMODINIT_FUNC initpyrodent(void) {
-	PyObject* m;
-	if (m == NULL) {
-		return;
-	}
+static PyObject * check(PyObject *self) {
+	printf("pass check!!\n");
+	Py_RETURN_NONE;
 }
 
+static PyMethodDef methods[] = {
+	{"check", (PyCFunction)check, METH_NOARGS, "check function.\n"},
+	{NULL, NULL, 0, NULL}
+};
+
+static char pyrodent_doc[] = "pyrodent module\n";
+
+void initpyrodent() {
+	Py_InitModule3("pyrodent", methods, pyrodent_doc);
+}
