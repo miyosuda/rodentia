@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 add_library(rodent_code STATIC
 	TrackBall.cpp
 	play.cpp
-	rigid.cpp
+	Environment.cpp
 )
 
 add_executable(rodent

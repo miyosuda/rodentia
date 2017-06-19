@@ -3,10 +3,10 @@
 #include <GLUT/glut.h>
 
 #include "TrackBall.h"
-#include "rigid.h"
+#include "Environment.h"
 
 static TrackBall trackBall(0.0f, 0.0f, 8.0f, -0.3f);
-static RigidManager rigidManager; //..  TODO:
+static Environment environment;
 
 /**
  * reshape():
@@ -41,7 +41,7 @@ void playMouseDrag(int x, int y, int button) {
  * playInit():
  */
 void playInit() {
-	rigidManager.initPhysics();
+	environment.init();
 }
 
 static void drawLine(const Vector4f& pos0, const Vector4f& pos1) {
@@ -91,16 +91,16 @@ void playLoop() {
 	{
 		glMultMatrixf( (const float*)&worldCamera );
 		
-		rigidManager.stepSimulation(1.0f/60.0f); //..
+		environment.step();
 		
 		drawFloor();
 	}
-	glPopMatrix();	
+	glPopMatrix();
 }
 
 /**
  * playFinalize():
  */
 void playFinalize() {
-	rigidManager.exitPhysics();
+	environment.release();
 }

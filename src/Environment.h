@@ -1,6 +1,6 @@
 // -*- C++ -*-
-#ifndef RIGID_HEADER
-#define RIGID_HEADER
+#ifndef ENVIRONMENT_HEADER
+#define ENVIRONMENT_HEADER
 
 #include "btBulletDynamicsCommon.h"
 #include <math.h>
@@ -21,20 +21,19 @@ private:
 	btRigidBody*		bodies[BODYPART_COUNT];
 	btTypedConstraint*	joints[JOINT_COUNT];
 
+	btTypedConstraint* getJoint(int index) {
+		return joints[index];
+	}
+
 public:
 	Model(btDynamicsWorld* world_, const btVector3& positionOffset);
 	~Model();
 
 	void setMotorTargets(float timeUs, float deltaTimeUs);
-
-	btTypedConstraint* getJoint(int index) {
-		return joints[index];
-	}
 };
 
 
-class RigidManager {
-	//keep the collision shapes, for deletion/cleanup
+class Environment {
 	btAlignedObjectArray<btCollisionShape*>	collisionShapes;
 	btBroadphaseInterface* broadPhase;
 	btCollisionDispatcher* dispatcher;
@@ -43,27 +42,27 @@ class RigidManager {
 	btDiscreteDynamicsWorld* world;
 
 	float timeUs; // microSec
-	btAlignedObjectArray<class Model*> models;
-	
-	void spawnModel(const btVector3& startOffset);
+	Model* model;
+
+	void setMotorTargets(btScalar deltaTime);
 	
 public:
-	RigidManager()
+	Environment()
 		:
 		broadPhase(nullptr),
 		dispatcher(nullptr),
 		solver(nullptr),
 		configuration(nullptr),
-		world(nullptr) {
+		world(nullptr),
+		model(nullptr) {
 	}
 
-	~RigidManager() {
+	~Environment() {
 	}
 
-	void initPhysics();
-	void exitPhysics();
-	void setMotorTargets(btScalar deltaTime);
-	void stepSimulation(float deltaTime);
+	void init();
+	void release();
+	void step();
 };
 
 #endif

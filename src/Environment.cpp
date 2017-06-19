@@ -1,4 +1,4 @@
-#include "rigid.h"
+#include "Environment.h"
 #include <stdio.h>
 #include <GLUT/glut.h>
 
@@ -101,7 +101,7 @@ Model::Model(btDynamicsWorld* world_,
 	const float bodyWidth  = 0.3f;
 	const float bodyHeight = 0.1f;
 	const float bodyDepth  = 0.5f;
-	const float legLength = 0.45f;     // つけねの長さ
+	const float legLength     = 0.45f; // つけねの長さ
 	const float foreLegLength = 0.35f; // 足の先の長さ
 	
 	shapes[0] = new btBoxShape(btVector3(btScalar(bodyWidth),
@@ -245,12 +245,7 @@ void Model::setMotorTargets(float timeUs, float deltaTimeUs) {
 	}
 }
 
-static void motorPreTickCallback(btDynamicsWorld* world, btScalar timeStep) {
-	RigidManager* manager = (RigidManager*)world->getWorldUserInfo();
-	manager->setMotorTargets(timeStep);
-}
-
-void RigidManager::initPhysics() {
+void Environment::init() {
 	// Setup the basic world
 	timeUs = 0;
 	configuration = new btDefaultCollisionConfiguration();
@@ -268,10 +263,15 @@ void RigidManager::initPhysics() {
 										solver,
 										configuration);
 
+	auto motorPreTickCallback = [](btDynamicsWorld* world, btScalar timeStep) {
+		Environment* manager = (Environment*)world->getWorldUserInfo();
+		manager->setMotorTargets(timeStep);
+	};
+
 	world->setInternalTickCallback(motorPreTickCallback, this, true);
 
-	world->setDebugDrawer(new DebugDrawer()); //..
-	world->getDebugDrawer()->setDebugMode(true); //..
+	world->setDebugDrawer(new DebugDrawer());
+	world->getDebugDrawer()->setDebugMode(true);
 	
 	// Setup a big ground box
 	{
@@ -286,21 +286,18 @@ void RigidManager::initPhysics() {
 		world->addRigidBody(body);
 	}
 
-	// Spawn one ragdoll
-	btVector3 startOffset(0, 0.5, 0);
-	spawnModel(startOffset);
+	// Spawn one model
+	const btVector3 startOffset(0, 0.5, 0);
+	model = new Model(world, startOffset);
 }
 
-void RigidManager::exitPhysics() {
-	for(int i=0; i<models.size(); ++i) {
-		Model* model = models[i];
+void Environment::release() {
+	if( model != nullptr ) {
 		delete model;
+		model = nullptr;
 	}
 
-	//cleanup in the reverse order of creation/initialization
-
-	//remove the rigidbodies from the dynamics world and delete them
-	
+	// remove the rigidbodies from the dynamics world and delete them
 	for(int i=world->getNumCollisionObjects()-1; i>=0 ; i--) {
 		btCollisionObject* obj = world->getCollisionObjectArray()[i];
 		btRigidBody* body = btRigidBody::upcast(obj);
@@ -327,12 +324,7 @@ void RigidManager::exitPhysics() {
 	delete configuration;
 }
 
-void RigidManager::spawnModel(const btVector3& startOffset) {
-	Model* model = new Model(world, startOffset);
-	models.push_back(model);
-}
-
-void RigidManager::setMotorTargets(btScalar deltaTime) {
+void Environment::setMotorTargets(btScalar deltaTime) {
 	// deltaTimeの単位はsecond
 	float deltaTimeUs = deltaTime * 1000000.0f; // microSec
 	const float minDeltaTimeUs = 1000000.0f/60.f;
@@ -344,17 +336,17 @@ void RigidManager::setMotorTargets(btScalar deltaTime) {
 	timeUs += deltaTimeUs;
 
 	// set per-frame sinusoidal position targets using angular motor
-	for(int r=0; r<models.size(); r++) {
-		models[r]->setMotorTargets(timeUs, deltaTimeUs);
+	if( model != nullptr ) {
+		model->setMotorTargets(timeUs, deltaTimeUs);
 	}
 }
 
-
-void RigidManager::stepSimulation(float deltaTime) {
+void Environment::step() {
+	const float deltaTime = 1.0f/60.0f;
+	
 	if(world) {
 		world->stepSimulation(deltaTime);
 		// Debug drawing
 		world->debugDrawWorld();
 	}
 }
-

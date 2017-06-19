@@ -1,17 +1,16 @@
 #include "rodent_api.h"
 #include <stdio.h>
 
-class Context {
-};
+#include "Environment.h"
 
 void* rodent_create() {
-	Context* context = new Context();
-	return static_cast<void*>(context);
+	Environment* environment = new Environment();
+	return static_cast<void*>(environment);
 }
 
 int rodent_init(void* context_) {
-	Context* context = static_cast<Context*>(context_);
-	if( context == nullptr ) {
+	Environment* environment = static_cast<Environment*>(context_);
+	if( environment == nullptr ) {
 		return -1;
 	}
 	
@@ -19,17 +18,17 @@ int rodent_init(void* context_) {
 }
 
 void rodent_release(void* context_) {
-	Context* context = static_cast<Context*>(context_);
-	if( context == nullptr ) {
+	Environment* environment = static_cast<Environment*>(context_);
+	if( environment == nullptr ) {
 		return;
 	}
 	
-	delete context;
+	delete environment;
 }
 
 int rodent_step(void* context_, float* joint_angles) {
-	Context* context = static_cast<Context*>(context_);
-	if( context == nullptr ) {
+	Environment* environment = static_cast<Environment*>(context_);
+	if( environment == nullptr ) {
 		return -1;
 	}
 
@@ -38,13 +37,15 @@ int rodent_step(void* context_, float* joint_angles) {
 		printf(">> angle=%f\n", joint_angles[i]);
 	}
 	//..
+
+	environment->step();
 	
 	return 0;
 }
 
 int rodent_joint_size(void* context_, int* joint_size) {
-	Context* context = static_cast<Context*>(context_);
-	if( context == nullptr ) {
+	Environment* environment = static_cast<Environment*>(context_);
+	if( environment == nullptr ) {
 		return -1;
 	}
 
