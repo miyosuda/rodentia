@@ -69,9 +69,9 @@ void DebugDrawer::toggleDebugFlag(int flag) {
 	}
 }
 
-btRigidBody* Model::createRigidBody(btScalar mass,
-								  const btTransform& startTransform,
-								  btCollisionShape* shape) {
+static btRigidBody* createRigidBody(btScalar mass,
+									const btTransform& startTransform,
+									btCollisionShape* shape) {
 
 	btVector3 localInertia(0,0,0);
 
@@ -86,9 +86,6 @@ btRigidBody* Model::createRigidBody(btScalar mass,
 												  shape,
 												  localInertia);
 	btRigidBody* body = new btRigidBody(info);
-
-	world->addRigidBody(body);
-
 	return body;
 }
 
@@ -112,15 +109,19 @@ Model::Model(btDynamicsWorld* world_,
 										 btScalar(bodyDepth)));
 	
 	for(int i=0; i<NUM_LEGS; ++i) {
-		shapes[1 + 2*i] = new btCapsuleShape(btScalar(0.10),
-											 btScalar(legLength));
-		shapes[2 + 2*i] = new btCapsuleShape(btScalar(0.08), // 先の方が少し細い
-											 btScalar(foreLegLength));
+		shapes[1 + 2*i] = new btCapsuleShapeZ(btScalar(0.10),
+											  btScalar(legLength));
+		shapes[2 + 2*i] = new btCapsuleShapeZ(btScalar(0.08), // 先の方が少し細い
+											  btScalar(foreLegLength));
 	}
 	
 	// Setup rigid bodies
 	btTransform offset; offset.setIdentity();
 	offset.setOrigin(positionOffset);
+
+	const float rootMass = 1.0f;
+	const float legMass = 1.0f;
+	const float foreLegMass = 0.5f;
 	
 	// root
 	const float height = 0.5;
@@ -129,9 +130,10 @@ Model::Model(btDynamicsWorld* world_,
 	transform.setIdentity();
 	transform.setOrigin(vRoot);
 	
-	bodies[0] = createRigidBody(btScalar(5.0), //..
+	bodies[0] = createRigidBody(btScalar(rootMass),
 								offset * transform,
 								shapes[0]);
+	world->addRigidBody(bodies[0]);
 	
 	btVector3 vBoneOrigins[4];
 	vBoneOrigins[0].setValue(-bodyWidth, 0.0f, -bodyDepth); // 左奥
@@ -141,25 +143,25 @@ Model::Model(btDynamicsWorld* world_,
 	
 	// legs
 	for(int i=0; i<NUM_LEGS; ++i) {
-		// thigh (太腿)		
+		// thigh (太腿)
 		transform.setIdentity();
 		transform.setOrigin( btVector3(vBoneOrigins[i].x(),
 									   height,
 									   vBoneOrigins[i].z() - 0.5 * legLength) );
-		transform.setRotation(btQuaternion(vRight, M_PI_2));
-		bodies[2*i+1] = createRigidBody(btScalar(1.0),
+		bodies[2*i+1] = createRigidBody(btScalar(legMass),
 										offset * transform,
 										shapes[2*i+1]);
+		world->addRigidBody(bodies[2*i+1]);
 		
 		// shin (すね)
 		transform.setIdentity();
 		transform.setOrigin( btVector3(vBoneOrigins[i].x(),
 									   height,
 									   vBoneOrigins[i].z() - legLength - 0.5 * foreLegLength));
-		transform.setRotation(btQuaternion(vRight, M_PI_2));
-		bodies[2*i+2] = createRigidBody(btScalar(0.5), //..
+		bodies[2*i+2] = createRigidBody(btScalar(foreLegMass),
 										offset * transform,
 										shapes[2*i+2]);
+		world->addRigidBody(bodies[2*i+2]);
 	}
 	
 	// Setup some damping on the bodies
@@ -171,52 +173,31 @@ Model::Model(btDynamicsWorld* world_,
 
 	// Setup the constraints
 	btHingeConstraint* hingeC;
-	
-	btTransform localA, localB, localC;
-	
 	for(int i=0; i<NUM_LEGS; ++i) {
-		// hip joints (足の付け根)
-		localA.setIdentity();
-		localB.setIdentity();
-		localA.getBasis().setEulerZYX(0, -M_PI_2, 0); // Y軸(垂直軸)での回転 //..
-		// 親側での位置
-		localA.setOrigin(vBoneOrigins[i]);
-		// 子側での位置
-		localB = bodies[2*i+1]->getWorldTransform().inverse() *
-			bodies[0]->getWorldTransform() * localA;
 		hingeC = new btHingeConstraint(*bodies[0], *bodies[2*i+1],
-									   localA, localB);
-		hingeC->setLimit(btScalar(M_PI * -0.8f), btScalar(M_PI * -0.6f));
+									   vBoneOrigins[i], 
+									   btVector3(0.0f, 0.0f, legLength * 0.5f),
+									   vRight, vRight,
+									   false);
+		hingeC->setLimit(btScalar(M_PI * 0.6f), btScalar(M_PI * 0.8f));
 
 		joints[2*i] = hingeC;
 		world->addConstraint(joints[2*i], true);
 
 		// knee joints (ヒザ)
-		localA.setIdentity();
-		localB.setIdentity();
-		localC.setIdentity();
-		localA.getBasis().setEulerZYX(0, -M_PI_2, 0); // Y軸(垂直軸)での回転
 		// A座標系でのヒザの位置
-		btVector3 vTmp;
-		vTmp.setValue( vBoneOrigins[i].x(),
-					   0.0f,
-					   vBoneOrigins[i].z() - legLength );
-		localA.setOrigin(vTmp);
-		// B座標系でのヒザの位置
-		localB = bodies[2*i+1]->getWorldTransform().inverse() *
-			bodies[0]->getWorldTransform() * localA;
-		// C座標系でのヒザの位置
-		localC = bodies[2*i+2]->getWorldTransform().inverse() *
-			bodies[0]->getWorldTransform() * localA;
 		hingeC = new btHingeConstraint(*bodies[2*i+1], *bodies[2*i+2],
-									   localB, localC);
-
+									   btVector3(0.0f, 0.0f, -legLength * 0.5f),
+									   btVector3(0.0f, 0.0f, foreLegLength * 0.5f),
+									   vRight, vRight,
+									   false);
+		
 		if( i < 2 ) {
 			// 前足
-			hingeC->setLimit(btScalar(M_PI * 0.2), btScalar(M_PI * 0.5));
+			hingeC->setLimit(btScalar(M_PI * -0.5), btScalar(M_PI * -0.2));
 		} else {
 			// 後ろ足
-			hingeC->setLimit(btScalar(M_PI * 0.2), btScalar(M_PI * 0.5));
+			hingeC->setLimit(btScalar(M_PI * -0.5), btScalar(M_PI * -0.2));
 		}
 		joints[2*i+1] = hingeC;
 		world->addConstraint(joints[2*i+1], true);
@@ -301,7 +282,8 @@ void RigidManager::initPhysics() {
 		btTransform groundTransform;
 		groundTransform.setIdentity();
 		groundTransform.setOrigin(btVector3(0,-10,0));
-		createRigidBody(btScalar(0.0), groundTransform,groundShape);
+		btRigidBody* body = createRigidBody(btScalar(0.0), groundTransform, groundShape);
+		world->addRigidBody(body);
 	}
 
 	// Spawn one ragdoll
@@ -376,24 +358,3 @@ void RigidManager::stepSimulation(float deltaTime) {
 	}
 }
 
-btRigidBody* RigidManager::createRigidBody(float mass,
-										   const btTransform& startTransform,
-										   btCollisionShape* shape) {
-	
-	btVector3 localInertia(0, 0, 0);
-
-	bool isDynamic = (mass != 0.0f);
-	if(isDynamic) {
-		shape->calculateLocalInertia(mass, localInertia);
-	}
-
-	btDefaultMotionState* motionState = new btDefaultMotionState(startTransform);
-	btRigidBody::btRigidBodyConstructionInfo info(mass,
-												  motionState,
-												  shape,
-												  localInertia);
-
-	btRigidBody* body = new btRigidBody(info);
-	world->addRigidBody(body);
-	return body;
-}

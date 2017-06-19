@@ -21,10 +21,6 @@ private:
 	btRigidBody*		bodies[BODYPART_COUNT];
 	btTypedConstraint*	joints[JOINT_COUNT];
 
-	btRigidBody* createRigidBody(btScalar mass,
-								 const btTransform& startTransform,
-								 btCollisionShape* shape);
-
 public:
 	Model(btDynamicsWorld* world_, const btVector3& positionOffset);
 	~Model();
@@ -48,11 +44,7 @@ class RigidManager {
 
 	float timeUs; // microSec
 	btAlignedObjectArray<class Model*> models;
-
-	btRigidBody* createRigidBody(float mass,
-								 const btTransform& startTransform,
-								 btCollisionShape* shape);
-
+	
 	void spawnModel(const btVector3& startOffset);
 	
 public:
