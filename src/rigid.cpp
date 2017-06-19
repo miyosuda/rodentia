@@ -69,7 +69,7 @@ void DebugDrawer::toggleDebugFlag(int flag) {
 	}
 }
 
-btRigidBody* Rig::createRigidBody(btScalar mass,
+btRigidBody* Model::createRigidBody(btScalar mass,
 								  const btTransform& startTransform,
 								  btCollisionShape* shape) {
 
@@ -92,8 +92,8 @@ btRigidBody* Rig::createRigidBody(btScalar mass,
 	return body;
 }
 
-Rig::Rig(btDynamicsWorld* world_,
-		 const btVector3& positionOffset)
+Model::Model(btDynamicsWorld* world_,
+			 const btVector3& positionOffset)
 	:
 	world(world_) {
 	
@@ -223,7 +223,7 @@ Rig::Rig(btDynamicsWorld* world_,
 	}
 }
 
-Rig::~Rig() {
+Model::~Model() {
 	// Remove all constraints
 	for(int i = 0; i < JOINT_COUNT; ++i) {
 		world->removeConstraint(joints[i]);
@@ -241,7 +241,7 @@ Rig::~Rig() {
 	}
 }
 
-void Rig::setMotorTargets(float timeUs, float deltaTimeUs) {
+void Model::setMotorTargets(float timeUs, float deltaTimeUs) {
 	const float cyclePeriodMs = 2000.0f; // in milliSec
 	// new SIMD solver for joints clips accumulated impulse, so the new limits for the motor
 	// should be (numberOfsolverIterations * oldLimits)
@@ -306,13 +306,13 @@ void RigidManager::initPhysics() {
 
 	// Spawn one ragdoll
 	btVector3 startOffset(0, 0.5, 0);
-	spawnRig(startOffset);
+	spawnModel(startOffset);
 }
 
 void RigidManager::exitPhysics() {
-	for(int i=0; i<rigs.size(); ++i) {
-		Rig* rig = rigs[i];
-		delete rig;
+	for(int i=0; i<models.size(); ++i) {
+		Model* model = models[i];
+		delete model;
 	}
 
 	//cleanup in the reverse order of creation/initialization
@@ -345,9 +345,9 @@ void RigidManager::exitPhysics() {
 	delete configuration;
 }
 
-void RigidManager::spawnRig(const btVector3& startOffset) {
-	Rig* rig = new Rig(world, startOffset);
-	rigs.push_back(rig);
+void RigidManager::spawnModel(const btVector3& startOffset) {
+	Model* model = new Model(world, startOffset);
+	models.push_back(model);
 }
 
 void RigidManager::setMotorTargets(btScalar deltaTime) {
@@ -362,8 +362,8 @@ void RigidManager::setMotorTargets(btScalar deltaTime) {
 	timeUs += deltaTimeUs;
 
 	// set per-frame sinusoidal position targets using angular motor
-	for(int r=0; r<rigs.size(); r++) {
-		rigs[r]->setMotorTargets(timeUs, deltaTimeUs);
+	for(int r=0; r<models.size(); r++) {
+		models[r]->setMotorTargets(timeUs, deltaTimeUs);
 	}
 }
 

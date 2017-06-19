@@ -14,7 +14,7 @@
 #define JOINT_COUNT BODYPART_COUNT - 1
 
 
-class Rig {
+class Model {
 private:
 	btDynamicsWorld*	world;
 	btCollisionShape*	shapes[BODYPART_COUNT];
@@ -26,8 +26,8 @@ private:
 								 btCollisionShape* shape);
 
 public:
-	Rig(btDynamicsWorld* world_, const btVector3& positionOffset);
-	~Rig();
+	Model(btDynamicsWorld* world_, const btVector3& positionOffset);
+	~Model();
 
 	void setMotorTargets(float timeUs, float deltaTimeUs);
 
@@ -47,13 +47,13 @@ class RigidManager {
 	btDiscreteDynamicsWorld* world;
 
 	float timeUs; // microSec
-	btAlignedObjectArray<class Rig*> rigs;
+	btAlignedObjectArray<class Model*> models;
 
 	btRigidBody* createRigidBody(float mass,
 								 const btTransform& startTransform,
 								 btCollisionShape* shape);
 
-	void spawnRig(const btVector3& startOffset);
+	void spawnModel(const btVector3& startOffset);
 	
 public:
 	RigidManager()
