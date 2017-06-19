@@ -1,12 +1,13 @@
-# build memo
+# Build memo
 
 download bullet source
 
-$ cmake .
-$ make install
+    $ cmake .
+    $ make
+    $ make install
 
 download gtest
 
-$ cmake .
-$ make install
-
+    $ cmake .
+    $ make
+    $ make install

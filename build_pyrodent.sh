@@ -8,4 +8,5 @@ fi
 
 ln -s libpyrodent.dylib rodent.so
 
-python check.py
+python rodent_test.py
+

@@ -12,6 +12,7 @@ add_executable(rodent
 
 add_library(pyrodent SHARED
 	pyrodent.c
+	rodent_api.cpp		
 )
 
 find_package(BULLET REQUIRED)
