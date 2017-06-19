@@ -262,26 +262,30 @@ Model::Model(btDynamicsWorld* world_,
 
 	// 左上腕
 	transform.setIdentity();
-	transform.setOrigin(btVector3(btScalar(-0.35), btScalar(1.0), btScalar(-0.45)));
-	transform.getBasis().setEulerZYX(0,0,M_PI_2);
+	//transform.setOrigin(btVector3(btScalar(-0.35), btScalar(1.0), btScalar(-0.45)));
+	transform.setOrigin(btVector3(btScalar(-0.18), btScalar(1.0-0.17), btScalar(-0.45)));
+	//transform.getBasis().setEulerZYX(0,0,M_PI_2);
 	bodies[BODYPART_LEFT_UPPER_ARM] = createRigidBody(btScalar(1.), offset*transform, shapes[BODYPART_LEFT_UPPER_ARM]);
 
 	// 左下腕
 	transform.setIdentity();
-	transform.setOrigin(btVector3(btScalar(-0.7), btScalar(1.0), btScalar(-0.45)));
-	transform.getBasis().setEulerZYX(0,0,M_PI_2);
+	//transform.setOrigin(btVector3(btScalar(-0.7), btScalar(1.0), btScalar(-0.45)));
+	transform.setOrigin(btVector3(btScalar(-0.18), btScalar(1.0-0.52), btScalar(-0.45)));
+	//transform.getBasis().setEulerZYX(0,0,M_PI_2);
 	bodies[BODYPART_LEFT_LOWER_ARM] = createRigidBody(btScalar(1.), offset*transform, shapes[BODYPART_LEFT_LOWER_ARM]);
 
 	// 右上腕
 	transform.setIdentity();
-	transform.setOrigin(btVector3(btScalar(0.35), btScalar(1.0), btScalar(-0.45)));
-	transform.getBasis().setEulerZYX(0,0,-M_PI_2);
+	//transform.setOrigin(btVector3(btScalar(0.35), btScalar(1.0), btScalar(-0.45)));
+	transform.setOrigin(btVector3(btScalar(0.18), btScalar(1.0-0.17), btScalar(-0.45)));
+	//transform.getBasis().setEulerZYX(0,0,-M_PI_2);
 	bodies[BODYPART_RIGHT_UPPER_ARM] = createRigidBody(btScalar(1.), offset*transform, shapes[BODYPART_RIGHT_UPPER_ARM]);
 
 	// 右下腕
 	transform.setIdentity();
-	transform.setOrigin(btVector3(btScalar(0.7), btScalar(1.0), btScalar(-0.45)));
-	transform.getBasis().setEulerZYX(0,0,-M_PI_2);
+	//transform.setOrigin(btVector3(btScalar(0.7), btScalar(1.0), btScalar(-0.45)));
+	transform.setOrigin(btVector3(btScalar(0.18), btScalar(1.0-0.52), btScalar(-0.45)));
+	//transform.getBasis().setEulerZYX(0,0,-M_PI_2);
 	bodies[BODYPART_RIGHT_LOWER_ARM] = createRigidBody(btScalar(1.), offset*transform, shapes[BODYPART_RIGHT_LOWER_ARM]);
 
 	world->addRigidBody(bodies[BODYPART_PELVIS]);
@@ -311,9 +315,12 @@ Model::Model(btDynamicsWorld* world_,
 
 	// 骨盤->脊柱
 	localA.setIdentity(); localB.setIdentity();
-	// TODO: 回転OK?
-	localA.getBasis().setEulerZYX(0,M_PI_2,0); localA.setOrigin(btVector3(btScalar(0.0), btScalar(0.0), btScalar(-0.15)));
-	localB.getBasis().setEulerZYX(0,M_PI_2,0); localB.setOrigin(btVector3(btScalar(0.0), btScalar(0.0), btScalar(0.15)));
+	// (もともと正面向きに)
+	//localA.getBasis().setEulerZYX(0,M_PI_2,0); localA.setOrigin(btVector3(btScalar(0.0), btScalar(0.0), btScalar(-0.15)));
+	//localB.getBasis().setEulerZYX(0,M_PI_2,0); localB.setOrigin(btVector3(btScalar(0.0), btScalar(0.0), btScalar(0.15)));
+	localA.getBasis().setEulerZYX(0,0,M_PI_2); localA.setOrigin(btVector3(btScalar(0.0), btScalar(0.0), btScalar(-0.15)));
+	localB.getBasis().setEulerZYX(0,0,M_PI_2); localB.setOrigin(btVector3(btScalar(0.0), btScalar(0.0), btScalar(0.15)));
+	
 	hingeC =  new btHingeConstraint(*bodies[BODYPART_PELVIS], *bodies[BODYPART_SPINE], localA, localB);
 	//hingeC->setLimit(btScalar(-M_PI_4), btScalar(M_PI_2));
 	hingeC->setLimit(btScalar(0.0), btScalar(M_PI_2));
@@ -322,9 +329,9 @@ Model::Model(btDynamicsWorld* world_,
 
 	// 脊柱->頭
 	localA.setIdentity(); localB.setIdentity();
-	// TODO: 回転OK?
-	localA.getBasis().setEulerZYX(0,0,M_PI_2); localA.setOrigin(btVector3(btScalar(0.), btScalar(0.0), btScalar(-0.30)));
-	localB.getBasis().setEulerZYX(0,0,M_PI_2); localB.setOrigin(btVector3(btScalar(0.), btScalar(0.0), btScalar(0.14)));
+	// (もともと上向きに)
+	localA.getBasis().setEulerZYX(0,M_PI_2,0); localA.setOrigin(btVector3(btScalar(0.), btScalar(0.0), btScalar(-0.30)));
+	localB.getBasis().setEulerZYX(0,M_PI_2,0); localB.setOrigin(btVector3(btScalar(0.), btScalar(0.0), btScalar(0.14)));
 	coneC = new btConeTwistConstraint(*bodies[BODYPART_SPINE], *bodies[BODYPART_HEAD], localA, localB);
 	coneC->setLimit(M_PI_4, M_PI_4, M_PI_2);
 	joints[JOINT_SPINE_HEAD] = coneC;
@@ -332,7 +339,6 @@ Model::Model(btDynamicsWorld* world_,
 
 	// 骨盤->左上足
 	localA.setIdentity(); localB.setIdentity();
-	// TODO: 回転OK?
 	localA.getBasis().setEulerZYX(0,0,-M_PI_4*5); localA.setOrigin(btVector3(btScalar(-0.18), btScalar(0.0), btScalar(0.1)));
 	localB.getBasis().setEulerZYX(0,0,-M_PI_4*5); localB.setOrigin(btVector3(btScalar(0.), btScalar(0.225), btScalar(0.0)));
 	coneC = new btConeTwistConstraint(*bodies[BODYPART_PELVIS], *bodies[BODYPART_LEFT_UPPER_LEG], localA, localB);
@@ -351,7 +357,6 @@ Model::Model(btDynamicsWorld* world_,
 
 	// 骨盤->右上足
 	localA.setIdentity(); localB.setIdentity();
-	// TODO: 回転OK?
 	localA.getBasis().setEulerZYX(0,0,M_PI_4); localA.setOrigin(btVector3(btScalar(0.18), btScalar(0.0), btScalar(0.1)));
 	localB.getBasis().setEulerZYX(0,0,M_PI_4); localB.setOrigin(btVector3(btScalar(0.), btScalar(0.225), btScalar(0.0)));
 	coneC = new btConeTwistConstraint(*bodies[BODYPART_PELVIS], *bodies[BODYPART_RIGHT_UPPER_LEG], localA, localB);
@@ -370,18 +375,17 @@ Model::Model(btDynamicsWorld* world_,
 
 	// 脊柱->左上腕
 	localA.setIdentity(); localB.setIdentity();
-	// TODO: 回転OK?
-	localA.getBasis().setEulerZYX(0,0,M_PI); localA.setOrigin(btVector3(btScalar(-0.2), btScalar(0.0), btScalar(-0.15)));
-	localB.getBasis().setEulerZYX(0,0,M_PI_2); localB.setOrigin(btVector3(btScalar(0.), btScalar(-0.18), btScalar(0.)));
+	localA.getBasis().setEulerZYX(0,0,-M_PI_4*5); localA.setOrigin(btVector3(btScalar(-0.2), btScalar(0.0), btScalar(-0.15)));
+	localB.getBasis().setEulerZYX(0,0,-M_PI_4*5); localB.setOrigin(btVector3(btScalar(0.), btScalar(0.18), btScalar(0.)));
 	coneC = new btConeTwistConstraint(*bodies[BODYPART_SPINE], *bodies[BODYPART_LEFT_UPPER_ARM], localA, localB);
-	coneC->setLimit(M_PI_2, M_PI_2, 0);
+	coneC->setLimit(M_PI_4, M_PI_4, 0);
 	joints[JOINT_LEFT_SHOULDER] = coneC;
 	world->addConstraint(joints[JOINT_LEFT_SHOULDER], true);
 
 	// 左上腕->左下腕
 	localA.setIdentity(); localB.setIdentity();
-	localA.getBasis().setEulerZYX(0,M_PI_2,0); localA.setOrigin(btVector3(btScalar(0.), btScalar(0.18), btScalar(0.)));
-	localB.getBasis().setEulerZYX(0,M_PI_2,0); localB.setOrigin(btVector3(btScalar(0.), btScalar(-0.14), btScalar(0.)));
+	localA.getBasis().setEulerZYX(0,M_PI_2,0); localA.setOrigin(btVector3(btScalar(0.), btScalar(-0.18), btScalar(0.)));
+	localB.getBasis().setEulerZYX(0,M_PI_2,0); localB.setOrigin(btVector3(btScalar(0.), btScalar(0.14), btScalar(0.)));
 	hingeC =  new btHingeConstraint(*bodies[BODYPART_LEFT_UPPER_ARM], *bodies[BODYPART_LEFT_LOWER_ARM], localA, localB);
 	hingeC->setLimit(btScalar(-M_PI_2), btScalar(0));
 	joints[JOINT_LEFT_ELBOW] = hingeC;
@@ -390,18 +394,17 @@ Model::Model(btDynamicsWorld* world_,
 
 	// 脊柱->右上腕
 	localA.setIdentity(); localB.setIdentity();
-	// TODO: 回転OK?
-	localA.getBasis().setEulerZYX(0,0,0); localA.setOrigin(btVector3(btScalar(0.2), btScalar(0.0), btScalar(-0.15)));
-	localB.getBasis().setEulerZYX(0,0,M_PI_2); localB.setOrigin(btVector3(btScalar(0.), btScalar(-0.18), btScalar(0.)));
+	localA.getBasis().setEulerZYX(0,0,M_PI_4); localA.setOrigin(btVector3(btScalar(0.2), btScalar(0.0), btScalar(-0.15)));
+	localB.getBasis().setEulerZYX(0,0,M_PI_4); localB.setOrigin(btVector3(btScalar(0.), btScalar(0.18), btScalar(0.)));
 	coneC = new btConeTwistConstraint(*bodies[BODYPART_SPINE], *bodies[BODYPART_RIGHT_UPPER_ARM], localA, localB);
-	coneC->setLimit(M_PI_2, M_PI_2, 0);
+	coneC->setLimit(M_PI_4, M_PI_4, 0);
 	joints[JOINT_RIGHT_SHOULDER] = coneC;
 	world->addConstraint(joints[JOINT_RIGHT_SHOULDER], true);
 
 	// 右上腕->右下腕
 	localA.setIdentity(); localB.setIdentity();
-	localA.getBasis().setEulerZYX(0,M_PI_2,0); localA.setOrigin(btVector3(btScalar(0.), btScalar(0.18), btScalar(0.)));
-	localB.getBasis().setEulerZYX(0,M_PI_2,0); localB.setOrigin(btVector3(btScalar(0.), btScalar(-0.14), btScalar(0.)));
+	localA.getBasis().setEulerZYX(0,M_PI_2,0); localA.setOrigin(btVector3(btScalar(0.), btScalar(-0.18), btScalar(0.)));
+	localB.getBasis().setEulerZYX(0,M_PI_2,0); localB.setOrigin(btVector3(btScalar(0.), btScalar(0.14), btScalar(0.)));
 	hingeC =  new btHingeConstraint(*bodies[BODYPART_RIGHT_UPPER_ARM], *bodies[BODYPART_RIGHT_LOWER_ARM], localA, localB);
 	hingeC->setLimit(btScalar(-M_PI_2), btScalar(0));
 	joints[JOINT_RIGHT_ELBOW] = hingeC;
@@ -498,8 +501,8 @@ void Environment::init() {
 		world->addRigidBody(body);
 	}
 
-	world->setGravity(btVector3(0,-10,0));
-	//world->setGravity(btVector3(0,-1,0));
+	//world->setGravity(btVector3(0,-10,0));
+	world->setGravity(btVector3(0,-1,0));
 
 	// Spawn one model
 	const btVector3 startOffset(0, 0.5, 0);
