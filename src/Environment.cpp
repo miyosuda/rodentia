@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <GLUT/glut.h>
 
+
 class DebugDrawer: public btIDebugDraw {
 private:
 	int debugMode;
@@ -93,7 +94,8 @@ Model::Model(btDynamicsWorld* world_,
 			 const btVector3& positionOffset)
 	:
 	world(world_) {
-	
+
+	/*
 	const btVector3 vUp(0, 1, 0);
 	const btVector3 vRight(1, 0, 0);
 
@@ -202,6 +204,185 @@ Model::Model(btDynamicsWorld* world_,
 		joints[2*i+1] = hingeC;
 		world->addConstraint(joints[2*i+1], true);
 	}
+	*/
+	//..
+	
+	// Setup the geometry
+	shapes[BODYPART_PELVIS]          = new btCapsuleShape(btScalar(0.15), btScalar(0.20));
+	shapes[BODYPART_SPINE]           = new btCapsuleShape(btScalar(0.15), btScalar(0.28));
+	shapes[BODYPART_HEAD]            = new btCapsuleShape(btScalar(0.10), btScalar(0.05));
+	shapes[BODYPART_LEFT_UPPER_LEG]  = new btCapsuleShape(btScalar(0.07), btScalar(0.45));
+	shapes[BODYPART_LEFT_LOWER_LEG]  = new btCapsuleShape(btScalar(0.05), btScalar(0.37));
+	shapes[BODYPART_RIGHT_UPPER_LEG] = new btCapsuleShape(btScalar(0.07), btScalar(0.45));
+	shapes[BODYPART_RIGHT_LOWER_LEG] = new btCapsuleShape(btScalar(0.05), btScalar(0.37));
+	shapes[BODYPART_LEFT_UPPER_ARM]  = new btCapsuleShape(btScalar(0.05), btScalar(0.33));
+	shapes[BODYPART_LEFT_LOWER_ARM]  = new btCapsuleShape(btScalar(0.04), btScalar(0.25));
+	shapes[BODYPART_RIGHT_UPPER_ARM] = new btCapsuleShape(btScalar(0.05), btScalar(0.33));
+	shapes[BODYPART_RIGHT_LOWER_ARM] = new btCapsuleShape(btScalar(0.04), btScalar(0.25));
+
+	// Setup all the rigid bodies
+	btTransform offset; offset.setIdentity();
+	offset.setOrigin(positionOffset);
+
+	btTransform transform;
+	transform.setIdentity();
+	transform.setOrigin(btVector3(btScalar(0.), btScalar(1.), btScalar(0.)));
+	bodies[BODYPART_PELVIS] = createRigidBody(btScalar(1.), offset*transform, shapes[BODYPART_PELVIS]);
+
+	transform.setIdentity();
+	transform.setOrigin(btVector3(btScalar(0.), btScalar(1.2), btScalar(0.)));
+	bodies[BODYPART_SPINE] = createRigidBody(btScalar(1.), offset*transform, shapes[BODYPART_SPINE]);
+
+	transform.setIdentity();
+	transform.setOrigin(btVector3(btScalar(0.), btScalar(1.6), btScalar(0.)));
+	bodies[BODYPART_HEAD] = createRigidBody(btScalar(1.), offset*transform, shapes[BODYPART_HEAD]);
+
+	transform.setIdentity();
+	transform.setOrigin(btVector3(btScalar(-0.18), btScalar(0.65), btScalar(0.)));
+	bodies[BODYPART_LEFT_UPPER_LEG] = createRigidBody(btScalar(1.), offset*transform, shapes[BODYPART_LEFT_UPPER_LEG]);
+
+	transform.setIdentity();
+	transform.setOrigin(btVector3(btScalar(-0.18), btScalar(0.2), btScalar(0.)));
+	bodies[BODYPART_LEFT_LOWER_LEG] = createRigidBody(btScalar(1.), offset*transform, shapes[BODYPART_LEFT_LOWER_LEG]);
+
+	transform.setIdentity();
+	transform.setOrigin(btVector3(btScalar(0.18), btScalar(0.65), btScalar(0.)));
+	bodies[BODYPART_RIGHT_UPPER_LEG] = createRigidBody(btScalar(1.), offset*transform, shapes[BODYPART_RIGHT_UPPER_LEG]);
+
+	transform.setIdentity();
+	transform.setOrigin(btVector3(btScalar(0.18), btScalar(0.2), btScalar(0.)));
+	bodies[BODYPART_RIGHT_LOWER_LEG] = createRigidBody(btScalar(1.), offset*transform, shapes[BODYPART_RIGHT_LOWER_LEG]);
+
+	transform.setIdentity();
+	transform.setOrigin(btVector3(btScalar(-0.35), btScalar(1.45), btScalar(0.)));
+	transform.getBasis().setEulerZYX(0,0,M_PI_2);
+	bodies[BODYPART_LEFT_UPPER_ARM] = createRigidBody(btScalar(1.), offset*transform, shapes[BODYPART_LEFT_UPPER_ARM]);
+
+	transform.setIdentity();
+	transform.setOrigin(btVector3(btScalar(-0.7), btScalar(1.45), btScalar(0.)));
+	transform.getBasis().setEulerZYX(0,0,M_PI_2);
+	bodies[BODYPART_LEFT_LOWER_ARM] = createRigidBody(btScalar(1.), offset*transform, shapes[BODYPART_LEFT_LOWER_ARM]);
+
+	transform.setIdentity();
+	transform.setOrigin(btVector3(btScalar(0.35), btScalar(1.45), btScalar(0.)));
+	transform.getBasis().setEulerZYX(0,0,-M_PI_2);
+	bodies[BODYPART_RIGHT_UPPER_ARM] = createRigidBody(btScalar(1.), offset*transform, shapes[BODYPART_RIGHT_UPPER_ARM]);
+
+	transform.setIdentity();
+	transform.setOrigin(btVector3(btScalar(0.7), btScalar(1.45), btScalar(0.)));
+	transform.getBasis().setEulerZYX(0,0,-M_PI_2);
+	bodies[BODYPART_RIGHT_LOWER_ARM] = createRigidBody(btScalar(1.), offset*transform, shapes[BODYPART_RIGHT_LOWER_ARM]);
+
+	world->addRigidBody(bodies[BODYPART_PELVIS]);
+	world->addRigidBody(bodies[BODYPART_SPINE]);
+	world->addRigidBody(bodies[BODYPART_HEAD]);
+	world->addRigidBody(bodies[BODYPART_LEFT_UPPER_LEG]);
+	world->addRigidBody(bodies[BODYPART_LEFT_LOWER_LEG]);
+	world->addRigidBody(bodies[BODYPART_RIGHT_UPPER_LEG]);
+	world->addRigidBody(bodies[BODYPART_RIGHT_LOWER_LEG]);
+	world->addRigidBody(bodies[BODYPART_LEFT_UPPER_ARM]);
+	world->addRigidBody(bodies[BODYPART_LEFT_LOWER_ARM]);
+	world->addRigidBody(bodies[BODYPART_RIGHT_UPPER_ARM]);
+	world->addRigidBody(bodies[BODYPART_RIGHT_LOWER_ARM]);
+
+	// Setup some damping on the bodies
+	for (int i = 0; i < BODYPART_COUNT; ++i) {
+		bodies[i]->setDamping(btScalar(0.05), btScalar(0.85));
+		bodies[i]->setDeactivationTime(btScalar(0.8));
+		bodies[i]->setSleepingThresholds(btScalar(1.6), btScalar(2.5));
+	}
+
+	// Now setup the constraints
+	btHingeConstraint* hingeC;
+	btConeTwistConstraint* coneC;
+
+	btTransform localA, localB;
+
+	localA.setIdentity(); localB.setIdentity();
+	localA.getBasis().setEulerZYX(0,M_PI_2,0); localA.setOrigin(btVector3(btScalar(0.), btScalar(0.15), btScalar(0.)));
+	localB.getBasis().setEulerZYX(0,M_PI_2,0); localB.setOrigin(btVector3(btScalar(0.), btScalar(-0.15), btScalar(0.)));
+	hingeC =  new btHingeConstraint(*bodies[BODYPART_PELVIS], *bodies[BODYPART_SPINE], localA, localB);
+	hingeC->setLimit(btScalar(-M_PI_4), btScalar(M_PI_2));
+	joints[JOINT_PELVIS_SPINE] = hingeC;
+	world->addConstraint(joints[JOINT_PELVIS_SPINE], true);
+
+
+	localA.setIdentity(); localB.setIdentity();
+	localA.getBasis().setEulerZYX(0,0,M_PI_2); localA.setOrigin(btVector3(btScalar(0.), btScalar(0.30), btScalar(0.)));
+	localB.getBasis().setEulerZYX(0,0,M_PI_2); localB.setOrigin(btVector3(btScalar(0.), btScalar(-0.14), btScalar(0.)));
+	coneC = new btConeTwistConstraint(*bodies[BODYPART_SPINE], *bodies[BODYPART_HEAD], localA, localB);
+	coneC->setLimit(M_PI_4, M_PI_4, M_PI_2);
+	joints[JOINT_SPINE_HEAD] = coneC;
+	world->addConstraint(joints[JOINT_SPINE_HEAD], true);
+
+
+	localA.setIdentity(); localB.setIdentity();
+	localA.getBasis().setEulerZYX(0,0,-M_PI_4*5); localA.setOrigin(btVector3(btScalar(-0.18), btScalar(-0.10), btScalar(0.)));
+	localB.getBasis().setEulerZYX(0,0,-M_PI_4*5); localB.setOrigin(btVector3(btScalar(0.), btScalar(0.225), btScalar(0.)));
+	coneC = new btConeTwistConstraint(*bodies[BODYPART_PELVIS], *bodies[BODYPART_LEFT_UPPER_LEG], localA, localB);
+	coneC->setLimit(M_PI_4, M_PI_4, 0);
+	joints[JOINT_LEFT_HIP] = coneC;
+	world->addConstraint(joints[JOINT_LEFT_HIP], true);
+
+	localA.setIdentity(); localB.setIdentity();
+	localA.getBasis().setEulerZYX(0,M_PI_2,0); localA.setOrigin(btVector3(btScalar(0.), btScalar(-0.225), btScalar(0.)));
+	localB.getBasis().setEulerZYX(0,M_PI_2,0); localB.setOrigin(btVector3(btScalar(0.), btScalar(0.185), btScalar(0.)));
+	hingeC =  new btHingeConstraint(*bodies[BODYPART_LEFT_UPPER_LEG], *bodies[BODYPART_LEFT_LOWER_LEG], localA, localB);
+	hingeC->setLimit(btScalar(0), btScalar(M_PI_2));
+	joints[JOINT_LEFT_KNEE] = hingeC;
+	world->addConstraint(joints[JOINT_LEFT_KNEE], true);
+
+
+	localA.setIdentity(); localB.setIdentity();
+	localA.getBasis().setEulerZYX(0,0,M_PI_4); localA.setOrigin(btVector3(btScalar(0.18), btScalar(-0.10), btScalar(0.)));
+	localB.getBasis().setEulerZYX(0,0,M_PI_4); localB.setOrigin(btVector3(btScalar(0.), btScalar(0.225), btScalar(0.)));
+	coneC = new btConeTwistConstraint(*bodies[BODYPART_PELVIS], *bodies[BODYPART_RIGHT_UPPER_LEG], localA, localB);
+	coneC->setLimit(M_PI_4, M_PI_4, 0);
+	joints[JOINT_RIGHT_HIP] = coneC;
+	world->addConstraint(joints[JOINT_RIGHT_HIP], true);
+
+	localA.setIdentity(); localB.setIdentity();
+	localA.getBasis().setEulerZYX(0,M_PI_2,0); localA.setOrigin(btVector3(btScalar(0.), btScalar(-0.225), btScalar(0.)));
+	localB.getBasis().setEulerZYX(0,M_PI_2,0); localB.setOrigin(btVector3(btScalar(0.), btScalar(0.185), btScalar(0.)));
+	hingeC =  new btHingeConstraint(*bodies[BODYPART_RIGHT_UPPER_LEG], *bodies[BODYPART_RIGHT_LOWER_LEG], localA, localB);
+	hingeC->setLimit(btScalar(0), btScalar(M_PI_2));
+	joints[JOINT_RIGHT_KNEE] = hingeC;
+	world->addConstraint(joints[JOINT_RIGHT_KNEE], true);
+
+
+	localA.setIdentity(); localB.setIdentity();
+	localA.getBasis().setEulerZYX(0,0,M_PI); localA.setOrigin(btVector3(btScalar(-0.2), btScalar(0.15), btScalar(0.)));
+	localB.getBasis().setEulerZYX(0,0,M_PI_2); localB.setOrigin(btVector3(btScalar(0.), btScalar(-0.18), btScalar(0.)));
+	coneC = new btConeTwistConstraint(*bodies[BODYPART_SPINE], *bodies[BODYPART_LEFT_UPPER_ARM], localA, localB);
+	coneC->setLimit(M_PI_2, M_PI_2, 0);
+	joints[JOINT_LEFT_SHOULDER] = coneC;
+	world->addConstraint(joints[JOINT_LEFT_SHOULDER], true);
+
+	localA.setIdentity(); localB.setIdentity();
+	localA.getBasis().setEulerZYX(0,M_PI_2,0); localA.setOrigin(btVector3(btScalar(0.), btScalar(0.18), btScalar(0.)));
+	localB.getBasis().setEulerZYX(0,M_PI_2,0); localB.setOrigin(btVector3(btScalar(0.), btScalar(-0.14), btScalar(0.)));
+	hingeC =  new btHingeConstraint(*bodies[BODYPART_LEFT_UPPER_ARM], *bodies[BODYPART_LEFT_LOWER_ARM], localA, localB);
+	hingeC->setLimit(btScalar(-M_PI_2), btScalar(0));
+	joints[JOINT_LEFT_ELBOW] = hingeC;
+	world->addConstraint(joints[JOINT_LEFT_ELBOW], true);
+
+
+
+	localA.setIdentity(); localB.setIdentity();
+	localA.getBasis().setEulerZYX(0,0,0); localA.setOrigin(btVector3(btScalar(0.2), btScalar(0.15), btScalar(0.)));
+	localB.getBasis().setEulerZYX(0,0,M_PI_2); localB.setOrigin(btVector3(btScalar(0.), btScalar(-0.18), btScalar(0.)));
+	coneC = new btConeTwistConstraint(*bodies[BODYPART_SPINE], *bodies[BODYPART_RIGHT_UPPER_ARM], localA, localB);
+	coneC->setLimit(M_PI_2, M_PI_2, 0);
+	joints[JOINT_RIGHT_SHOULDER] = coneC;
+	world->addConstraint(joints[JOINT_RIGHT_SHOULDER], true);
+
+	localA.setIdentity(); localB.setIdentity();
+	localA.getBasis().setEulerZYX(0,M_PI_2,0); localA.setOrigin(btVector3(btScalar(0.), btScalar(0.18), btScalar(0.)));
+	localB.getBasis().setEulerZYX(0,M_PI_2,0); localB.setOrigin(btVector3(btScalar(0.), btScalar(-0.14), btScalar(0.)));
+	hingeC =  new btHingeConstraint(*bodies[BODYPART_RIGHT_UPPER_ARM], *bodies[BODYPART_RIGHT_LOWER_ARM], localA, localB);
+	hingeC->setLimit(btScalar(-M_PI_2), btScalar(0));
+	joints[JOINT_RIGHT_ELBOW] = hingeC;
+	world->addConstraint(joints[JOINT_RIGHT_ELBOW], true);
 }
 
 Model::~Model() {
@@ -233,6 +414,7 @@ void Model::setMotorTargets(float timeUs, float deltaTimeUs) {
 		(int(timeUs / 1000) % int(cyclePeriodMs)) / cyclePeriodMs;
 	btScalar targetAngleRate = 0.5 * (1 + sin(2 * M_PI * targetRate));
 
+	/*
 	for(int i=0; i<2*NUM_LEGS; i++) {
 		btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(getJoint(i));
 		btScalar curAngle = hingeC->getHingeAngle();
@@ -243,6 +425,7 @@ void Model::setMotorTargets(float timeUs, float deltaTimeUs) {
 		btScalar desiredAngularVel = 1000000.0f * angleError/deltaTimeUs;
 		hingeC->enableAngularMotor(true, desiredAngularVel, muscleStrength);
 	}
+	*/
 }
 
 void Environment::init() {
@@ -270,8 +453,16 @@ void Environment::init() {
 
 	world->setInternalTickCallback(motorPreTickCallback, this, true);
 
+	//..
 	world->setDebugDrawer(new DebugDrawer());
-	world->getDebugDrawer()->setDebugMode(true);
+	int debugMode =
+		//btIDebugDraw::DBG_DrawAabb |
+		//btIDebugDraw::DBG_DrawContactPoints |
+		btIDebugDraw::DBG_DrawWireframe |
+		btIDebugDraw::DBG_DrawConstraints |
+		btIDebugDraw::DBG_DrawConstraintLimits;
+	world->getDebugDrawer()->setDebugMode(debugMode);
+	//..
 	
 	// Setup a big ground box
 	{
