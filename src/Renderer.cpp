@@ -9,10 +9,12 @@ void Renderer::setProjection(float width, float height) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	glFrustum(-0.5f*aspect * height * 0.001f, 
-			   0.5f*aspect * height * 0.001f,
-			  -0.5f	       * height * 0.001f,
-			   0.5f	       * height * 0.001f,
+	const float DEFAULT_SCREEN_HEIGHT = 480;
+	
+	glFrustum(-0.5f*aspect * DEFAULT_SCREEN_HEIGHT * 0.001f, 
+			   0.5f*aspect * DEFAULT_SCREEN_HEIGHT * 0.001f,
+			  -0.5f	       * DEFAULT_SCREEN_HEIGHT * 0.001f,
+			   0.5f	       * DEFAULT_SCREEN_HEIGHT * 0.001f,
 			  512.0f * 0.001f,
 			  120000.0f * 0.001f);
 }

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <GLFW/glfw3.h>
 
 #include "play.h"
@@ -13,22 +14,22 @@ static int curButton = -1;
 /**
  * <!--  init():  -->
  */
-static void init() {
-	playInit();
+static void init(int width, int height) {
+	playInit(width, height);
 }
 
 /**
  * release():
  */
 static void release() {
-	playFinalize();
+	playRelease();
 }
 
 /**
  * <!--  draw():  -->
  */
 static void draw(GLFWwindow* window) {
-	playLoop();
+	playStep();
 
 	glfwSwapBuffers(window);
 }
@@ -57,6 +58,7 @@ static void mouseButtonCallback(GLFWwindow* window, int button, int action, int 
 	if (button == GLFW_MOUSE_BUTTON_LEFT ||
 		button == GLFW_MOUSE_BUTTON_RIGHT) {
 
+		// MEMO: この座標はwindowのサイズベース(RetinaだとFrameBufferサイズの半分)でくる.
 		double cursorX, cursorY;
 		glfwGetCursorPos(window, &cursorX, &cursorY);
 		int x = (int)cursorX;
@@ -94,20 +96,11 @@ static void scrollCallback(GLFWwindow* window, double x, double y) {
 }
 
 /**
- * <!--  framebufferSizeCallback():  -->
- */
-static void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
-	// TODO: ここは2倍のサイズで来ている為、TrackBallの挙動が以前と変わってしまっている.
-	playReshape(width, height);
-}
-
-/**
  * <!--  errorCallback():  -->
  */
 static void errorCallback(int error, const char* description) {
 	fprintf(stderr, "Error: %s\n", description);
 }
-
 
 /**
  * main(): 
@@ -119,6 +112,9 @@ int main(int argc, char** argv) {
 		exit(EXIT_FAILURE);
 	}
 
+	// Disable resizing
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
 	GLFWwindow* window = glfwCreateWindow(DEFAULT_SCREEN_WIDTH,
 										  DEFAULT_SCREEN_HEIGHT,
 										  "rodent", NULL, NULL);
@@ -128,7 +124,6 @@ int main(int argc, char** argv) {
 	}
 
 	glfwSetKeyCallback(window, keyCallback);
-	glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 	glfwSetMouseButtonCallback(window, mouseButtonCallback);
 	glfwSetCursorPosCallback(window, cursorPositionCallback);
 	glfwSetScrollCallback(window, scrollCallback);
@@ -136,11 +131,10 @@ int main(int argc, char** argv) {
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
 
-	int width, height;
-	glfwGetFramebufferSize(window, &width, &height);
-	framebufferSizeCallback(window, width, height);
-
-	init();
+	int frameBufferWidth, frameBufferHeight;
+	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
+	
+	init(frameBufferWidth, frameBufferHeight);
 
 	while (!glfwWindowShouldClose(window)) {
 		draw(window);

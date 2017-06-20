@@ -3,7 +3,6 @@
 #define OFFSCREENRENDERER_HEADER
 
 #include "Renderer.h"
-
 #include <GLFW/glfw3.h>
 
 class OffscreenRenderer : public Renderer {
@@ -30,6 +29,9 @@ public:
 	int getFrameBufferHeight() const { return frameBufferHeight; }
 	const void* getBuffer()    const { return buffer; }
 
+	int getFrameBufferSize() const {
+		return frameBufferWidth * frameBufferHeight * 4;
+	}
 };
 
 

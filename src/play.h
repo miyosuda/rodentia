@@ -7,12 +7,12 @@ enum {
 	MOUSE_RIGHT_BUTTON
 };
 
-void playReshape(int width, int height);
+//void playReshape(int width, int height);
 void playMouseDown(int x, int y, int button);
 void playMouseDrag(int x, int y, int button);
 
-void playInit();
-void playLoop();
-void playFinalize();
+void playInit(int width, int height);
+void playStep();
+void playRelease();
 
 #endif

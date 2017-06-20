@@ -17,9 +17,15 @@ bool OffscreenRenderer::init(int width, int height) {
 
 	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
-	// TODO: on MacOSX frame buffer size is doubled (because of retina screen?) 
+#if defined(__APPLE__)
+	// Workaround for retina MacBook Pro
+	// (MacOSX frame buffer size is doubled (because of retina screen?)
 	int windowWidth  = width/2;
 	int windowHeight = height/2;
+#else
+	int windowWidth  = width;
+	int windowHeight = height;
+#endif
 
 	window = glfwCreateWindow(windowWidth, windowHeight, "", NULL, NULL);
 	if (!window) {
@@ -42,7 +48,7 @@ bool OffscreenRenderer::init(int width, int height) {
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
 #if !USE_NATIVE_OSMESA
-	buffer = calloc(4, frameBufferWidth * frameBufferHeight);
+	buffer = calloc(4, getFrameBufferSize()/4);
 #endif
 
 	camera.setIdentity();
@@ -78,7 +84,7 @@ void OffscreenRenderer::render() {
 	
 #if USE_NATIVE_OSMESA
 	glfwGetOSMesaColorBuffer(window, &frameBufferWidth, &frameBufferHeight,
-							 NULL, (void**) &buffer);
+							 NULL, &buffer);
 #else
 	glReadPixels(0, 0, frameBufferWidth, frameBufferHeight, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 #endif

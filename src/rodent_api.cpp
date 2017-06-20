@@ -26,6 +26,7 @@ int rodent_init(void* context_) {
 
 	environment->init();
 
+	// MEMO: width, heightはframeバッファサイズの設定と、projectionのaspect計算に使われている.
 	renderer.init(240, 240);
 	
 	return 0;

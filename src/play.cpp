@@ -4,21 +4,11 @@
 
 #include "TrackBall.h"
 #include "Environment.h"
-
 #include "ScreenRenderer.h" //..
 
 static TrackBall trackBall(0.0f, 0.0f, 8.0f, -0.3f);
 static Environment environment;
 static ScreenRenderer renderer; //..
-
-/**
- * reshape():
- */
-void playReshape(int width, int height) {
-	renderer.init(width, height); //..
-	
-	trackBall.resize(width, height);
-}
 
 /**
  * mouseDown():
@@ -45,14 +35,26 @@ void playMouseDrag(int x, int y, int button) {
 /**
  * playInit():
  */
-void playInit() {
+void playInit(int width, int height) {
+	// MEMO: ここのwidth, heightはフレームバッファのサイズになっている.
+	
+#if defined(__APPLE__)
+	// Workaround for retina MacBook Pro
+	trackBall.resize(width/2, height/2);
+#else
+	trackBall.resize(width, height);
+#endif
+
 	environment.init();
+
+	// MEMO: width, height は中でviewport の設定と projection の aspect 計算に使われている.
+	renderer.init(width, height); //..
 }
 
 /**
- * playLoop():
+ * playStep():
  */
-void playLoop() {
+void playStep() {
 	Matrix4f mat;
 	trackBall.getMat(mat);
 	renderer.setCamera(mat);
@@ -65,8 +67,8 @@ void playLoop() {
 }
 
 /**
- * playFinalize():
+ * <!--  playRelease():  -->
  */
-void playFinalize() {
+void playRelease() {
 	environment.release();
 }
