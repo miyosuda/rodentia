@@ -50,7 +50,7 @@ static void debugSaveFrameImage() {
 	// Write image Y-flipped because OpenGL
 	int width = renderer.getFrameBufferWidth();
 	int height = renderer.getFrameBufferHeight();
-	stbi_write_png("offscreen.png",
+	stbi_write_png("../debug.png",
 				   width, height, 4,
 				   buf + (width * 4 * (height - 1)),
 				   -width * 4);

@@ -22,6 +22,8 @@ class RodentTest(unittest.TestCase):
                             dtype=np.float32)
     
     ret = env.step(joint_angles=joint_angles)
+    ret = env.step(joint_angles=joint_angles)
+    
     print(ret)
 
 if __name__ == '__main__':

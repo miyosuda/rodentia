@@ -6,6 +6,7 @@ add_library(rodent_code STATIC
 	Environment.cpp
 	Renderer.cpp
 	OffscreenRenderer.cpp
+	ScreenRenderer.cpp
 )
 
 add_executable(rodent
@@ -15,7 +16,6 @@ add_executable(rodent
 add_library(pyrodent SHARED
 	pyrodent.c
 	rodent_api.cpp
-	#render.cpp
 )
 
 find_package(BULLET REQUIRED)

@@ -1,9 +1,6 @@
 #include "OffscreenRenderer.h"
 #include <stdlib.h>
 
-// TODO:
-#include "TrackBall.h"
-
 /**
  * <!--  init():  -->
  */
@@ -52,9 +49,9 @@ bool OffscreenRenderer::init(int width, int height) {
 
 	//..
 	// TODO: set initial camera matrix properly
-	TrackBall trackBall(0.0f, 0.0f, 8.0f, -0.3f); //..
 	Matrix4f mat;
-	trackBall.getMat(mat);
+	mat.setIdentity();
+	mat.setColumn(3, Vector4f(0.0f, 2.0f, 7.0f, 1.0f));
 	setCamera(mat);
 	//..
 	

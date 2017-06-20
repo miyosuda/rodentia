@@ -12,7 +12,6 @@ private:
 	int frameBufferWidth;
 	int frameBufferHeight;	
 	void* buffer;
-	//Matrix4f camera;
 
 public:	
 	OffscreenRenderer()

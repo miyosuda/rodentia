@@ -11,32 +11,9 @@
 static int curButton = -1;
 
 /**
- * setProjection():
- */
-static void setProjection(float width, float height) {
-	float aspect = (float)DEFAULT_SCREEN_WIDTH / (float)DEFAULT_SCREEN_HEIGHT;
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	glFrustum(-0.5f*aspect * DEFAULT_SCREEN_HEIGHT * 0.001f, 
-			   0.5f*aspect * DEFAULT_SCREEN_HEIGHT * 0.001f,
-			  -0.5f	       * DEFAULT_SCREEN_HEIGHT * 0.001f,
-			   0.5f	       * DEFAULT_SCREEN_HEIGHT * 0.001f,
-			  512.0f * 0.001f,
-			  120000.0f * 0.001f);
-
-	glMatrixMode(GL_MODELVIEW);
-}
-
-/**
  * <!--  init():  -->
  */
 static void init() {
-	glDepthFunc(GL_LESS);
-	glEnable(GL_DEPTH_TEST);
-	
-	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-
 	playInit();
 }
 
@@ -51,8 +28,6 @@ static void release() {
  * <!--  draw():  -->
  */
 static void draw(GLFWwindow* window) {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	playLoop();
 
 	glfwSwapBuffers(window);
@@ -122,9 +97,7 @@ static void scrollCallback(GLFWwindow* window, double x, double y) {
  * <!--  framebufferSizeCallback():  -->
  */
 static void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
-	glViewport(0, 0, width, height);
-	setProjection(width, height);
-
+	// TODO: ここは2倍のサイズで来ている為、TrackBallの挙動が以前と変わってしまっている.
 	playReshape(width, height);
 }
 
@@ -146,7 +119,9 @@ int main(int argc, char** argv) {
 		exit(EXIT_FAILURE);
 	}
 
-	GLFWwindow* window = glfwCreateWindow(640, 480, "Wave Simulation", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(DEFAULT_SCREEN_WIDTH,
+										  DEFAULT_SCREEN_HEIGHT,
+										  "rodent", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		exit(EXIT_FAILURE);
