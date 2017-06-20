@@ -15,8 +15,6 @@ void Renderer::setProjection(float width, float height) {
 			   0.5f	       * height * 0.001f,
 			  512.0f * 0.001f,
 			  120000.0f * 0.001f);
-	
-	glMatrixMode(GL_MODELVIEW);
 }
 
 /**
@@ -72,9 +70,8 @@ void Renderer::renderPre() {
 	Matrix4f worldCamera;
 	worldCamera.invertRT(camera);
 
-	// TODO: loadMatrixでよいのでは？
-	glPushMatrix();
-	glMultMatrixf( worldCamera.getPointer() );
-
+	glMatrixMode(GL_MODELVIEW);	
+	glLoadMatrixf(worldCamera.getPointer());
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

@@ -7,12 +7,12 @@
 class Renderer {
 private:
 	void drawLine(const Vector4f& pos0, const Vector4f& pos1);
-	void drawFloor();
 	
 protected:
 	Matrix4f camera;
 	
 	void setProjection(float width, float height);
+	void drawFloor();	
 
 public:
 	void setCamera(const Matrix4f& mat);

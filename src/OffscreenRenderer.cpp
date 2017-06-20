@@ -76,7 +76,8 @@ void OffscreenRenderer::release() {
  * <!--  render():  -->
  */
 void OffscreenRenderer::render() {
-	glPopMatrix();
+	// TODO: 場所ここでない方がいいか？
+	drawFloor();
 	
 #if USE_NATIVE_OSMESA
 	glfwGetOSMesaColorBuffer(window, &frameBufferWidth, &frameBufferHeight,
