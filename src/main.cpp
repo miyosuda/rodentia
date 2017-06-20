@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <GLUT/glut.h>
+#include <GLFW/glfw3.h>
 
 #include "play.h"
 #include "Matrix4f.h"
@@ -8,7 +8,7 @@
 #define DEFAULT_SCREEN_WIDTH   640
 #define DEFAULT_SCREEN_HEIGHT  480
 
-static int curButton = 0;
+static int curButton = -1;
 
 /**
  * setProjection():
@@ -20,8 +20,8 @@ static void setProjection(float width, float height) {
 
 	glFrustum(-0.5f*aspect * DEFAULT_SCREEN_HEIGHT * 0.001f, 
 			   0.5f*aspect * DEFAULT_SCREEN_HEIGHT * 0.001f,
-			  -0.5f        * DEFAULT_SCREEN_HEIGHT * 0.001f,
-			   0.5f        * DEFAULT_SCREEN_HEIGHT * 0.001f,
+			  -0.5f	       * DEFAULT_SCREEN_HEIGHT * 0.001f,
+			   0.5f	       * DEFAULT_SCREEN_HEIGHT * 0.001f,
 			  512.0f * 0.001f,
 			  120000.0f * 0.001f);
 
@@ -29,11 +29,9 @@ static void setProjection(float width, float height) {
 }
 
 /**
- * init(): 
+ * <!--  init():  -->
  */
 static void init() {
-	setProjection(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
-
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
 	
@@ -50,22 +48,80 @@ static void release() {
 }
 
 /**
- * paint(): 
+ * <!--  draw():  -->
  */
-static void paint() {
+static void draw(GLFWwindow* window) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	playLoop();
 
-	glutSwapBuffers();
-	
-	glutPostRedisplay();
+	playLoop();	
+
+	glfwSwapBuffers(window);
 }
 
 /**
- * reshape():
+ * <!--  keyCallback():  -->
  */
-static void reshape(int width, int height) {
+static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	if (action != GLFW_PRESS) {
+		return;
+	}
+
+	switch (key) {
+		case GLFW_KEY_ESCAPE:
+			glfwSetWindowShouldClose(window, GLFW_TRUE);
+			break;
+		default:
+			break;
+	}
+}
+
+/**
+ * <!--  mouseButtonCallback():  -->
+ */
+static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+	if (button == GLFW_MOUSE_BUTTON_LEFT ||
+		button == GLFW_MOUSE_BUTTON_RIGHT) {
+
+		double cursorX, cursorY;
+		glfwGetCursorPos(window, &cursorX, &cursorY);
+		int x = (int)cursorX;
+		int y = (int)cursorY;
+
+		int playButton = -1;
+		if(button == GLFW_MOUSE_BUTTON_LEFT) {
+			playButton = MOUSE_LEFT_BUTTON;
+		} else if(button == GLFW_MOUSE_BUTTON_RIGHT) {
+			playButton = MOUSE_RIGHT_BUTTON;
+		}
+		
+		if(action == GLFW_PRESS) {
+			playMouseDown(x, y, playButton);
+			curButton = playButton;
+		} else if( action == GLFW_RELEASE ) {
+			curButton = -1;
+		}
+	}
+}
+
+/**
+ * <!--  cursorPositionCallback():  -->
+ */
+static void cursorPositionCallback(GLFWwindow* window, double x, double y) {
+	if( curButton != -1 ) {
+		playMouseDrag((int)x, (int)y, curButton);
+	}
+}
+
+/**
+ * <!--  scrollCallback():  -->
+ */
+static void scrollCallback(GLFWwindow* window, double x, double y) {
+}
+
+/**
+ * <!--  framebufferSizeCallback():  -->
+ */
+static void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 	setProjection(width, height);
 
@@ -73,81 +129,53 @@ static void reshape(int width, int height) {
 }
 
 /**
- * keyDown(): 
+ * <!--  errorCallback():  -->
  */
-static void keyDown(unsigned char key, int x, int y) {
-	switch(key) {
-	case 0x1b:
-		exit(0);
-		break;
-    }
+static void errorCallback(int error, const char* description) {
+	fprintf(stderr, "Error: %s\n", description);
 }
 
-/**
- * mouseDown(): 
- */
-static void mouseDown(int button, int state, int x, int y) {
-	if(button == GLUT_LEFT_BUTTON || 
-	   button == GLUT_MIDDLE_BUTTON || 
-	   button == GLUT_RIGHT_BUTTON) {
-
-		int playButton = 0;
-		if(button == GLUT_LEFT_BUTTON) {
-			playButton = MOUSE_LEFT_BUTTON;
-		} else if(button == GLUT_RIGHT_BUTTON) {
-			playButton = MOUSE_RIGHT_BUTTON;
-		}
-
-		if(state == GLUT_DOWN) {
-			playMouseDown(x, y, playButton);
-		}
-		curButton = button;
-	}
-}
-
-/**
- * mouseDrag(): 
- */
-static void mouseDrag(int x, int y) {
-
-	int playButton = 0;
-	if(curButton == GLUT_LEFT_BUTTON) {
-		playButton = MOUSE_LEFT_BUTTON;
-	} else if(curButton == GLUT_RIGHT_BUTTON) {
-		playButton = MOUSE_RIGHT_BUTTON;
-	}
-
-	playMouseDrag(x, y, playButton);
-}
-
-/**
- * idle(): 
- */
-static void idle() {
-}
 
 /**
  * main(): 
  */
 int main(int argc, char** argv) {
-	glutInit(&argc, argv);
-	glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH );
-	glutInitWindowSize(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
-	glutInitWindowPosition(50, 50);
-	glutCreateWindow( argv[0] );
-	
-	init();
-  
-	glutDisplayFunc( paint ); 
-	glutReshapeFunc( reshape );
-	glutKeyboardFunc( keyDown );
-	glutMouseFunc( mouseDown );
-	glutMotionFunc( mouseDrag );
-	glutIdleFunc( idle );
+	GLFWwindow* window;
 
-	glutMainLoop();
+	glfwSetErrorCallback(errorCallback);
+
+	if (!glfwInit()) {
+		exit(EXIT_FAILURE);
+	}
+
+	window = glfwCreateWindow(640, 480, "Wave Simulation", NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+
+	glfwSetKeyCallback(window, keyCallback);
+	glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+	glfwSetMouseButtonCallback(window, mouseButtonCallback);
+	glfwSetCursorPosCallback(window, cursorPositionCallback);
+	glfwSetScrollCallback(window, scrollCallback);
+
+	glfwMakeContextCurrent(window);
+	glfwSwapInterval(1);
+
+	int width, height;
+	glfwGetFramebufferSize(window, &width, &height);
+	framebufferSizeCallback(window, width, height);
+
+	init();
+
+	while (!glfwWindowShouldClose(window)) {
+		draw(window);
+		
+		glfwPollEvents();
+	}
 
 	release();
 
-	return 0;
+	exit(EXIT_SUCCESS);	
 }
