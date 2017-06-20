@@ -53,7 +53,7 @@ static void release() {
 static void draw(GLFWwindow* window) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	playLoop();	
+	playLoop();
 
 	glfwSwapBuffers(window);
 }
@@ -140,15 +140,13 @@ static void errorCallback(int error, const char* description) {
  * main(): 
  */
 int main(int argc, char** argv) {
-	GLFWwindow* window;
-
 	glfwSetErrorCallback(errorCallback);
 
 	if (!glfwInit()) {
 		exit(EXIT_FAILURE);
 	}
 
-	window = glfwCreateWindow(640, 480, "Wave Simulation", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(640, 480, "Wave Simulation", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		exit(EXIT_FAILURE);
