@@ -3,7 +3,7 @@
 /**
  * <!--  init():  -->
  */
-void ScreenRenderer::init(int width, int height) {
+bool ScreenRenderer::init(int width, int height) {
 	glViewport(0, 0, width, height);
 	
 	setProjection(width, height);
@@ -12,6 +12,8 @@ void ScreenRenderer::init(int width, int height) {
 	glEnable(GL_DEPTH_TEST);
 	
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+
+	return true;
 }
 
 /**
@@ -20,4 +22,10 @@ void ScreenRenderer::init(int width, int height) {
 void ScreenRenderer::render() {
 	// TODO: 場所ここでない方がいいか？
 	drawFloor();
+}
+
+/**
+ * <!--  release():  -->
+ */
+void ScreenRenderer::release() {
 }

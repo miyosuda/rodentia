@@ -10,14 +10,37 @@ private:
 	
 protected:
 	Matrix4f camera;
+	int frameBufferWidth;
+	int frameBufferHeight;
 	
 	void setProjection(float width, float height);
 	void drawFloor();	
 
 public:
+	Renderer()
+		:
+		frameBufferWidth(0),
+		frameBufferHeight(0) {
+	}
+	virtual ~Renderer() {
+	}
+
 	void setCamera(const Matrix4f& mat);
 	void renderPre();
-	virtual void render() = 0;
+	
+	virtual bool init(int width, int height) = 0;
+	virtual void render() = 0;	
+	virtual void release() = 0;
+
+	int getFrameBufferWidth()  const { return frameBufferWidth;  }
+	int getFrameBufferHeight() const { return frameBufferHeight; }
+	
+	virtual const void* getBuffer() const {
+		return nullptr;
+	}
+	int getFrameBufferSize() const {
+		return frameBufferWidth * frameBufferHeight * 4;
+	}
 };
 
 #endif

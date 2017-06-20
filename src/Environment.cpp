@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <GLUT/glut.h>
 
+#include "OffscreenRenderer.h"
+#include "ScreenRenderer.h"
+
 
 class DebugDrawer: public btIDebugDraw {
 private:
@@ -428,6 +431,12 @@ void Environment::release() {
 	delete broadPhase;
 	delete dispatcher;
 	delete configuration;
+
+	if( renderer != nullptr ) {
+		renderer->release();
+		delete renderer;
+		renderer = nullptr;
+	}
 }
 
 void Environment::setMotorTargets(btScalar deltaTime) {
@@ -449,10 +458,65 @@ void Environment::setMotorTargets(btScalar deltaTime) {
 
 void Environment::step() {
 	const float deltaTime = 1.0f/60.0f;
+
+	if( renderer != nullptr ) {
+		renderer->renderPre();
+	}
 	
 	if(world) {
 		world->stepSimulation(deltaTime);
 		// Debug drawing
 		world->debugDrawWorld();
+	}
+
+	if( renderer != nullptr ) {
+		renderer->render();
+	}
+}
+
+bool Environment::initRenderer(int width, int height, bool offscreen) {
+	if( offscreen ) {
+		renderer = new OffscreenRenderer();
+	} else {
+		renderer = new ScreenRenderer();
+	}
+	return renderer->init(width, height);
+}
+
+const void* Environment::getFrameBuffer() const {
+	if( renderer != nullptr ) {
+		return renderer->getBuffer();
+	} else {
+		return nullptr;
+	}
+}
+
+int Environment::getFrameBufferWidth() const {
+	if( renderer != nullptr ) {
+		return renderer->getFrameBufferWidth();
+	} else {
+		return 0;
+	}
+}
+
+int Environment::getFrameBufferHeight() const {
+	if( renderer != nullptr ) {
+		return renderer->getFrameBufferHeight();
+	} else {
+		return 0;
+	}
+}
+
+int Environment::getFrameBufferSize() const {
+	if( renderer != nullptr ) {
+		return renderer->getFrameBufferSize();
+	} else {
+		return 0;
+	}
+}
+
+void Environment::setRenderCamera(const Matrix4f& mat) {
+	if( renderer != nullptr ) {
+		renderer->setCamera(mat);
 	}
 }

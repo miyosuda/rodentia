@@ -8,11 +8,6 @@
 #include "stb_image_write.h"
 //..
 
-//..
-#include "OffscreenRenderer.h"
-static OffscreenRenderer renderer;
-//..
-
 void* rodent_create() {
 	Environment* environment = new Environment();
 	return static_cast<void*>(environment);
@@ -26,9 +21,10 @@ int rodent_init(void* context_) {
 
 	environment->init();
 
-	// MEMO: width, heightはframeバッファサイズの設定と、projectionのaspect計算に使われている.
-	renderer.init(240, 240);
-	
+	if( !environment->initRenderer(240, 240, true) ) {
+		return -1;
+	}
+
 	return 0;
 }
 
@@ -40,17 +36,15 @@ void rodent_release(void* context_) {
 
 	environment->release();
 
-	renderer.release();
-	
 	delete environment;
 }
 
-static void debugSaveFrameImage() {
-	const void* buffer = renderer.getBuffer();
+static void debugSaveFrameImage(const Environment* environment) {
+	const void* buffer = environment->getFrameBuffer();
 	const char* buf = (const char*)buffer;
 	// Write image Y-flipped because OpenGL
-	int width = renderer.getFrameBufferWidth();
-	int height = renderer.getFrameBufferHeight();
+	int width = environment->getFrameBufferWidth();
+	int height = environment->getFrameBufferHeight();
 	stbi_write_png("../debug.png",
 				   width, height, 4,
 				   buf + (width * 4 * (height - 1)),
@@ -69,14 +63,10 @@ int rodent_step(void* context_, float* joint_angles) {
 	}
 	//..
 
-	renderer.renderPre();
-
 	environment->step();
 
-	renderer.render();
-
 	//..
-	debugSaveFrameImage();
+	debugSaveFrameImage(environment);
 	//..
 	
 	return 0;

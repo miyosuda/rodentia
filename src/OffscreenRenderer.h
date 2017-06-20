@@ -8,29 +8,22 @@
 class OffscreenRenderer : public Renderer {
 private:
 	GLFWwindow* window;
-	int frameBufferWidth;
-	int frameBufferHeight;	
 	void* buffer;
 
 public:	
 	OffscreenRenderer()
 		:
+		Renderer(),
 		window(nullptr),
-		frameBufferWidth(0),
-		frameBufferHeight(0),
 		buffer(nullptr) {
 	}
 
-	bool init(int width, int height);
-	void release();
+	virtual bool init(int width, int height) override;
+	virtual void release() override;
 	virtual void render() override;
 
-	int getFrameBufferWidth()  const { return frameBufferWidth;  }
-	int getFrameBufferHeight() const { return frameBufferHeight; }
-	const void* getBuffer()    const { return buffer; }
-
-	int getFrameBufferSize() const {
-		return frameBufferWidth * frameBufferHeight * 4;
+	virtual const void* getBuffer() const override {
+		return buffer;
 	}
 };
 

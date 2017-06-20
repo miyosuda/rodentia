@@ -8,9 +8,14 @@
 class ScreenRenderer : public Renderer {
 private:
 
-public:	
-	void init(int width, int height);
+public:
+	ScreenRenderer()
+		:
+		Renderer() {
+	}
+	virtual bool init(int width, int height) override;
 	virtual void render() override;
+	virtual void release() override;
 };
 
 #endif

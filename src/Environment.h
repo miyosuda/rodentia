@@ -9,10 +9,6 @@
 #define M_PI_8     0.5 * M_PI_4
 #endif
 
-//#define NUM_LEGS 4
-//#define BODYPART_COUNT 2 * NUM_LEGS + 1
-//#define JOINT_COUNT BODYPART_COUNT - 1
-
 enum {
 	BODYPART_PELVIS = 0,
 	BODYPART_SPINE,
@@ -71,6 +67,8 @@ public:
 	void setMotorTargets(float timeUs, float deltaTimeUs);
 };
 
+class Renderer;
+class Matrix4f;
 
 class Environment {
 	btAlignedObjectArray<btCollisionShape*>	collisionShapes;
@@ -82,6 +80,7 @@ class Environment {
 
 	float timeUs; // microSec
 	Model* model;
+	Renderer* renderer;	
 
 	void setMotorTargets(btScalar deltaTime);
 	
@@ -93,7 +92,8 @@ public:
 		solver(nullptr),
 		configuration(nullptr),
 		world(nullptr),
-		model(nullptr) {
+		model(nullptr),
+		renderer(nullptr) {
 	}
 
 	~Environment() {
@@ -102,6 +102,13 @@ public:
 	void init();
 	void release();
 	void step();
+
+	bool initRenderer(int width, int height, bool offscreen);
+	const void* getFrameBuffer() const;
+	int getFrameBufferWidth() const;
+	int getFrameBufferHeight() const;
+	int getFrameBufferSize() const;
+	void setRenderCamera(const Matrix4f& mat);
 };
 
 #endif
