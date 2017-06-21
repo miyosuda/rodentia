@@ -1,21 +1,23 @@
 cmake_minimum_required(VERSION 3.0)
 
 add_library(rodent_code STATIC
-	TrackBall.cpp
-	play.cpp
-	Environment.cpp
-	Renderer.cpp
-	OffscreenRenderer.cpp
-	ScreenRenderer.cpp
+	play/TrackBall.cpp
+	play/play.cpp
+	env/Environment.cpp
+	render/Renderer.cpp
+	render/OffscreenRenderer.cpp
+	render/ScreenRenderer.cpp
 )
 
 add_executable(rodent
-	main.cpp
+	play/main.cpp
 )
 
 add_library(pyrodent SHARED
-	pyrodent.cpp
+	python/pyrodent.cpp
 )
+
+include_directories(geom play render env)
 
 find_package(BULLET REQUIRED)
 find_package(OpenGL REQUIRED)
