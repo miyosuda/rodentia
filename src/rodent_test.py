@@ -16,7 +16,9 @@ class RodentTest(unittest.TestCase):
     self.assertEqual(version, "0.1")
 
   def testEnv(self):
-    env = rodent.Env()
+    width  = 84 * 4
+    height = 84 * 4
+    env = rodent.Env(width=width, height=height)
     
     target_joint_angles = np.array([0.0, 0.1, 0.2, 0.3,
                                     1.0, 0.9, 0.8, 0.7],
@@ -31,9 +33,8 @@ class RodentTest(unittest.TestCase):
     screen = obs["screen"]
     scipy.misc.imsave("../debug.png", screen)
 
-    # TODO:
     # check shape
-    self.assertEqual( (240,240,4), screen.shape )
+    self.assertEqual( (width,height,4), screen.shape )
 
     # dtype should be uint8
     self.assertEqual(np.uint8, screen.dtype)

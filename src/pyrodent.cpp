@@ -13,10 +13,10 @@ static Environment* createEnvironment() {
 	return environment;
 }
 
-static bool initEnvironment(Environment* environment) {
+static bool initEnvironment(Environment* environment, int width, int height) {
 	environment->init();
 
-	if( !environment->initRenderer(240, 240, true) ) {
+	if( !environment->initRenderer(width, height, true) ) {
 		return false;
 	}
 	
@@ -74,14 +74,24 @@ static PyObject* EnvObject_new(PyTypeObject* type,
 }
 
 static int Env_init(EnvObject* self, PyObject* args, PyObject* kwds) {
-	// TODO: バッファのサイズを引数で取る様に
+	const char *kwlist[] = { "width","height", nullptr };
+
+	// Get argument
+	int width;
+	int height;
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "ii", const_cast<char**>(kwlist),
+									 &width, &height)) {
+		PyErr_SetString(PyExc_RuntimeError, "init argument shortage");
+		return -1;
+	}
 	
 	if (self->environment == nullptr) {
 		PyErr_SetString(PyExc_RuntimeError, "rodent environment not setup");
 		return -1;
 	}
 
-	if ( !initEnvironment(self->environment) ) {
+	// Initialize environment
+	if ( !initEnvironment(self->environment, width, height) ) {
 		PyErr_Format(PyExc_RuntimeError, "Failed to init environment.");
 		return -1;
 	}
@@ -90,12 +100,13 @@ static int Env_init(EnvObject* self, PyObject* args, PyObject* kwds) {
 }
 
 static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
-	PyObject* joint_angles_obj = nullptr;
+	PyObject* jointAnglesObj = nullptr;
 
+	// Get argument
 	const char* kwlist[] = {"joint_angles", nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!", const_cast<char**>(kwlist), &PyArray_Type,
-									 &joint_angles_obj)) {
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!", const_cast<char**>(kwlist),
+									 &PyArray_Type, &jointAnglesObj)) {
 		return nullptr;
 	}
 
@@ -105,32 +116,31 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 	}
 
 	// Check input joint size
-	int joint_size = getJointSize(self->environment);
+	int jointSize = getJointSize(self->environment);
 
-	PyArrayObject* joint_angles_array = (PyArrayObject*)joint_angles_obj;
+	PyArrayObject* jointAnglesArray = (PyArrayObject*)jointAnglesObj;
 
-	if (PyArray_NDIM(joint_angles_array) != 1 ||
-		PyArray_DIM(joint_angles_array, 0) != joint_size) {
-		PyErr_Format(PyExc_ValueError, "joint_array must have shape (%i)",
-					 joint_size);
+	if (PyArray_NDIM(jointAnglesArray) != 1 ||
+		PyArray_DIM(jointAnglesArray, 0) != jointSize) {
+		PyErr_Format(PyExc_ValueError, "joint_array must have shape (%i)", jointSize);
 		return nullptr;
 	}
 
-	if (PyArray_TYPE(joint_angles_array) != NPY_FLOAT) {
+	if (PyArray_TYPE(jointAnglesArray) != NPY_FLOAT) {
 		PyErr_SetString(PyExc_ValueError, "joint_angle must have dtype np.float32");
 		return nullptr;
 	}
 	
 	// Process step
-	float* data = (float*)PyArray_DATA(joint_angles_array);
+	float* data = (float*)PyArray_DATA(jointAnglesArray);
 	stepEnvironment(self->environment, data);
 
 	// Create output dictionary
-	PyObject* result = PyDict_New();
-	if (result == NULL) {
+	PyObject* resultDic = PyDict_New();
+	if (resultDic == nullptr) {
 		PyErr_NoMemory();
-		return NULL;
-	}	
+		return nullptr;
+	}
 
 	// Create output joint tuple
 	// TODO: arrayに変更?
@@ -152,19 +162,19 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 	dims[2] = 4;
 
     PyArrayObject* array = (PyArrayObject*)PyArray_SimpleNew(
-        3, // int nd
+		3, // int nd
 		dims, // dims
-        NPY_UINT8); // int typenum
+		NPY_UINT8); // int typenum
     delete [] dims;
 
 	// Set buffer memory to array
     memcpy(PyArray_BYTES(array), frameBuffer, PyArray_NBYTES(array));
 
 	// Put list to dictionary
-    PyDict_SetItemString(result, "screen", (PyObject*)array);
+    PyDict_SetItemString(resultDic, "screen", (PyObject*)array);
 
 	// Put list to dictionary
-    PyDict_SetItemString(result, "joint_angles", list);
+    PyDict_SetItemString(resultDic, "joint_angles", list);
 
 	// Decrease ref count of array
     Py_DECREF((PyObject*)array);
@@ -172,18 +182,18 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 	// Decrease ref count of list
     Py_DECREF(list);
 	
-	return result;
+	return resultDic;
 }
 
 static PyMethodDef EnvObject_methods[] = {
 	{"step", (PyCFunction)Env_step, METH_VARARGS | METH_KEYWORDS,
 	 "Advance the environment"},
-	{NULL}
+	{nullptr}
 };
 
 
 static PyTypeObject rodent_EnvType = {
-	PyObject_HEAD_INIT(NULL) 0,    // ob_size
+	PyObject_HEAD_INIT(nullptr) 0, // ob_size
 	"rodent.Env",                  // tp_name
 	sizeof(EnvObject),             // tp_basicsize
 	0,                             // tp_itemsize
@@ -225,14 +235,14 @@ static PyTypeObject rodent_EnvType = {
 
 
 
-static PyObject* module_version(PyObject* self) {
+static PyObject* moduleVersion(PyObject* self) {
 	return Py_BuildValue("s", RODENT_WRAPPER_VERSION);
 }
 
-static PyMethodDef module_methods[] = {
-	{"version", (PyCFunction)module_version, METH_NOARGS,
+static PyMethodDef moduleMethods[] = {
+	{"version", (PyCFunction)moduleVersion, METH_NOARGS,
 	 "Module version number."},
-	{NULL, NULL, 0, NULL}
+	{nullptr, nullptr, 0, nullptr}
 };
 
 #ifdef __cplusplus
@@ -246,7 +256,7 @@ void initrodent() {
 		return;
 	}
 	
-	m = Py_InitModule3("rodent", module_methods, "Rodent API module");
+	m = Py_InitModule3("rodent", moduleMethods, "Rodent API module");
 
 	Py_INCREF(&rodent_EnvType);
 	PyModule_AddObject(m, "Env", (PyObject*)&rodent_EnvType);
