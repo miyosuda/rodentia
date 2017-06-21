@@ -34,12 +34,12 @@ else()
 	message("NumPy not found")
 endif()
 
-message(${PYTHON_NUMPY_INCLUDE_DIR})
+message(STATUS ${PYTHON_NUMPY_INCLUDE_DIR})
 
 # workaround for brew environment
 set(PYTHON_INCLUDE_DIRS "/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/include/python2.7")
 set(PYTHON_LIBRARIES "/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/lib/libpython2.7.dylib")
-set(NUMPY_INCLUDES "/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/core/include")
+set(PYTHON_NUMPY_INCLUDE_DIR "/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/core/include")
 
 include_directories( ${OPENGL_INCLUDE_DIRS}
 					 ${GLFW_INCLUDE_DIRS}
