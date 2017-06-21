@@ -6,6 +6,7 @@ from __future__ import print_function
 import os
 import unittest
 import numpy as np
+import scipy.misc
 
 import rodent
 
@@ -17,14 +18,25 @@ class RodentTest(unittest.TestCase):
   def testEnv(self):
     env = rodent.Env()
     
-    joint_angles = np.array([1.0, 2.0, 3.0, 4.0,
-                             10.0, 102.0, 103.0, 104.0],
-                            dtype=np.float32)
+    target_joint_angles = np.array([0.0, 0.1, 0.2, 0.3,
+                                    1.0, 0.9, 0.8, 0.7],
+                                   dtype=np.float32)
+
+    for i in range(3):
+      obs = env.step(joint_angles=target_joint_angles)
     
-    ret = env.step(joint_angles=joint_angles)
-    ret = env.step(joint_angles=joint_angles)
+    joint_angles = obs["joint_angles"]
+    print(joint_angles)
     
-    print(ret)
+    screen = obs["screen"]
+    scipy.misc.imsave("../debug.png", screen)
+
+    # TODO:
+    # check shape
+    self.assertEqual( (240,240,4), screen.shape )
+
+    # dtype should be uint8
+    self.assertEqual(np.uint8, screen.dtype)
 
 if __name__ == '__main__':
   unittest.main()
