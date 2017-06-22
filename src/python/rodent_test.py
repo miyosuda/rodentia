@@ -31,7 +31,7 @@ class RodentTest(unittest.TestCase):
     print(joint_angles)
     
     screen = obs["screen"]
-    scipy.misc.imsave("../../debug.png", screen)
+    scipy.misc.imsave("debug.png", screen)
 
     # check shape
     self.assertEqual( (width,height,4), screen.shape )

@@ -12,15 +12,17 @@ protected:
 	Matrix4f camera;
 	int frameBufferWidth;
 	int frameBufferHeight;
+	bool flipping; // upside down flipping
 	
 	void setProjection(float width, float height);
 	void drawFloor();	
 
 public:
-	Renderer()
+	Renderer(bool flipping_=false)
 		:
 		frameBufferWidth(0),
-		frameBufferHeight(0) {
+		frameBufferHeight(0),
+		flipping(flipping_) {
 	}
 	virtual ~Renderer() {
 	}
