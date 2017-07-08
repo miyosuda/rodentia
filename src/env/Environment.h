@@ -5,66 +5,46 @@
 #include "btBulletDynamicsCommon.h"
 #include <math.h>
 
-#ifndef M_PI_8
-#define M_PI_8     0.5 * M_PI_4
-#endif
+class Action {
+public:
+	int look;   // look left=[+], look right=[-]
+	int strafe; // strafe left=[+1], strafe right=[-1]
+	int move;   // forward=[+1], backward=[-1]
 
-enum {
-	BODYPART_PELVIS = 0,
-	BODYPART_SPINE,
-	BODYPART_HEAD,
+	Action()
+		:
+		look(0),
+		strafe(0),
+		move(0) {
+	}
 
-	BODYPART_LEFT_UPPER_LEG,
-	BODYPART_LEFT_LOWER_LEG,
+	Action(int look_, int strafe_, int move_)
+		:
+		look(look_),
+		strafe(strafe_),
+		move(move_) {
+	}
 
-	BODYPART_RIGHT_UPPER_LEG,
-	BODYPART_RIGHT_LOWER_LEG,
+	void set(int look_, int strafe_, int move_) {
+		look   = look_;
+		strafe = strafe_;
+		move   = move_;
+	}
 
-	BODYPART_LEFT_UPPER_ARM,
-	BODYPART_LEFT_LOWER_ARM,
-
-	BODYPART_RIGHT_UPPER_ARM,
-	BODYPART_RIGHT_LOWER_ARM,
-
-	BODYPART_COUNT
+	static int getActionSize() {
+		return 3;
+	}
 };
-
-enum {
-	JOINT_PELVIS_SPINE = 0,
-	JOINT_SPINE_HEAD,
-
-	JOINT_LEFT_HIP,
-	JOINT_LEFT_KNEE,
-
-	JOINT_RIGHT_HIP,
-	JOINT_RIGHT_KNEE,
-
-	JOINT_LEFT_SHOULDER,
-	JOINT_LEFT_ELBOW,
-
-	JOINT_RIGHT_SHOULDER,
-	JOINT_RIGHT_ELBOW,
-
-	JOINT_COUNT
-};
-
 
 class Model {
 private:
-	btDynamicsWorld*	world;
-	btCollisionShape*	shapes[BODYPART_COUNT];
-	btRigidBody*		bodies[BODYPART_COUNT];
-	btTypedConstraint*	joints[JOINT_COUNT];
-
-	btTypedConstraint* getJoint(int index) {
-		return joints[index];
-	}
+	btDynamicsWorld*  world;
+	btCollisionShape* shape;
+	btRigidBody*	  body;
 
 public:
-	Model(btDynamicsWorld* world_, const btVector3& positionOffset);
+	Model(btDynamicsWorld* world_);
 	~Model();
-
-	void setMotorTargets(float timeUs, float deltaTimeUs);
 };
 
 class Renderer;
@@ -78,12 +58,9 @@ class Environment {
 	btDefaultCollisionConfiguration* configuration;
 	btDiscreteDynamicsWorld* world;
 
-	float timeUs; // microSec
 	Model* model;
 	Renderer* renderer;	
 
-	void setMotorTargets(btScalar deltaTime);
-	
 public:
 	Environment()
 		:
@@ -101,7 +78,7 @@ public:
 
 	void init();
 	void release();
-	void step();
+	void step(const Action& action);
 
 	bool initRenderer(int width, int height, bool offscreen);
 	const void* getFrameBuffer() const;

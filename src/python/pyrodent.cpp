@@ -7,7 +7,10 @@
 
 #define RODENT_WRAPPER_VERSION "0.1"
 
-//..
+//---------------------------------------------------------
+//                    [Interface]
+//---------------------------------------------------------
+
 static Environment* createEnvironment() {
 	Environment* environment = new Environment();
 	return environment;
@@ -28,16 +31,19 @@ static void releaseEnvironment(Environment* environment) {
 	delete environment;
 }
 
-static void stepEnvironment(Environment* environment, const float* jointTargetAngles) {
-	// TODO: set joint target angles
-	environment->step();
+static int stepEnvironment(Environment* environment, const Action& action) {
+	environment->step(action);
+	// TODO: reward
+	return 0;
 }
 
-static int getJointSize(Environment* environment) {
-	return 8;
+static int getActionSize(Environment* environment) {
+	return Action::getActionSize();
 }
-//..
 
+//---------------------------------------------------------
+//                     [Python funcs]
+//---------------------------------------------------------
 
 typedef struct {
 	PyObject_HEAD
@@ -54,7 +60,7 @@ static void EnvObject_dealloc(EnvObject* self) {
 
 static PyObject* EnvObject_new(PyTypeObject* type,
 							   PyObject* args,
-                               PyObject* kwds) {
+							   PyObject* kwds) {
 	EnvObject* self;
 	
 	self = (EnvObject*)type->tp_alloc(type, 0);
@@ -100,13 +106,13 @@ static int Env_init(EnvObject* self, PyObject* args, PyObject* kwds) {
 }
 
 static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
-	PyObject* jointAnglesObj = nullptr;
+	PyObject* actionObj = nullptr;
 
 	// Get argument
-	const char* kwlist[] = {"joint_angles", nullptr};
+	const char* kwlist[] = {"action", nullptr};
 
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!", const_cast<char**>(kwlist),
-									 &PyArray_Type, &jointAnglesObj)) {
+									 &PyArray_Type, &actionObj)) {
 		return nullptr;
 	}
 
@@ -115,25 +121,27 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 		return nullptr;
 	}
 
-	// Check input joint size
-	int jointSize = getJointSize(self->environment);
+	// Check input action size
+	int actionSize = getActionSize(self->environment);
 
-	PyArrayObject* jointAnglesArray = (PyArrayObject*)jointAnglesObj;
+	PyArrayObject* actionArray = (PyArrayObject*)actionObj;
 
-	if (PyArray_NDIM(jointAnglesArray) != 1 ||
-		PyArray_DIM(jointAnglesArray, 0) != jointSize) {
-		PyErr_Format(PyExc_ValueError, "joint_array must have shape (%i)", jointSize);
+	if (PyArray_NDIM(actionArray) != 1 ||
+		PyArray_DIM(actionArray, 0) != actionSize) {
+		PyErr_Format(PyExc_ValueError, "action_array must have shape (%i)", actionSize);
 		return nullptr;
 	}
 
-	if (PyArray_TYPE(jointAnglesArray) != NPY_FLOAT) {
-		PyErr_SetString(PyExc_ValueError, "joint_angle must have dtype np.float32");
+	if (PyArray_TYPE(actionArray) != NPY_INT) {
+		PyErr_SetString(PyExc_ValueError, "action_angle must have dtype np.int32");
 		return nullptr;
 	}
 	
 	// Process step
-	float* data = (float*)PyArray_DATA(jointAnglesArray);
-	stepEnvironment(self->environment, data);
+	int* actionArr = (int*)PyArray_DATA(actionArray);
+	Action action(actionArr[0], actionArr[1], actionArr[2]);
+	
+	int reward = stepEnvironment(self->environment, action);
 
 	// Create output dictionary
 	PyObject* resultDic = PyDict_New();
@@ -142,45 +150,33 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 		return nullptr;
 	}
 
-	// Create output joint tuple
-	// TODO: arrayに変更?
-	int itemSize = 3;
-	PyObject* list = PyTuple_New(itemSize);
-	for (int i=0; i<itemSize; ++i) {
-		PyObject* item = PyFloat_FromDouble((double)i*100);
-		PyTuple_SetItem(list, i, item);
-	}
-
 	int frameBufferWidth  = self->environment->getFrameBufferWidth();
 	int frameBufferHeight = self->environment->getFrameBufferHeight();
 	const void* frameBuffer = self->environment->getFrameBuffer();
 
 	// Create screen outpu array
-	long* dims = new long[3];
-	dims[0] = frameBufferWidth;
-	dims[1] = frameBufferHeight;
-	dims[2] = 4;
+	long* screenDims = new long[3];
+	screenDims[0] = frameBufferWidth;
+	screenDims[1] = frameBufferHeight;
+	screenDims[2] = 4;
 
-    PyArrayObject* array = (PyArrayObject*)PyArray_SimpleNew(
+	PyArrayObject* screenArray = (PyArrayObject*)PyArray_SimpleNew(
 		3, // int nd
-		dims, // dims
+		screenDims, // screenDims
 		NPY_UINT8); // int typenum
-    delete [] dims;
+	delete [] screenDims;
 
 	// Set buffer memory to array
-    memcpy(PyArray_BYTES(array), frameBuffer, PyArray_NBYTES(array));
+	memcpy(PyArray_BYTES(screenArray), frameBuffer, PyArray_NBYTES(screenArray));
 
 	// Put list to dictionary
-    PyDict_SetItemString(resultDic, "screen", (PyObject*)array);
+	PyDict_SetItemString(resultDic, "screen", (PyObject*)screenArray);
 
 	// Put list to dictionary
-    PyDict_SetItemString(resultDic, "joint_angles", list);
+	PyDict_SetItemString(resultDic, "reward", PyInt_FromLong(reward)); // TODO: RecRef check
 
 	// Decrease ref count of array
-    Py_DECREF((PyObject*)array);
-	
-	// Decrease ref count of list
-    Py_DECREF(list);
+	Py_DECREF((PyObject*)screenArray);
 	
 	return resultDic;
 }

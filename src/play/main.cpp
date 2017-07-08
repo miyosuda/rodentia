@@ -38,16 +38,45 @@ static void draw(GLFWwindow* window) {
  * <!--  keyCallback():  -->
  */
 static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-	if (action != GLFW_PRESS) {
+	if( action != GLFW_PRESS && action != GLFW_RELEASE ) {
 		return;
 	}
 
+	bool press = action == GLFW_PRESS;
+
+	int actionKey = -1;
+	
 	switch (key) {
-		case GLFW_KEY_ESCAPE:
+	case GLFW_KEY_ESCAPE:
+		if( action == GLFW_PRESS ) {
 			glfwSetWindowShouldClose(window, GLFW_TRUE);
-			break;
-		default:
-			break;
+		}
+		break;
+	case GLFW_KEY_Q:
+		actionKey = KEY_ACTION_LOOK_LEFT;
+		break;
+	case GLFW_KEY_E:
+		actionKey = KEY_ACTION_LOOK_RIGHT;
+		break;
+	case GLFW_KEY_A:
+		actionKey = KEY_ACTION_STRAFE_LEFT;
+		break;
+	case GLFW_KEY_D:
+		actionKey = KEY_ACTION_STRAFE_RIGHT;
+		break;
+	case GLFW_KEY_W:
+		actionKey = KEY_ACTION_MOVE_FORWARD;
+		break;
+	case GLFW_KEY_S:
+		actionKey = KEY_ACTION_MOVE_BACKWARD;
+		break;		
+	default:
+		actionKey = -1;
+		break;
+	}
+	
+	if( actionKey != -1 ) {
+		playKey(actionKey, press);
 	}
 }
 

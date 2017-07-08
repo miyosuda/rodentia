@@ -20,15 +20,13 @@ class RodentTest(unittest.TestCase):
     height = 84 * 4
     env = rodent.Env(width=width, height=height)
     
-    target_joint_angles = np.array([0.0, 0.1, 0.2, 0.3,
-                                    1.0, 0.9, 0.8, 0.7],
-                                   dtype=np.float32)
+    action = np.array([10, 0, 0], dtype=np.int32)
 
     for i in range(3):
-      obs = env.step(joint_angles=target_joint_angles)
+      obs = env.step(action=action)
     
-    joint_angles = obs["joint_angles"]
-    print(joint_angles)
+    reward = obs["reward"]
+    print(reward)
     
     screen = obs["screen"]
     scipy.misc.imsave("debug.png", screen)

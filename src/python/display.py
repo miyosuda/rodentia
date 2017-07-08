@@ -30,12 +30,9 @@ class Display(object):
     pygame.display.update()
 
   def process(self):
-    target_joint_angles = np.array([0.0, 0.0, 0.0, 0.0,
-                                    0.0, 0.0, 0.0, 0.0],
-                                   dtype=np.float32)
-
-    obs = self.env.step(joint_angles=target_joint_angles)
-    joint_angles = obs["joint_angles"]
+    action = np.array([0, 0, 0], dtype=np.int32)
+    obs = self.env.step(action=action)
+    reward = obs["reward"]
     screen = obs["screen"]
     image = pygame.image.frombuffer(screen, (self.width,self.height), 'RGBA')
     self.surface.blit(image, (0, 0))    

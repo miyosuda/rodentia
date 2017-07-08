@@ -8,8 +8,15 @@
 static TrackBall trackBall(0.0f, 0.0f, 8.0f, -0.3f);
 static Environment environment;
 
+static bool lookLeftState     = false;
+static bool lookRightState    = false;
+static bool strafeLeftState   = false;
+static bool strafeRightState  = false;
+static bool moveForwardState  = false;
+static bool moveBackwardState = false;
+
 /**
- * mouseDown():
+ * <!--  playMouseDown():  -->
  */
 void playMouseDown(int x, int y, int button) {
 	if(button == MOUSE_LEFT_BUTTON) {
@@ -20,7 +27,7 @@ void playMouseDown(int x, int y, int button) {
 }
 
 /**
- * mouseDrag():
+ * <!--  playMouseDrag():  -->
  */
 void playMouseDrag(int x, int y, int button) {
 	if(button == MOUSE_LEFT_BUTTON) {
@@ -31,7 +38,35 @@ void playMouseDrag(int x, int y, int button) {
 }
 
 /**
- * playInit():
+ * <!--  playKey():  -->
+ */
+void playKey(int actionKey, bool press) {
+	switch(actionKey) {
+	case KEY_ACTION_LOOK_LEFT:
+		lookLeftState = press;
+		break;
+	case KEY_ACTION_LOOK_RIGHT:
+		lookRightState = press;
+		break;
+	case KEY_ACTION_STRAFE_LEFT:
+		strafeLeftState = press;
+		break;
+	case KEY_ACTION_STRAFE_RIGHT:
+		strafeRightState = press;
+		break;
+	case KEY_ACTION_MOVE_FORWARD:
+		moveForwardState = press;
+		break;		 
+	case KEY_ACTION_MOVE_BACKWARD:
+		moveBackwardState = press;
+		break;
+	default:
+		break;
+	}
+}
+
+/**
+ * <!--  playInit():  -->
  */
 void playInit(int width, int height) {
 	// MEMO: ここのwidth, heightはフレームバッファのサイズになっている.
@@ -48,15 +83,45 @@ void playInit(int width, int height) {
 	environment.initRenderer(width, height, false);
 }
 
+static void getAction(Action& action) {
+	int lookAction = 0;
+	int strafeAction = 0;
+	int moveAction = 0;
+
+	if( lookLeftState ) {
+		lookAction += 10;
+	}
+	if( lookRightState ) {
+		lookAction -= 10;
+	}
+	if( strafeLeftState ) {
+		strafeAction += 1;
+	}
+	if(strafeRightState ) {
+		strafeAction -= 1;
+	}
+	if( moveForwardState ) {
+		moveAction += 1;
+	}
+	if( moveBackwardState ) {
+		moveAction -= 1;
+	}
+
+	action.set(lookAction, strafeAction, moveAction);
+}
+
 /**
- * playStep():
+ * <!--  playStep():  -->
  */
 void playStep() {
 	Matrix4f mat;
 	trackBall.getMat(mat);
 	environment.setRenderCamera(mat);
+
+	Action action;
+	getAction(action);
 	
-	environment.step();
+	environment.step(action);
 }
 
 /**
