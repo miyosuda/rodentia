@@ -1,6 +1,6 @@
 #include "play.h"
 #include <assert.h>
-#include <GLUT/glut.h>
+#include <GLFW/glfw3.h>
 
 #include "TrackBall.h"
 #include "Environment.h"

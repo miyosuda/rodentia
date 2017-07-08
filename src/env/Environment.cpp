@@ -56,6 +56,11 @@ Model::~Model() {
 	shape = nullptr;
 }
 
+void Model::control(const Action& action) {
+	//body->applyCentralImpulse( btVector3(0.1f, 0.0f, 0.0f) );
+	//body->setLinearVelocity( btVector3(1.0f, 0.0f, 0.0f) );
+}
+
 void Environment::init() {
 	// Setup the basic world
 	configuration = new btDefaultCollisionConfiguration();
@@ -147,6 +152,8 @@ void Environment::step(const Action& action) {
 	}
 	
 	if(world) {
+		model->control(action); //..
+		
 		world->stepSimulation(deltaTime);
 		// Debug drawing
 		world->debugDrawWorld();

@@ -45,6 +45,8 @@ private:
 public:
 	Model(btDynamicsWorld* world_);
 	~Model();
+
+	void control(const Action& action);
 };
 
 class Renderer;
