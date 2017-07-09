@@ -29,6 +29,16 @@ static btRigidBody* createRigidBody(btScalar mass,
 	return body;
 }
 
+static void convertBtTransformToMatrix4f(const btTransform& transform, Matrix4f& mat) {
+	const btVector3& origin = transform.getOrigin();
+	const btMatrix3x3& basis = transform.getBasis();
+	for(int i=0; i<3; ++i) {
+		btVector3 column = basis.getColumn(i);
+		mat.setColumn(i, Vector4f(column.x(), column.y(), column.z(), 0.0f));
+	}
+	mat.setColumn(3, Vector4f(origin.x(), origin.y(), origin.z(), 1.0f));
+}
+
 Model::Model(btDynamicsWorld* world_)
 	:
 	world(world_) {
@@ -117,6 +127,12 @@ void Model::control(const Action& action) {
 	
 	body->applyTorqueImpulse(torqueImpulse);
 }
+
+void Model::getMat(Matrix4f& mat) const {
+	convertBtTransformToMatrix4f(body->getWorldTransform(), mat);
+}
+
+
 
 void Environment::init() {
 	// Setup the basic world
@@ -389,5 +405,13 @@ int Environment::getFrameBufferSize() const {
 void Environment::setRenderCamera(const Matrix4f& mat) {
 	if( renderer != nullptr ) {
 		renderer->setCamera(mat);
+	}
+}
+
+void Environment::updateCameraToAgentView() {
+	if( model != nullptr ) {
+		Matrix4f mat;
+		model->getMat(mat);
+		setRenderCamera(mat);
 	}
 }

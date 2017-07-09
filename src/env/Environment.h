@@ -39,6 +39,8 @@ public:
 	}
 };
 
+class Matrix4f;
+
 class Model {
 private:
 	btDynamicsWorld*  world;
@@ -50,10 +52,10 @@ public:
 	~Model();
 
 	void control(const Action& action);
+	void getMat(Matrix4f& mat) const;
 };
 
 class Renderer;
-class Matrix4f;
 
 class Environment {
 	// [typedef]
@@ -115,6 +117,7 @@ public:
 	void setRenderCamera(const Matrix4f& mat);
 
 	const vector<int>& getCollidedIds() const { return collidedIds; }
+	void updateCameraToAgentView();
 };
 
 #endif

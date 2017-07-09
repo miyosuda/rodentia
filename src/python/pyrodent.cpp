@@ -33,6 +33,7 @@ static void releaseEnvironment(Environment* environment) {
 
 static void stepEnvironment(Environment* environment, const Action& action) {
 	environment->step(action);
+	environment->updateCameraToAgentView();
 }
 
 static int addBox(Environment* environment,
