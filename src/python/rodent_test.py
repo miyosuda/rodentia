@@ -25,9 +25,6 @@ class RodentTest(unittest.TestCase):
     for i in range(3):
       obs = env.step(action=action)
     
-    reward = obs["reward"]
-    print(reward)
-    
     screen = obs["screen"]
     scipy.misc.imsave("debug.png", screen)
 

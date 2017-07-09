@@ -25,8 +25,7 @@ static btRigidBody* createRigidBody(btScalar mass,
 	return body;
 }
 
-//Model::Model(btDynamicsWorld* world_)
-Model::Model(btDynamicsWorld* world_, btRigidBody* floorBody)
+Model::Model(btDynamicsWorld* world_)
 	:
 	world(world_) {
 	
@@ -43,25 +42,6 @@ Model::Model(btDynamicsWorld* world_, btRigidBody* floorBody)
 
 	// Set damping
 	body->setDamping(btScalar(0.05), btScalar(0.85));
-	//body->setDamping(btScalar(0.5), btScalar(0.9));	
-
-	// Set stand-up constraint
-	// TODO: Agent can't move vertically with this constraint setting
-	/*
-	btTransform frameInA, frameInB;
-	frameInA = btTransform::getIdentity();
-	frameInB = btTransform::getIdentity();	
-	frameInA.setOrigin(btVector3(0.0, 10.0, 0.0));
-	frameInB.setOrigin(btVector3(0.0, -1.0, 0.0));
-	btGeneric6DofConstraint* constraint =
-		new btGeneric6DofConstraint(*floorBody, *body,
-									frameInA, frameInB,
-									true);
-
-	constraint->setLinearLowerLimit(btVector3(-SIMD_INFINITY, 0, -SIMD_INFINITY));
-	constraint->setLinearUpperLimit(btVector3( SIMD_INFINITY, 0,  SIMD_INFINITY));
-	world->addConstraint(constraint);
-	*/
 }
 
 Model::~Model() {
@@ -77,22 +57,25 @@ Model::~Model() {
 }
 
 void Model::control(const Action& action) {
-	const float linearVelocityRate = 3.0f;
-	const float angularVelocityRate = 3.0f;
+	const float linearVelocityRate = 5.0f;
+	const float angularVelocityRate = 0.5f;
+	const float impulseLengthLimit = 1.0f;
 	
-	// Linear
+	// Calc linear impulse
 	btVector3 targetLocalVelocity = btVector3(0.0f, 0.0f, 0.0f);
 	
-	if( action.strafe > 0 ) {
-		targetLocalVelocity += btVector3(-linearVelocityRate, 0.0f, 0.0f);
-	} else if( action.strafe < 0 ) {
-		targetLocalVelocity += btVector3( linearVelocityRate, 0.0f, 0.0f);
+	if( action.strafe != 0 ) {
+		// left and right
+		targetLocalVelocity += btVector3(-linearVelocityRate * action.strafe,
+										 0.0f,
+										 0.0f);
 	}
 	
-	if( action.move > 0 ) {
-		targetLocalVelocity += btVector3( 0.0f, 0.0f, -linearVelocityRate);
-	} else if( action.move < 0 ) {
-		targetLocalVelocity += btVector3( 0.0f, 0.0f,  linearVelocityRate);
+	if( action.move != 0 ) {
+		// forward and backward
+		targetLocalVelocity += btVector3( 0.0f,
+										  0.0f,
+										  -linearVelocityRate * action.move);
 	}
 
 	btTransform transform(body->getWorldTransform());
@@ -102,18 +85,25 @@ void Model::control(const Action& action) {
 	btVector3 velocityDiff = targetVelocity - body->getLinearVelocity();
 
 	btVector3 impulse = velocityDiff / body->getInvMass();
-	body->applyCentralImpulse(impulse);
+	float impulseLen = impulse.length();
 
-	// Angular
-	btVector3 targetLocalAngularVelocity = btVector3(0.0f, 0.0f, 0.0f);
-	
-	if( action.look > 0 ) {
-		targetLocalAngularVelocity = btVector3(0.0f,  angularVelocityRate, 0.0f);
-	} else if( action.look < 0 ) {
-		targetLocalAngularVelocity = btVector3(0.0f, -angularVelocityRate, 0.0f);
+	if(impulseLen > impulseLengthLimit) {
+		// Avoid too big impulse
+		impulse *= (impulseLengthLimit / impulseLen);
 	}
 
-	// TODO: Can simplify
+	// Apply impulse at the botom of cylinder.
+	body->applyImpulse(impulse, btVector3(0.0f, -1.0f, 0.0f));
+
+	// Calc angular impulse
+	btVector3 targetLocalAngularVelocity = btVector3(0.0f, 0.0f, 0.0f);
+	
+	if( action.look != 0 ) {
+		targetLocalAngularVelocity = btVector3(0.0f,
+											   action.look * angularVelocityRate,
+											   0.0f);
+	}
+
 	btVector3 targetAngularVelocity = transform * targetLocalAngularVelocity;
 	btVector3 angularVelocityDiff = targetAngularVelocity - body->getAngularVelocity();
 	btMatrix3x3 inertiaTensorWorld = body->getInvInertiaTensorWorld().inverse();
@@ -149,7 +139,6 @@ void Environment::init() {
 	debugDrawer->setDebugMode(debugMode);
 	
 	// Setup a ground floor box
-	btRigidBody* floorBody; //..
 	{
 		btCollisionShape* shape = new btBoxShape(btVector3(btScalar(200.0),
 														   btScalar(10.0),
@@ -160,14 +149,36 @@ void Environment::init() {
 		transform.setOrigin(btVector3(0,-10,0));
 		btRigidBody* body = createRigidBody(btScalar(0.0), transform, shape);
 		world->addRigidBody(body);
-
-		floorBody = body; //..
 	}
+
+	// Setup test box
+	{
+		btCollisionShape* shape = new btBoxShape(btVector3(btScalar(3.0),
+														   btScalar(3.0),
+														   btScalar(3.0)));
+		collisionShapes.push_back(shape);
+		btTransform transform;
+		transform.setIdentity();
+		transform.setOrigin(btVector3(10,3,10));
+		btRigidBody* body = createRigidBody(btScalar(0.0), transform, shape);
+		world->addRigidBody(body);
+	}
+
+	// Setup test sphere
+	{
+		btCollisionShape* shape = new btSphereShape(btScalar(1.0));
+		collisionShapes.push_back(shape);
+		
+		btTransform transform;
+		transform.setIdentity();
+		transform.setOrigin(btVector3(-5,1,-5));
+		btRigidBody* body = createRigidBody(btScalar(0.0), transform, shape);
+		world->addRigidBody(body);
+	}		
 
 	world->setGravity(btVector3(0, -10, 0));
 
-	//model = new Model(world);
-	model = new Model(world, floorBody);
+	model = new Model(world);
 }
 
 void Environment::release() {
@@ -176,7 +187,7 @@ void Environment::release() {
 		model = nullptr;
 	}
 
-	// remove the rigidbodies from the dynamics world and delete them
+	// Remove the rigidbodies from the dynamics world and delete them
 	for(int i=world->getNumCollisionObjects()-1; i>=0 ; i--) {
 		btCollisionObject* obj = world->getCollisionObjectArray()[i];
 		btRigidBody* body = btRigidBody::upcast(obj);
@@ -187,14 +198,16 @@ void Environment::release() {
 		delete obj;
 	}
 
-	//delete collision shapes
+	// Delete collision shapes
 	for(int j=0; j<collisionShapes.size(); ++j) {
 		btCollisionShape* shape = collisionShapes[j];
 		delete shape;
 	}
 
 	auto debugDrawer = world->getDebugDrawer();
-	delete debugDrawer;
+	if( debugDrawer != nullptr ) {
+		delete debugDrawer;
+	}
 
 	delete world;
 	delete solver;
@@ -217,12 +230,27 @@ void Environment::step(const Action& action) {
 	}
 	
 	if(world) {
-		model->control(action); //..
+		model->control(action);
 		
 		world->stepSimulation(deltaTime);
 		// Debug drawing
 		world->debugDrawWorld();
 	}
+
+	//..
+	// Collision check
+	/*
+	int numManifolds = world->getDispatcher()->getNumManifolds();
+	printf("numManifolds=%d\n", numManifolds); //..
+	
+	for (int i = 0; i < numManifolds; i++) {
+		btPersistentManifold* contactManifold =
+			world->getDispatcher()->getManifoldByIndexInternal(i);
+		const btCollisionObject* obA = contactManifold->getBody0();
+		const btCollisionObject* obB = contactManifold->getBody1();
+	}
+	*/
+	//..
 
 	if( renderer != nullptr ) {
 		renderer->render();

@@ -31,10 +31,8 @@ static void releaseEnvironment(Environment* environment) {
 	delete environment;
 }
 
-static int stepEnvironment(Environment* environment, const Action& action) {
+static void stepEnvironment(Environment* environment, const Action& action) {
 	environment->step(action);
-	// TODO: reward
-	return 0;
 }
 
 static int getActionSize(Environment* environment) {
@@ -80,7 +78,7 @@ static PyObject* EnvObject_new(PyTypeObject* type,
 }
 
 static int Env_init(EnvObject* self, PyObject* args, PyObject* kwds) {
-	const char *kwlist[] = { "width","height", nullptr };
+	const char *kwlist[] = { "width", "height", nullptr };
 
 	// Get argument
 	int width;
@@ -141,7 +139,7 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 	int* actionArr = (int*)PyArray_DATA(actionArray);
 	Action action(actionArr[0], actionArr[1], actionArr[2]);
 	
-	int reward = stepEnvironment(self->environment, action);
+	stepEnvironment(self->environment, action);
 
 	// Create output dictionary
 	PyObject* resultDic = PyDict_New();
@@ -173,13 +171,21 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 	PyDict_SetItemString(resultDic, "screen", (PyObject*)screenArray);
 
 	// Put list to dictionary
-	PyDict_SetItemString(resultDic, "reward", PyInt_FromLong(reward)); // TODO: RecRef check
+	//PyDict_SetItemString(resultDic, "reward", PyInt_FromLong(reward)); // TODO: RecRef check
 
 	// Decrease ref count of array
 	Py_DECREF((PyObject*)screenArray);
 	
 	return resultDic;
 }
+
+//..
+// step(action)
+// int add_box(half_extent, pos, rot, detect_collision)
+// int add_sphere(radius, pos, rot, detect_collision)
+// void remove_obj(id)
+// void locate_agent(pos, rot)
+//..
 
 static PyMethodDef EnvObject_methods[] = {
 	{"step", (PyCFunction)Env_step, METH_VARARGS | METH_KEYWORDS,
