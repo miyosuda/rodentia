@@ -58,11 +58,6 @@ public:
 class Renderer;
 
 class Environment {
-	// [typedef]
-	typedef map<int, btRigidBody*> BodyMap; // <id,btRigidBody*>
-	//typedef BodyMap::const_iterator ConstBodyMapIterator;
-	//typedef BodyMap::iterator       BodyMapIterator;
-	
 	btAlignedObjectArray<btCollisionShape*>	collisionShapes;
 	btBroadphaseInterface* broadPhase;
 	btCollisionDispatcher* dispatcher;
@@ -74,9 +69,12 @@ class Environment {
 	Renderer* renderer;
 	int nextObjId;
 	vector<int> collidedIds;
-	BodyMap bodyMap;
+	map<int, btRigidBody*> bodyMap;
 
 	void checkCollision();
+	btRigidBody* createBox(float halfExtentX, float halfExtentY, float halfExtentZ,
+						   float posX, float posY, float posZ,
+						   float rot);
 
 public:
 	Environment()

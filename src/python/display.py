@@ -23,7 +23,7 @@ class Display(object):
     self.height = 480
     self.env = rodent.Env(width=self.width, height=self.height)
 
-    self.env.add_box(half_extent=to_nd_float_array([5.0, 10.0, 5.0]),
+    self.env.add_box(half_extent=to_nd_float_array([5.0, 5.0, 5.0]),
                      pos=to_nd_float_array([10.0, 5.0, 10.0]),
                      rot=0.0,
                      detect_collision=False)

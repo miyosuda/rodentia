@@ -26,7 +26,7 @@ class RodentTest(unittest.TestCase):
 
     # Check setup interfaces
     # Add box
-    env.add_box(half_extent=to_nd_float_array([5.0, 10.0, 5.0]),
+    env.add_box(half_extent=to_nd_float_array([5.0, 5.0, 5.0]),
                 pos=to_nd_float_array([10.0, 5.0, 10.0]),
                 rot=0.0,
                 detect_collision=False)

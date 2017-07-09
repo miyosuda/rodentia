@@ -161,18 +161,10 @@ void Environment::init() {
 	debugDrawer->setDebugMode(debugMode);
 	
 	// Setup a ground floor box
-	{
-		btCollisionShape* shape = new btBoxShape(btVector3(btScalar(200.0),
-														   btScalar(10.0),
-														   btScalar(200.0)));
-		collisionShapes.push_back(shape);
-		btTransform transform;
-		transform.setIdentity();
-		transform.setOrigin(btVector3(0,-10,0));
-		btRigidBody* body = createRigidBody(btScalar(0.0), transform, shape);
-		body->setUserIndex(ID_IGNORE_COLLISION);
-		world->addRigidBody(body);
-	}
+	btRigidBody* floorBody = createBox(200.0f, 10.0f, 200.0f,
+									   0.0f, -10.0f, 0.0f,
+									   0.0f);
+	floorBody->setUserIndex(ID_IGNORE_COLLISION);
 
 	nextObjId = ID_OBJ_START;
 
@@ -285,12 +277,11 @@ void Environment::step(const Action& action) {
 	}
 }
 
-int Environment::addBox(float halfExtentX, float halfExtentY, float halfExtentZ,
-						float posX, float posY, float posZ,
-						float rot,
-						bool detectCollision) {
+btRigidBody* Environment::createBox(float halfExtentX, float halfExtentY, float halfExtentZ,
+									float posX, float posY, float posZ,
+									float rot) {
 	btCollisionShape* shape = new btBoxShape(btVector3(halfExtentX,
-													   halfExtentX,
+													   halfExtentY,
 													   halfExtentZ));
 	collisionShapes.push_back(shape);
 	btTransform transform;
@@ -300,7 +291,18 @@ int Environment::addBox(float halfExtentX, float halfExtentY, float halfExtentZ,
 
 	btRigidBody* body = createRigidBody(0.0, transform, shape);
 	world->addRigidBody(body);
+	return body;
+}
 
+int Environment::addBox(float halfExtentX, float halfExtentY, float halfExtentZ,
+						float posX, float posY, float posZ,
+						float rot,
+						bool detectCollision) {
+	
+	btRigidBody* body = createBox(halfExtentX, halfExtentY, halfExtentZ,
+								  posX, posY, posZ,
+								  rot);
+	
 	int id = nextObjId;
 	nextObjId += 1;
 
