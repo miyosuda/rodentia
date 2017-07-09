@@ -232,10 +232,12 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 	// Put list to dictionary
 	PyDict_SetItemString(resultDic, "screen", (PyObject*)screenArray);
 
-	int collidedIdSize = 3;
+	const vector<int>& collidedIds = self->environment->getCollidedIds();
+
+	size_t collidedIdSize = collidedIds.size();
 	PyObject* collidedIdTuple = PyTuple_New(collidedIdSize);
-	for (int i=0; i<collidedIdSize; ++i) {
-		PyObject* item = PyInt_FromLong(i*100); // TODO:
+	for (size_t i=0; i<collidedIdSize; ++i) {
+		PyObject* item = PyInt_FromLong(collidedIds[i]);
 		PyTuple_SetItem(collidedIdTuple, i, item);
 	}
 

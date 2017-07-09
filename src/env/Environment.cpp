@@ -209,6 +209,8 @@ void Environment::release() {
 }
 
 void Environment::checkCollision() {
+	collidedIds.clear();
+	
 	int numManifolds = world->getDispatcher()->getNumManifolds();
 	
 	for(int i=0; i<numManifolds; ++i) {
@@ -231,12 +233,12 @@ void Environment::checkCollision() {
 			if( obj0->getUserIndex() == ID_AGENT ) {
 				int otherId = obj1->getUserIndex();
 				if( otherId >= ID_OBJ_START ) {
-					printf("collided=%d\n", otherId);
+					collidedIds.push_back(otherId);
 				}
 			} else if( obj1->getUserIndex() == ID_AGENT ) {
 				int otherId = obj0->getUserIndex();
 				if( otherId >= ID_OBJ_START ) {
-					printf("collided=%d\n", otherId);
+					collidedIds.push_back(otherId);
 				}
 			}
 		}
@@ -292,8 +294,7 @@ int Environment::addBox(float halfExtentX, float halfExtentY, float halfExtentZ,
 		body->setUserIndex(ID_IGNORE_COLLISION);
 	}
 
-	// TODO: idのmap管理
-
+	bodyMap[id] = body;
 	return id;
 }
 
@@ -322,13 +323,21 @@ int Environment::addSphere(float radius,
 		body->setUserIndex(ID_IGNORE_COLLISION);
 	}
 
-	// TODO: idのmap管理
-	
+	bodyMap[id] = body;
 	return id;
 }
 
 void Environment::removeObj(int id) {
-	// TODO: Not implemented yet
+	auto itr = bodyMap.find(id);
+	if( itr != bodyMap.end() ) {
+		btRigidBody* body = bodyMap[id];
+		if(body && body->getMotionState()) {
+			delete body->getMotionState();
+		}
+		world->removeCollisionObject(body);
+		delete body;
+		bodyMap.erase(itr);
+	}
 }
 
 void Environment::locateAgent(float posX, float posY, float posZ,

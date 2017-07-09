@@ -4,6 +4,9 @@
 
 #include "btBulletDynamicsCommon.h"
 #include <math.h>
+#include <map>
+#include <vector>
+using namespace std;
 
 class Action {
 public:
@@ -53,6 +56,11 @@ class Renderer;
 class Matrix4f;
 
 class Environment {
+	// [typedef]
+	typedef map<int, btRigidBody*> BodyMap; // <id,btRigidBody*>
+	//typedef BodyMap::const_iterator ConstBodyMapIterator;
+	//typedef BodyMap::iterator       BodyMapIterator;
+	
 	btAlignedObjectArray<btCollisionShape*>	collisionShapes;
 	btBroadphaseInterface* broadPhase;
 	btCollisionDispatcher* dispatcher;
@@ -63,6 +71,8 @@ class Environment {
 	Model* model;
 	Renderer* renderer;
 	int nextObjId;
+	vector<int> collidedIds;
+	BodyMap bodyMap;
 
 	void checkCollision();
 
@@ -103,6 +113,8 @@ public:
 	int getFrameBufferHeight() const;
 	int getFrameBufferSize() const;
 	void setRenderCamera(const Matrix4f& mat);
+
+	const vector<int>& getCollidedIds() const { return collidedIds; }
 };
 
 #endif

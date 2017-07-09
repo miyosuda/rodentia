@@ -59,5 +59,7 @@ class RodentTest(unittest.TestCase):
 
     collided = obs["collided"]
 
+    print("collided size={}".format(len(collided)))
+
 if __name__ == '__main__':
   unittest.main()
