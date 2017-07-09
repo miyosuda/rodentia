@@ -61,7 +61,6 @@ Model::Model(btDynamicsWorld* world_, btRigidBody* floorBody)
 
 	// Set stand-up constraint
  	// TODO: Agent can't move vertically with this constraint setting
-	/*
 	btTransform frameInA, frameInB;
 	frameInA = btTransform::getIdentity();
 	frameInB = btTransform::getIdentity();	
@@ -75,7 +74,6 @@ Model::Model(btDynamicsWorld* world_, btRigidBody* floorBody)
 	constraint->setLinearLowerLimit(btVector3(-SIMD_INFINITY, 0, -SIMD_INFINITY));
 	constraint->setLinearUpperLimit(btVector3( SIMD_INFINITY, 0,  SIMD_INFINITY));
 	world->addConstraint(constraint);
-	*/
 }
 
 Model::~Model() {
@@ -271,7 +269,7 @@ void Environment::checkCollision() {
 	}
 }
 
-void Environment::step(const Action& action) {
+void Environment::step(const Action& action, bool updateCamera) {
 	const float deltaTime = 1.0f/60.0f;
 
 	if( renderer != nullptr ) {
@@ -282,6 +280,11 @@ void Environment::step(const Action& action) {
 		model->control(action);
 		
 		world->stepSimulation(deltaTime);
+
+		if( updateCamera ) {
+			// TODO: updateCamera周りちゃんと整理すること
+			updateCameraToAgentView();
+		}
 
 		// Collision check
 		checkCollision();

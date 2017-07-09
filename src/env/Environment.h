@@ -94,7 +94,7 @@ public:
 
 	void init();
 	void release();
-	void step(const Action& action);
+	void step(const Action& action, bool updateCamera=false);
 	int addBox(float halfExtentX, float halfExtentY, float halfExtentZ,
 			   float posX, float posY, float posZ,
 			   float rot,
