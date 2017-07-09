@@ -33,6 +33,7 @@ static void releaseEnvironment(Environment* environment) {
 
 static void stepEnvironment(Environment* environment, const Action& action) {
 	environment->step(action);
+	// TODO: カメラの更新は正しくは、step()の中のstepSimulation()の直後のレンダリングする前に来るべき.
 	environment->updateCameraToAgentView();
 }
 

@@ -48,7 +48,7 @@ private:
 	btRigidBody*	  body;
 
 public:
-	Model(btDynamicsWorld* world_);
+	Model(btDynamicsWorld* world_, btRigidBody* floorBody);
 	~Model();
 
 	void control(const Action& action);
