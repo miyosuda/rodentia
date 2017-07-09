@@ -25,7 +25,8 @@ static btRigidBody* createRigidBody(btScalar mass,
 	return body;
 }
 
-Model::Model(btDynamicsWorld* world_)
+//Model::Model(btDynamicsWorld* world_)
+Model::Model(btDynamicsWorld* world_, btRigidBody* floorBody)
 	:
 	world(world_) {
 	
@@ -37,11 +38,30 @@ Model::Model(btDynamicsWorld* world_)
 	
 	body = createRigidBody(btScalar(1.0), transform, shape);
 
+	body->setActivationState(DISABLE_DEACTIVATION);
 	world->addRigidBody(body);
 
+	// Set damping
 	body->setDamping(btScalar(0.05), btScalar(0.85));
-	body->setDeactivationTime(btScalar(0.8));
-	body->setSleepingThresholds(btScalar(1.6), btScalar(2.5));
+	//body->setDamping(btScalar(0.5), btScalar(0.9));	
+
+	// Set stand-up constraint
+	// TODO: Agent can't move vertically with this constraint setting
+	/*
+	btTransform frameInA, frameInB;
+	frameInA = btTransform::getIdentity();
+	frameInB = btTransform::getIdentity();	
+	frameInA.setOrigin(btVector3(0.0, 10.0, 0.0));
+	frameInB.setOrigin(btVector3(0.0, -1.0, 0.0));
+	btGeneric6DofConstraint* constraint =
+		new btGeneric6DofConstraint(*floorBody, *body,
+									frameInA, frameInB,
+									true);
+
+	constraint->setLinearLowerLimit(btVector3(-SIMD_INFINITY, 0, -SIMD_INFINITY));
+	constraint->setLinearUpperLimit(btVector3( SIMD_INFINITY, 0,  SIMD_INFINITY));
+	world->addConstraint(constraint);
+	*/
 }
 
 Model::~Model() {
@@ -57,8 +77,49 @@ Model::~Model() {
 }
 
 void Model::control(const Action& action) {
-	//body->applyCentralImpulse( btVector3(0.1f, 0.0f, 0.0f) );
-	//body->setLinearVelocity( btVector3(1.0f, 0.0f, 0.0f) );
+	const float linearVelocityRate = 3.0f;
+	const float angularVelocityRate = 3.0f;
+	
+	// Linear
+	btVector3 targetLocalVelocity = btVector3(0.0f, 0.0f, 0.0f);
+	
+	if( action.strafe > 0 ) {
+		targetLocalVelocity += btVector3(-linearVelocityRate, 0.0f, 0.0f);
+	} else if( action.strafe < 0 ) {
+		targetLocalVelocity += btVector3( linearVelocityRate, 0.0f, 0.0f);
+	}
+	
+	if( action.move > 0 ) {
+		targetLocalVelocity += btVector3( 0.0f, 0.0f, -linearVelocityRate);
+	} else if( action.move < 0 ) {
+		targetLocalVelocity += btVector3( 0.0f, 0.0f,  linearVelocityRate);
+	}
+
+	btTransform transform(body->getWorldTransform());
+	transform.setOrigin(btVector3(0,0,0));
+
+	btVector3 targetVelocity = transform * targetLocalVelocity;
+	btVector3 velocityDiff = targetVelocity - body->getLinearVelocity();
+
+	btVector3 impulse = velocityDiff / body->getInvMass();
+	body->applyCentralImpulse(impulse);
+
+	// Angular
+	btVector3 targetLocalAngularVelocity = btVector3(0.0f, 0.0f, 0.0f);
+	
+	if( action.look > 0 ) {
+		targetLocalAngularVelocity = btVector3(0.0f,  angularVelocityRate, 0.0f);
+	} else if( action.look < 0 ) {
+		targetLocalAngularVelocity = btVector3(0.0f, -angularVelocityRate, 0.0f);
+	}
+
+	// TODO: Can simplify
+	btVector3 targetAngularVelocity = transform * targetLocalAngularVelocity;
+	btVector3 angularVelocityDiff = targetAngularVelocity - body->getAngularVelocity();
+	btMatrix3x3 inertiaTensorWorld = body->getInvInertiaTensorWorld().inverse();
+	btVector3 torqueImpulse = inertiaTensorWorld * angularVelocityDiff;
+	
+	body->applyTorqueImpulse(torqueImpulse);
 }
 
 void Environment::init() {
@@ -87,7 +148,8 @@ void Environment::init() {
 		btIDebugDraw::DBG_DrawConstraintLimits;
 	debugDrawer->setDebugMode(debugMode);
 	
-	// Setup a big ground box
+	// Setup a ground floor box
+	btRigidBody* floorBody; //..
 	{
 		btCollisionShape* shape = new btBoxShape(btVector3(btScalar(200.0),
 														   btScalar(10.0),
@@ -98,11 +160,14 @@ void Environment::init() {
 		transform.setOrigin(btVector3(0,-10,0));
 		btRigidBody* body = createRigidBody(btScalar(0.0), transform, shape);
 		world->addRigidBody(body);
+
+		floorBody = body; //..
 	}
 
 	world->setGravity(btVector3(0, -10, 0));
 
-	model = new Model(world);
+	//model = new Model(world);
+	model = new Model(world, floorBody);
 }
 
 void Environment::release() {
