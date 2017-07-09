@@ -5,6 +5,10 @@
 #include "ScreenRenderer.h"
 #include "DebugDrawer.h"
 
+static const int ID_AGENT = 0;
+static const int ID_IGNORE_COLLISION = -1;
+static const int ID_OBJ_START = 1;
+
 static btRigidBody* createRigidBody(btScalar mass,
 									const btTransform& startTransform,
 									btCollisionShape* shape) {
@@ -36,6 +40,8 @@ Model::Model(btDynamicsWorld* world_)
 	transform.setOrigin(btVector3(btScalar(0.0), btScalar(1.0), btScalar(0.0)));
 	
 	body = createRigidBody(btScalar(1.0), transform, shape);
+
+	body->setUserIndex(ID_AGENT);
 
 	body->setActivationState(DISABLE_DEACTIVATION);
 	world->addRigidBody(body);
@@ -148,33 +154,11 @@ void Environment::init() {
 		transform.setIdentity();
 		transform.setOrigin(btVector3(0,-10,0));
 		btRigidBody* body = createRigidBody(btScalar(0.0), transform, shape);
+		body->setUserIndex(ID_IGNORE_COLLISION);
 		world->addRigidBody(body);
 	}
 
-	// Setup test box
-	{
-		btCollisionShape* shape = new btBoxShape(btVector3(btScalar(3.0),
-														   btScalar(3.0),
-														   btScalar(3.0)));
-		collisionShapes.push_back(shape);
-		btTransform transform;
-		transform.setIdentity();
-		transform.setOrigin(btVector3(10,3,10));
-		btRigidBody* body = createRigidBody(btScalar(0.0), transform, shape);
-		world->addRigidBody(body);
-	}
-
-	// Setup test sphere
-	{
-		btCollisionShape* shape = new btSphereShape(btScalar(1.0));
-		collisionShapes.push_back(shape);
-		
-		btTransform transform;
-		transform.setIdentity();
-		transform.setOrigin(btVector3(-5,1,-5));
-		btRigidBody* body = createRigidBody(btScalar(0.0), transform, shape);
-		world->addRigidBody(body);
-	}		
+	nextObjId = ID_OBJ_START;
 
 	world->setGravity(btVector3(0, -10, 0));
 
@@ -220,9 +204,46 @@ void Environment::release() {
 		delete renderer;
 		renderer = nullptr;
 	}
+
+	nextObjId = ID_OBJ_START;
 }
 
-void Environment::step(const Action& action) {	
+void Environment::checkCollision() {
+	int numManifolds = world->getDispatcher()->getNumManifolds();
+	
+	for(int i=0; i<numManifolds; ++i) {
+		btPersistentManifold* contactManifold =
+			world->getDispatcher()->getManifoldByIndexInternal(i);
+		const btCollisionObject* obj0 = contactManifold->getBody0();
+		const btCollisionObject* obj1 = contactManifold->getBody1();
+
+		bool hasContact = false;
+
+		int numContacts = contactManifold->getNumContacts();
+        for(int j=0; j<numContacts; ++j) {
+            btManifoldPoint& pt = contactManifold->getContactPoint(j);
+            if (pt.getDistance() < 0.0f) {
+				hasContact = true;
+            }
+		}
+
+		if( hasContact ) {
+			if( obj0->getUserIndex() == ID_AGENT ) {
+				int otherId = obj1->getUserIndex();
+				if( otherId >= ID_OBJ_START ) {
+					printf("collided=%d\n", otherId);
+				}
+			} else if( obj1->getUserIndex() == ID_AGENT ) {
+				int otherId = obj0->getUserIndex();
+				if( otherId >= ID_OBJ_START ) {
+					printf("collided=%d\n", otherId);
+				}
+			}
+		}
+	}
+}
+
+void Environment::step(const Action& action) {
 	const float deltaTime = 1.0f/60.0f;
 
 	if( renderer != nullptr ) {
@@ -233,28 +254,86 @@ void Environment::step(const Action& action) {
 		model->control(action);
 		
 		world->stepSimulation(deltaTime);
+
+		// Collision check
+		checkCollision();
+		
 		// Debug drawing
 		world->debugDrawWorld();
 	}
 
-	//..
-	// Collision check
-	/*
-	int numManifolds = world->getDispatcher()->getNumManifolds();
-	printf("numManifolds=%d\n", numManifolds); //..
-	
-	for (int i = 0; i < numManifolds; i++) {
-		btPersistentManifold* contactManifold =
-			world->getDispatcher()->getManifoldByIndexInternal(i);
-		const btCollisionObject* obA = contactManifold->getBody0();
-		const btCollisionObject* obB = contactManifold->getBody1();
-	}
-	*/
-	//..
-
 	if( renderer != nullptr ) {
 		renderer->render();
 	}
+}
+
+int Environment::addBox(float halfExtentX, float halfExtentY, float halfExtentZ,
+						float posX, float posY, float posZ,
+						float rot,
+						bool detectCollision) {
+	btCollisionShape* shape = new btBoxShape(btVector3(halfExtentX,
+													   halfExtentX,
+													   halfExtentZ));
+	collisionShapes.push_back(shape);
+	btTransform transform;
+	transform.setIdentity();
+	transform.setOrigin(btVector3(posX, posY, posZ));
+	transform.getBasis().setEulerZYX(0.0f, rot, 0.0f);
+
+	btRigidBody* body = createRigidBody(0.0, transform, shape);
+	world->addRigidBody(body);
+
+	int id = nextObjId;
+	nextObjId += 1;
+
+	if( detectCollision ) {
+		body->setUserIndex(id);
+	} else {
+		body->setUserIndex(ID_IGNORE_COLLISION);
+	}
+
+	// TODO: idのmap管理
+
+	return id;
+}
+
+int Environment::addSphere(float radius,
+						   float posX, float posY, float posZ,
+						   float rot,
+						   bool detectCollision) {
+
+	btCollisionShape* shape = new btSphereShape(radius);
+	collisionShapes.push_back(shape);
+	
+	btTransform transform;
+	transform.setIdentity();
+	transform.setOrigin(btVector3(posX, posY, posZ));
+	transform.getBasis().setEulerZYX(0.0f, rot, 0.0f);
+	
+	btRigidBody* body = createRigidBody(0.0, transform, shape);
+	world->addRigidBody(body);
+
+	int id = nextObjId;
+	nextObjId += 1;
+
+	if( detectCollision ) {
+		body->setUserIndex(id);
+	} else {
+		body->setUserIndex(ID_IGNORE_COLLISION);
+	}
+
+	// TODO: idのmap管理
+	
+	return id;
+}
+
+void Environment::removeObj(int id) {
+	// TODO: Not implemented yet
+}
+
+void Environment::locateAgent(float posX, float posY, float posZ,
+							  float rot) {
+	// TODO: Not implemented yet
 }
 
 bool Environment::initRenderer(int width, int height, bool offscreen) {

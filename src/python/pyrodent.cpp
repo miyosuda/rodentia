@@ -35,6 +35,39 @@ static void stepEnvironment(Environment* environment, const Action& action) {
 	environment->step(action);
 }
 
+static int addBox(Environment* environment,
+				  float halfExtentX, float halfExtentY, float halfExtentZ,
+				  float posX, float posY, float posZ,
+				  float rot,
+				  bool detectCollision) {
+	return environment->addBox(halfExtentX, halfExtentY, halfExtentZ,
+							   posX, posY, posZ,
+							   rot,
+							   detectCollision);
+}
+
+static int addSphere(Environment* environment, 
+					 float radius,
+					 float posX, float posY, float posZ,
+					 float rot,
+					 bool detectCollision) {
+	return environment->addSphere(radius,
+								  posX, posY, posZ,
+								  rot,
+								  detectCollision);
+}
+
+static void removeObj(Environment* environment, 
+					  int id) {
+	environment->removeObj(id);
+}
+
+static void locateAgent(Environment* environment,
+						float posX, float posY, float posZ,
+						float rot) {
+	environment->locateAgent(posX, posY, posZ, rot);
+}
+
 static int getActionSize(Environment* environment) {
 	return Action::getActionSize();
 }
@@ -42,6 +75,45 @@ static int getActionSize(Environment* environment) {
 //---------------------------------------------------------
 //                     [Python funcs]
 //---------------------------------------------------------
+
+static bool checkArrayDim(PyArrayObject* array, int dim, const char* name) {
+	if (PyArray_NDIM(array) != 1 ||
+		PyArray_DIM(array, 0) != dim) {
+		PyErr_Format(PyExc_ValueError, "%s must have shape (%d)", name, dim);
+		return false;
+	}
+	return true;
+}
+
+static const float* getFloatArrayData(PyObject* obj, int dim, const char* name) {
+	PyArrayObject* array = (PyArrayObject*)obj;
+
+	if( !checkArrayDim(array, dim, name) ) {
+		return nullptr;
+	}
+
+	if (PyArray_TYPE(array) != NPY_FLOAT) {
+		PyErr_Format(PyExc_ValueError, "%s must have dtype np.float32", name);
+		return nullptr;
+	}
+
+	return (const float*)PyArray_DATA(array);
+}
+
+static const int* getIntArrayData(PyObject* obj, int dim, const char* name) {
+	PyArrayObject* array = (PyArrayObject*)obj;
+
+	if( !checkArrayDim(array, dim, name) ) {
+		return nullptr;
+	}
+
+	if (PyArray_TYPE(array) != NPY_INT) {
+		PyErr_Format(PyExc_ValueError, "%s must have dtype np.int32", name);
+		return nullptr;
+	}
+	
+	return (const int*)PyArray_DATA(array);
+}
 
 typedef struct {
 	PyObject_HEAD
@@ -113,32 +185,22 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 									 &PyArray_Type, &actionObj)) {
 		return nullptr;
 	}
-
+	
 	if (self->environment == nullptr) {
 		PyErr_SetString(PyExc_RuntimeError, "rodent environment not setup");
 		return nullptr;
 	}
 
-	// Check input action size
+	// action
 	int actionSize = getActionSize(self->environment);
-
-	PyArrayObject* actionArray = (PyArrayObject*)actionObj;
-
-	if (PyArray_NDIM(actionArray) != 1 ||
-		PyArray_DIM(actionArray, 0) != actionSize) {
-		PyErr_Format(PyExc_ValueError, "action_array must have shape (%i)", actionSize);
-		return nullptr;
-	}
-
-	if (PyArray_TYPE(actionArray) != NPY_INT) {
-		PyErr_SetString(PyExc_ValueError, "action_angle must have dtype np.int32");
+	const int* actionArr = getIntArrayData(actionObj, actionSize, "action");
+	if( actionArr == nullptr ) {
 		return nullptr;
 	}
 	
-	// Process step
-	int* actionArr = (int*)PyArray_DATA(actionArray);
 	Action action(actionArr[0], actionArr[1], actionArr[2]);
-	
+
+	// Process step
 	stepEnvironment(self->environment, action);
 
 	// Create output dictionary
@@ -170,26 +232,195 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 	// Put list to dictionary
 	PyDict_SetItemString(resultDic, "screen", (PyObject*)screenArray);
 
-	// Put list to dictionary
-	//PyDict_SetItemString(resultDic, "reward", PyInt_FromLong(reward)); // TODO: RecRef check
+	int collidedIdSize = 3;
+	PyObject* collidedIdTuple = PyTuple_New(collidedIdSize);
+	for (int i=0; i<collidedIdSize; ++i) {
+		PyObject* item = PyInt_FromLong(i*100); // TODO:
+		PyTuple_SetItem(collidedIdTuple, i, item);
+	}
+
+	// Put tuple to dictionary
+	PyDict_SetItemString(resultDic, "collided", collidedIdTuple);
 
 	// Decrease ref count of array
 	Py_DECREF((PyObject*)screenArray);
+
+	// Decrease ref count of tuple
+    Py_DECREF(collidedIdTuple);
 	
 	return resultDic;
 }
 
-//..
-// step(action)
+static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
+	PyObject* halfExtentObj = nullptr;
+	PyObject* posObj = nullptr;
+	float rot;
+	int detectCollision;
+
+	// Get argument
+	const char* kwlist[] = {"half_extent", "pos", "rot", "detect_collision", nullptr};
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!O!fi", const_cast<char**>(kwlist),
+									 &PyArray_Type, &halfExtentObj,
+									 &PyArray_Type, &posObj,
+									 &rot,
+									 &detectCollision)) {
+		return nullptr;
+	}
+	
+	if (self->environment == nullptr) {
+		PyErr_SetString(PyExc_RuntimeError, "rodent environment not setup");
+		return nullptr;
+	}
+
+	// half_extent
+	const float* halfExtentArr = getFloatArrayData(halfExtentObj, 3, "half_extent");
+	if( halfExtentArr == nullptr ) {
+		return nullptr;
+	}
+	
+	float halfExtentX = halfExtentArr[0];
+	float halfExtentY = halfExtentArr[1];
+	float halfExtentZ = halfExtentArr[2];
+
+	// pos
+	const float* posArr = getFloatArrayData(posObj, 3, "pos");
+	if( posArr == nullptr ) {
+		return nullptr;
+	}
+	
+	float posX = posArr[0];
+	float posY = posArr[1];
+	float posZ = posArr[2];
+
+	int id = addBox(self->environment,
+					halfExtentX, halfExtentY, halfExtentZ,
+					posX, posY, posZ,
+					rot, detectCollision != 0);
+	
+	// Returning object ID	
+	PyObject* idObj = PyInt_FromLong(id);
+
+	return idObj;
+}
+
+static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds) {
+	float radius;
+	PyObject* posObj = nullptr;
+	float rot;
+	int detectCollision;
+
+	// Get argument
+	const char* kwlist[] = {"radius", "pos", "rot", "detect_collision", nullptr};
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "fO!fi", const_cast<char**>(kwlist),
+									 &radius,
+									 &PyArray_Type, &posObj,
+									 &rot,
+									 &detectCollision)) {
+		return nullptr;
+	}
+	
+	if (self->environment == nullptr) {
+		PyErr_SetString(PyExc_RuntimeError, "rodent environment not setup");
+		return nullptr;
+	}
+
+	// pos
+	const float* posArr = getFloatArrayData(posObj, 3, "pos");
+	if( posArr == nullptr ) {
+		return nullptr;
+	}
+	
+	float posX = posArr[0];
+	float posY = posArr[1];
+	float posZ = posArr[2];
+
+	int id = addSphere(self->environment,
+					   radius,
+					   posX, posY, posZ,
+					   rot, detectCollision != 0);
+
+	// Returning object ID
+	PyObject* idObj = PyInt_FromLong(id);
+	return idObj;
+}
+
+static PyObject* Env_remove_obj(EnvObject* self, PyObject* args, PyObject* kwds) {
+	int id;
+
+	// Get argument
+	const char* kwlist[] = {"id", nullptr};
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", const_cast<char**>(kwlist),
+									 &id)) {
+		return nullptr;
+	}
+	
+	if (self->environment == nullptr) {
+		PyErr_SetString(PyExc_RuntimeError, "rodent environment not setup");
+		return nullptr;
+	}
+
+	removeObj(self->environment, id);
+
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
+static PyObject* Env_locate_agent(EnvObject* self, PyObject* args, PyObject* kwds) {
+	PyObject* posObj = nullptr;
+	float rot;
+
+	// Get argument
+	const char* kwlist[] = {"pos", "rot", nullptr};
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!f", const_cast<char**>(kwlist),
+									 &PyArray_Type, &posObj,
+									 &rot)) {
+		return nullptr;
+	}
+	
+	if (self->environment == nullptr) {
+		PyErr_SetString(PyExc_RuntimeError, "rodent environment not setup");
+		return nullptr;
+	}
+
+	// pos
+	const float* posArr = getFloatArrayData(posObj, 3, "pos");
+	if( posArr == nullptr ) {
+		return nullptr;
+	}
+	
+	float posX = posArr[0];
+	float posY = posArr[1];
+	float posZ = posArr[2];
+
+	locateAgent(self->environment,
+				posX, posY, posZ,
+				rot);
+
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
+// dic step(action)
 // int add_box(half_extent, pos, rot, detect_collision)
 // int add_sphere(radius, pos, rot, detect_collision)
 // void remove_obj(id)
 // void locate_agent(pos, rot)
-//..
 
 static PyMethodDef EnvObject_methods[] = {
 	{"step", (PyCFunction)Env_step, METH_VARARGS | METH_KEYWORDS,
 	 "Advance the environment"},
+	{"add_box", (PyCFunction)Env_add_box, METH_VARARGS | METH_KEYWORDS,
+	 "Add box object"},
+	{"add_sphere", (PyCFunction)Env_add_sphere, METH_VARARGS | METH_KEYWORDS,
+	 "Add sphere object"},
+	{"remove_obj", (PyCFunction)Env_remove_obj, METH_VARARGS | METH_KEYWORDS,
+	 "Remove object"},
+	{"locate_agent", (PyCFunction)Env_locate_agent, METH_VARARGS | METH_KEYWORDS,
+	 "Locate agent"},
 	{nullptr}
 };
 

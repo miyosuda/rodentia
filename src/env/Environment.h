@@ -61,7 +61,10 @@ class Environment {
 	btDiscreteDynamicsWorld* world;
 
 	Model* model;
-	Renderer* renderer;	
+	Renderer* renderer;
+	int nextObjId;
+
+	void checkCollision();
 
 public:
 	Environment()
@@ -72,7 +75,8 @@ public:
 		configuration(nullptr),
 		world(nullptr),
 		model(nullptr),
-		renderer(nullptr) {
+		renderer(nullptr),
+		nextObjId(0) {
 	}
 
 	~Environment() {
@@ -81,6 +85,17 @@ public:
 	void init();
 	void release();
 	void step(const Action& action);
+	int addBox(float halfExtentX, float halfExtentY, float halfExtentZ,
+			   float posX, float posY, float posZ,
+			   float rot,
+			   bool detectCollision);
+	int addSphere(float radius,
+				  float posX, float posY, float posZ,
+				  float rot,
+				  bool detectCollision);
+	void removeObj(int id);
+	void locateAgent(float posX, float posY, float posZ,
+					 float rot);
 
 	bool initRenderer(int width, int height, bool offscreen);
 	const void* getFrameBuffer() const;
