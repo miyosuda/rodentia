@@ -65,17 +65,19 @@ bool DiffuseShader::init() {
 /**
  * <!--  setMatrix():  -->
  */
-void DiffuseShader::setMatrix(const Matrix4f& mat) {
-	glUniformMatrix4fv( mvpMatrixHandle, 1, GL_FALSE,
-						(GLfloat*)mat.getPointer() );
-}
+void DiffuseShader::setMatrix(const Matrix4f& modelViewMat,
+							  const Matrix4f& modelViewProjectionMat) {
 
-/**
- * <!--  setMatrix():  -->
- */
-void DiffuseShader::setNormalMatrix(const Matrix3f& mat) {
+	// Set normal matrix by removing translate part.
+	Matrix3f normalMat;
+	normalMat.set(modelViewMat);
+
 	glUniformMatrix3fv( normalMatrixHandle, 1, GL_FALSE,
-						(GLfloat*)mat.getPointer() );
+						(GLfloat*)normalMat.getPointer() );
+
+	// Set model view projection matrix
+	glUniformMatrix4fv( mvpMatrixHandle, 1, GL_FALSE,
+						(GLfloat*)modelViewProjectionMat.getPointer() );
 }
 
 /**

@@ -10,6 +10,8 @@
 #include "Image.h"
 #include "PNGDecoder.h"
 #include "Texture.h"
+#include "Material.h"
+#include "MeshFace.h"
 
 
 
@@ -73,17 +75,6 @@ static short indices[] = {
 	16, 17, 18,     16, 18, 19,   // 右側面
 	20, 21, 22,     20, 22, 23    // 左側面
 };
-
-/*
-static short indices[] = {	
-	0,  2,  1,      0,  3,  2,    // 前面
-	4,  6,  5,      4,  7,  6,    // 背面
-	8,  10, 9,      8,  11, 10,   // 上面
-	12, 14, 13,     12, 15, 14,   // 底面
-	16, 18, 17,     16, 19, 18,   // 右側面
-	20, 22, 21,     20, 23, 22    // 左側面
-};
-*/
 
 static int indicesSize = 36;
 
@@ -168,12 +159,19 @@ int main() {
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
 
-	//..
 	Texture* texture = loadTexture();
-	//..
 
-	DiffuseShader shader;
-	shader.init();
+	Shader* shader = new DiffuseShader();
+	shader->init();
+	
+	Material* material = new Material(texture, shader);
+	
+	MeshFace* meshFace = new MeshFace(material,
+									  vertices,
+									  verticesSize,
+									  indices,
+									  indicesSize);
+	
 	Camera camera;
 
 	// NOTE: OpenGL error checks have been omitted for brevity
@@ -221,36 +219,12 @@ int main() {
 		Matrix4f modelViewMat;
 		modelViewMat.mul(cameraInvMat, mat);
 
-		Matrix3f normalMat;
-		normalMat.set(modelViewMat);
-
 		Matrix4f modelViewProjectionMat;
 		modelViewProjectionMat.mul(projectionMat, modelViewMat);
 
-		texture->bind();
-
-		shader.use();
-		shader.beginRender(vertices);
+		meshFace->draw(modelViewMat,
+					   modelViewProjectionMat);
 		
-		glActiveTexture(GL_TEXTURE0);
-	
-		shader.setMatrix(modelViewProjectionMat);
-		shader.setNormalMatrix(normalMat);
-	
-		shader.render(indices, indicesSize);
-
-		//..
-		/*
-		glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-		const char* buf = (const char*)buffer;
-		stbi_write_png("out.png",
-					   width, height, 4,
-					   buf + (width * 4 * (height - 1)),
-					   -width * 4);
-		break;
-		*/
-		//..
-
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}

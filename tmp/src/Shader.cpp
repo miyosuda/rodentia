@@ -1,8 +1,7 @@
 #include "Shader.h"
 #include <stdio.h>
 #include <stdlib.h>
-
-#define DEBUG //..
+#include "Matrix4f.h"
 
 /**
  * <!--	 Shader():	-->
@@ -32,7 +31,6 @@ int Shader::compileShader(GLenum type, const char* src) {
 	glShaderSource(shader, 1, &src, NULL);
 	glCompileShader(shader);
 	
-#if defined(DEBUG)
 	GLint logLength;
 	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
 	if (logLength > 0) {
@@ -43,7 +41,6 @@ int Shader::compileShader(GLenum type, const char* src) {
 	} else {
 		//printf("Shader compile OK!\n");
 	}
-#endif
 	
 	GLint status;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
@@ -84,7 +81,6 @@ bool Shader::load(const char* vertShaderSrc, const char* fragShaderSrc) {
 
 	glLinkProgram(program);
 	
-#if defined(DEBUG)
 	GLint logLength;
 	glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
 	if (logLength > 0) {
@@ -92,7 +88,6 @@ bool Shader::load(const char* vertShaderSrc, const char* fragShaderSrc) {
 		glGetProgramInfoLog(program, logLength, &logLength, log);
 		free(log);
 	}
-#endif
 	
 	GLint status;
 	glGetProgramiv(program, GL_LINK_STATUS, &status);
@@ -151,4 +146,29 @@ int Shader::getUniformLocation(const char* name) {
  */
 int Shader::getAttribLocation(const char* name) {
 	return glGetAttribLocation(program, name);
+}
+
+/**
+ * <!--  setMatrix():  -->
+ */
+void Shader::setMatrix(const Matrix4f& modelViewMat,
+					   const Matrix4f& modelViewProjectionMat) {
+}
+
+/**
+ * <!--  beginRender():  -->
+ */
+void Shader::beginRender(const float* vertices) {
+}
+
+/**
+ * <!--  render():  -->
+ */
+void Shader::render(const short* indices, int indicesSize) {
+}
+
+/**
+ * <!--  endRender():  -->
+ */
+void Shader::endRender() {
 }
