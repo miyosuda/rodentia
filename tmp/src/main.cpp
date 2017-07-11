@@ -140,6 +140,11 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	}
 }
 
+//..
+//#define STB_IMAGE_WRITE_IMPLEMENTATION
+//#include "stb_image_write.h"
+//..
+
 int main() {
 	GLFWwindow* window;
 
@@ -179,16 +184,24 @@ int main() {
 	camera.init(1.0f, 1000.0f, 50.0f, ratio);
 
 	//..
+	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND); // 現在ObjはBLEND無し
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	//..
 
 	float head = 0.0f;
+
+	//.. キャプチャ用のバッファ用意
+	/*
+	int frameBufferSize = width * height * 4;
+	void* buffer = calloc(4, frameBufferSize/4);
+	*/
 	
 	while (!glfwWindowShouldClose(window)) {
 		glViewport(0, 0, width, height);
-		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		camera.update();
 
@@ -225,6 +238,18 @@ int main() {
 		shader.setNormalMatrix(normalMat);
 	
 		shader.render(indices, indicesSize);
+
+		//..
+		/*
+		glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+		const char* buf = (const char*)buffer;
+		stbi_write_png("out.png",
+					   width, height, 4,
+					   buf + (width * 4 * (height - 1)),
+					   -width * 4);
+		break;
+		*/
+		//..
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
