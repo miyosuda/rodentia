@@ -4,8 +4,13 @@
 #include <stdio.h>
 
 #include "Camera.h"
-#include "CheckShader.h"
+#include "DiffuseShader.h"
 #include "Matrix3f.h"
+
+#include "Image.h"
+#include "PNGDecoder.h"
+#include "Texture.h"
+
 
 
 /*
@@ -111,20 +116,17 @@ static void* readFile(const char* path, int& readSize) {
 	return buffer;
 }
 
-#include "Image.h"
-#include "PNGDecoder.h"
-#include "Texture.h"
-
-static void checkPNGDecode() {
+static Texture* loadTexture() {
 	int size;
 	void* buffer = readFile("image.png", size);
 	Image image;
 	PNGDecoder::decode((unsigned char*)buffer, size, image);
 
-	Texture texture;
-	texture.init((const unsigned char*)image.getBuffer(),
-				 image.getWidth(), image.getHeight(),
-				 image.hasAlpha());
+	Texture* texture = new Texture();
+	texture->init((const unsigned char*)image.getBuffer(),
+				  image.getWidth(), image.getHeight(),
+				  image.hasAlpha());
+	return texture;
 }
 
 // 時計回りが正面
@@ -162,10 +164,10 @@ int main() {
 	glfwSwapInterval(1);
 
 	//..
-	checkPNGDecode();
+	Texture* texture = loadTexture();
 	//..
 
-	CheckShader shader;
+	DiffuseShader shader;
 	shader.init();
 	Camera camera;
 
@@ -212,10 +214,12 @@ int main() {
 		Matrix4f modelViewProjectionMat;
 		modelViewProjectionMat.mul(projectionMat, modelViewMat);
 
+		texture->bind();
+
 		shader.use();
 		shader.beginRender(vertices);
 		
-		//glActiveTexture(GL_TEXTURE0);
+		glActiveTexture(GL_TEXTURE0);
 	
 		shader.setMatrix(modelViewProjectionMat);
 		shader.setNormalMatrix(normalMat);

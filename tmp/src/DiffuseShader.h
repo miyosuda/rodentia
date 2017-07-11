@@ -1,17 +1,17 @@
 // -*- C++ -*-
-#ifndef OBJSHADER_HEADER
-#define OBJSHADER_HEADER
+#ifndef DIFFUSESHADER_HEADER
+#define DIFFUSESHADER_HEADER
 
 #include "Shader.h"
 
 class Matrix4f;
 class Matrix3f;
 
-class CheckShader : public Shader {
+class DiffuseShader : public Shader {
 private:
 	int vertexHandle;
 	int normalHandle;
-	//int textureCoordHandle;
+	int textureCoordHandle;
 	int mvpMatrixHandle;
 	int normalMatrixHandle;
 	
