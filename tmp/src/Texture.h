@@ -8,7 +8,7 @@ public:
 	Texture();
 	~Texture();
 	void release();
-	void init(const unsigned char* data, int width, int height,
+	void init(const void* buffer, int width, int height,
 			  bool hasAlpha=true);
 	void bind();
 };

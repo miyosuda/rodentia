@@ -6,7 +6,7 @@ class Image;
 
 class PNGDecoder {
 public:
-	static bool decode(unsigned char* buffer, int bufferSize, Image& image);
+	static bool decode(void* buffer, int bufferSize, Image& image);
 };
 
 #endif

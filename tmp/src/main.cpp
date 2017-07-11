@@ -120,10 +120,10 @@ static Texture* loadTexture() {
 	int size;
 	void* buffer = readFile("image.png", size);
 	Image image;
-	PNGDecoder::decode((unsigned char*)buffer, size, image);
+	PNGDecoder::decode(buffer, size, image);
 
 	Texture* texture = new Texture();
-	texture->init((const unsigned char*)image.getBuffer(),
+	texture->init(image.getBuffer(),
 				  image.getWidth(), image.getHeight(),
 				  image.hasAlpha());
 	return texture;

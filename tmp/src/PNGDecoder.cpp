@@ -20,8 +20,10 @@ static void pngReadFunc( png_struct *pngobj,
 /**
  * <!--  decode():  -->
  */
-bool PNGDecoder::decode(unsigned char* buffer, int bufferSize, Image& image) {
-	if( png_sig_cmp( buffer, 0, 8) ) {
+bool PNGDecoder::decode(void* buffer, int bufferSize, Image& image) {
+	unsigned char* buf = (unsigned char*)buffer;
+	
+	if( png_sig_cmp( buf, 0, 8) ) {
 		return false;
 	}
 
@@ -43,7 +45,7 @@ bool PNGDecoder::decode(unsigned char* buffer, int bufferSize, Image& image) {
 		return false;
 	}
 
-	unsigned char* filepos = buffer;
+	unsigned char* filepos = buf;
     png_set_read_fn( pngobj,
 					 (png_voidp)&filepos,
 					 (png_rw_ptr)pngReadFunc );
@@ -54,9 +56,6 @@ bool PNGDecoder::decode(unsigned char* buffer, int bufferSize, Image& image) {
 	int height = png_get_image_height(pngobj, info);
 
 	png_byte colorType = png_get_color_type(pngobj, info);
-	//png_byte bitDepth = png_get_bit_depth(pngobj, info);
-	//int channels = png_get_channels(pngobj, info);
-	//int numberOfPasses = png_set_interlace_handling(pngobj);
 
 	if (setjmp(png_jmpbuf(pngobj))) {
 		return false;
@@ -65,34 +64,24 @@ bool PNGDecoder::decode(unsigned char* buffer, int bufferSize, Image& image) {
 	bool hasAlpha = false;
 
 	if( (colorType & PNG_COLOR_MASK_ALPHA) == 0 ) {
-		// αが無い場合
+		// with no alpha
 		hasAlpha = false;
 	} else {
-		// αがある場合
+		// with alpha
 		hasAlpha = true;
 	}
 
 	if( colorType & PNG_COLOR_TYPE_PALETTE ) {
-		// index colorの場合
+		// index color
 		png_set_palette_to_rgb(pngobj);
 
 		if(png_get_valid( pngobj, info, PNG_INFO_tRNS ) ) {
-			//png_set_tRNS_to_alpha(pngobj);
 			hasAlpha = true;
         }
 	}
 
-	//png_bytep* lines = (png_bytep*) malloc(sizeof(png_bytep) * height);
-
 	unsigned char **lines =
 		(unsigned char **)malloc(sizeof(unsigned char *) * height);
-
-	//printf("width=%d\n", width);
-	//printf("height=%d\n", height);
-	//printf("colorType=%d\n", colorType);
-	//printf("bitDepth=%d\n", bitDepth);
-	//printf("channels=%d\n", channels);
-	//printf("pass=%d\n", numberOfPasses);
 
 	if( hasAlpha ) {
 		// to 32bit image

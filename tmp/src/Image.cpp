@@ -1,4 +1,5 @@
 #include "Image.h"
+#include <stdio.h>
 #include <stdlib.h> // nullptr
 
 /**
@@ -28,7 +29,7 @@ void Image::init(int width_, int height_, int type_) {
 	height = height_;
 	type = type_;
 
-	// bufferには、R,G,B,(A), R,G,B,(A) の順で入っている
+	// buffer order is R,G,B,(A), R,G,B,(A) ....
 	int b = getChannels();
 	int bufferSize = b * width * height;
 	buffer = malloc(bufferSize);
@@ -67,8 +68,6 @@ void* Image::getLineBuffer(int y) {
 	buf += (width * b * y);
 	return buf;
 }
-
-#include "util.h"
 
 /**
  * <!--  debugDump():  -->

@@ -24,8 +24,10 @@ void Texture::release() {
 /**
  * <!--	 init():  -->
  */
-void Texture::init(const unsigned char* data, int width, int height, 
+void Texture::init(const void* buffer, int width, int height, 
 				   bool hasAlpha) {
+	const unsigned char* data = (const unsigned char*)buffer;
+	
 	glGenTextures(1, (unsigned int*)&handle);
 	bind();
 
