@@ -13,6 +13,7 @@
 #include "Material.h"
 #include "MeshFace.h"
 #include "MeshFaceData.h"
+#include "Mesh.h"
 
 
 /*
@@ -173,6 +174,8 @@ int main() {
 	
 	MeshFace* meshFace = new MeshFace(material,
 									  meshFaceData);
+	Mesh* mesh = new Mesh();
+	mesh->addMeshFace(meshFace);
 	
 	Camera camera;
 
@@ -222,8 +225,8 @@ int main() {
 		Matrix4f modelViewProjectionMat;
 		modelViewProjectionMat.mul(projectionMat, modelViewMat);
 
-		meshFace->draw(modelViewMat,
-					   modelViewProjectionMat);
+		mesh->draw(modelViewMat,
+				   modelViewProjectionMat);
 		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
