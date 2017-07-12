@@ -11,73 +11,8 @@
 #include "PNGDecoder.h"
 #include "Texture.h"
 #include "Material.h"
-#include "MeshFace.h"
-#include "MeshFaceData.h"
 #include "Mesh.h"
-
-
-/*
-
-    [y]
-     |  
-     |
-     |
-     *------[x]
-    /
-   / 
- [z]
-*/
-
-static float vertices[] = {	
-	// 前面
-	-1.0f, -1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, // 左下
-	 1.0f, -1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // 右下
-	 1.0f,  1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, // 右上
-	-1.0f,  1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // 左上
-  
-	// 背面
-	-1.0f, -1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, // 左下
-	-1.0f,  1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, // 右下
-	 1.0f,  1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, // 右上
-	 1.0f, -1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // 左上
-  
-	// 上面
-	-1.0f,  1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // 左下
-	-1.0f,  1.0f,  1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, // 右下
-	 1.0f,  1.0f,  1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // 右上
-	 1.0f,  1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, // 左上
-  
-	// 底面
-	-1.0f, -1.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, // 左下
-	 1.0f, -1.0f, -1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f, // 右下
-	 1.0f, -1.0f,  1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, // 右上
-	-1.0f, -1.0f,  1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, // 左上
-  
-	// 右側面
-	 1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // 左下
-	 1.0f,  1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // 右下
-	 1.0f,  1.0f,  1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // 右上
-	 1.0f, -1.0f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // 左上
-  
-	// 左側面
-	-1.0f, -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // 左下
-	-1.0f, -1.0f,  1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // 右下
-	-1.0f,  1.0f,  1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // 右上
-	-1.0f,  1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // 左上
-};
-
-static int verticesSize = 192;
-
-static short indices[] = {
-	0,  1,  2,      0,  2,  3,    // 前面
-	4,  5,  6,      4,  6,  7,    // 背面
-	8,  9,  10,     8,  10, 11,   // 上面
-	12, 13, 14,     12, 14, 15,   // 底面
-	16, 17, 18,     16, 18, 19,   // 右側面
-	20, 21, 22,     20, 22, 23    // 左側面
-};
-
-static int indicesSize = 36;
+#include "MeshManager.h"
 
 static void* readFile(const char* path, int& readSize) {
 	readSize = 0;
@@ -164,7 +99,10 @@ int main() {
 
 	Shader* shader = new DiffuseShader();
 	shader->init();
-	
+
+	MeshManager meshManager;
+
+	/*
 	Material* material = new Material(texture, shader);
 
 	MeshFaceData meshFaceData(vertices,
@@ -176,6 +114,9 @@ int main() {
 									  meshFaceData);
 	Mesh* mesh = new Mesh();
 	mesh->addMeshFace(meshFace);
+	*/
+
+	const Mesh* mesh = meshManager.getBoxMesh(texture, shader);
 	
 	Camera camera;
 

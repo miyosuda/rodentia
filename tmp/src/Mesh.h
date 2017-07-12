@@ -6,31 +6,18 @@
 using namespace std;
 
 class MeshFace;
+class Matrix4f;
 
 class Mesh {
 private:
 	vector<MeshFace*> meshFaces;
 
 public:
-	~Mesh() {
-		int size = meshFaces.size();
-		for(int i=0; i<size; ++i) {
-			delete meshFaces[i];
-		}
-		meshFaces.clear();
-	}
-	
-	void addMeshFace(MeshFace* meshFace) {
-		meshFaces.push_back(meshFace);
-	}
-
+	Mesh() {}
+	~Mesh();
+	void addMeshFace(MeshFace* meshFace);
 	void draw( const Matrix4f& modelViewMat, 
-			   const Matrix4f& projectionMat ) {
-		int size = meshFaces.size();
-		for(int i=0; i<size; ++i) {
-			meshFaces[i]->draw(modelViewMat, projectionMat);
-		}
-	}
+			   const Matrix4f& projectionMat ) const;
 };
 
 #endif

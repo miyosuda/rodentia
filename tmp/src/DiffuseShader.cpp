@@ -66,7 +66,7 @@ bool DiffuseShader::init() {
  * <!--  setMatrix():  -->
  */
 void DiffuseShader::setMatrix(const Matrix4f& modelViewMat,
-							  const Matrix4f& modelViewProjectionMat) {
+							  const Matrix4f& modelViewProjectionMat) const {
 
 	// Set normal matrix by removing translate part.
 	Matrix3f normalMat;
@@ -83,7 +83,7 @@ void DiffuseShader::setMatrix(const Matrix4f& modelViewMat,
 /**
  * <!--  beginRender():  -->
  */
-void DiffuseShader::beginRender(const float* vertices) {
+void DiffuseShader::beginRender(const float* vertices) const {
 	const float* normals = vertices;
 	normals += 3;
 
@@ -106,14 +106,14 @@ void DiffuseShader::beginRender(const float* vertices) {
 /**
  * <!--  render():  -->
  */
-void DiffuseShader::render(const short* indices, int indicesSize) {
+void DiffuseShader::render(const short* indices, int indicesSize) const {
 	glDrawElements(GL_TRIANGLES, indicesSize, GL_UNSIGNED_SHORT, indices);
 }
 
 /**
  * <!--  endRender():  -->
  */
-void DiffuseShader::endRender() {
+void DiffuseShader::endRender() const {
 	glDisableVertexAttribArray(vertexHandle);
 	glDisableVertexAttribArray(normalHandle);
 	glDisableVertexAttribArray(textureCoordHandle);

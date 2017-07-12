@@ -152,23 +152,23 @@ int Shader::getAttribLocation(const char* name) {
  * <!--  setMatrix():  -->
  */
 void Shader::setMatrix(const Matrix4f& modelViewMat,
-					   const Matrix4f& modelViewProjectionMat) {
+					   const Matrix4f& modelViewProjectionMat) const {
 }
 
 /**
  * <!--  beginRender():  -->
  */
-void Shader::beginRender(const float* vertices) {
+void Shader::beginRender(const float* vertices) const {
 }
 
 /**
  * <!--  render():  -->
  */
-void Shader::render(const short* indices, int indicesSize) {
+void Shader::render(const short* indices, int indicesSize) const {
 }
 
 /**
  * <!--  endRender():  -->
  */
-void Shader::endRender() {
+void Shader::endRender() const {
 }

@@ -57,6 +57,6 @@ void Texture::init(const void* buffer, int width, int height,
 /**
  * <!--  bind():  -->
  */
-void Texture::bind() {
+void Texture::bind() const {
 	glBindTexture(GL_TEXTURE_2D, handle);
 }

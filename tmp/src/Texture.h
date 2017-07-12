@@ -10,7 +10,7 @@ public:
 	void release();
 	void init(const void* buffer, int width, int height,
 			  bool hasAlpha=true);
-	void bind();
+	void bind() const;
 };
 
 #endif

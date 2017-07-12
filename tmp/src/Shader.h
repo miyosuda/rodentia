@@ -25,10 +25,10 @@ public:
 
 	virtual bool init()=0;
 	virtual void setMatrix(const Matrix4f& modelViewMat,
-						   const Matrix4f& modelViewProjectionMat);
-	virtual void beginRender(const float* vertices);
-	virtual void render(const short* indices, int indicesSize);
-	virtual void endRender();
+						   const Matrix4f& modelViewProjectionMat) const;
+	virtual void beginRender(const float* vertices) const;
+	virtual void render(const short* indices, int indicesSize) const; 
+	virtual void endRender() const;
 };
 
 #endif

@@ -33,6 +33,8 @@ add_executable(glcheck
 	${PROJECT_SOURCE_DIR}/Image.cpp
 	${PROJECT_SOURCE_DIR}/MeshFace.cpp
 	${PROJECT_SOURCE_DIR}/Material.cpp
+	${PROJECT_SOURCE_DIR}/Mesh.cpp
+	${PROJECT_SOURCE_DIR}/MeshManager.cpp
    )
 
 target_link_libraries(glcheck
