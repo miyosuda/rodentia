@@ -14,48 +14,7 @@
 #include "Material.h"
 #include "Mesh.h"
 #include "MeshManager.h"
-
-static void* readFile(const char* path, int& readSize) {
-	readSize = 0;
-	
-	FILE* file = fopen(path, "rb");
-	if ( file == nullptr ) {
-		printf("Couldn't open file: %s\n", path);
-		return nullptr;
-	}
-
-	int pos = ftell(file);
-	fseek(file, 0, SEEK_END);
-	
-	int size = ftell(file);
-	fseek(file, pos, SEEK_SET);
-
-	void* buffer = malloc(size);
-	int ret = fread(buffer, 1, size, file);
-	if( ret != size ) {
-		fclose(file);
-		free(buffer);
-		return nullptr;
-	}
-
-	readSize = size;
-	
-	fclose(file);
-	return buffer;
-}
-
-static Texture* loadTexture() {
-	int size;
-	void* buffer = readFile("image.png", size);
-	Image image;
-	PNGDecoder::decode(buffer, size, image);
-
-	Texture* texture = new Texture();
-	texture->init(image.getBuffer(),
-				  image.getWidth(), image.getHeight(),
-				  image.hasAlpha());
-	return texture;
-}
+#include "TextureManager.h"
 
 static void error_callback(int error, const char* description) {
 	fprintf(stderr, "Error: %s\n", description);
@@ -92,8 +51,9 @@ int main() {
 	glfwSwapInterval(1);
 
 	MeshManager meshManager;
+	TextureManager textureManager;
 
-	Texture* texture = loadTexture();
+	Texture* texture = textureManager.loadTexture("image.png");
 
 	Shader* shader = new DiffuseShader();
 	shader->init();
