@@ -15,6 +15,7 @@
 #include "Mesh.h"
 #include "MeshManager.h"
 #include "TextureManager.h"
+#include "ShaderManager.h"
 
 static void error_callback(int error, const char* description) {
 	fprintf(stderr, "Error: %s\n", description);
@@ -52,10 +53,11 @@ int main() {
 
 	MeshManager meshManager;
 	TextureManager textureManager;
+	ShaderManager shaderManager;
 
 	Texture* texture = textureManager.loadTexture("image.png");
 
-	Shader* shader = new DiffuseShader();
+	Shader* shader = shaderManager.getShader("diffuse");
 	shader->init();
 
 	Material* material = new Material(texture, shader);
@@ -81,8 +83,6 @@ int main() {
 	while (!glfwWindowShouldClose(window)) {
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		camera.update();
 
 		Matrix4f mat;
 

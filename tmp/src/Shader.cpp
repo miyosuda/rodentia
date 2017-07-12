@@ -14,13 +14,14 @@ Shader::Shader() {
  * <!--	 ~Shader():	 -->
  */
 Shader::~Shader() {
+	release();
 }
 
 /**
  * <!--  bindAttributes():  -->
  */
 void Shader::bindAttributes() {
-	// 自前でattribute indexをbindしたい場合はオーバーライド
+	// Override if wan't to bind attribute index manually
 }
 
 /**

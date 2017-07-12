@@ -58,6 +58,7 @@ void LineShader::setMatrix(const Matrix4f& modelViewMat,
  * <!--  beginRender():  -->
  */
 void LineShader::beginRender(const float* vertices) const {
+	// Now assuming 3 floats packed vertices
 	glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE,
 						  0, vertices);
 	glEnableVertexAttribArray(vertexHandle);

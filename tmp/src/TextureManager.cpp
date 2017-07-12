@@ -56,7 +56,7 @@ TextureManager::~TextureManager() {
 Texture* TextureManager::loadTexture(const char* path) {
 	auto itr = textureMap.find(path);
 	if( itr != textureMap.end() ) {
-		Texture* texture = textureMap[path];
+		Texture* texture = itr->second;
 		return texture;
 	}
 	

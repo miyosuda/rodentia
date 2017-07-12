@@ -1,9 +1,8 @@
 #include "Camera.h"
 
-//-----------------------------------
-//         [RenderManager]
-//-----------------------------------
-
+/**
+ * <!--  setProjectionMatrix():  -->
+ */
 static void setProjectionMatrix(Matrix4f& m,
 								float w, float h,
 								float near, float far) {
@@ -18,11 +17,13 @@ static void setProjectionMatrix(Matrix4f& m,
 	m.m30 = 0; m.m31 = 0; m.m32 = -1; m.m33 = 1;
 }
 
+/**
+ * <!--  Camera():  -->
+ */
 Camera::Camera() {
-	head = 0.0f;
-	pitch = 0.0f;
-	setPos(0.0f, 0.0f, 0.0f);
-	matdirty = true;
+	Matrix4f m;
+	m.setIdentity();
+	setMat(m);
 }
 
 /**
@@ -37,51 +38,11 @@ void Camera::init(float znear_, float zfar_, float focalLength, float ratio) {
 
 	nearWidth = w;
 }
-	
-const Vector4f& Camera::getPos() const {
-	return pos;
-}
-	
-void Camera::setPos(float x, float y, float z) {
-	pos.set(x,y,z, 1.0f);
-	matdirty = true;
-}
-	
-void Camera::setPos(Vector4f pos_) {
-	pos.set(pos_);
-	matdirty = true;
-}
-	
-void Camera::update() {
-	if( matdirty ) {
-		mat.setIdentity();
-		mat.setRotationY(head);
-		Matrix4f mat0;
-		mat0.setRotationX(pitch);
-		mat *= mat0;
-		mat.setColumn(3, Vector4f(pos.x, pos.y, pos.z, 1.0f));
-		
-		invMat.invertRT(mat);
-		matdirty = false;
-	}
-}
 
-void Camera::setHead(float head_) {
-	head = head_;
-	matdirty = true;
-}
-	
-void Camera::setPitch(float pitch_) {
-	pitch = pitch_;
-	matdirty = true;
-}
-
-void Camera::addHead(float dh) {
-	head += dh;
-	matdirty = true;
-}
-
-void Camera::addPitch(float dp) {
-	pitch += dp;
-	matdirty = true;
+/**
+ * <!--  setMat():  -->
+ */
+void Camera::setMat(const Matrix4f& mat_) {
+	mat.set(mat_);
+	invMat.invertRT(mat);
 }

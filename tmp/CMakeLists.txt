@@ -37,6 +37,7 @@ add_executable(glcheck
 	${PROJECT_SOURCE_DIR}/Mesh.cpp
 	${PROJECT_SOURCE_DIR}/MeshManager.cpp
 	${PROJECT_SOURCE_DIR}/TextureManager.cpp
+	${PROJECT_SOURCE_DIR}/ShaderManager.cpp
    )
 
 target_link_libraries(glcheck
