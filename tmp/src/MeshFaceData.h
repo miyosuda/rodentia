@@ -21,11 +21,11 @@ public:
 		indicesSize(indicesSize_) {
 
 		vertices = new float[verticesSize];
-		memcpy(vertices, vertices_, sizeof(float)*verticesSize);
+		memcpy(vertices, vertices_, sizeof(float) * verticesSize);
 
 		indicesSize = indicesSize_;
 		indices = new short[indicesSize];
-		memcpy(indices, indices_, sizeof(short)*indicesSize);
+		memcpy(indices, indices_, sizeof(short) * indicesSize);
 	}
 	
 	~MeshFaceData() {

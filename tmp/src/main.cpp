@@ -57,7 +57,6 @@ static Texture* loadTexture() {
 	return texture;
 }
 
-// 時計回りが正面
 static void error_callback(int error, const char* description) {
 	fprintf(stderr, "Error: %s\n", description);
 }
@@ -67,6 +66,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 	}
 }
+
 
 int main() {
 	GLFWwindow* window;
@@ -80,7 +80,7 @@ int main() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-	window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
+	window = glfwCreateWindow(640, 480, "glcheck", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		exit(EXIT_FAILURE);
@@ -91,14 +91,15 @@ int main() {
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
 
+	MeshManager meshManager;
+
 	Texture* texture = loadTexture();
 
 	Shader* shader = new DiffuseShader();
 	shader->init();
 
-	MeshManager meshManager;
-
-	const Mesh* mesh = meshManager.getBoxMesh(texture, shader);
+	Material* material = new Material(texture, shader);
+	const Mesh* mesh = meshManager.getBoxMesh(material);
 
 	Camera camera;
 

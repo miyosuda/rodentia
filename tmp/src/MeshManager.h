@@ -4,16 +4,19 @@
 
 class MeshFaceData;
 class Mesh;
-class Texture;
-class Shader;
+class Material;
 
 class MeshManager {
 private:
 	MeshFaceData* boxMeshFaceData;
 
 public:
+	MeshManager()
+		:
+		boxMeshFaceData(nullptr) {
+	}
 	~MeshManager();
-	const Mesh* getBoxMesh(Texture* texture, Shader* shader);
+	const Mesh* getBoxMesh(Material* material);
 };
 
 #endif

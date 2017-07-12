@@ -80,7 +80,7 @@ MeshManager::~MeshManager() {
 /**
  * <!--  getBoxMesh():  -->
  */
-const Mesh* MeshManager::getBoxMesh(Texture* texture, Shader* shader) {
+const Mesh* MeshManager::getBoxMesh(Material* material) {
 	if( boxMeshFaceData == nullptr ) {
 		boxMeshFaceData = new MeshFaceData(boxVertices,
 										   boxVerticesSize,
@@ -88,8 +88,6 @@ const Mesh* MeshManager::getBoxMesh(Texture* texture, Shader* shader) {
 										   boxIndicesSize);
 	}
 
-	// TODO: Materialを引数にした方がよいか？
-	Material* material = new Material(texture, shader);
 	MeshFace* meshFace = new MeshFace(material,
 									  *boxMeshFaceData);
 	Mesh* mesh = new Mesh();

@@ -36,9 +36,9 @@ bool LineShader::init() {
 		return false;
 	}
 	
-	vertexHandle       = getAttribLocation("vertexPosition");
-	mvpMatrixHandle    = getUniformLocation("modelViewProjectionMatrix");
-	lineColorHandle    = getUniformLocation("lineColor");
+	vertexHandle    = getAttribLocation("vertexPosition");
+	mvpMatrixHandle = getUniformLocation("modelViewProjectionMatrix");
+	lineColorHandle = getUniformLocation("lineColor");
 
 	return true;
 }
