@@ -12,7 +12,7 @@
 #include "Texture.h"
 #include "Material.h"
 #include "MeshFace.h"
-
+#include "MeshFaceData.h"
 
 
 /*
@@ -165,16 +165,16 @@ int main() {
 	shader->init();
 	
 	Material* material = new Material(texture, shader);
+
+	MeshFaceData meshFaceData(vertices,
+							  verticesSize,
+							  indices,
+							  indicesSize);
 	
 	MeshFace* meshFace = new MeshFace(material,
-									  vertices,
-									  verticesSize,
-									  indices,
-									  indicesSize);
+									  meshFaceData);
 	
 	Camera camera;
-
-	// NOTE: OpenGL error checks have been omitted for brevity
 
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);

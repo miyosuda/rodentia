@@ -5,6 +5,7 @@
 class Texture;
 class Shader;
 class Matrix4f;
+class MeshFaceData;
 
 class Material {
 private:
@@ -19,9 +20,7 @@ public:
 		shader(shader_) {
 	}
 
-	void draw(float* vertices,
-			  short* indices,
-			  int indicesSize,
+	void draw(const MeshFaceData& meshFaceData,
 			  const Matrix4f& modelViewMat,
 			  const Matrix4f& modelViewProjectionMat);
 };

@@ -1,21 +1,16 @@
 #include "MeshFace.h"
 #include "Material.h"
 #include "Matrix4f.h"
+#include "MeshFace.h"
 
 /**
  * <!--  MeshFace():  -->
  */
 MeshFace::MeshFace( Material* material_,
-					float* vertices_,
-					int verticesSize_,
-					short* indices_,
-					int indicesSize_ )
+					const MeshFaceData& meshFaceData_ )
 	:
-	material(material_),
-	vertices(vertices_),
-	verticesSize(verticesSize_),
-	indices(indices_),
-	indicesSize(indicesSize_) {
+	material(material_),	
+	meshFaceData(meshFaceData_) {
 }
 
 /**
@@ -30,9 +25,7 @@ MeshFace::~MeshFace() {
  */
 void MeshFace::draw( const Matrix4f& modelViewMat,
 					 const Matrix4f& modelViewProjectionMat) {
-	material->draw(vertices,
-				   indices,
-				   indicesSize,
+	material->draw(meshFaceData,
 				   modelViewMat,
 				   modelViewProjectionMat);
 }
