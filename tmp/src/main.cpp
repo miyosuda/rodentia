@@ -5,6 +5,7 @@
 
 #include "Camera.h"
 #include "DiffuseShader.h"
+#include "LineShader.h"
 #include "Matrix3f.h"
 
 #include "Image.h"
@@ -67,11 +68,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	}
 }
 
-//..
-//#define STB_IMAGE_WRITE_IMPLEMENTATION
-//#include "stb_image_write.h"
-//..
-
 int main() {
 	GLFWwindow* window;
 
@@ -102,22 +98,8 @@ int main() {
 
 	MeshManager meshManager;
 
-	/*
-	Material* material = new Material(texture, shader);
-
-	MeshFaceData meshFaceData(vertices,
-							  verticesSize,
-							  indices,
-							  indicesSize);
-	
-	MeshFace* meshFace = new MeshFace(material,
-									  meshFaceData);
-	Mesh* mesh = new Mesh();
-	mesh->addMeshFace(meshFace);
-	*/
-
 	const Mesh* mesh = meshManager.getBoxMesh(texture, shader);
-	
+
 	Camera camera;
 
 	int width, height;
@@ -135,12 +117,6 @@ int main() {
 
 	float head = 0.0f;
 
-	//.. キャプチャ用のバッファ用意
-	/*
-	int frameBufferSize = width * height * 4;
-	void* buffer = calloc(4, frameBufferSize/4);
-	*/
-	
 	while (!glfwWindowShouldClose(window)) {
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -166,9 +142,12 @@ int main() {
 		Matrix4f modelViewProjectionMat;
 		modelViewProjectionMat.mul(projectionMat, modelViewMat);
 
+		//Vector4f color(1.0f, 1.0f, 0.0f, 1.0f);
+		//shader->setColor(color);
+
 		mesh->draw(modelViewMat,
 				   modelViewProjectionMat);
-		
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}

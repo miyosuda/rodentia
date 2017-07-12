@@ -67,13 +67,14 @@ static short boxIndices[] = {
 
 static int boxIndicesSize = 36;
 
+
 /**
  * <!--  ~MeshManager():  -->
  */
 MeshManager::~MeshManager() {
 	if( boxMeshFaceData != nullptr ) {
 		delete boxMeshFaceData;
-	}	
+	}
 }
 
 /**

@@ -27,6 +27,7 @@ add_executable(glcheck
 	${PROJECT_SOURCE_DIR}/main.cpp
 	${PROJECT_SOURCE_DIR}/Shader.cpp
 	${PROJECT_SOURCE_DIR}/DiffuseShader.cpp
+	${PROJECT_SOURCE_DIR}/LineShader.cpp
 	${PROJECT_SOURCE_DIR}/Camera.cpp
 	${PROJECT_SOURCE_DIR}/Texture.cpp
 	${PROJECT_SOURCE_DIR}/PNGDecoder.cpp

@@ -16,12 +16,12 @@ private:
 	float pitch;
 	bool matdirty;
 
-	float znear; // znearクリップ面までの距離
-	float nearWidth; // znearクリップ面の幅
+	float znear; // distance to znear clip plane
+	float nearWidth; // znear clip place width
 	
 public:
 	Camera();
-	void init(float znear_, float zfar_, float focalLength_, float ratio);
+	void init(float znear_, float zfar_, float focalLength, float ratio);
 	const Vector4f& getPos() const;
 	void setPos(float x, float y, float z);
 	void setPos(Vector4f pos_);

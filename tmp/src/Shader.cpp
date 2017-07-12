@@ -172,3 +172,9 @@ void Shader::render(const short* indices, int indicesSize) const {
  */
 void Shader::endRender() const {
 }
+
+/**
+ * <!--  setColor():  -->
+ */
+void Shader::setColor(const Vector4f& color) const {
+}

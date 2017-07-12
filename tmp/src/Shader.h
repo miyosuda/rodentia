@@ -5,6 +5,7 @@
 #include "glinc.h"
 
 class Matrix4f;
+class Vector4f;
 
 class Shader {
 protected:
@@ -29,6 +30,7 @@ public:
 	virtual void beginRender(const float* vertices) const;
 	virtual void render(const short* indices, int indicesSize) const; 
 	virtual void endRender() const;
+	virtual void setColor(const Vector4f& color) const;
 };
 
 #endif

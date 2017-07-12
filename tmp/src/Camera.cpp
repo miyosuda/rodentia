@@ -16,7 +16,6 @@ static void setProjectionMatrix(Matrix4f& m,
 	m.m10 = 0; m.m11 = b; m.m12 = 0;  m.m13 = 0;
 	m.m20 = 0; m.m21 = 0; m.m22 = c;  m.m23 = d;
 	m.m30 = 0; m.m31 = 0; m.m32 = -1; m.m33 = 1;
-	//m.m30 = 0; m.m31 = 0; m.m32 = -1; m.m33 = 0;
 }
 
 Camera::Camera() {
@@ -27,12 +26,12 @@ Camera::Camera() {
 }
 
 /**
- * @param focalLength_ 35.0mmフィルム換算での焦点距離 (mm)
- * @param ratio  w/h (縦持ちportraitだと、1より小さい値)
+ * @param focalLength_ focul length based on 35.0mm film
+ * @param ratio  w/h (when portrait ratio is bigger than 1.0)
  */
-void Camera::init(float znear_, float zfar_, float focalLength_, float ratio) {
+void Camera::init(float znear_, float zfar_, float focalLength, float ratio) {
 	znear = znear_;
-	float h = znear * 35.0f / focalLength_;
+	float h = znear * 35.0f / focalLength;
 	float w = h * ratio;
 	setProjectionMatrix(projectionMat, w, h, znear, zfar_);
 
