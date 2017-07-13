@@ -14,9 +14,12 @@ private:
 	map<string, Texture*> textureMap;
 	void* readFile(const char* path, int& readSize);
 
+	Texture* findTexture(const char* path);
+
 public:
 	~TextureManager();
 	Texture* loadTexture(const char* path);
+	Texture* getColorTexture(float r, float g, float b);
 };
 
 #endif

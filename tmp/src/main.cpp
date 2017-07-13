@@ -55,7 +55,8 @@ int main() {
 	TextureManager textureManager;
 	ShaderManager shaderManager;
 
-	Texture* texture = textureManager.loadTexture("image.png");
+	//Texture* texture = textureManager.loadTexture("image.png");
+	Texture* texture = textureManager.getColorTexture(1.0f, 1.0f, 0.0f);
 
 	Shader* shader = shaderManager.getShader("diffuse");
 	Material* material = new Material(texture, shader);
