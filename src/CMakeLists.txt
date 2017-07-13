@@ -18,7 +18,7 @@ add_library(pyrodent SHARED
 	python/pyrodent.cpp
 )
 
-include_directories(geom play render env)
+include_directories(common geom play render env)
 
 find_package(BULLET REQUIRED)
 find_package(OpenGL REQUIRED)

@@ -3,7 +3,7 @@
 #define OFFSCREENRENDERER_HEADER
 
 #include "Renderer.h"
-#include <GLFW/glfw3.h>
+#include "glinc.h"
 
 class OffscreenRenderer : public Renderer {
 private:

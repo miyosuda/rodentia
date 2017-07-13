@@ -3,7 +3,7 @@
 #define SCREENRENDERER_HEADER
 
 #include "Renderer.h"
-#include <GLFW/glfw3.h>
+#include "glinc.h"
 
 class ScreenRenderer : public Renderer {
 private:

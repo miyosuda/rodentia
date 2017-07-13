@@ -1,7 +1,8 @@
 #include "play.h"
-#include <assert.h>
-#include <GLFW/glfw3.h>
 
+#include <assert.h>
+
+#include "glinc.h"
 #include "TrackBall.h"
 #include "Environment.h"
 

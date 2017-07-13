@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <GLFW/glfw3.h>
+#include "glinc.h"
 
 #include "play.h"
 #include "Matrix4f.h"

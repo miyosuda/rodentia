@@ -1,5 +1,5 @@
 #include "DebugDrawer.h"
-#include <GLFW/glfw3.h>
+#include "glinc.h"
 
 void DebugDrawer::drawLine(const btVector3 &from,
 						   const btVector3 &to,
