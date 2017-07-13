@@ -35,6 +35,7 @@ add_executable(glcheck
 	${PROJECT_SOURCE_DIR}/MeshFace.cpp
 	${PROJECT_SOURCE_DIR}/Material.cpp
 	${PROJECT_SOURCE_DIR}/Mesh.cpp
+	${PROJECT_SOURCE_DIR}/MeshFaceData.cpp	
 	${PROJECT_SOURCE_DIR}/MeshManager.cpp
 	${PROJECT_SOURCE_DIR}/TextureManager.cpp
 	${PROJECT_SOURCE_DIR}/ShaderManager.cpp

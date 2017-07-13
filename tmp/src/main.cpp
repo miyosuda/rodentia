@@ -58,10 +58,9 @@ int main() {
 	Texture* texture = textureManager.loadTexture("image.png");
 
 	Shader* shader = shaderManager.getShader("diffuse");
-	shader->init();
-
 	Material* material = new Material(texture, shader);
-	const Mesh* mesh = meshManager.getBoxMesh(material);
+	//const Mesh* mesh = meshManager.getBoxMesh(material);
+	const Mesh* mesh = meshManager.getSphereMesh(material);
 
 	Camera camera;
 

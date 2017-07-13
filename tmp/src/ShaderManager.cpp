@@ -45,6 +45,6 @@ Shader* ShaderManager::getShader(const char* name) {
 		}
 		shaderMap[nameStr] = shader;
 	}
-	
+
 	return shader;
 }

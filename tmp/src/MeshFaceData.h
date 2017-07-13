@@ -12,26 +12,11 @@ private:
 	int indicesSize;
 
 public:
-	MeshFaceData( float* vertices_,
+	MeshFaceData( const float* vertices_,
 				  int verticesSize_,
-				  short* indices_,
-				  int indicesSize_ )
-		:
-		verticesSize(verticesSize_),
-		indicesSize(indicesSize_) {
-
-		vertices = new float[verticesSize];
-		memcpy(vertices, vertices_, sizeof(float) * verticesSize);
-
-		indicesSize = indicesSize_;
-		indices = new short[indicesSize];
-		memcpy(indices, indices_, sizeof(short) * indicesSize);
-	}
-	
-	~MeshFaceData() {
-		delete [] vertices;
-		delete [] indices;
-	}
+				  const short* indices_,
+				  int indicesSize_ );
+	~MeshFaceData();
 	
 	const float* getVertices() const {
 		return vertices;

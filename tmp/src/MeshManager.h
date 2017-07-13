@@ -9,14 +9,17 @@ class Material;
 class MeshManager {
 private:
 	MeshFaceData* boxMeshFaceData;
+	MeshFaceData* sphereMeshFaceData;
 
 public:
 	MeshManager()
 		:
-		boxMeshFaceData(nullptr) {
+		boxMeshFaceData(nullptr),
+		sphereMeshFaceData(nullptr) {
 	}
 	~MeshManager();
 	const Mesh* getBoxMesh(Material* material);
+	const Mesh* getSphereMesh(Material* material);
 };
 
 #endif
