@@ -1,20 +1,41 @@
 #include "DebugDrawer.h"
 #include "glinc.h"
+#include "Shader.h"
+#include "Matrix4f.h"
 
+/**
+ * <!--  drawLine():  -->
+ */
 void DebugDrawer::drawLine(const btVector3 &from,
 						   const btVector3 &to,
 						   const btVector3 &color) {
 
 	// draws a simple line of pixels between points.
+
+	lineShader->setColor(Vector4f(color.x(), color.y(), color.z(), 1.0f));
+
+	float vertices[6];
+	vertices[0] = from.x();
+	vertices[1] = from.y();
+	vertices[2] = from.z();
+	vertices[3] = to.x();
+	vertices[4] = to.y();
+	vertices[5] = to.z();
+
+	lineShader->use();
+	lineShader->beginRender(vertices);
+
+	short indices[2];
+	indices[0] = 0;
+	indices[1] = 1;
 	
-	// use the GL_LINES primitive to draw lines
-	glBegin(GL_LINES);
-	glColor3f(color.getX(), color.getY(), color.getZ());
-	glVertex3f(from.getX(), from.getY(), from.getZ());
-	glVertex3f(to.getX(), to.getY(), to.getZ());
-	glEnd();
+	lineShader->render(indices, 2);
+	lineShader->endRender();
 }
 
+/**
+ * <!--  drawContactPoint():  -->
+ */
 void DebugDrawer::drawContactPoint(const btVector3 &pointOnB,
 								   const btVector3 &normalOnB,
 								   btScalar distance,
@@ -26,6 +47,9 @@ void DebugDrawer::drawContactPoint(const btVector3 &pointOnB,
 	drawLine(startPoint, endPoint, color);
 }
 
+/**
+ * <!--  toggleDebugFlag():  -->
+ */
 void DebugDrawer::toggleDebugFlag(int flag) {
 	// checks if a flag is set and enables/
 	// disables it
@@ -36,4 +60,13 @@ void DebugDrawer::toggleDebugFlag(int flag) {
 		// flag is disabled, so enable it
 		debugMode |= flag;
 	}
+}
+
+/**
+ * <!--  prepare():  -->
+ */
+void DebugDrawer::prepare(const Matrix4f& modelViewMat, const Matrix4f& projectionMat) {
+	Matrix4f modelViewProjectionMat;
+	modelViewProjectionMat.mul(projectionMat, modelViewMat);
+	lineShader->setMatrix(modelViewMat, modelViewProjectionMat);
 }

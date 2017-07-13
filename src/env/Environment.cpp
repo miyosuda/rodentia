@@ -167,8 +167,10 @@ void Environment::init() {
 										solver,
 										configuration);
 
+	Shader* lineShader = shaderManager.getShader("line");
+
 	// Set debug drawer
-	auto debugDrawer = new DebugDrawer();
+	debugDrawer = new DebugDrawer(lineShader);
 	world->setDebugDrawer(debugDrawer);
 	int debugMode =
 		btIDebugDraw::DBG_DrawWireframe |
@@ -212,9 +214,10 @@ void Environment::release() {
 		delete shape;
 	}
 
-	auto debugDrawer = world->getDebugDrawer();
+	// Delete debug drawer
 	if( debugDrawer != nullptr ) {
 		delete debugDrawer;
+		debugDrawer = nullptr;
 	}
 
 	delete world;
@@ -290,7 +293,12 @@ void Environment::step(const Action& action, bool updateCamera) {
 		checkCollision();
 		
 		// Debug drawing
-		world->debugDrawWorld();
+		if( debugDrawer != nullptr && renderer != nullptr ) {
+			const Camera& camera = renderer->getCamera();
+			debugDrawer->prepare(camera.getInvMat(),
+								 camera.getProjectionMat());
+			world->debugDrawWorld();
+		}
 	}
 
 	if( renderer != nullptr ) {
@@ -427,7 +435,7 @@ int Environment::getFrameBufferSize() const {
 
 void Environment::setRenderCamera(const Matrix4f& mat) {
 	if( renderer != nullptr ) {
-		renderer->setCamera(mat);
+		renderer->setCameraMat(mat);
 	}
 }
 

@@ -8,6 +8,8 @@
 #include <vector>
 using namespace std;
 
+#include "ShaderManager.h"
+
 class Action {
 public:
 	int look;   // look left=[+], look right=[-]
@@ -56,6 +58,7 @@ public:
 };
 
 class Renderer;
+class DebugDrawer;
 
 class Environment {
 	btAlignedObjectArray<btCollisionShape*>	collisionShapes;
@@ -70,6 +73,9 @@ class Environment {
 	int nextObjId;
 	vector<int> collidedIds;
 	map<int, btRigidBody*> bodyMap;
+
+	DebugDrawer* debugDrawer;
+	ShaderManager shaderManager; //..
 
 	void checkCollision();
 	btRigidBody* createBox(float halfExtentX, float halfExtentY, float halfExtentZ,
@@ -86,7 +92,8 @@ public:
 		world(nullptr),
 		model(nullptr),
 		renderer(nullptr),
-		nextObjId(0) {
+		nextObjId(0),
+		debugDrawer(nullptr) {
 	}
 
 	~Environment() {

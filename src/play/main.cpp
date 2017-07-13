@@ -2,7 +2,6 @@
 #include <stdlib.h>
 
 #include "glinc.h"
-
 #include "play.h"
 #include "Matrix4f.h"
 
@@ -140,6 +139,10 @@ int main(int argc, char** argv) {
 	if (!glfwInit()) {
 		exit(EXIT_FAILURE);
 	}
+
+	// Set GL version
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
 	// Disable resizing
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);

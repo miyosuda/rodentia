@@ -3,19 +3,19 @@
 #define RENDERER_HEADER
 
 #include "Matrix4f.h"
+#include "Camera.h"
 
 class Renderer {
 private:
 	void drawLine(const Vector4f& pos0, const Vector4f& pos1);
 	
 protected:
-	Matrix4f camera;
+	Camera camera;
 	int frameBufferWidth;
 	int frameBufferHeight;
 	bool flipping; // upside down flipping
 	
-	void setProjection(float width, float height);
-	void drawFloor();	
+	void drawFloor();
 
 public:
 	Renderer(bool flipping_=false)
@@ -27,7 +27,8 @@ public:
 	virtual ~Renderer() {
 	}
 
-	void setCamera(const Matrix4f& mat);
+	void setCameraMat(const Matrix4f& mat);
+	const Camera& getCamera() const { return camera; }
 	void renderPre();
 	
 	virtual bool init(int width, int height) = 0;

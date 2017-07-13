@@ -8,6 +8,23 @@ add_library(rodent_code STATIC
 	render/Renderer.cpp
 	render/OffscreenRenderer.cpp
 	render/ScreenRenderer.cpp
+	render/DiffuseShader.cpp
+	render/Image.cpp
+	render/Camera.cpp
+	render/LineShader.cpp
+	render/Material.cpp
+	render/Mesh.cpp
+	render/MeshFace.cpp
+	render/MeshFaceData.cpp
+	render/MeshManager.cpp
+	render/OffscreenRenderer.cpp
+	render/PNGDecoder.cpp
+	render/Renderer.cpp
+	render/ScreenRenderer.cpp
+	render/Shader.cpp
+	render/ShaderManager.cpp
+	render/Texture.cpp
+	render/TextureManager.cpp
 )
 
 add_executable(rodent

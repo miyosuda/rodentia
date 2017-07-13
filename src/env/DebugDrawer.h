@@ -4,11 +4,20 @@
 
 #include "btBulletDynamicsCommon.h"
 
+class Shader;
+class Matrix4f;
+
 class DebugDrawer: public btIDebugDraw {
 private:
 	int debugMode;
+	Shader* lineShader;
 	
 public:
+	DebugDrawer(Shader* lineShader_)
+		:
+		lineShader(lineShader_) {
+	}
+	
 	// debug mode functions
 	virtual void setDebugMode(int debugMode_) override {
 		debugMode = debugMode_;
@@ -32,6 +41,7 @@ public:
 	virtual void draw3dText(const btVector3 &location, const char* textString) override {}
 	
 	void toggleDebugFlag(int flag);
+	void prepare(const Matrix4f& movelViewMat, const Matrix4f& projectionMat);
 };
 
 #endif

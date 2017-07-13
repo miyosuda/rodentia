@@ -40,7 +40,8 @@ bool OffscreenRenderer::init(int width, int height) {
 	glViewport(0, 0, frameBufferWidth, frameBufferHeight);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	setProjection(frameBufferWidth, frameBufferHeight);
+	float ratio = width / (float) height;
+	camera.init(1.0f, 1000.0f, 50.0f, ratio);
 
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
@@ -51,16 +52,6 @@ bool OffscreenRenderer::init(int width, int height) {
 	buffer = calloc(4, getFrameBufferSize()/4);
 #endif
 
-	camera.setIdentity();
-
-	//..
-	// TODO: set initial camera matrix properly
-	Matrix4f mat;
-	mat.setIdentity();
-	mat.setColumn(3, Vector4f(0.0f, 2.0f, 7.0f, 1.0f));
-	setCamera(mat);
-	//..
-	
 	return true;
 }
 
@@ -80,7 +71,7 @@ void OffscreenRenderer::release() {
  */
 void OffscreenRenderer::render() {
 	// TODO: 場所ここでない方がいいか？
-	drawFloor();
+	//drawFloor();
 	
 #if USE_NATIVE_OSMESA
 	glfwGetOSMesaColorBuffer(window, &frameBufferWidth, &frameBufferHeight,
