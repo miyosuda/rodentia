@@ -4,7 +4,7 @@ add_library(rodent_code STATIC
 	play/TrackBall.cpp
 	play/play.cpp
 	env/Environment.cpp
-	env/DebugDrawer.cpp
+	render/DebugDrawer.cpp
 	render/Renderer.cpp
 	render/OffscreenRenderer.cpp
 	render/ScreenRenderer.cpp

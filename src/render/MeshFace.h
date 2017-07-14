@@ -17,6 +17,10 @@ public:
 	~MeshFace();
 	void draw( const Matrix4f& modelViewMat, 
 			   const Matrix4f& projectionMat );
+
+	const MeshFaceData& debugGetMeshFaceData() const {
+		return meshFaceData;
+	}
 };
 
 #endif

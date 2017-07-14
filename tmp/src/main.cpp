@@ -16,6 +16,7 @@
 #include "MeshManager.h"
 #include "TextureManager.h"
 #include "ShaderManager.h"
+#include "SceneObject.h"
 
 static void error_callback(int error, const char* description) {
 	fprintf(stderr, "Error: %s\n", description);
@@ -64,6 +65,7 @@ int main() {
 	const Mesh* mesh = meshManager.getSphereMesh(material);
 
 	Camera camera;
+	SceneObject object(mesh);
 
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
@@ -94,20 +96,9 @@ int main() {
 		mat.setRotationY(head);
 		mat.setColumn(3, pos);
 
-		const Matrix4f& cameraInvMat = camera.getInvMat();
-		const Matrix4f& projectionMat = camera.getProjectionMat();
+		object.setMat(mat);
 
-		Matrix4f modelViewMat;
-		modelViewMat.mul(cameraInvMat, mat);
-
-		Matrix4f modelViewProjectionMat;
-		modelViewProjectionMat.mul(projectionMat, modelViewMat);
-
-		//Vector4f color(1.0f, 1.0f, 0.0f, 1.0f);
-		//shader->setColor(color);
-
-		mesh->draw(modelViewMat,
-				   modelViewProjectionMat);
+		object.draw(camera);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

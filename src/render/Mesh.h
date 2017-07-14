@@ -18,6 +18,13 @@ public:
 	void addMeshFace(MeshFace* meshFace);
 	void draw( const Matrix4f& modelViewMat, 
 			   const Matrix4f& projectionMat ) const;
+
+	int debugGetMeshFaceSize() const {
+		return meshFaces.size();
+	}
+	const MeshFace* debugGetMeshFace(int index) const {
+		return meshFaces[index];
+	}
 };
 
 #endif
