@@ -8,6 +8,8 @@
 #include <vector>
 using namespace std;
 
+#include "MeshManager.h"
+#include "TextureManager.h"
 #include "ShaderManager.h"
 
 class Action {
@@ -59,6 +61,7 @@ public:
 };
 
 class Matrix4f;
+class Vector3f;
 
 class Renderer;
 class DebugDrawer;
@@ -93,16 +96,20 @@ public:
 	void getMat(Matrix4f& mat) const;
 };
 
+class DrawComponent;
+class Camera;
 
 class EnvironmentObject {
 protected:
 	RigidBodyComponent* rigidBodyComponent;
+	DrawComponent* drawComponent;
 
 public:
-	virtual ~EnvironmentObject();
-
 	EnvironmentObject();
+	virtual ~EnvironmentObject();
 	int getCollisionId() const;
+	void getMat(Matrix4f& mat) const;
+	void draw(const Camera& camera) const;
 };
 
 class StageObject : public EnvironmentObject {
@@ -111,7 +118,9 @@ public:
 				float rot,
 				btCollisionShape* shape,
 				btDynamicsWorld* world,
-				int collisionId);
+				int collisionId,
+				const Mesh* mesh,
+				const Vector3f& scale);
 };
 
 class AgentObject : public EnvironmentObject {
@@ -120,7 +129,6 @@ public:
 				btDynamicsWorld* world,
 				int collisionId);
 	void control(const Action& action);
-	void getMat(Matrix4f& mat) const;
 };
 
 class Environment {
@@ -138,14 +146,18 @@ class Environment {
 	map<int, EnvironmentObject*> objectMap; // <obj-id, EnvironmentObject>
 
 	DebugDrawer* debugDrawer;
-	ShaderManager shaderManager; //..
+	MeshManager meshManager;
+	TextureManager textureManager;	
+	ShaderManager shaderManager;
 
 	void prepareAgent();
 	void checkCollision();
 	int addObject(btCollisionShape* shape,
 				  float posX, float posY, float posZ,
 				  float rot,
-				  bool detectCollision);
+				  bool detectCollision,
+				  const Mesh* mesh,
+				  const Vector3f& scale);
 
 public:
 	Environment()

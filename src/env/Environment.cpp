@@ -4,6 +4,12 @@
 #include "OffscreenRenderer.h"
 #include "ScreenRenderer.h"
 #include "DebugDrawer.h"
+#include "DrawComponent.h"
+#include "Mesh.h"
+#include "Vector3f.h"
+#include "Camera.h"
+#include "Material.h"
+#include "Texture.h"
 
 static const int ID_IGNORE_COLLISION = -1;
 static const int ID_AGENT = -2;
@@ -175,11 +181,29 @@ void AgentRigidBodyComponent::control(const Action& action) {
 //---------------------------
 //   [EnvironmentObject]
 //---------------------------
-EnvironmentObject::EnvironmentObject() {
+EnvironmentObject::EnvironmentObject()
+	:
+	drawComponent(nullptr) {
 }
 
 EnvironmentObject::~EnvironmentObject() {
 	delete rigidBodyComponent;
+	if( drawComponent != nullptr ) {
+		delete drawComponent;
+	}
+}
+
+// Get RigidBody Matrix (position and rotation)
+void EnvironmentObject::getMat(Matrix4f& mat) const {
+	rigidBodyComponent->getMat(mat);
+}
+
+void EnvironmentObject::draw(const Camera& camera) const {
+	if( drawComponent != nullptr ) {
+		Matrix4f rigidBodyMat;
+		getMat(rigidBodyMat);
+		drawComponent->draw(camera, rigidBodyMat);
+	}
 }
 
 //---------------------------
@@ -189,8 +213,10 @@ StageObject::StageObject(float posX, float posY, float posZ,
 						 float rot,
 						 btCollisionShape* shape,
 						 btDynamicsWorld* world,
-						 int collisionId)
-	:   
+						 int collisionId,
+						 const Mesh* mesh,
+						 const Vector3f& scale)
+	:
 	EnvironmentObject() {
 	rigidBodyComponent = new RigidBodyComponent(0.0f,
 												posX, posY, posZ,
@@ -198,6 +224,7 @@ StageObject::StageObject(float posX, float posY, float posZ,
 												shape,
 												world,
 												collisionId);
+	drawComponent = new DrawComponent(mesh, scale);
 }
 
 //---------------------------
@@ -218,10 +245,6 @@ AgentObject::AgentObject(btCollisionShape* shape,
 
 void AgentObject::control(const Action& action) {
 	rigidBodyComponent->control(action);
-}
-
-void AgentObject::getMat(Matrix4f& mat) const {
-	rigidBodyComponent->getMat(mat);
 }
 
 //---------------------------
@@ -419,7 +442,14 @@ int Environment::addBox(float halfExtentX, float halfExtentY, float halfExtentZ,
 	btCollisionShape* shape = collisionShapeManager.getBoxShape(halfExtentX,
 																halfExtentY,
 																halfExtentZ);
-	return addObject(shape, posX, posY, posZ, rot, detectCollision);
+	// TODO:
+	Texture* texture = textureManager.getColorTexture(1.0f, 0.0f, 0.0f);
+	Shader* shader = shaderManager.getShader("diffuse");
+	Material* material = new Material(texture, shader);
+	const Mesh* mesh = meshManager.getBoxMesh(material);
+	Vector3f scale(halfExtentX, halfExtentY, halfExtentZ);
+	
+	return addObject(shape, posX, posY, posZ, rot, detectCollision, mesh, scale);
 }
 
 int Environment::addSphere(float radius,
@@ -427,13 +457,23 @@ int Environment::addSphere(float radius,
 						   float rot,
 						   bool detectCollision) {
 	btCollisionShape* shape = collisionShapeManager.getSphereShape(radius);
-	return addObject(shape, posX, posY, posZ, rot, detectCollision);
+
+	// TODO:
+	Texture* texture = textureManager.getColorTexture(1.0f, 0.0f, 0.0f);
+	Shader* shader = shaderManager.getShader("diffuse");
+	Material* material = new Material(texture, shader);
+	const Mesh* mesh = meshManager.getSphereMesh(material);
+	Vector3f scale(radius, radius, radius);
+	
+	return addObject(shape, posX, posY, posZ, rot, detectCollision, mesh, scale);
 }
 
 int Environment::addObject(btCollisionShape* shape,
 						   float posX, float posY, float posZ,
 						   float rot,
-						   bool detectCollision) {
+						   bool detectCollision,
+						   const Mesh* mesh,
+						   const Vector3f& scale) {
 	int id = nextObjId;
 	nextObjId += 1;
 
@@ -450,7 +490,9 @@ int Environment::addObject(btCollisionShape* shape,
 		rot,
 		shape,
 		world,
-		collisionId);
+		collisionId,
+		mesh,
+		scale);
 
 	objectMap[id] = object;
 	return id;

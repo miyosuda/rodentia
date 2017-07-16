@@ -25,6 +25,7 @@ add_library(rodent_code STATIC
 	render/ShaderManager.cpp
 	render/Texture.cpp
 	render/TextureManager.cpp
+	render/DrawComponent.cpp
 )
 
 add_executable(rodent
@@ -40,6 +41,7 @@ include_directories(common geom play render env)
 find_package(BULLET REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLFW REQUIRED)
+find_package(PNG REQUIRED)
 
 find_package(PythonInterp 2 REQUIRED)
 STRING( REGEX REPLACE "([0-9.]+)\\.[0-9]+" "\\1" python_version ${PYTHON_VERSION_STRING} )
@@ -63,21 +65,24 @@ set(PYTHON_NUMPY_INCLUDE_DIR "/usr/local/Cellar/python/2.7.13/Frameworks/Python.
 include_directories( ${OPENGL_INCLUDE_DIRS}
 					 ${GLFW_INCLUDE_DIRS}
 					 ${BULLET_INCLUDE_DIRS}
+					 ${PNG_INCLUDE_DIRS}
 					 ${PYTHON_INCLUDE_DIRS}
-					 ${PYTHON_NUMPY_INCLUDE_DIR}
+					 ${PYTHON_NUMPY_INCLUDE_DIR}					 
 					 )
 
 target_link_libraries(rodent
 					${OPENGL_LIBRARIES}
 					${GLFW_LIBRARIES}
 					${BULLET_LIBRARIES}
+					${PNG_LIBRARIES}
 					rodent_code
 					)
 
 target_link_libraries(pyrodent
-					  ${OPENGL_LIBRARIES}
+					${OPENGL_LIBRARIES}
 					${GLFW_LIBRARIES}
 					${BULLET_LIBRARIES}
+					${PNG_LIBRARIES}
 					${PYTHON_LIBRARIES}
 					rodent_code
 					)

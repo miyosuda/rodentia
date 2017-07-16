@@ -6,9 +6,6 @@
 #include "Camera.h"
 
 class Renderer {
-private:
-	void drawLine(const Vector4f& pos0, const Vector4f& pos1);
-	
 protected:
 	Camera camera;
 	int frameBufferWidth;
