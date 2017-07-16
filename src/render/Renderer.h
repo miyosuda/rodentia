@@ -13,16 +13,12 @@ protected:
 	Camera camera;
 	int frameBufferWidth;
 	int frameBufferHeight;
-	bool flipping; // upside down flipping
 	
-	void drawFloor();
-
 public:
-	Renderer(bool flipping_=false)
+	Renderer()
 		:
 		frameBufferWidth(0),
-		frameBufferHeight(0),
-		flipping(flipping_) {
+		frameBufferHeight(0) {
 	}
 	virtual ~Renderer() {
 	}

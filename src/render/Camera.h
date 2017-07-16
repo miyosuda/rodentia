@@ -15,7 +15,7 @@ private:
 	
 public:
 	Camera();
-	void init(float znear_, float zfar_, float focalLength, float ratio);
+	void init(float znear_, float zfar_, float focalLength, float ratio, bool flipping);
 
 	void setMat(const Matrix4f& mat_);
 	const Matrix4f& getMat() const {

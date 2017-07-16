@@ -12,16 +12,12 @@
 //---------------------------------------------------------
 
 static Environment* createEnvironment() {
-	printf("pass000\n");
 	Environment* environment = new Environment();
-	printf("pass001\n");
 	return environment;
 }
 
 static bool initEnvironment(Environment* environment, int width, int height) {
-	printf("pass002\n");
 	environment->init();
-	printf("pass003\n");	
 
 	if( !environment->initRenderer(width, height, true) ) {
 		return false;

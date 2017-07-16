@@ -44,7 +44,7 @@ bool OffscreenRenderer::init(int width, int height) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	float ratio = width / (float) height;
-	camera.init(1.0f, 1000.0f, 50.0f, ratio);
+	camera.init(1.0f, 1000.0f, 50.0f, ratio, true);
 
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
@@ -73,8 +73,7 @@ void OffscreenRenderer::release() {
  * <!--  render():  -->
  */
 void OffscreenRenderer::render() {
-	// TODO: 場所ここでない方がいいか？
-	//drawFloor();
+	// TODO: 整理
 	
 #if USE_NATIVE_OSMESA
 	glfwGetOSMesaColorBuffer(window, &frameBufferWidth, &frameBufferHeight,

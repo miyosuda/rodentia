@@ -13,7 +13,7 @@ private:
 public:	
 	OffscreenRenderer()
 		:
-		Renderer(true), // flip upside down
+		Renderer(),
 		window(nullptr),
 		buffer(nullptr) {
 	}

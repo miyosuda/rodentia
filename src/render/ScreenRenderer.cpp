@@ -7,7 +7,7 @@ bool ScreenRenderer::init(int width, int height) {
 	glViewport(0, 0, width, height);
 	
 	float ratio = width / (float) height;
-	camera.init(1.0f, 1000.0f, 50.0f, ratio);
+	camera.init(1.0f, 1000.0f, 50.0f, ratio, false); 
 
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
@@ -21,8 +21,7 @@ bool ScreenRenderer::init(int width, int height) {
  * <!--  render():  -->
  */
 void ScreenRenderer::render() {
-	// TODO: 場所ここでない方がいいか？
-	//drawFloor();
+	// TODO: 整理
 }
 
 /**

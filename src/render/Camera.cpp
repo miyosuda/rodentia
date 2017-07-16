@@ -5,9 +5,13 @@
  */
 static void setProjectionMatrix(Matrix4f& m,
 								float w, float h,
-								float near, float far) {
+								float near, float far,
+								bool flipping) {
 	float a = 2.0f * near / w;
 	float b = 2.0f * near / h;
+	if( flipping ) {
+		b = -b;
+	}
 	float c = - (far + near) / (far - near);
 	float d = -2.0f * far * near / (far - near);
 	
@@ -28,13 +32,15 @@ Camera::Camera() {
 
 /**
  * @param focalLength_ focul length based on 35.0mm film
- * @param ratio  w/h (when portrait ratio is bigger than 1.0)
+ * @param ratio        w/h (when portrait ratio is bigger than 1.0)
+ * @param flipping     if true render upside down
  */
-void Camera::init(float znear_, float zfar_, float focalLength, float ratio) {
+void Camera::init(float znear_, float zfar_, float focalLength, float ratio,
+				  bool flipping) {
 	znear = znear_;
 	float h = znear * 35.0f / focalLength;
 	float w = h * ratio;
-	setProjectionMatrix(projectionMat, w, h, znear, zfar_);
+	setProjectionMatrix(projectionMat, w, h, znear, zfar_, flipping);
 
 	nearWidth = w;
 }
