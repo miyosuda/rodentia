@@ -5,29 +5,8 @@
 #include "ScreenRenderer.h"
 #include "DebugDrawer.h"
 
-static const int ID_AGENT = 0;
 static const int ID_IGNORE_COLLISION = -1;
-static const int ID_OBJ_START = 1;
-
-static btRigidBody* createRigidBody(btScalar mass,
-									const btTransform& startTransform,
-									btCollisionShape* shape) {
-
-	btVector3 localInertia(0,0,0);
-
-	bool isDynamic = (mass != 0.0f);
-	if (isDynamic) {
-		shape->calculateLocalInertia(mass, localInertia);
-	}
-
-	btDefaultMotionState* motionState = new btDefaultMotionState(startTransform);
-	btRigidBody::btRigidBodyConstructionInfo info(mass,
-												  motionState,
-												  shape,
-												  localInertia);
-	btRigidBody* body = new btRigidBody(info);
-	return body;
-}
+static const int ID_AGENT = -2;
 
 static void convertBtTransformToMatrix4f(const btTransform& transform, Matrix4f& mat) {
 	const btVector3& origin = transform.getOrigin();
@@ -39,28 +18,88 @@ static void convertBtTransformToMatrix4f(const btTransform& transform, Matrix4f&
 	mat.setColumn(3, Vector4f(origin.x(), origin.y(), origin.z(), 1.0f));
 }
 
-Model::Model(btDynamicsWorld* world_, btRigidBody* floorBody)
+//---------------------------
+//   [RigidBodyComponent]
+//---------------------------
+
+RigidBodyComponent::RigidBodyComponent(float mass,
+									   float posX, float posY, float posZ,
+									   float rot,
+									   btCollisionShape* shape,
+									   btDynamicsWorld* world_,
+									   int collisionId)
 	:
 	world(world_) {
 	
-	shape = new btCylinderShape(btVector3(btScalar(1.0), btScalar(1.0), btScalar(1.0)));
-
 	btTransform transform;
 	transform.setIdentity();
-	transform.setOrigin(btVector3(btScalar(0.0), btScalar(1.0), btScalar(0.0)));
-	
-	body = createRigidBody(btScalar(1.0), transform, shape);
+	transform.setOrigin(btVector3(posX, posY, posZ));
+	transform.getBasis().setEulerZYX(0.0f, rot, 0.0f);
 
-	body->setUserIndex(ID_AGENT);
+	btVector3 localInertia(0,0,0);
 
-	body->setActivationState(DISABLE_DEACTIVATION);
+	bool isDynamic = (mass != 0.0f);
+	if (isDynamic) {
+		shape->calculateLocalInertia(mass, localInertia);
+	}
+
+	btDefaultMotionState* motionState = new btDefaultMotionState(transform);
+	btRigidBody::btRigidBodyConstructionInfo info(mass,
+												  motionState,
+												  shape,
+												  localInertia);
+	body = new btRigidBody(info);
 	world->addRigidBody(body);
+	
+	body->setUserIndex(collisionId);
+}
 
+RigidBodyComponent::~RigidBodyComponent() {
+	if(body->getMotionState()) {
+		delete body->getMotionState();
+	}
+	world->removeCollisionObject(body);
+	delete body;
+}
+
+int RigidBodyComponent::getCollisionId() const {
+	return body->getUserIndex();
+}
+
+void RigidBodyComponent::control(const Action& action) {
+}
+
+void RigidBodyComponent::getMat(Matrix4f& mat) const {
+	convertBtTransformToMatrix4f(body->getWorldTransform(), mat);
+}
+
+
+//---------------------------
+// [AgentRigidBodyComponent]
+//---------------------------
+AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
+												 float posX, float posY, float posZ,
+												 float rot,
+												 btCollisionShape* shape,
+												 btDynamicsWorld* world_,
+												 int collisionId)
+	:
+	RigidBodyComponent(mass,
+					   posX,  posY,  posZ,
+					   rot,
+					   shape,
+					   world_,
+					   collisionId) {
+
+	// Disable deactivation
+	body->setActivationState(DISABLE_DEACTIVATION);
+	
 	// Set damping
 	body->setDamping(btScalar(0.05), btScalar(0.85));
 
 	// Set stand-up constraint
- 	// TODO: Agent can't move vertically with this constraint setting
+	// TODO: Agent can't move vertically with this constraint setting
+	/*
 	btTransform frameInA, frameInB;
 	frameInA = btTransform::getIdentity();
 	frameInB = btTransform::getIdentity();	
@@ -74,21 +113,10 @@ Model::Model(btDynamicsWorld* world_, btRigidBody* floorBody)
 	constraint->setLinearLowerLimit(btVector3(-SIMD_INFINITY, 0, -SIMD_INFINITY));
 	constraint->setLinearUpperLimit(btVector3( SIMD_INFINITY, 0,  SIMD_INFINITY));
 	world->addConstraint(constraint);
+	*/
 }
 
-Model::~Model() {
-	world->removeRigidBody(body);
-	
-	delete body->getMotionState();
-	
-	delete body;
-	body = nullptr;
-	
-	delete shape;
-	shape = nullptr;
-}
-
-void Model::control(const Action& action) {
+void AgentRigidBodyComponent::control(const Action& action) {
 	const float linearVelocityRate = 5.0f;
 	const float angularVelocityRate = 0.5f;
 	const float impulseLengthLimit = 1.0f;
@@ -144,11 +172,102 @@ void Model::control(const Action& action) {
 	body->applyTorqueImpulse(torqueImpulse);
 }
 
-void Model::getMat(Matrix4f& mat) const {
-	convertBtTransformToMatrix4f(body->getWorldTransform(), mat);
+//---------------------------
+//   [EnvironmentObject]
+//---------------------------
+EnvironmentObject::EnvironmentObject() {
 }
 
+EnvironmentObject::~EnvironmentObject() {
+	delete rigidBodyComponent;
+}
 
+//---------------------------
+//      [StageObject]
+//---------------------------
+StageObject::StageObject(float posX, float posY, float posZ,
+						 float rot,
+						 btCollisionShape* shape,
+						 btDynamicsWorld* world,
+						 int collisionId)
+	:   
+	EnvironmentObject() {
+	rigidBodyComponent = new RigidBodyComponent(0.0f,
+												posX, posY, posZ,
+												rot,
+												shape,
+												world,
+												collisionId);
+}
+
+//---------------------------
+//      [AgentObject]
+//---------------------------
+AgentObject::AgentObject(btCollisionShape* shape,
+						 btDynamicsWorld* world,
+						 int collisionId)
+	:
+	EnvironmentObject() {
+	rigidBodyComponent = new AgentRigidBodyComponent(1.0f,
+													 0.0f, 1.0, 0.0f,
+													 0.0f,
+													 shape,
+													 world,
+													 collisionId);
+}
+
+void AgentObject::control(const Action& action) {
+	rigidBodyComponent->control(action);
+}
+
+void AgentObject::getMat(Matrix4f& mat) const {
+	rigidBodyComponent->getMat(mat);
+}
+
+//---------------------------
+//  [CollisionShapeManager]
+//---------------------------
+
+CollisionShapeManager::~CollisionShapeManager() {
+	// Delete collision shapes
+	for(int j=0; j<collisionShapes.size(); ++j) {
+		btCollisionShape* shape = collisionShapes[j];
+		delete shape;
+	}
+}
+
+btCollisionShape* CollisionShapeManager::getSphereShape(float radius) {
+	// TODO: same shape should be cached and reused
+	btCollisionShape* shape = new btSphereShape(radius);
+	collisionShapes.push_back(shape);
+	return shape;
+}
+
+btCollisionShape* CollisionShapeManager::getBoxShape(float halfExtentX,
+													 float halfExtentY,
+													 float halfExtentZ) {
+	// TODO: same shape should be cached and reused
+	btCollisionShape* shape = new btBoxShape(btVector3(halfExtentX,
+													   halfExtentY,
+													   halfExtentZ));
+	collisionShapes.push_back(shape);
+	return shape;
+}
+
+btCollisionShape* CollisionShapeManager::getCylinderShape(float halfExtentX,
+														  float halfExtentY,
+														  float halfExtentZ) {
+	// TODO: same shape should be cached and reused
+	btCollisionShape* shape = new btCylinderShape(btVector3(halfExtentX,
+															halfExtentY,
+															halfExtentZ));
+	collisionShapes.push_back(shape);
+	return shape;
+}
+
+//---------------------------
+//      [Environment]
+//---------------------------
 
 void Environment::init() {
 	// Setup the basic world
@@ -177,43 +296,37 @@ void Environment::init() {
 		btIDebugDraw::DBG_DrawConstraints |
 		btIDebugDraw::DBG_DrawConstraintLimits;
 	debugDrawer->setDebugMode(debugMode);
-	
-	// Setup a ground floor box
-	btRigidBody* floorBody = createBox(200.0f, 10.0f, 200.0f,
-									   0.0f, -10.0f, 0.0f,
-									   0.0f);
-	floorBody->setUserIndex(ID_IGNORE_COLLISION);
 
-	nextObjId = ID_OBJ_START;
+	nextObjId = 0;
+
+	addBox(200.0f, 10.0f, 200.0f,
+		   0.0f, -10.0f, 0.0f,
+		   0.0f,
+		   false);	
 
 	world->setGravity(btVector3(0, -10, 0));
 
-	model = new Model(world, floorBody);
+	prepareAgent();
+}
+
+void Environment::prepareAgent() {
+	// TOOD: constraint用にfloorを渡すようにしないといけない
+	btCollisionShape* shape = collisionShapeManager.getCylinderShape(1.0f, 1.0f, 1.0f);
+	agent = new AgentObject(shape, world, ID_AGENT);
 }
 
 void Environment::release() {
-	if( model != nullptr ) {
-		delete model;
-		model = nullptr;
+	if( agent != nullptr ) {
+		delete agent;
+		agent = nullptr;
 	}
 
-	// Remove the rigidbodies from the dynamics world and delete them
-	for(int i=world->getNumCollisionObjects()-1; i>=0 ; i--) {
-		btCollisionObject* obj = world->getCollisionObjectArray()[i];
-		btRigidBody* body = btRigidBody::upcast(obj);
-		if(body && body->getMotionState()) {
-			delete body->getMotionState();
-		}
-		world->removeCollisionObject( obj );
-		delete obj;
+	for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
+		auto object = itr->second;
+		delete object;
 	}
-
-	// Delete collision shapes
-	for(int j=0; j<collisionShapes.size(); ++j) {
-		btCollisionShape* shape = collisionShapes[j];
-		delete shape;
-	}
-
+	objectMap.clear();
+	
 	// Delete debug drawer
 	if( debugDrawer != nullptr ) {
 		delete debugDrawer;
@@ -232,7 +345,7 @@ void Environment::release() {
 		renderer = nullptr;
 	}
 
-	nextObjId = ID_OBJ_START;
+	nextObjId = 0;
 }
 
 void Environment::checkCollision() {
@@ -259,12 +372,12 @@ void Environment::checkCollision() {
 		if( hasContact ) {
 			if( obj0->getUserIndex() == ID_AGENT ) {
 				int otherId = obj1->getUserIndex();
-				if( otherId >= ID_OBJ_START ) {
+				if( otherId != ID_AGENT && otherId != ID_IGNORE_COLLISION ) {
 					collidedIds.push_back(otherId);
 				}
 			} else if( obj1->getUserIndex() == ID_AGENT ) {
 				int otherId = obj0->getUserIndex();
-				if( otherId >= ID_OBJ_START ) {
+				if( otherId != ID_AGENT && otherId != ID_IGNORE_COLLISION ) {
 					collidedIds.push_back(otherId);
 				}
 			}
@@ -280,7 +393,9 @@ void Environment::step(const Action& action, bool updateCamera) {
 	}
 	
 	if(world) {
-		model->control(action);
+		if( agent != nullptr ) {
+			agent->control(action);
+		}
 		
 		world->stepSimulation(deltaTime);
 
@@ -306,42 +421,35 @@ void Environment::step(const Action& action, bool updateCamera) {
 	}
 }
 
-btRigidBody* Environment::createBox(float halfExtentX, float halfExtentY, float halfExtentZ,
-									float posX, float posY, float posZ,
-									float rot) {
-	btCollisionShape* shape = new btBoxShape(btVector3(halfExtentX,
-													   halfExtentY,
-													   halfExtentZ));
-	collisionShapes.push_back(shape);
-	btTransform transform;
-	transform.setIdentity();
-	transform.setOrigin(btVector3(posX, posY, posZ));
-	transform.getBasis().setEulerZYX(0.0f, rot, 0.0f);
-
-	btRigidBody* body = createRigidBody(0.0, transform, shape);
-	world->addRigidBody(body);
-	return body;
-}
-
 int Environment::addBox(float halfExtentX, float halfExtentY, float halfExtentZ,
 						float posX, float posY, float posZ,
 						float rot,
 						bool detectCollision) {
 	
-	btRigidBody* body = createBox(halfExtentX, halfExtentY, halfExtentZ,
-								  posX, posY, posZ,
-								  rot);
-	
+	// TODO: 共通化
+	btCollisionShape* shape = collisionShapeManager.getBoxShape(halfExtentX,
+																halfExtentY,
+																halfExtentZ);
+
 	int id = nextObjId;
 	nextObjId += 1;
 
+	int collisionId;
+
 	if( detectCollision ) {
-		body->setUserIndex(id);
+		collisionId = id;
 	} else {
-		body->setUserIndex(ID_IGNORE_COLLISION);
+		collisionId = ID_IGNORE_COLLISION;
 	}
 
-	bodyMap[id] = body;
+	EnvironmentObject* object = new StageObject(
+		posX, posY, posZ,
+		rot,
+		shape,
+		world,
+		collisionId);
+
+	objectMap[id] = object;
 	return id;
 }
 
@@ -350,40 +458,37 @@ int Environment::addSphere(float radius,
 						   float rot,
 						   bool detectCollision) {
 
-	btCollisionShape* shape = new btSphereShape(radius);
-	collisionShapes.push_back(shape);
+	// TODO: 共通化
+	btCollisionShape* shape = collisionShapeManager.getSphereShape(radius);
 	
-	btTransform transform;
-	transform.setIdentity();
-	transform.setOrigin(btVector3(posX, posY, posZ));
-	transform.getBasis().setEulerZYX(0.0f, rot, 0.0f);
-	
-	btRigidBody* body = createRigidBody(0.0, transform, shape);
-	world->addRigidBody(body);
-
 	int id = nextObjId;
 	nextObjId += 1;
 
+	int collisionId;
+
 	if( detectCollision ) {
-		body->setUserIndex(id);
+		collisionId = id;
 	} else {
-		body->setUserIndex(ID_IGNORE_COLLISION);
+		collisionId = ID_IGNORE_COLLISION;
 	}
 
-	bodyMap[id] = body;
+	EnvironmentObject* object = new StageObject(
+		posX, posY, posZ,
+		rot,
+		shape,
+		world,
+		collisionId);
+
+	objectMap[id] = object;
 	return id;
 }
 
 void Environment::removeObj(int id) {
-	auto itr = bodyMap.find(id);
-	if( itr != bodyMap.end() ) {
-		btRigidBody* body = bodyMap[id];
-		if(body && body->getMotionState()) {
-			delete body->getMotionState();
-		}
-		world->removeCollisionObject(body);
-		delete body;
-		bodyMap.erase(itr);
+	auto itr = objectMap.find(id);
+	if( itr != objectMap.end() ) {
+		EnvironmentObject* object = objectMap[id];
+		delete object;
+		objectMap.erase(itr);
 	}
 }
 
@@ -440,9 +545,9 @@ void Environment::setRenderCamera(const Matrix4f& mat) {
 }
 
 void Environment::updateCameraToAgentView() {
-	if( model != nullptr ) {
+	if( agent != nullptr ) {
 		Matrix4f mat;
-		model->getMat(mat);
+		agent->getMat(mat);
 		setRenderCamera(mat);
 	}
 }

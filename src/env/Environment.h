@@ -41,46 +41,107 @@ public:
 	}
 };
 
-class Matrix4f;
-
-class Model {
+// TODO: collision shapes sould be cached
+class CollisionShapeManager {
 private:
-	btDynamicsWorld*  world;
-	btCollisionShape* shape;
-	btRigidBody*	  body;
+	btAlignedObjectArray<btCollisionShape*>	collisionShapes;
 
 public:
-	Model(btDynamicsWorld* world_, btRigidBody* floorBody);
-	~Model();
-
-	void control(const Action& action);
-	void getMat(Matrix4f& mat) const;
+	~CollisionShapeManager();
+	
+	btCollisionShape* getSphereShape(float radius);
+	btCollisionShape* getBoxShape(float halfExtentX,
+								  float halfExtentY,
+								  float halfExtentZ);
+	btCollisionShape* getCylinderShape(float halfExtentX,
+									   float halfExtentY,
+									   float halfExtentZ);
 };
+
+class Matrix4f;
 
 class Renderer;
 class DebugDrawer;
 
+class RigidBodyComponent {
+protected:
+	btDynamicsWorld* world;
+	btRigidBody* body;
+
+public:
+	RigidBodyComponent(float mass,
+					   float posX, float posY, float posZ,
+					   float rot,
+					   btCollisionShape* shape,
+					   btDynamicsWorld* world,
+					   int collisionId);
+	virtual ~RigidBodyComponent();
+	int getCollisionId() const;
+	virtual void control(const Action& action);
+	void getMat(Matrix4f& mat) const;
+};
+
+class AgentRigidBodyComponent : public RigidBodyComponent {
+public:
+	AgentRigidBodyComponent(float mass,
+							float posX, float posY, float posZ,
+							float rot,
+							btCollisionShape* shape,
+							btDynamicsWorld* world,
+							int collisionId);
+	virtual void control(const Action& action) override;
+	void getMat(Matrix4f& mat) const;
+};
+
+
+class EnvironmentObject {
+protected:
+	RigidBodyComponent* rigidBodyComponent;
+
+public:
+	virtual ~EnvironmentObject();
+
+	EnvironmentObject();
+	int getCollisionId() const;
+};
+
+class StageObject : public EnvironmentObject {
+public:
+	StageObject(float posX, float posY, float posZ,
+				float rot,
+				btCollisionShape* shape,
+				btDynamicsWorld* world,
+				int collisionId);
+};
+
+class AgentObject : public EnvironmentObject {
+public:	
+	AgentObject(btCollisionShape* shape,
+				btDynamicsWorld* world,
+				int collisionId);
+	void control(const Action& action);
+	void getMat(Matrix4f& mat) const;
+};
+
 class Environment {
-	btAlignedObjectArray<btCollisionShape*>	collisionShapes;
+	CollisionShapeManager collisionShapeManager;
 	btBroadphaseInterface* broadPhase;
 	btCollisionDispatcher* dispatcher;
 	btConstraintSolver*	solver;
 	btDefaultCollisionConfiguration* configuration;
 	btDiscreteDynamicsWorld* world;
 
-	Model* model;
+	AgentObject* agent;
 	Renderer* renderer;
 	int nextObjId;
 	vector<int> collidedIds;
-	map<int, btRigidBody*> bodyMap;
+	map<int, EnvironmentObject*> objectMap; // <obj-id, EnvironmentObject>
 
 	DebugDrawer* debugDrawer;
 	ShaderManager shaderManager; //..
 
+	void prepareAgent();
 	void checkCollision();
-	btRigidBody* createBox(float halfExtentX, float halfExtentY, float halfExtentZ,
-						   float posX, float posY, float posZ,
-						   float rot);
 
 public:
 	Environment()
@@ -90,7 +151,7 @@ public:
 		solver(nullptr),
 		configuration(nullptr),
 		world(nullptr),
-		model(nullptr),
+		agent(nullptr),
 		renderer(nullptr),
 		nextObjId(0),
 		debugDrawer(nullptr) {
