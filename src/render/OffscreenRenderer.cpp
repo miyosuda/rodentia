@@ -15,6 +15,9 @@ bool OffscreenRenderer::init(int width, int height) {
 		return false;
 	}
 
+	// Set GL version
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);	
 	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
 #if defined(__APPLE__)

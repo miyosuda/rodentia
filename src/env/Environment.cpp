@@ -286,17 +286,6 @@ void Environment::init() {
 										solver,
 										configuration);
 
-	Shader* lineShader = shaderManager.getShader("line");
-
-	// Set debug drawer
-	debugDrawer = new DebugDrawer(lineShader);
-	world->setDebugDrawer(debugDrawer);
-	int debugMode =
-		btIDebugDraw::DBG_DrawWireframe |
-		btIDebugDraw::DBG_DrawConstraints |
-		btIDebugDraw::DBG_DrawConstraintLimits;
-	debugDrawer->setDebugMode(debugMode);
-
 	nextObjId = 0;
 
 	// Add floor stage object
@@ -487,7 +476,22 @@ bool Environment::initRenderer(int width, int height, bool offscreen) {
 	} else {
 		renderer = new ScreenRenderer();
 	}
-	return renderer->init(width, height);
+	bool ret = renderer->init(width, height);
+	
+	if( ret ) {
+		Shader* lineShader = shaderManager.getShader("line");
+
+		// Set debug drawer
+		debugDrawer = new DebugDrawer(lineShader);
+		world->setDebugDrawer(debugDrawer);
+		int debugMode =
+			btIDebugDraw::DBG_DrawWireframe |
+			btIDebugDraw::DBG_DrawConstraints |
+			btIDebugDraw::DBG_DrawConstraintLimits;
+		debugDrawer->setDebugMode(debugMode);
+	}
+
+	return ret;
 }
 
 const void* Environment::getFrameBuffer() const {
