@@ -430,7 +430,7 @@ int Environment::addBox(float halfExtentX, float halfExtentY, float halfExtentZ,
 	btCollisionShape* shape = collisionShapeManager.getBoxShape(halfExtentX,
 																halfExtentY,
 																halfExtentZ);
-	addObject(shape, posX, posY, posZ, rot, detectCollision);
+	return addObject(shape, posX, posY, posZ, rot, detectCollision);
 }
 
 int Environment::addSphere(float radius,
@@ -438,13 +438,13 @@ int Environment::addSphere(float radius,
 						   float rot,
 						   bool detectCollision) {
 	btCollisionShape* shape = collisionShapeManager.getSphereShape(radius);
-	addObject(shape, posX, posY, posZ, rot, detectCollision);
+	return addObject(shape, posX, posY, posZ, rot, detectCollision);
 }
 
-int EnvironmentObject::addObject(btCollisionShape* shape,
-								 float posX, float posY, float posZ,
-								 float rot,
-								 bool detectCollision) {
+int Environment::addObject(btCollisionShape* shape,
+						   float posX, float posY, float posZ,
+						   float rot,
+						   bool detectCollision) {
 	int id = nextObjId;
 	nextObjId += 1;
 
