@@ -299,6 +299,7 @@ void Environment::init() {
 
 	nextObjId = 0;
 
+	// Add floor stage object
 	addBox(200.0f, 10.0f, 200.0f,
 		   0.0f, -10.0f, 0.0f,
 		   0.0f,
@@ -306,6 +307,7 @@ void Environment::init() {
 
 	world->setGravity(btVector3(0, -10, 0));
 
+	// Add agent object
 	prepareAgent();
 }
 
@@ -425,42 +427,24 @@ int Environment::addBox(float halfExtentX, float halfExtentY, float halfExtentZ,
 						float posX, float posY, float posZ,
 						float rot,
 						bool detectCollision) {
-	
-	// TODO: 共通化
 	btCollisionShape* shape = collisionShapeManager.getBoxShape(halfExtentX,
 																halfExtentY,
 																halfExtentZ);
-
-	int id = nextObjId;
-	nextObjId += 1;
-
-	int collisionId;
-
-	if( detectCollision ) {
-		collisionId = id;
-	} else {
-		collisionId = ID_IGNORE_COLLISION;
-	}
-
-	EnvironmentObject* object = new StageObject(
-		posX, posY, posZ,
-		rot,
-		shape,
-		world,
-		collisionId);
-
-	objectMap[id] = object;
-	return id;
+	addObject(shape, posX, posY, posZ, rot, detectCollision);
 }
 
 int Environment::addSphere(float radius,
 						   float posX, float posY, float posZ,
 						   float rot,
 						   bool detectCollision) {
-
-	// TODO: 共通化
 	btCollisionShape* shape = collisionShapeManager.getSphereShape(radius);
-	
+	addObject(shape, posX, posY, posZ, rot, detectCollision);
+}
+
+int EnvironmentObject::addObject(btCollisionShape* shape,
+								 float posX, float posY, float posZ,
+								 float rot,
+								 bool detectCollision) {
 	int id = nextObjId;
 	nextObjId += 1;
 

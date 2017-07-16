@@ -142,6 +142,10 @@ class Environment {
 
 	void prepareAgent();
 	void checkCollision();
+	int addObject(btCollisionShape* shape,
+				  float posX, float posY, float posZ,
+				  float rot,
+				  bool detectCollision);
 
 public:
 	Environment()
