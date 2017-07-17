@@ -150,6 +150,7 @@ class Environment {
 	TextureManager textureManager;	
 	ShaderManager shaderManager;
 
+	bool initRenderer(int width, int height, bool offscreen);
 	void prepareAgent();
 	void checkCollision();
 	int addObject(btCollisionShape* shape,
@@ -176,7 +177,7 @@ public:
 	~Environment() {
 	}
 
-	void init();
+	bool init(int width, int height, bool offscreen);
 	void release();
 	void step(const Action& action, bool updateCamera=false);
 	int addBox(float halfExtentX, float halfExtentY, float halfExtentZ,
@@ -191,7 +192,6 @@ public:
 	void locateAgent(float posX, float posY, float posZ,
 					 float rot);
 
-	bool initRenderer(int width, int height, bool offscreen);
 	const void* getFrameBuffer() const;
 	int getFrameBufferWidth() const;
 	int getFrameBufferHeight() const;

@@ -21,6 +21,7 @@ public:
 	}
 
 	void draw(const MeshFaceData& meshFaceData,
+			  const Matrix4f& modelMat,
 			  const Matrix4f& modelViewMat,
 			  const Matrix4f& modelViewProjectionMat);
 };

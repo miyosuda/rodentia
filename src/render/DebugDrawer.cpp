@@ -65,8 +65,13 @@ void DebugDrawer::toggleDebugFlag(int flag) {
 /**
  * <!--  prepare():  -->
  */
-void DebugDrawer::prepare(const Matrix4f& modelViewMat, const Matrix4f& projectionMat) {
+void DebugDrawer::prepare(const Matrix4f& modelViewMat,
+						  const Matrix4f& projectionMat) {
+	Matrix4f modelMat;
+	modelMat.setIdentity();
+	
 	Matrix4f modelViewProjectionMat;
 	modelViewProjectionMat.mul(projectionMat, modelViewMat);
-	lineShader->setMatrix(modelViewMat, modelViewProjectionMat);
+	
+	lineShader->setMatrix(modelMat, modelViewMat, modelViewProjectionMat);
 }

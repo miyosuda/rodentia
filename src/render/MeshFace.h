@@ -15,7 +15,8 @@ public:
 	MeshFace( Material* material_,
 			  const MeshFaceData& meshFaceData );
 	~MeshFace();
-	void draw( const Matrix4f& modelViewMat, 
+	void draw( const Matrix4f& modelMat,
+			   const Matrix4f& modelViewMat, 
 			   const Matrix4f& projectionMat );
 
 	const MeshFaceData& debugGetMeshFaceData() const {

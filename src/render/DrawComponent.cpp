@@ -22,15 +22,16 @@ void DrawComponent::draw(const Camera& camera, const Matrix4f& rigidBodyMat) con
 	const Matrix4f& cameraInvMat = camera.getInvMat();
 	const Matrix4f& projectionMat = camera.getProjectionMat();
 
-	Matrix4f mat;
-	mat.mul(rigidBodyMat, scaleMat);
+	Matrix4f modelMat;
+	modelMat.mul(rigidBodyMat, scaleMat);
 
 	Matrix4f modelViewMat;
-	modelViewMat.mul(cameraInvMat, mat);
+	modelViewMat.mul(cameraInvMat, modelMat);
 
 	Matrix4f modelViewProjectionMat;
 	modelViewProjectionMat.mul(projectionMat, modelViewMat);
 
-	mesh->draw(modelViewMat,
+	mesh->draw(modelMat,
+			   modelViewMat,
 			   modelViewProjectionMat);
 }

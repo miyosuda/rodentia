@@ -25,7 +25,8 @@ public:
 	int getAttribLocation(const char* name);
 
 	virtual bool init()=0;
-	virtual void setMatrix(const Matrix4f& modelViewMat,
+	virtual void setMatrix(const Matrix4f& modelMat,
+						   const Matrix4f& modelViewMat,
 						   const Matrix4f& modelViewProjectionMat) const;
 	virtual void beginRender(const float* vertices) const;
 	virtual void render(const short* indices, int indicesSize) const; 

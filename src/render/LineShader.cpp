@@ -46,7 +46,8 @@ bool LineShader::init() {
 /**
  * <!--  setMatrix():  -->
  */
-void LineShader::setMatrix(const Matrix4f& modelViewMat,
+void LineShader::setMatrix(const Matrix4f& modelMat,
+						   const Matrix4f& modelViewMat,
 						   const Matrix4f& modelViewProjectionMat) const {
 
 	// Set model view projection matrix

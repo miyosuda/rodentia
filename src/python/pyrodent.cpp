@@ -17,9 +17,7 @@ static Environment* createEnvironment() {
 }
 
 static bool initEnvironment(Environment* environment, int width, int height) {
-	environment->init();
-
-	if( !environment->initRenderer(width, height, true) ) {
+	if( !environment->init(width, height, true) ) {
 		return false;
 	}
 	

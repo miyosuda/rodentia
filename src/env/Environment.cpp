@@ -292,7 +292,7 @@ btCollisionShape* CollisionShapeManager::getCylinderShape(float halfExtentX,
 //      [Environment]
 //---------------------------
 
-void Environment::init() {
+bool Environment::init(int width, int height, bool offscreen) {	
 	// Setup the basic world
 	configuration = new btDefaultCollisionConfiguration();
 
@@ -311,16 +311,23 @@ void Environment::init() {
 
 	nextObjId = 0;
 
+	bool ret = initRenderer(width, height, offscreen);
+	if( !ret ) {
+		return false;
+	}
+	
 	// Add floor stage object
 	addBox(200.0f, 10.0f, 200.0f,
 		   0.0f, -10.0f, 0.0f,
 		   0.0f,
-		   false);	
+		   false);
 
 	world->setGravity(btVector3(0, -10, 0));
 
 	// Add agent object
 	prepareAgent();
+
+	return true;
 }
 
 void Environment::prepareAgent() {
@@ -422,11 +429,22 @@ void Environment::step(const Action& action, bool updateCamera) {
 		checkCollision();
 		
 		// Debug drawing
-		if( debugDrawer != nullptr && renderer != nullptr ) {
-			const Camera& camera = renderer->getCamera();
-			debugDrawer->prepare(camera.getInvMat(),
-								 camera.getProjectionMat());
-			world->debugDrawWorld();
+		if( renderer != nullptr ) {
+			// Draw objects
+			for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
+				EnvironmentObject* object = itr->second;
+				object->draw(renderer->getCamera());
+			}
+
+			if( debugDrawer != nullptr) {
+				// TODO: not drawn when drawing object mesh.
+				glDisable(GL_DEPTH_TEST);
+				const Camera& camera = renderer->getCamera();
+				debugDrawer->prepare(camera.getInvMat(),
+									 camera.getProjectionMat());
+				world->debugDrawWorld();
+				glEnable(GL_DEPTH_TEST);
+			}
 		}
 	}
 
@@ -443,7 +461,7 @@ int Environment::addBox(float halfExtentX, float halfExtentY, float halfExtentZ,
 																halfExtentY,
 																halfExtentZ);
 	// TODO:
-	Texture* texture = textureManager.getColorTexture(1.0f, 0.0f, 0.0f);
+	Texture* texture = textureManager.getColorTexture(1.0f, 1.0f, 1.0f);
 	Shader* shader = shaderManager.getShader("diffuse");
 	Material* material = new Material(texture, shader);
 	const Mesh* mesh = meshManager.getBoxMesh(material);

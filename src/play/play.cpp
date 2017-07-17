@@ -79,9 +79,7 @@ void playInit(int width, int height) {
 	trackBall.resize(width, height);
 #endif
 
-	environment.init();
-
-	environment.initRenderer(width, height, false);
+	environment.init(width, height, false);
 
 	// Locate test objects
 	environment.addBox(3.0f, 3.0f, 3.0f,

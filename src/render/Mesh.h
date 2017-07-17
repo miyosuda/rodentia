@@ -16,7 +16,8 @@ public:
 	Mesh() {}
 	~Mesh();
 	void addMeshFace(MeshFace* meshFace);
-	void draw( const Matrix4f& modelViewMat, 
+	void draw( const Matrix4f& modelMat,
+			   const Matrix4f& modelViewMat, 
 			   const Matrix4f& projectionMat ) const;
 
 	int debugGetMeshFaceSize() const {

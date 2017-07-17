@@ -39,8 +39,6 @@ int Shader::compileShader(GLenum type, const char* src) {
 		glGetShaderInfoLog(shader, logLength, &logLength, log);
 		printf("Shader compile log:\n%s\n", log);
 		free(log);
-	} else {
-		//printf("Shader compile OK!\n");
 	}
 	
 	GLint status;
@@ -152,7 +150,8 @@ int Shader::getAttribLocation(const char* name) {
 /**
  * <!--  setMatrix():  -->
  */
-void Shader::setMatrix(const Matrix4f& modelViewMat,
+void Shader::setMatrix(const Matrix4f& modelMat,
+					   const Matrix4f& modelViewMat,
 					   const Matrix4f& modelViewProjectionMat) const {
 }
 

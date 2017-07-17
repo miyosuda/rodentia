@@ -17,14 +17,14 @@ static const char* vertShaderSrc =
 	"" 	
 	"void main() "
 	"{ "
-	"    vec3 eyeNormal = normalize(normalMatrix * vertexNormal); "
-	"    vec3 lightPosition = vec3(-1.0, -0.5, -1.0); "
+	"    vec3 normal = normalize(normalMatrix * vertexNormal); "
+	"    vec3 lightDir = vec3(1.0, -0.5, 0.3); "
 	"    vec4 diffuseColor = vec4(1.0, 1.0, 1.0, 1.0); "
 	"    vec4 ambientColor = vec4(0.3, 0.3, 0.3, 1.0); "
 	"    "
-	"    float nDotVP = max(0.0, dot(eyeNormal, normalize(lightPosition)));"
+	"    float nDotL = max(0.0, dot(normal, normalize(-lightDir)));"
 	"    texCoord = vertexTexCoord; "
-	"    varyColor = diffuseColor * nDotVP + ambientColor; "
+	"    varyColor = diffuseColor * nDotL + ambientColor; "
 	"    varyColor.w = 1.0;	"
 	"    "
 	"    gl_Position = modelViewProjectionMatrix * vertexPosition; "
@@ -40,7 +40,7 @@ static const char* fragShaderSrc =
 	" "
 	"void main() "
 	"{ "
-	"    vec4 baseColor = texture2D(texSampler2D, texCoord); " 	
+	"    vec4 baseColor = texture2D(texSampler2D, texCoord); "
 	"    gl_FragColor = baseColor * varyColor; "
 	"} ";
 
@@ -65,12 +65,13 @@ bool DiffuseShader::init() {
 /**
  * <!--  setMatrix():  -->
  */
-void DiffuseShader::setMatrix(const Matrix4f& modelViewMat,
+void DiffuseShader::setMatrix(const Matrix4f& modelMat,
+							  const Matrix4f& modelViewMat,
 							  const Matrix4f& modelViewProjectionMat) const {
-
+	
 	// Set normal matrix by removing translate part.
 	Matrix3f normalMat;
-	normalMat.set(modelViewMat);
+	normalMat.set(modelMat);
 
 	glUniformMatrix3fv( normalMatrixHandle, 1, GL_FALSE,
 						(GLfloat*)normalMat.getPointer() );

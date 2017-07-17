@@ -8,6 +8,7 @@
  * <!--  draw():  -->
  */
 void Material::draw(const MeshFaceData& meshFaceData,
+					const Matrix4f& modelMat,
 					const Matrix4f& modelViewMat,
 					const Matrix4f& modelViewProjectionMat) {
 
@@ -19,7 +20,7 @@ void Material::draw(const MeshFaceData& meshFaceData,
 	shader->use();
 	shader->beginRender(meshFaceData.getVertices());
 
-	shader->setMatrix(modelViewMat, modelViewProjectionMat);
+	shader->setMatrix(modelMat, modelViewMat, modelViewProjectionMat);
 
 	shader->render(meshFaceData.getIndices(),
 				   meshFaceData.getIndicesSize());
