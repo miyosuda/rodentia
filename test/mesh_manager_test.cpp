@@ -73,7 +73,7 @@ namespace {
 
 		// Check vertex and index size
 		ASSERT_EQ(verticesSize, 20*20*8);
-		ASSERT_EQ(indicesSize, 20*20*6);
+		ASSERT_EQ(indicesSize, (20-1)*(20-1)*6);
 
 		// Check vetex range
 		const float* vertices = meshFaceData0.getVertices();

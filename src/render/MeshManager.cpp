@@ -131,7 +131,7 @@ const Mesh* MeshManager::getSphereMesh(Material* material) {
 			}
 		}
 
-		int indicesSize = rings * sectors * 6;
+		int indicesSize = (rings-1) * (sectors-1) * 6;
 		short* indices = new short[indicesSize];
 		short* ind = indices;
 		

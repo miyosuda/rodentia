@@ -19,7 +19,7 @@ namespace {
 
 		for(int i=0; i<indicesSize; ++i) {
 			indices[i] = (short)(i*2);
-		}		
+		}
 
 		MeshFaceData meshFaceData(vertices, verticesSize, indices, indicesSize);
 
@@ -29,7 +29,7 @@ namespace {
 
 		// Check buffer size
 		ASSERT_EQ(verticesSize, meshFaceData.getVerticesSize());
-		ASSERT_EQ(indicesSize, meshFaceData.getIndicesSize());		
+		ASSERT_EQ(indicesSize, meshFaceData.getIndicesSize());
 
 		delete [] vertices;
 		delete [] indices;
