@@ -8,7 +8,7 @@ import unittest
 import numpy as np
 import scipy.misc
 
-import rodent
+import rodent_module
 
 def to_nd_float_array(list_obj):
   return np.array(list_obj, dtype=np.float32)
@@ -16,13 +16,13 @@ def to_nd_float_array(list_obj):
 
 class RodentTest(unittest.TestCase):
   def testVersion(self):
-    version = rodent.version();
+    version = rodent_module.version();
     self.assertEqual(version, "0.1")
 
   def testEnv(self):
     width  = 84 * 4
     height = 84 * 4
-    env = rodent.Env(width=width, height=height)
+    env = rodent_module.Env(width=width, height=height)
 
     # Check setup interfaces
     # Add box

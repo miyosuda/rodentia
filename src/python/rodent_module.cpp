@@ -5,7 +5,7 @@
 
 #include "Environment.h"
 
-#define RODENT_WRAPPER_VERSION "0.1"
+#define RODENT_MODULE_VERSION "0.1"
 
 //---------------------------------------------------------
 //                    [Interface]
@@ -470,7 +470,7 @@ static PyTypeObject rodent_EnvType = {
 
 
 static PyObject* moduleVersion(PyObject* self) {
-	return Py_BuildValue("s", RODENT_WRAPPER_VERSION);
+	return Py_BuildValue("s", RODENT_MODULE_VERSION);
 }
 
 static PyMethodDef moduleMethods[] = {
@@ -483,14 +483,14 @@ static PyMethodDef moduleMethods[] = {
 extern "C" {
 #endif
 
-void initrodent() {
+void initrodent_module() {
 	PyObject* m;
 
 	if (PyType_Ready(&rodent_EnvType) < 0) {
 		return;
 	}
 	
-	m = Py_InitModule3("rodent", moduleMethods, "Rodent API module");
+	m = Py_InitModule3("rodent_module", moduleMethods, "Rodent API module");
 
 	Py_INCREF(&rodent_EnvType);
 	PyModule_AddObject(m, "Env", (PyObject*)&rodent_EnvType);

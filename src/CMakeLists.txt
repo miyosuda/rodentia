@@ -32,8 +32,8 @@ add_executable(rodent
 	play/main.cpp
 )
 
-add_library(pyrodent SHARED
-	python/pyrodent.cpp
+add_library(rodent_module SHARED
+	python/rodent_module.cpp
 )
 
 include_directories(common geom play render env)
@@ -78,7 +78,7 @@ target_link_libraries(rodent
 					rodent_code
 					)
 
-target_link_libraries(pyrodent
+target_link_libraries(rodent_module
 					${OPENGL_LIBRARIES}
 					${GLFW_LIBRARIES}
 					${BULLET_LIBRARIES}

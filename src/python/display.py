@@ -10,7 +10,7 @@ import os
 from collections import deque
 import pygame, sys
 from pygame.locals import *
-import rodent
+import rodent_module
 
 BLACK = (0, 0, 0)
 
@@ -21,7 +21,7 @@ class Display(object):
   def __init__(self, display_size):
     self.width  = 640
     self.height = 480
-    self.env = rodent.Env(width=self.width, height=self.height)
+    self.env = rodent_module.Env(width=self.width, height=self.height)
 
     self.env.add_box(half_extent=to_nd_float_array([5.0, 5.0, 5.0]),
                      pos=to_nd_float_array([10.0, 5.0, 10.0]),
