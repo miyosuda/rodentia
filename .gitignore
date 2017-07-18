@@ -8,5 +8,9 @@ bin/
 **/cmake_install.cmake
 *.pyc
 
+dist/
+build/
+rodent.egg-info/
+
 debug.png
 check.py
