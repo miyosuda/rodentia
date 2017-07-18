@@ -18,7 +18,7 @@ static const char* vertShaderSrc =
 	"void main() "
 	"{ "
 	"    vec3 normal = normalize(normalMatrix * vertexNormal); "
-	"    vec3 lightDir = vec3(1.0, -0.5, 0.3); "
+	"    vec3 lightDir = vec3(1.0, -0.4, 0.3); "
 	"    vec4 diffuseColor = vec4(1.0, 1.0, 1.0, 1.0); "
 	"    vec4 ambientColor = vec4(0.3, 0.3, 0.3, 1.0); "
 	"    "
@@ -90,6 +90,8 @@ void DiffuseShader::beginRender(const float* vertices) const {
 
 	const float* texCoords = vertices;
 	texCoords += 6;
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE,
 						  4*8, vertices);

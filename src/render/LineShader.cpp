@@ -59,6 +59,8 @@ void LineShader::setMatrix(const Matrix4f& modelMat,
  * <!--  beginRender():  -->
  */
 void LineShader::beginRender(const float* vertices) const {
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	
 	// Now assuming 3 floats packed vertices
 	glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE,
 						  0, vertices);
