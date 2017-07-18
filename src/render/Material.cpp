@@ -14,7 +14,10 @@ void Material::draw(const MeshFaceData& meshFaceData,
 
 	if( texture != nullptr ) {
 		texture->bind();
+		glEnable(GL_TEXTURE_2D);
 		glActiveTexture(GL_TEXTURE0);
+	} else {
+		glDisable(GL_TEXTURE_2D);
 	}
 
 	shader->use();
