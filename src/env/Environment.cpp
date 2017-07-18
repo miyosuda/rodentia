@@ -88,6 +88,7 @@ AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
 												 float rot,
 												 btCollisionShape* shape,
 												 btDynamicsWorld* world_,
+												 btRigidBody* floorBody,
 												 int collisionId)
 	:
 	RigidBodyComponent(mass,
@@ -105,7 +106,6 @@ AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
 
 	// Set stand-up constraint
 	// TODO: Agent can't move vertically with this constraint setting
-	/*
 	btTransform frameInA, frameInB;
 	frameInA = btTransform::getIdentity();
 	frameInB = btTransform::getIdentity();	
@@ -119,7 +119,6 @@ AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
 	constraint->setLinearLowerLimit(btVector3(-SIMD_INFINITY, 0, -SIMD_INFINITY));
 	constraint->setLinearUpperLimit(btVector3( SIMD_INFINITY, 0,  SIMD_INFINITY));
 	world->addConstraint(constraint);
-	*/
 }
 
 void AgentRigidBodyComponent::control(const Action& action) {
@@ -232,6 +231,7 @@ StageObject::StageObject(float posX, float posY, float posZ,
 //---------------------------
 AgentObject::AgentObject(btCollisionShape* shape,
 						 btDynamicsWorld* world,
+						 btRigidBody* floorBody,
 						 int collisionId)
 	:
 	EnvironmentObject() {
@@ -240,6 +240,7 @@ AgentObject::AgentObject(btCollisionShape* shape,
 													 0.0f,
 													 shape,
 													 world,
+													 floorBody,
 													 collisionId);
 }
 
@@ -317,23 +318,25 @@ bool Environment::init(int width, int height, bool offscreen) {
 	}
 	
 	// Add floor stage object
-	addBox(200.0f, 10.0f, 200.0f,
-		   0.0f, -10.0f, 0.0f,
-		   0.0f,
-		   false);
+	int floorObjId = addBox(200.0f, 10.0f, 200.0f,
+							0.0f, -10.0f, 0.0f,
+							0.0f,
+							false);
 
 	world->setGravity(btVector3(0, -10, 0));
 
 	// Add agent object
-	prepareAgent();
+	prepareAgent(floorObjId);
 
 	return true;
 }
 
-void Environment::prepareAgent() {
-	// TOOD: constraint用にfloorを渡すようにしないといけない
+void Environment::prepareAgent(int floorObjId) {
+	EnvironmentObject* floorObj = findObject(floorObjId);
+	btRigidBody* floorBody = floorObj->getRigidBody();
+	
 	btCollisionShape* shape = collisionShapeManager.getCylinderShape(1.0f, 1.0f, 1.0f);
-	agent = new AgentObject(shape, world, ID_AGENT);
+	agent = new AgentObject(shape, world, floorBody, ID_AGENT);
 }
 
 void Environment::release() {
@@ -516,7 +519,17 @@ int Environment::addObject(btCollisionShape* shape,
 	return id;
 }
 
-void Environment::removeObj(int id) {
+EnvironmentObject* Environment::findObject(int id) {
+	auto itr = objectMap.find(id);
+	if( itr != objectMap.end() ) {
+		EnvironmentObject* object = objectMap[id];
+		return object;
+	} else {
+		return nullptr;
+	}
+}
+
+void Environment::removeObject(int id) {
 	auto itr = objectMap.find(id);
 	if( itr != objectMap.end() ) {
 		EnvironmentObject* object = objectMap[id];

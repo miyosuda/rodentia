@@ -58,7 +58,7 @@ static int addSphere(Environment* environment,
 
 static void removeObj(Environment* environment, 
 					  int id) {
-	environment->removeObj(id);
+	environment->removeObject(id);
 }
 
 static void locateAgent(Environment* environment,

@@ -82,6 +82,7 @@ public:
 	int getCollisionId() const;
 	virtual void control(const Action& action);
 	void getMat(Matrix4f& mat) const;
+	btRigidBody* getRigidBody() { return body; }
 };
 
 class AgentRigidBodyComponent : public RigidBodyComponent {
@@ -91,6 +92,7 @@ public:
 							float rot,
 							btCollisionShape* shape,
 							btDynamicsWorld* world,
+							btRigidBody* floorBody,
 							int collisionId);
 	virtual void control(const Action& action) override;
 	void getMat(Matrix4f& mat) const;
@@ -110,6 +112,9 @@ public:
 	int getCollisionId() const;
 	void getMat(Matrix4f& mat) const;
 	void draw(const Camera& camera) const;
+	btRigidBody* getRigidBody() {
+		return rigidBodyComponent->getRigidBody();
+	}
 };
 
 class StageObject : public EnvironmentObject {
@@ -127,6 +132,7 @@ class AgentObject : public EnvironmentObject {
 public:	
 	AgentObject(btCollisionShape* shape,
 				btDynamicsWorld* world,
+				btRigidBody* floorBody,
 				int collisionId);
 	void control(const Action& action);
 };
@@ -147,11 +153,11 @@ class Environment {
 
 	DebugDrawer* debugDrawer;
 	MeshManager meshManager;
-	TextureManager textureManager;	
+	TextureManager textureManager;
 	ShaderManager shaderManager;
 
 	bool initRenderer(int width, int height, bool offscreen);
-	void prepareAgent();
+	void prepareAgent(int floorObjId);
 	void checkCollision();
 	int addObject(btCollisionShape* shape,
 				  float posX, float posY, float posZ,
@@ -159,6 +165,7 @@ class Environment {
 				  bool detectCollision,
 				  const Mesh* mesh,
 				  const Vector3f& scale);
+	EnvironmentObject* findObject(int id);
 
 public:
 	Environment()
@@ -188,7 +195,7 @@ public:
 				  float posX, float posY, float posZ,
 				  float rot,
 				  bool detectCollision);
-	void removeObj(int id);
+	void removeObject(int id);
 	void locateAgent(float posX, float posY, float posZ,
 					 float rot);
 
