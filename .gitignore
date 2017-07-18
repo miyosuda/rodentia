@@ -6,4 +6,7 @@
 **/*.so
 bin/
 **/cmake_install.cmake
+*.pyc
+
 debug.png
+check.py
