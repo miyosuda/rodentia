@@ -9,6 +9,8 @@ add_library(rodent_code STATIC
 	play/TrackBall.cpp
 	play/play.cpp
 	env/Environment.cpp
+	env/RigidBodyComponent.cpp
+	env/EnvironmentObject.cpp
 	render/DebugDrawer.cpp
 	render/Renderer.cpp
 	render/OffscreenRenderer.cpp

@@ -4,6 +4,7 @@
 #include <numpy/arrayobject.h>
 
 #include "Environment.h"
+#include "Action.h"
 
 #define RODENT_MODULE_VERSION "0.1"
 

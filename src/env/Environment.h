@@ -11,37 +11,17 @@ using namespace std;
 #include "MeshManager.h"
 #include "TextureManager.h"
 #include "ShaderManager.h"
+#include "RigidBodyComponent.h"
 
-class Action {
-public:
-	int look;   // look left=[+], look right=[-]
-	int strafe; // strafe left=[+1], strafe right=[-1]
-	int move;   // forward=[+1], backward=[-1]
+class Action;
+class Matrix4f;
+class Vector3f;
+class Renderer;
+class DebugDrawer;
+class Camera;
+class EnvironmentObject;
+class AgentObject;
 
-	Action()
-		:
-		look(0),
-		strafe(0),
-		move(0) {
-	}
-
-	Action(int look_, int strafe_, int move_)
-		:
-		look(look_),
-		strafe(strafe_),
-		move(move_) {
-	}
-
-	void set(int look_, int strafe_, int move_) {
-		look   = look_;
-		strafe = strafe_;
-		move   = move_;
-	}
-
-	static int getActionSize() {
-		return 3;
-	}
-};
 
 // TODO: collision shapes sould be cached
 class CollisionShapeManager {
@@ -58,83 +38,6 @@ public:
 	btCollisionShape* getCylinderShape(float halfExtentX,
 									   float halfExtentY,
 									   float halfExtentZ);
-};
-
-class Matrix4f;
-class Vector3f;
-
-class Renderer;
-class DebugDrawer;
-
-class RigidBodyComponent {
-protected:
-	btDynamicsWorld* world;
-	btRigidBody* body;
-
-public:
-	RigidBodyComponent(float mass,
-					   float posX, float posY, float posZ,
-					   float rot,
-					   btCollisionShape* shape,
-					   btDynamicsWorld* world,
-					   int collisionId);
-	virtual ~RigidBodyComponent();
-	int getCollisionId() const;
-	virtual void control(const Action& action);
-	void getMat(Matrix4f& mat) const;
-	btRigidBody* getRigidBody() { return body; }
-};
-
-class AgentRigidBodyComponent : public RigidBodyComponent {
-public:
-	AgentRigidBodyComponent(float mass,
-							float posX, float posY, float posZ,
-							float rot,
-							btCollisionShape* shape,
-							btDynamicsWorld* world,
-							btRigidBody* floorBody,
-							int collisionId);
-	virtual void control(const Action& action) override;
-	void getMat(Matrix4f& mat) const;
-};
-
-class DrawComponent;
-class Camera;
-
-class EnvironmentObject {
-protected:
-	RigidBodyComponent* rigidBodyComponent;
-	DrawComponent* drawComponent;
-
-public:
-	EnvironmentObject();
-	virtual ~EnvironmentObject();
-	int getCollisionId() const;
-	void getMat(Matrix4f& mat) const;
-	void draw(const Camera& camera) const;
-	btRigidBody* getRigidBody() {
-		return rigidBodyComponent->getRigidBody();
-	}
-};
-
-class StageObject : public EnvironmentObject {
-public:
-	StageObject(float posX, float posY, float posZ,
-				float rot,
-				btCollisionShape* shape,
-				btDynamicsWorld* world,
-				int collisionId,
-				const Mesh* mesh,
-				const Vector3f& scale);
-};
-
-class AgentObject : public EnvironmentObject {
-public:	
-	AgentObject(btCollisionShape* shape,
-				btDynamicsWorld* world,
-				btRigidBody* floorBody,
-				int collisionId);
-	void control(const Action& action);
 };
 
 class Environment {
