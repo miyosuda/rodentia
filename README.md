@@ -31,3 +31,8 @@ Work in progress.
     $ make
     
 TODO: Direct include/lib path setting for numpy on MacOSX
+
+## Install
+	$ python setup.py bdist_wheel
+	$ cd dist
+	$ pip install rodent-0.0.1-py2-none-any.whl
