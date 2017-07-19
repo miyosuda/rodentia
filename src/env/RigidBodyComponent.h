@@ -23,7 +23,10 @@ public:
 	int getCollisionId() const;
 	virtual void control(const Action& action);
 	void getMat(Matrix4f& mat) const;
+	void locate(float posX, float posY, float posZ,
+				float rot);
 	btRigidBody* getRigidBody() { return body; }
+
 };
 
 class AgentRigidBodyComponent : public RigidBodyComponent {

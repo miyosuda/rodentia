@@ -78,3 +78,8 @@ AgentObject::AgentObject(btCollisionShape* shape,
 void AgentObject::control(const Action& action) {
 	rigidBodyComponent->control(action);
 }
+
+void AgentObject::locate(float posX, float posY, float posZ,
+						 float rot) {
+	rigidBodyComponent->locate(posX, posY, posZ, rot);
+}

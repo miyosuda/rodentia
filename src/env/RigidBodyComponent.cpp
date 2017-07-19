@@ -67,6 +67,15 @@ void RigidBodyComponent::getMat(Matrix4f& mat) const {
 	convertBtTransformToMatrix4f(body->getWorldTransform(), mat);
 }
 
+void RigidBodyComponent::locate(float posX, float posY, float posZ,
+								float rot) {
+	btTransform transform;
+	transform.setIdentity();
+	transform.setOrigin(btVector3(posX, posY, posZ));
+	transform.getBasis().setEulerZYX(0.0f, rot, 0.0f);
+	body->setWorldTransform(transform);
+}
+
 
 //---------------------------
 // [AgentRigidBodyComponent]

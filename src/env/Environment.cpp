@@ -309,7 +309,9 @@ void Environment::removeObject(int id) {
 
 void Environment::locateAgent(float posX, float posY, float posZ,
 							  float rot) {
-	// TODO: Not implemented yet
+	if( agent != nullptr ) {
+		agent->locate(posX, posY, posZ, rot);
+	}
 }
 
 bool Environment::initRenderer(int width, int height, bool offscreen) {

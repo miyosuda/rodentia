@@ -48,6 +48,8 @@ public:
 				btRigidBody* floorBody,
 				int collisionId);
 	void control(const Action& action);
+	void locate(float posX, float posY, float posZ,
+				float rot);
 };
 
 #endif
