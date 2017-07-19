@@ -1,5 +1,5 @@
 # Always prefer setuptools over distutils
-from setuptools import setup, find_packages
+from setuptools import setup #, find_packages
 
 setup(
   name='rodent',
@@ -15,8 +15,8 @@ setup(
   author_email='miyosuda@gmail.com',
 
   install_requires=['numpy'],  
-  packages=['rodent'],  
-  package_data={'rodent': ['rodent', 'rodent_module.so']},
+  packages=['rodent'],
+  package_data={'rodent': ['rodent_module.so']},
 
   license='Apache 2.0',
 

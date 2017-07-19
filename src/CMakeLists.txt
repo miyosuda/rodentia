@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.0)
 
+# OS-dependent specifics
+if(APPLE)
+  set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
+endif()
+
 add_library(rodent_code STATIC
 	play/TrackBall.cpp
 	play/play.cpp
@@ -35,6 +40,10 @@ add_executable(rodent
 add_library(rodent_module SHARED
 	python/rodent_module.cpp
 )
+
+set_target_properties(rodent_module PROPERTIES PREFIX "")
+set_target_properties(rodent_module PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/rodent)
+
 
 include_directories(common geom play render env)
 
