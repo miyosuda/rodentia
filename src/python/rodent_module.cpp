@@ -220,7 +220,7 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 	long* screenDims = new long[3];
 	screenDims[0] = frameBufferWidth;
 	screenDims[1] = frameBufferHeight;
-	screenDims[2] = 4;
+	screenDims[2] = 3;
 
 	PyArrayObject* screenArray = (PyArrayObject*)PyArray_SimpleNew(
 		3, // int nd

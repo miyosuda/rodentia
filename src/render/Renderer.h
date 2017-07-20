@@ -37,7 +37,7 @@ public:
 		return nullptr;
 	}
 	int getFrameBufferSize() const {
-		return frameBufferWidth * frameBufferHeight * 4;
+		return frameBufferWidth * frameBufferHeight * 3;
 	}
 };
 

@@ -33,7 +33,7 @@ class RodentTest(unittest.TestCase):
 
     # Add Sphere
     sphere_id = env.add_sphere(radius=2.0,
-                               pos=to_nd_float_array([-5.0, 2.0, -5.0]),
+                               pos=to_nd_float_array([0.0, 2.0, -5.0]),
                                rot=0.0,
                                detect_collision=True)
     print("sphere_id={}".format(sphere_id))
@@ -46,13 +46,13 @@ class RodentTest(unittest.TestCase):
     action = np.array([10, 0, 0], dtype=np.int32)
 
     for i in range(3):
-      obs = env.step(action=action)
+      obs = env.step(action=action, num_steps=1)
     
     screen = obs["screen"]
     scipy.misc.imsave("debug.png", screen)
 
     # Check shape
-    self.assertEqual( (width,height,4), screen.shape )
+    self.assertEqual( (width,height,3), screen.shape )
 
     # dtype should be uint8
     self.assertEqual(np.uint8, screen.dtype)

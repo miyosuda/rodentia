@@ -20,6 +20,14 @@ bool OffscreenRenderer::init(int width, int height) {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
+	// RGB 24bit format (No alpha)
+	glfwWindowHint(GLFW_RED_BITS, 8);
+	glfwWindowHint(GLFW_GREEN_BITS, 8);
+	glfwWindowHint(GLFW_BLUE_BITS, 8);
+	
+	// TODO: Tone jump occurs when explicitly set zero alpha bits.
+	//glfwWindowHint(GLFW_ALPHA_BITS, 0);
+
 #if defined(__APPLE__)
 	// Workaround for retina MacBook Pro
 	// (MacOSX frame buffer size is doubled (because of retina screen?)
@@ -77,6 +85,6 @@ void OffscreenRenderer::renderPost() {
 	glfwGetOSMesaColorBuffer(window, &frameBufferWidth, &frameBufferHeight,
 							 NULL, &buffer);
 #else
-	glReadPixels(0, 0, frameBufferWidth, frameBufferHeight, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	glReadPixels(0, 0, frameBufferWidth, frameBufferHeight, GL_RGB, GL_UNSIGNED_BYTE, buffer);
 #endif
 }

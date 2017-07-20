@@ -69,7 +69,7 @@ class Display(object):
     action = self.get_action()
     obs = self.env.step(action=action, num_steps=1)
     screen = obs["screen"]
-    image = pygame.image.frombuffer(screen, (self.width,self.height), 'RGBA')
+    image = pygame.image.frombuffer(screen, (self.width,self.height), 'RGB')
     self.surface.blit(image, (0, 0))
 
     collided = obs["collided"]
@@ -92,7 +92,6 @@ def main(args):
     
     display.update()
     clock.tick(FPS)
-    
     
 if __name__ == '__main__':
   tf.app.run()

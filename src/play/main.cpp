@@ -144,6 +144,14 @@ int main(int argc, char** argv) {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
+	// RGB 24bit format (No alpha)
+	glfwWindowHint(GLFW_RED_BITS, 8);
+	glfwWindowHint(GLFW_GREEN_BITS, 8);
+	glfwWindowHint(GLFW_BLUE_BITS, 8);
+	
+	// TODO: Tone jump occurs when explicitly set zero alpha bits.
+	//glfwWindowHint(GLFW_ALPHA_BITS, 0);
+
 	// Disable resizing
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
