@@ -58,7 +58,7 @@ void playKey(int actionKey, bool press) {
 		break;
 	case KEY_ACTION_MOVE_FORWARD:
 		moveForwardState = press;
-		break;		 
+		break;
 	case KEY_ACTION_MOVE_BACKWARD:
 		moveBackwardState = press;
 		break;

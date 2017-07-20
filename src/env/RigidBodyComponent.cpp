@@ -105,7 +105,7 @@ AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
 	// TODO: Agent can't move vertically with this constraint setting
 	btTransform frameInA, frameInB;
 	frameInA = btTransform::getIdentity();
-	frameInB = btTransform::getIdentity();	
+	frameInB = btTransform::getIdentity();
 	frameInA.setOrigin(btVector3(0.0, 10.0, 0.0));
 	frameInB.setOrigin(btVector3(0.0, -1.0, 0.0));
 	btGeneric6DofConstraint* constraint =

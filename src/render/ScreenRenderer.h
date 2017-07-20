@@ -14,7 +14,7 @@ public:
 		Renderer() {
 	}
 	virtual bool init(int width, int height) override;
-	virtual void render() override;
+	virtual void renderPost() override;
 	virtual void release() override;
 };
 

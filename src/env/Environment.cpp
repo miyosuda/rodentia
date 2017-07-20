@@ -178,7 +178,7 @@ void Environment::checkCollision() {
 	}
 }
 
-void Environment::step(const Action& action, bool updateCamera) {
+void Environment::step(const Action& action, bool agentView) {
 	const float deltaTime = 1.0f/60.0f;
 
 	if( renderer != nullptr ) {
@@ -192,8 +192,7 @@ void Environment::step(const Action& action, bool updateCamera) {
 		
 		world->stepSimulation(deltaTime);
 
-		if( updateCamera ) {
-			// TODO: updateCamera周りちゃんと整理すること
+		if( agentView ) {
 			updateCameraToAgentView();
 		}
 
@@ -221,7 +220,7 @@ void Environment::step(const Action& action, bool updateCamera) {
 	}
 
 	if( renderer != nullptr ) {
-		renderer->render();
+		renderer->renderPost();
 	}
 }
 

@@ -46,7 +46,7 @@ static int addBox(Environment* environment,
 							   detectCollision);
 }
 
-static int addSphere(Environment* environment, 
+static int addSphere(Environment* environment,
 					 float radius,
 					 float posX, float posY, float posZ,
 					 float rot,
@@ -429,7 +429,7 @@ static PyMethodDef EnvObject_methods[] = {
 
 static PyTypeObject rodent_EnvType = {
 	PyObject_HEAD_INIT(nullptr) 0, // ob_size
-	"rodent.Env",                  // tp_name
+	"rodent_module.Env",           // tp_name
 	sizeof(EnvObject),             // tp_basicsize
 	0,                             // tp_itemsize
 	(destructor)EnvObject_dealloc, // tp_dealloc

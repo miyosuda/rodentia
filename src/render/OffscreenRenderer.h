@@ -20,7 +20,7 @@ public:
 
 	virtual bool init(int width, int height) override;
 	virtual void release() override;
-	virtual void render() override;
+	virtual void renderPost() override;
 
 	virtual const void* getBuffer() const override {
 		return buffer;

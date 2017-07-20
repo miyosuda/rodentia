@@ -89,7 +89,7 @@ public:
 
 	bool init(int width, int height, bool offscreen);
 	void release();
-	void step(const Action& action, bool updateCamera=false);
+	void step(const Action& action, bool agentView=false);
 	int addBox(float halfExtentX, float halfExtentY, float halfExtentZ,
 			   float posX, float posY, float posZ,
 			   float rot,

@@ -10,6 +10,8 @@ protected:
 	Camera camera;
 	int frameBufferWidth;
 	int frameBufferHeight;
+
+	void initCamera(float ratio, bool flipping);
 	
 public:
 	Renderer()
@@ -25,7 +27,7 @@ public:
 	void renderPre();
 	
 	virtual bool init(int width, int height) = 0;
-	virtual void render() = 0;	
+	virtual void renderPost() = 0;	
 	virtual void release() = 0;
 
 	int getFrameBufferWidth()  const { return frameBufferWidth;  }
