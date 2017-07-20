@@ -2,7 +2,6 @@
 
 Work in progress.
 
-
 ## Preparation (for MacOSX)
 
 ### Install Bullet
@@ -23,16 +22,20 @@ Work in progress.
     $ make install
 
 ### Install GLFW
+
     $ brew install glfw3
 
-## Build
+## Build Rodent
+
+    $ git clone https://github.com/miyosuda/rodent.git
     $ cd rodent
     $ cmake .
-    $ make
+    $ make -j4
     
 TODO: Direct include/lib path setting for numpy on MacOSX
 
 ## Install
-	$ python setup.py bdist_wheel
-	$ cd dist
-	$ pip install rodent-0.0.1-py2-none-any.whl
+
+    $ python setup.py bdist_wheel
+    $ cd dist
+    $ pip install rodent-0.0.1-py2-none-any.whl

@@ -6,7 +6,7 @@
 #include "Environment.h"
 #include "Action.h"
 
-#define RODENT_MODULE_VERSION "0.1"
+#define RODENT_MODULE_VERSION "0.0.1"
 
 //---------------------------------------------------------
 //                    [Interface]
@@ -30,9 +30,8 @@ static void releaseEnvironment(Environment* environment) {
 	delete environment;
 }
 
-static void stepEnvironment(Environment* environment, const Action& action) {
-	// TODO: updateCamera周り整理すること
-	environment->step(action, true);
+static void stepEnvironment(Environment* environment, const Action& action, int stepNum) {
+	environment->step(action, stepNum, true);
 }
 
 static int addBox(Environment* environment,
@@ -179,10 +178,13 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 	PyObject* actionObj = nullptr;
 
 	// Get argument
-	const char* kwlist[] = {"action", nullptr};
+	const char* kwlist[] = {"action", "num_steps", nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!", const_cast<char**>(kwlist),
-									 &PyArray_Type, &actionObj)) {
+	int stepNum = 1;
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!i", const_cast<char**>(kwlist),
+									 &PyArray_Type, &actionObj,
+									 &stepNum)) {
 		return nullptr;
 	}
 	
@@ -201,7 +203,7 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 	Action action(actionArr[0], actionArr[1], actionArr[2]);
 
 	// Process step
-	stepEnvironment(self->environment, action);
+	stepEnvironment(self->environment, action, stepNum);
 
 	// Create output dictionary
 	PyObject* resultDic = PyDict_New();
@@ -232,13 +234,17 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 	// Put list to dictionary
 	PyDict_SetItemString(resultDic, "screen", (PyObject*)screenArray);
 
-	const vector<int>& collidedIds = self->environment->getCollidedIds();
+	const set<int>& collidedIds = self->environment->getCollidedIds();
 
 	size_t collidedIdSize = collidedIds.size();
 	PyObject* collidedIdTuple = PyTuple_New(collidedIdSize);
-	for (size_t i=0; i<collidedIdSize; ++i) {
-		PyObject* item = PyInt_FromLong(collidedIds[i]);
+	
+	int i=0;
+	for(auto it=collidedIds.begin(); it!=collidedIds.end(); ++it) {
+		int collidedId = *it;
+		PyObject* item = PyInt_FromLong(collidedId);
 		PyTuple_SetItem(collidedIdTuple, i, item);
+		i += 1;
 	}
 
 	// Put tuple to dictionary

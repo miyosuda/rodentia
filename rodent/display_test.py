@@ -67,7 +67,7 @@ class Display(object):
 
   def process(self):
     action = self.get_action()
-    obs = self.env.step(action=action)
+    obs = self.env.step(action=action, num_steps=1)
     screen = obs["screen"]
     image = pygame.image.frombuffer(screen, (self.width,self.height), 'RGBA')
     self.surface.blit(image, (0, 0))

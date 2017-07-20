@@ -1,6 +1,7 @@
 #include "play.h"
 
 #include <assert.h>
+#include <math.h>
 
 #include "glinc.h"
 #include "TrackBall.h"
@@ -85,7 +86,7 @@ void playInit(int width, int height) {
 	// Locate test objects
 	environment.addBox(3.0f, 3.0f, 3.0f,
 					   10.0f, 3.0f, 3.0f,
-					   3.141592f * 0.25f,
+					   M_PI * 0.25f,
 					   false);
 	environment.addSphere(1.0f,
 						  5.0f, 1.0f, -5.0f,
@@ -131,7 +132,7 @@ void playStep() {
 	Action action;
 	getAction(action);
 	
-	environment.step(action);
+	environment.step(action, 1, false);
 }
 
 /**

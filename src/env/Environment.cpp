@@ -141,9 +141,7 @@ void Environment::release() {
 	nextObjId = 0;
 }
 
-void Environment::checkCollision() {
-	collidedIds.clear();
-	
+void Environment::checkCollision() {	
 	int numManifolds = world->getDispatcher()->getNumManifolds();
 	
 	for(int i=0; i<numManifolds; ++i) {
@@ -166,19 +164,19 @@ void Environment::checkCollision() {
 			if( obj0->getUserIndex() == ID_AGENT ) {
 				int otherId = obj1->getUserIndex();
 				if( otherId != ID_AGENT && otherId != ID_IGNORE_COLLISION ) {
-					collidedIds.push_back(otherId);
+					collidedIds.insert(otherId);
 				}
 			} else if( obj1->getUserIndex() == ID_AGENT ) {
 				int otherId = obj0->getUserIndex();
 				if( otherId != ID_AGENT && otherId != ID_IGNORE_COLLISION ) {
-					collidedIds.push_back(otherId);
+					collidedIds.insert(otherId);
 				}
 			}
 		}
 	}
 }
 
-void Environment::step(const Action& action, bool agentView) {
+void Environment::step(const Action& action, int stepNum, bool agentView) {
 	const float deltaTime = 1.0f/60.0f;
 
 	if( renderer != nullptr ) {
@@ -186,18 +184,22 @@ void Environment::step(const Action& action, bool agentView) {
 	}
 	
 	if(world) {
-		if( agent != nullptr ) {
-			agent->control(action);
+		collidedIds.clear();
+
+		for(int i=0; i<stepNum; ++i) {
+			if( agent != nullptr ) {
+				agent->control(action);
+			}
+
+			world->stepSimulation(deltaTime);
+
+			// Collision check
+			checkCollision();
 		}
-		
-		world->stepSimulation(deltaTime);
 
 		if( agentView ) {
 			updateCameraToAgentView();
 		}
-
-		// Collision check
-		checkCollision();
 		
 		// Debug drawing
 		if( renderer != nullptr ) {

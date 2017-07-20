@@ -46,8 +46,8 @@ class Environment(object):
     self.env.locate_agent(pos=to_nd_float_array([0.0, 1.0, 0.0]),
                           rot=0.0)
 
-  def step(self, action):
+  def step(self, action, num_steps=1):
     """
     convert list arg to numpy ndarray.
     """
-    return self.env.step(action=to_nd_int_array(action))
+    return self.env.step(action=to_nd_int_array(action), num_steps)

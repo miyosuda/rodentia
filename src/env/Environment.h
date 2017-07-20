@@ -5,7 +5,7 @@
 #include "btBulletDynamicsCommon.h"
 #include <math.h>
 #include <map>
-#include <vector>
+#include <set>
 using namespace std;
 
 #include "MeshManager.h"
@@ -51,7 +51,7 @@ class Environment {
 	AgentObject* agent;
 	Renderer* renderer;
 	int nextObjId;
-	vector<int> collidedIds;
+	set<int> collidedIds;
 	map<int, EnvironmentObject*> objectMap; // <obj-id, EnvironmentObject>
 
 	DebugDrawer* debugDrawer;
@@ -89,7 +89,7 @@ public:
 
 	bool init(int width, int height, bool offscreen);
 	void release();
-	void step(const Action& action, bool agentView=false);
+	void step(const Action& action, int stepNum, bool agentView);
 	int addBox(float halfExtentX, float halfExtentY, float halfExtentZ,
 			   float posX, float posY, float posZ,
 			   float rot,
@@ -108,7 +108,7 @@ public:
 	int getFrameBufferSize() const;
 	void setRenderCamera(const Matrix4f& mat);
 
-	const vector<int>& getCollidedIds() const { return collidedIds; }
+	const set<int>& getCollidedIds() const { return collidedIds; }
 	void updateCameraToAgentView();
 };
 
