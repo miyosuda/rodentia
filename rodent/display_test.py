@@ -3,7 +3,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import tensorflow as tf
 import numpy as np
 import cv2
 import os
@@ -77,7 +76,7 @@ class Display(object):
       for id in collided:
         self.env.remove_obj(id)
 
-def main(args):
+def main():
   display_size = (640, 480)
   display = Display(display_size)
   clock = pygame.time.Clock()
@@ -94,4 +93,4 @@ def main(args):
     clock.tick(FPS)
     
 if __name__ == '__main__':
-  tf.app.run()
+  main()
