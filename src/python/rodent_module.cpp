@@ -8,6 +8,11 @@
 
 #define RODENT_MODULE_VERSION "0.0.1"
 
+#if PY_MAJOR_VERSION >= 3
+#define PyInt_FromLong PyLong_FromLong
+#define PyString_FromString PyBytes_FromString
+#endif
+
 //---------------------------------------------------------
 //                    [Interface]
 //---------------------------------------------------------
@@ -123,8 +128,12 @@ static void EnvObject_dealloc(EnvObject* self) {
 	if( self->environment != nullptr ) {
 		releaseEnvironment(self->environment);
 	}
-	
+
+#if PY_MAJOR_VERSION >= 3
+	(((PyObject*)(self))->ob_type)->tp_free((PyObject*)self);
+#else
 	self->ob_type->tp_free((PyObject*)self);
+#endif
 }
 
 static PyObject* EnvObject_new(PyTypeObject* type,
@@ -434,7 +443,11 @@ static PyMethodDef EnvObject_methods[] = {
 
 
 static PyTypeObject rodent_EnvType = {
-	PyObject_HEAD_INIT(nullptr) 0, // ob_size
+#if PY_MAJOR_VERSION >= 3
+	PyVarObject_HEAD_INIT(nullptr, 0) // ob_size
+#else
+	PyObject_HEAD_INIT(nullptr) 0, // ob_size	
+#endif
 	"rodent_module.Env",           // tp_name
 	sizeof(EnvObject),             // tp_basicsize
 	0,                             // tp_itemsize
@@ -486,23 +499,63 @@ static PyMethodDef moduleMethods[] = {
 	{nullptr, nullptr, 0, nullptr}
 };
 
+#if PY_MAJOR_VERSION >= 3
+static struct PyModuleDef moduleDef = {
+	PyModuleDef_HEAD_INIT, "rodent_module", // m_name
+	"3D reinforcement learning environment", // m_doc
+	-1,            // m_size
+	moduleMethods, // m_methods
+	NULL,          // m_reload
+	NULL,          // m_traverse
+	NULL,          // m_clear
+	NULL,          // m_free
+};
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void initrodent_module() {
+PyMODINIT_FUNC
+#if PY_MAJOR_VERSION >= 3
+PyInit_rodent_module()
+#else
+initrodent_module()
+#endif
+{
 	PyObject* m;
+#if PY_MAJOR_VERSION >= 3
+	m = PyModule_Create(&moduleDef);
+#else
+	m = Py_InitModule3("rodent_module", moduleMethods, "Rodent API module");
+#endif
 
-	if (PyType_Ready(&rodent_EnvType) < 0) {
+#if PY_MAJOR_VERSION >= 3
+	if (m == NULL) {
+		return m;
+	}
+#else
+	if (m == NULL) {
 		return;
 	}
+#endif
 	
-	m = Py_InitModule3("rodent_module", moduleMethods, "Rodent API module");
-
+	if (PyType_Ready(&rodent_EnvType) < 0) {
+#if PY_MAJOR_VERSION >= 3		
+		return m;
+#else
+		return;
+#endif
+	}
+	
 	Py_INCREF(&rodent_EnvType);
 	PyModule_AddObject(m, "Env", (PyObject*)&rodent_EnvType);
 
 	import_array();
+
+#if PY_MAJOR_VERSION >= 3
+	return m;
+#endif
 }
 
 #ifdef __cplusplus

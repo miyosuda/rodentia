@@ -14,7 +14,7 @@ def to_nd_float_array(list_obj):
   return np.array(list_obj, dtype=np.float32)
   
 
-class RodentTest(unittest.TestCase):
+class RodentModuleTest(unittest.TestCase):
   def testVersion(self):
     version = rodent_module.version();
     self.assertEqual(version, "0.0.1")
