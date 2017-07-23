@@ -22,15 +22,30 @@ class Display(object):
     self.height = 480
     self.env = rodent_module.Env(width=self.width, height=self.height)
 
-    self.env.add_box(half_extent=to_nd_float_array([5.0, 5.0, 5.0]),
-                     pos=to_nd_float_array([10.0, 5.0, 10.0]),
+    # Wall
+    # -Z
+    self.env.add_box(half_extent=to_nd_float_array([20.0, 1.0, 1.0]),
+                     pos=to_nd_float_array([0.0, 1.0, -20.0]),
+                     rot=0.0,
+                     detect_collision=False)
+    # +Z
+    self.env.add_box(half_extent=to_nd_float_array([20.0, 1.0, 1.0]),
+                     pos=to_nd_float_array([0.0, 1.0, 20.0]),
                      rot=0.0,
                      detect_collision=False)
 
-    sphere_id = self.env.add_sphere(radius=2.0,
-                                    pos=to_nd_float_array([-5.0, 2.0, -5.0]),
-                                    rot=0.0,
-                                    detect_collision=True)
+    # -X
+    self.env.add_box(half_extent=to_nd_float_array([1.0, 1.0, 20.0]),
+                     pos=to_nd_float_array([-20.0, 1.0, 0.0]),
+                     rot=0.0,
+                     detect_collision=False)
+    # +X
+    self.env.add_box(half_extent=to_nd_float_array([1.0, 1.0, 20.0]),
+                     pos=to_nd_float_array([20.0, 1.0, 0.0]),
+                     rot=0.0,
+                     detect_collision=False)
+
+    self.reset()
     
     pygame.init()
     
@@ -74,7 +89,28 @@ class Display(object):
     collided = obs["collided"]
     if len(collided) != 0:
       for id in collided:
+        self.reward += 1
         self.env.remove_obj(id)
+        
+    if self.reward >= 2:
+      self.reset()
+
+  def reset(self):
+    # Reward Sphere
+    sphere_id0 = self.env.add_sphere(radius=1.0,
+                                    pos=to_nd_float_array([-5.0, 1.0, -5.0]),
+                                    rot=0.0,
+                                    detect_collision=True)
+
+    sphere_id1 = self.env.add_sphere(radius=1.0,
+                                    pos=to_nd_float_array([5.0, 1.0, -5.0]),
+                                    rot=0.0,
+                                    detect_collision=True)
+    # Locate agent to default position
+    self.env.locate_agent(pos=to_nd_float_array([0,0,0]),
+                          rot=0.0)
+
+    self.reward = 0    
 
 def main():
   display_size = (640, 480)
