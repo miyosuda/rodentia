@@ -31,6 +31,10 @@ Work in progress.
     $ cd rodent
     $ cmake .
     $ make -j4
+
+For python3,
+
+    $ cmake . -DBUILD_PYTHON3=ON
     
 TODO: Direct include/lib path setting for numpy on MacOSX
 

@@ -50,4 +50,10 @@ class Environment(object):
     """
     convert list arg to numpy ndarray.
     """
-    return self.env.step(action=to_nd_int_array(action), num_steps)
+    return self.env.step(action=to_nd_int_array(action), num_steps=num_steps)
+
+  def remove_obj(self, id):
+    """
+    Remove object
+    """
+    return self.env.remove_obj(id=id)

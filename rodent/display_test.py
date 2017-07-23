@@ -13,6 +13,8 @@ import rodent_module
 
 BLACK = (0, 0, 0)
 
+MAX_STEP_NUM = 60 * 30
+
 def to_nd_float_array(list_obj):
   return np.array(list_obj, dtype=np.float32)
 
@@ -22,7 +24,18 @@ class Display(object):
     self.height = 480
     self.env = rodent_module.Env(width=self.width, height=self.height)
 
-    # Wall
+    self.prepare_wall()
+
+    self.obj_ids_set = set()
+    
+    self.reset()
+    
+    pygame.init()
+    
+    self.surface = pygame.display.set_mode(display_size, 0, 24)
+    pygame.display.set_caption('rodent')
+
+  def prepare_wall(self):
     # -Z
     self.env.add_box(half_extent=to_nd_float_array([20.0, 1.0, 1.0]),
                      pos=to_nd_float_array([0.0, 1.0, -20.0]),
@@ -33,7 +46,6 @@ class Display(object):
                      pos=to_nd_float_array([0.0, 1.0, 20.0]),
                      rot=0.0,
                      detect_collision=False)
-
     # -X
     self.env.add_box(half_extent=to_nd_float_array([1.0, 1.0, 20.0]),
                      pos=to_nd_float_array([-20.0, 1.0, 0.0]),
@@ -44,13 +56,6 @@ class Display(object):
                      pos=to_nd_float_array([20.0, 1.0, 0.0]),
                      rot=0.0,
                      detect_collision=False)
-
-    self.reset()
-    
-    pygame.init()
-    
-    self.surface = pygame.display.set_mode(display_size, 0, 24)
-    pygame.display.set_caption('rodent')
 
   def update(self):
     self.surface.fill(BLACK)
@@ -79,38 +84,62 @@ class Display(object):
     return np.array([lookAction, strafeAction, moveAction],
                     dtype=np.int32)
 
+  def process_sub(self, action):
+    obs = self.env.step(action=action, num_steps=1)
+    self.step_num += 1
+    
+    screen = obs["screen"]
+    collided = obs["collided"]
+
+    reward = 0
+    if len(collided) != 0:
+      for id in collided:
+        reward += 1
+        self.env.remove_obj(id)
+
+    self.total_reward += reward
+    terminal = self.total_reward >= 2 or self.step_num >= MAX_STEP_NUM
+    return screen, reward, terminal
+    
   def process(self):
     action = self.get_action()
-    obs = self.env.step(action=action, num_steps=1)
-    screen = obs["screen"]
+    screen, reward, terminal = self.process_sub(action)
+
     image = pygame.image.frombuffer(screen, (self.width,self.height), 'RGB')
     self.surface.blit(image, (0, 0))
 
-    collided = obs["collided"]
-    if len(collided) != 0:
-      for id in collided:
-        self.reward += 1
-        self.env.remove_obj(id)
-        
-    if self.reward >= 2:
+    if terminal:
       self.reset()
 
-  def reset(self):
-    # Reward Sphere
-    sphere_id0 = self.env.add_sphere(radius=1.0,
-                                    pos=to_nd_float_array([-5.0, 1.0, -5.0]),
-                                    rot=0.0,
-                                    detect_collision=True)
+  def clear_objects(self):
+    for id in self.obj_ids_set:
+      self.env.remove_obj(id)
+    self.obj_ids_set = set()
 
-    sphere_id1 = self.env.add_sphere(radius=1.0,
-                                    pos=to_nd_float_array([5.0, 1.0, -5.0]),
-                                    rot=0.0,
-                                    detect_collision=True)
+  def reset(self):
+    # Clear remaining reward objects
+    self.clear_objects()
+    
+    # Reward Sphere
+    obj_id0 = self.env.add_sphere(radius=1.0,
+                                  pos=to_nd_float_array([-5.0, 1.0, -5.0]),
+                                  rot=0.0,
+                                  detect_collision=True)
+
+    obj_id1 = self.env.add_sphere(radius=1.0,
+                                  pos=to_nd_float_array([5.0, 1.0, -5.0]),
+                                  rot=0.0,
+                                  detect_collision=True)
+
+    self.obj_ids_set.add(obj_id0)
+    self.obj_ids_set.add(obj_id1)
+    
     # Locate agent to default position
     self.env.locate_agent(pos=to_nd_float_array([0,0,0]),
                           rot=0.0)
 
-    self.reward = 0    
+    self.total_reward = 0
+    self.step_num = 0
 
 def main():
   display_size = (640, 480)
