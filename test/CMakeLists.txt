@@ -6,6 +6,7 @@ set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 find_package(GTEST REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(PNG REQUIRED)
 
 include_directories( ${GTEST_ROOT}/include/ )
 include_directories( ${GTEST_ROOT}/include/
@@ -25,6 +26,7 @@ add_executable(rodent_test
 
 target_link_libraries( rodent_test
     ${OPENGL_LIBRARIES}
+	${PNG_LIBRARIES}	
 	rodent_code
 	gtest
 	gtest_main

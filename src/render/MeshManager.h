@@ -6,6 +6,8 @@ class Mesh;
 class MeshData;
 class MeshFaceData;
 class Material;
+class TextureManager;
+class ShaderManager;
 
 
 class MeshManager {
@@ -23,7 +25,8 @@ public:
 	~MeshManager();
 	const Mesh* getBoxMesh(Material* material);
 	const Mesh* getSphereMesh(Material* material);
-	const Mesh* getModelMesh(const char* path);
+	const Mesh* getModelMesh(const char* path,
+							 TextureManager& textureManager, ShaderManager& shaderManager);
 };
 
 #endif

@@ -9,6 +9,8 @@ using namespace std;
 class MeshFaceData;
 class Material;
 class Mesh;
+class TextureManager;
+class ShaderManager;
 
 
 class MeshData {
@@ -21,6 +23,7 @@ public:
 	void addMeshFace(MeshFaceData* meshFaceData, const string& texturePath);
 
 	Mesh* toMesh(Material* material);
+	Mesh* toMesh(TextureManager& textureManager, ShaderManager& shaderManager);
 };
 
 #endif

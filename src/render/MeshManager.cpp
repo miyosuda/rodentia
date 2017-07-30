@@ -7,6 +7,9 @@
 #include "MeshFaceData.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "ObjImporter.h"
+#include "TextureManager.h"
+#include "ShaderManager.h"
 
 /*
     [y]
@@ -170,7 +173,13 @@ const Mesh* MeshManager::getSphereMesh(Material* material) {
 /**
  * <!--  getModelMesh():  -->
  */
-const Mesh* MeshManager::getModelMesh(const char* path) {
-	// TODO: 未実装
-	return nullptr;
+const Mesh* MeshManager::getModelMesh(const char* path,
+									  TextureManager& textureManager,
+									  ShaderManager& shaderManager) {
+	MeshData* meshData = ObjImporter::import(path);
+	if( meshData == nullptr ) {
+		return nullptr;
+	}
+
+	return meshData->toMesh(textureManager, shaderManager);
 }
