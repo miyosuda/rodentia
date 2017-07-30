@@ -61,6 +61,19 @@ static int addSphere(Environment* environment,
 								  detectCollision);
 }
 
+static int addModel(Environment* environment,
+					const char* path,
+					float scaleX, float scaleY, float scaleZ,
+					float posX, float posY, float posZ,
+					float rot,
+					bool detectCollision) {
+	return environment->addModel(path,
+								 scaleX, scaleY, scaleZ,
+								 posX, posY, posZ,
+								 rot,
+								 detectCollision);
+}
+
 static void removeObj(Environment* environment, 
 					  int id) {
 	environment->removeObject(id);
@@ -363,6 +376,61 @@ static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds)
 	return idObj;
 }
 
+static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) {
+	const char* path = "";
+	PyObject* scaleObj = nullptr;	
+	PyObject* posObj = nullptr;
+	float rot;
+	int detectCollision;
+
+	// Get argument
+	const char* kwlist[] = {"path", "scale", "pos", "rot", "detect_collision", nullptr};
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!fi", const_cast<char**>(kwlist),
+									 &path,
+									 &PyArray_Type, &scaleObj,
+									 &PyArray_Type, &posObj,
+									 &rot,
+									 &detectCollision)) {
+		return nullptr;
+	}
+	
+	if (self->environment == nullptr) {
+		PyErr_SetString(PyExc_RuntimeError, "rodent environment not setup");
+		return nullptr;
+	}
+
+	// scale
+	const float* scaleArr = getFloatArrayData(scaleObj, 3, "scale");
+	if( scaleArr == nullptr ) {
+		return nullptr;
+	}
+	
+	float scaleX = scaleArr[0];
+	float scaleY = scaleArr[1];
+	float scaleZ = scaleArr[2];	
+
+	// pos
+	const float* posArr = getFloatArrayData(posObj, 3, "pos");
+	if( posArr == nullptr ) {
+		return nullptr;
+	}
+	
+	float posX = posArr[0];
+	float posY = posArr[1];
+	float posZ = posArr[2];
+
+	int id = addModel(self->environment,
+					  path,
+					  scaleX, scaleY, scaleZ,
+					  posX, posY, posZ,
+					  rot, detectCollision != 0);
+
+	// Returning object ID
+	PyObject* idObj = PyInt_FromLong(id);
+	return idObj;
+}
+
 static PyObject* Env_remove_obj(EnvObject* self, PyObject* args, PyObject* kwds) {
 	int id;
 
@@ -424,6 +492,7 @@ static PyObject* Env_locate_agent(EnvObject* self, PyObject* args, PyObject* kwd
 // dic step(action)
 // int add_box(half_extent, pos, rot, detect_collision)
 // int add_sphere(radius, pos, rot, detect_collision)
+// int add_model(path, scale, pos, rot, detect_collision)
 // void remove_obj(id)
 // void locate_agent(pos, rot)
 
@@ -434,6 +503,8 @@ static PyMethodDef EnvObject_methods[] = {
 	 "Add box object"},
 	{"add_sphere", (PyCFunction)Env_add_sphere, METH_VARARGS | METH_KEYWORDS,
 	 "Add sphere object"},
+	{"add_model", (PyCFunction)Env_add_model, METH_VARARGS | METH_KEYWORDS,
+	 "Add model object"},
 	{"remove_obj", (PyCFunction)Env_remove_obj, METH_VARARGS | METH_KEYWORDS,
 	 "Remove object"},
 	{"locate_agent", (PyCFunction)Env_locate_agent, METH_VARARGS | METH_KEYWORDS,
@@ -541,7 +612,7 @@ initrodent_module()
 #endif
 	
 	if (PyType_Ready(&rodent_EnvType) < 0) {
-#if PY_MAJOR_VERSION >= 3		
+#if PY_MAJOR_VERSION >= 3
 		return m;
 #else
 		return;

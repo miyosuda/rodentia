@@ -98,6 +98,11 @@ public:
 				  float posX, float posY, float posZ,
 				  float rot,
 				  bool detectCollision);
+	int addModel(const char* path,
+				 float scaleX, float scaleY, float scaleZ,
+				 float posX, float posY, float posZ,
+				 float rot,
+				 bool detectCollision);
 	void removeObject(int id);
 	void locateAgent(float posX, float posY, float posZ,
 					 float rot);

@@ -38,6 +38,16 @@ class Environment(object):
                                pos=to_nd_float_array(pos),
                                rot=rot,
                                detect_collision=detect_collision)
+
+  def add_model(self, path, scale, pos, rot, detect_collision):
+    """
+    convert list arg to numpy ndarray.
+    """
+    return self.env.add_model(path=path,
+                              scale=to_nd_float_array(scale),
+                              pos=to_nd_float_array(pos),
+                              rot=rot,
+                              detect_collision=detect_collision)
   
   def locate_agent(self, pos, rot):
     """

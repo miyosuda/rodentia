@@ -259,6 +259,26 @@ int Environment::addSphere(float radius,
 	return addObject(shape, posX, posY, posZ, rot, detectCollision, mesh, scale);
 }
 
+int Environment::addModel(const char* path,
+						  float scaleX, float scaleY, float scaleZ,
+						  float posX, float posY, float posZ,
+						  float rot,
+						  bool detectCollision) {
+	
+	// TODO: 現在仮のshapeを入れている！
+	btCollisionShape* shape = collisionShapeManager.getBoxShape(1.0f,
+																1.0f,
+																1.0f);
+	
+	const Mesh* mesh = meshManager.getModelMesh(path, textureManager, shaderManager);
+	if( mesh == nullptr ) {
+		return -1; 
+	}
+	
+	Vector3f scale(scaleX, scaleY, scaleZ);
+	return addObject(shape, posX, posY, posZ, rot, detectCollision, mesh, scale);
+}
+
 int Environment::addObject(btCollisionShape* shape,
 						   float posX, float posY, float posZ,
 						   float rot,
