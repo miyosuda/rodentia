@@ -3,18 +3,19 @@
 #include <math.h>
 
 #include "MeshFace.h"
+#include "MeshData.h"
 #include "MeshFaceData.h"
 #include "Mesh.h"
 #include "Material.h"
 
 /*
     [y]
-     |  
+     |
      |
      |
      *------[x]
     /
-   / 
+   /
  [z]
 */
 
@@ -74,8 +75,11 @@ static int boxIndicesSize = 36;
  * <!--  ~MeshManager():  -->
  */
 MeshManager::~MeshManager() {
-	if( boxMeshFaceData != nullptr ) {
-		delete boxMeshFaceData;
+	if( boxMeshData != nullptr ) {
+		delete boxMeshData;
+	}
+	if( sphereMeshData != nullptr ) {
+		delete sphereMeshData;
 	}
 }
 
@@ -83,25 +87,24 @@ MeshManager::~MeshManager() {
  * <!--  getBoxMesh():  -->
  */
 const Mesh* MeshManager::getBoxMesh(Material* material) {
-	if( boxMeshFaceData == nullptr ) {
-		boxMeshFaceData = new MeshFaceData(boxVertices,
-										   boxVerticesSize,
-										   boxIndices,
-										   boxIndicesSize);
+	if( boxMeshData == nullptr ) {
+		MeshFaceData* meshFaceData = new MeshFaceData(boxVertices,
+													 boxVerticesSize,
+													 boxIndices,
+													 boxIndicesSize);
+		MeshData* meshData = new MeshData();
+		meshData->addMeshFace(meshFaceData, "");
+		boxMeshData = meshData;
 	}
 
-	MeshFace* meshFace = new MeshFace(material,
-									  *boxMeshFaceData);
-	Mesh* mesh = new Mesh();
-	mesh->addMeshFace(meshFace);
-	return mesh;
+	return boxMeshData->toMesh(material);
 }
 
 /**
  * <!--  getSphereMesh():  -->
  */
 const Mesh* MeshManager::getSphereMesh(Material* material) {
-	if( sphereMeshFaceData == nullptr ) {
+	if( sphereMeshData == nullptr ) {
 		const int rings = 20;
 		const int sectors = 20;
 
@@ -149,18 +152,25 @@ const Mesh* MeshManager::getSphereMesh(Material* material) {
 			}
 		}
 
-		sphereMeshFaceData = new MeshFaceData(vertices,
-											  verticesSize,
-											  indices,
-											  indicesSize);
+		MeshFaceData* meshFaceData = new MeshFaceData(vertices,
+													  verticesSize,
+													  indices,
+													  indicesSize);
+		MeshData* meshData = new MeshData();
+		meshData->addMeshFace(meshFaceData, "");
+		sphereMeshData = meshData;
 		
 		delete [] vertices;
 		delete [] indices;
 	}
 
-	MeshFace* meshFace = new MeshFace(material,
-									  *sphereMeshFaceData);
-	Mesh* mesh = new Mesh();
-	mesh->addMeshFace(meshFace);
-	return mesh;
+	return sphereMeshData->toMesh(material);
+}
+
+/**
+ * <!--  getModelMesh():  -->
+ */
+const Mesh* MeshManager::getModelMesh(const char* path) {
+	// TODO: 未実装
+	return nullptr;
 }

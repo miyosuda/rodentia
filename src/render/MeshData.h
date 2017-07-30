@@ -7,6 +7,9 @@
 using namespace std;
 
 class MeshFaceData;
+class Material;
+class Mesh;
+
 
 class MeshData {
 private:
@@ -14,7 +17,10 @@ private:
 	vector<string> texturePathes;
 
 public:
+	~MeshData();
 	void addMeshFace(MeshFaceData* meshFaceData, const string& texturePath);
+
+	Mesh* toMesh(Material* material);
 };
 
 #endif
