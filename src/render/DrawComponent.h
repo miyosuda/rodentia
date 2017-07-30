@@ -15,6 +15,7 @@ private:
 
 public:
 	DrawComponent(const Mesh* mesh_, const Vector3f& scale);
+	~DrawComponent();
 	void draw(const Camera& camera, const Matrix4f& rigidBodyMat) const;
 };
 

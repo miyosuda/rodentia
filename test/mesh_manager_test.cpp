@@ -38,10 +38,10 @@ namespace {
 		}
 
 		// Check index range
-		const short* indices = meshFaceData0.getIndices();
+		const unsigned short* indices = meshFaceData0.getIndices();
 		
 		for(int i=0; i<indicesSize; ++i) {
-			short index = indices[i];
+			unsigned short index = indices[i];
 			ASSERT_LT(index, 6*6);
 			ASSERT_GE(index, 0);
 		}
@@ -84,10 +84,10 @@ namespace {
 		}
 
 		// Check index range
-		const short* indices = meshFaceData0.getIndices();
+		const unsigned short* indices = meshFaceData0.getIndices();
 		
 		for(int i=0; i<indicesSize; ++i) {
-			short index = indices[i];
+			unsigned short index = indices[i];
 			ASSERT_LT(index, 20*20);
 			ASSERT_GE(index, 0);
 		}

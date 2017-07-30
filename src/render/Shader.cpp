@@ -164,7 +164,7 @@ void Shader::beginRender(const float* vertices) const {
 /**
  * <!--  render():  -->
  */
-void Shader::render(const short* indices, int indicesSize) const {
+void Shader::render(const unsigned short* indices, int indicesSize) const {
 }
 
 /**

@@ -17,7 +17,7 @@ public:
 						   const Matrix4f& modelViewProjectionMat)
 		const override;
 	virtual void beginRender(const float* vertices) const override;
-	virtual void render(const short* indices, int indicesSize) const override;
+	virtual void render(const unsigned short* indices, int indicesSize) const override;
 	virtual void endRender() const override;
 	virtual void setColor(const Vector4f& color) const override;
 };

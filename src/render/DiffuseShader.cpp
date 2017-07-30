@@ -109,7 +109,7 @@ void DiffuseShader::beginRender(const float* vertices) const {
 /**
  * <!--  render():  -->
  */
-void DiffuseShader::render(const short* indices, int indicesSize) const {
+void DiffuseShader::render(const unsigned short* indices, int indicesSize) const {
 	glDrawElements(GL_TRIANGLES, indicesSize, GL_UNSIGNED_SHORT, indices);
 }
 

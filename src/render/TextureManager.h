@@ -10,7 +10,7 @@ using namespace std;
 class Texture;
 
 class TextureManager {
-private:	
+private:
 	map<string, Texture*> textureMap;
 	void* readFile(const char* path, int& readSize);
 

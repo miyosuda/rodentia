@@ -7,9 +7,7 @@
 #include "Mesh.h"
 #include "Material.h"
 
-
 /*
-
     [y]
      |  
      |
@@ -60,7 +58,7 @@ static float boxVertices[] = {
 
 static int boxVerticesSize = 192;
 
-static short boxIndices[] = {
+static unsigned short boxIndices[] = {
 	0,  1,  2,      0,  2,  3,    // +z
 	4,  5,  6,      4,  6,  7,    // -z
 	8,  9,  10,     8,  10, 11,   // +y
@@ -132,15 +130,15 @@ const Mesh* MeshManager::getSphereMesh(Material* material) {
 		}
 
 		int indicesSize = (rings-1) * (sectors-1) * 6;
-		short* indices = new short[indicesSize];
-		short* ind = indices;
+		unsigned short* indices = new unsigned short[indicesSize];
+		unsigned short* ind = indices;
 		
 		for(int r=0; r<rings-1; ++r) {
 			for(int s=0; s<sectors-1; ++s) {
-				short index0 = r * sectors + s;
-				short index1 = r * sectors + (s+1);
-				short index2 = (r+1) * sectors + (s+1);
-				short index3 = (r+1) * sectors + s;
+				unsigned short index0 = r * sectors + s;
+				unsigned short index1 = r * sectors + (s+1);
+				unsigned short index2 = (r+1) * sectors + (s+1);
+				unsigned short index3 = (r+1) * sectors + s;
 				
 				*ind++ = index0;
 				*ind++ = index1;

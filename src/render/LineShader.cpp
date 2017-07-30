@@ -70,7 +70,7 @@ void LineShader::beginRender(const float* vertices) const {
 /**
  * <!--  render():  -->
  */
-void LineShader::render(const short* indices, int indicesSize) const {
+void LineShader::render(const unsigned short* indices, int indicesSize) const {
 	glDrawElements(GL_LINES, indicesSize, GL_UNSIGNED_SHORT, indices);
 }
 

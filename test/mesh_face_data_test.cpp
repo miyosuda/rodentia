@@ -11,14 +11,14 @@ namespace {
 		int indicesSize = 20;
 		
 		float* vertices = new float[verticesSize];
-		short* indices = new short[indicesSize];
+		unsigned short* indices = new unsigned short[indicesSize];
 
 		for(int i=0; i<verticesSize; ++i) {
 			vertices[i] = (float)(100 * i + 1);
 		}
 
 		for(int i=0; i<indicesSize; ++i) {
-			indices[i] = (short)(i*2);
+			indices[i] = (unsigned short)(i*2);
 		}
 
 		MeshFaceData meshFaceData(vertices, verticesSize, indices, indicesSize);

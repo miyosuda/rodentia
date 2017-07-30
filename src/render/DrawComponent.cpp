@@ -16,6 +16,13 @@ DrawComponent::DrawComponent(const Mesh* mesh_, const Vector3f& scale)
 }
 
 /**
+ * <!--  ~DrawComponent():  -->
+ */
+DrawComponent::~DrawComponent() {
+	delete mesh;
+}
+
+/**
  * <!--  draw():  -->
  */
 void DrawComponent::draw(const Camera& camera, const Matrix4f& rigidBodyMat) const {

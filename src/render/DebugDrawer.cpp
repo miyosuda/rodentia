@@ -25,7 +25,7 @@ void DebugDrawer::drawLine(const btVector3 &from,
 	lineShader->use();
 	lineShader->beginRender(vertices);
 
-	short indices[2];
+	unsigned short indices[2];
 	indices[0] = 0;
 	indices[1] = 1;
 	

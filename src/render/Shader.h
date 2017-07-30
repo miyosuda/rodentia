@@ -29,7 +29,7 @@ public:
 						   const Matrix4f& modelViewMat,
 						   const Matrix4f& modelViewProjectionMat) const;
 	virtual void beginRender(const float* vertices) const;
-	virtual void render(const short* indices, int indicesSize) const; 
+	virtual void render(const unsigned short* indices, int indicesSize) const; 
 	virtual void endRender() const;
 	virtual void setColor(const Vector4f& color) const;
 };

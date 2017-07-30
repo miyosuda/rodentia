@@ -1,11 +1,12 @@
 #include "MeshFaceData.h"
+#include <string.h>
 
 /**
  * <!--  MeshFaceData():  -->
  */
 MeshFaceData::MeshFaceData( const float* vertices_,
 							int verticesSize_,
-							const short* indices_,
+							const unsigned short* indices_,
 							int indicesSize_ )
 	:
 	verticesSize(verticesSize_),
@@ -14,7 +15,7 @@ MeshFaceData::MeshFaceData( const float* vertices_,
 	vertices = new float[verticesSize];
 	memcpy(vertices, vertices_, sizeof(float) * verticesSize);
 
-	indices = new short[indicesSize];
+	indices = new unsigned short[indicesSize];
 	memcpy(indices, indices_, sizeof(short) * indicesSize);
 }
 	

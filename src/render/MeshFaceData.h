@@ -2,19 +2,17 @@
 #ifndef MESHFACEDATA_HEADER
 #define MESHFACEDATA_HEADER
 
-#include <string.h>
-
 class MeshFaceData {
 private:
 	float* vertices;
 	int verticesSize;
-	short* indices;
+	unsigned short* indices;
 	int indicesSize;
 
 public:
 	MeshFaceData( const float* vertices_,
 				  int verticesSize_,
-				  const short* indices_,
+				  const unsigned short* indices_,
 				  int indicesSize_ );
 	~MeshFaceData();
 	
@@ -24,7 +22,7 @@ public:
 	int getVerticesSize() const {
 		return verticesSize;
 	}
-	const short* getIndices() const {
+	const unsigned short* getIndices() const {
 		return indices;
 	}
 	int getIndicesSize() const {

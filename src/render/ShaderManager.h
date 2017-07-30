@@ -10,7 +10,7 @@ using namespace std;
 class Shader;
 
 class ShaderManager {
-private:	
+private:
 	map<string, Shader*> shaderMap;
 
 public:

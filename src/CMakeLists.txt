@@ -27,6 +27,7 @@ add_library(rodent_code STATIC
 	render/Mesh.cpp
 	render/MeshFace.cpp
 	render/MeshFaceData.cpp
+	render/MeshData.cpp		
 	render/MeshManager.cpp
 	render/OffscreenRenderer.cpp
 	render/PNGDecoder.cpp
@@ -37,6 +38,7 @@ add_library(rodent_code STATIC
 	render/Texture.cpp
 	render/TextureManager.cpp
 	render/DrawComponent.cpp
+	importer/ObjImporter.cpp
 )
 
 add_executable(rodent
@@ -51,7 +53,7 @@ set_target_properties(rodent_module PROPERTIES PREFIX "")
 set_target_properties(rodent_module PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/rodent)
 
 
-include_directories(common geom play render env)
+include_directories(common geom play render env importer)
 
 find_package(BULLET REQUIRED)
 find_package(OpenGL REQUIRED)
