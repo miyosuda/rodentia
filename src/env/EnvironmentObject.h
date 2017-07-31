@@ -34,6 +34,7 @@ class StageObject : public EnvironmentObject {
 public:
 	StageObject(float posX, float posY, float posZ,
 				float rot,
+				const Vector3f& relativeCenter,
 				btCollisionShape* shape,
 				btDynamicsWorld* world,
 				int collisionId,

@@ -65,6 +65,7 @@ class Environment {
 	int addObject(btCollisionShape* shape,
 				  float posX, float posY, float posZ,
 				  float rot,
+				  const Vector3f& relativeCenter,
 				  bool detectCollision,
 				  const Mesh* mesh,
 				  const Vector3f& scale);

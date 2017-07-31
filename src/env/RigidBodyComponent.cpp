@@ -2,14 +2,27 @@
 #include "Action.h"
 #include "Matrix4f.h"
 
-static void convertBtTransformToMatrix4f(const btTransform& transform, Matrix4f& mat) {
+static void convertRigidBodyTransformToDrawMatrix4f(const btTransform& transform,
+													const Vector3f& relativeCenter,
+													Matrix4f& drawMat) {
+
+	Matrix4f rigidBodyMat;
 	const btVector3& origin = transform.getOrigin();
 	const btMatrix3x3& basis = transform.getBasis();
 	for(int i=0; i<3; ++i) {
 		btVector3 column = basis.getColumn(i);
-		mat.setColumn(i, Vector4f(column.x(), column.y(), column.z(), 0.0f));
+		rigidBodyMat.setColumn(i, Vector4f(column.x(), column.y(), column.z(), 0.0f));
 	}
-	mat.setColumn(3, Vector4f(origin.x(), origin.y(), origin.z(), 1.0f));
+	rigidBodyMat.setColumn(3, Vector4f(origin.x(), origin.y(), origin.z(), 1.0f));
+
+	Matrix4f invRelativeCenterMat;
+	invRelativeCenterMat.setIdentity();
+	invRelativeCenterMat.setColumn(3, Vector4f(-relativeCenter.x,
+											   -relativeCenter.y,
+											   -relativeCenter.z,
+											   1.0f));
+
+	drawMat.mul(rigidBodyMat, invRelativeCenterMat);
 }
 
 //---------------------------
@@ -19,16 +32,29 @@ static void convertBtTransformToMatrix4f(const btTransform& transform, Matrix4f&
 RigidBodyComponent::RigidBodyComponent(float mass,
 									   float posX, float posY, float posZ,
 									   float rot,
+									   const Vector3f& relativeCenter_,
 									   btCollisionShape* shape,
 									   btDynamicsWorld* world_,
 									   int collisionId)
 	:
-	world(world_) {
-	
-	btTransform transform;
-	transform.setIdentity();
-	transform.setOrigin(btVector3(posX, posY, posZ));
-	transform.getBasis().setEulerZYX(0.0f, rot, 0.0f);
+	world(world_),
+	relativeCenter(relativeCenter_) {
+
+	printf("const: %f %f %f\n", relativeCenter.x, relativeCenter.y, relativeCenter.z); //..
+
+	btTransform drawTransform;
+	drawTransform.setIdentity();
+	drawTransform.setOrigin(btVector3(posX, posY, posZ));
+	drawTransform.getBasis().setEulerZYX(0.0f, rot, 0.0f);
+
+	btTransform relativeCenterTransform;
+	relativeCenterTransform.setIdentity();
+	relativeCenterTransform.setOrigin(btVector3(relativeCenter.x,
+												relativeCenter.y,
+												relativeCenter.z));
+
+	btTransform rigidBodyTransform;
+	rigidBodyTransform = drawTransform * relativeCenterTransform;
 
 	btVector3 localInertia(0,0,0);
 
@@ -37,7 +63,7 @@ RigidBodyComponent::RigidBodyComponent(float mass,
 		shape->calculateLocalInertia(mass, localInertia);
 	}
 
-	btDefaultMotionState* motionState = new btDefaultMotionState(transform);
+	btDefaultMotionState* motionState = new btDefaultMotionState(rigidBodyTransform);
 	btRigidBody::btRigidBodyConstructionInfo info(mass,
 												  motionState,
 												  shape,
@@ -64,16 +90,27 @@ void RigidBodyComponent::control(const Action& action) {
 }
 
 void RigidBodyComponent::getMat(Matrix4f& mat) const {
-	convertBtTransformToMatrix4f(body->getWorldTransform(), mat);
+	convertRigidBodyTransformToDrawMatrix4f(body->getWorldTransform(), relativeCenter, mat);
 }
 
 void RigidBodyComponent::locate(float posX, float posY, float posZ,
 								float rot) {
-	btTransform transform;
-	transform.setIdentity();
-	transform.setOrigin(btVector3(posX, posY, posZ));
-	transform.getBasis().setEulerZYX(0.0f, rot, 0.0f);
-	body->setWorldTransform(transform);
+
+	btTransform drawTransform;
+	drawTransform.setIdentity();
+	drawTransform.setOrigin(btVector3(posX, posY, posZ));
+	drawTransform.getBasis().setEulerZYX(0.0f, rot, 0.0f);
+
+	btTransform relativeCenterTransform;
+	relativeCenterTransform.setIdentity();
+	relativeCenterTransform.setOrigin(btVector3(relativeCenter.x,
+												relativeCenter.y,
+												relativeCenter.z));
+
+	btTransform rigidBodyTransform;
+	rigidBodyTransform = drawTransform * relativeCenterTransform;	
+	
+	body->setWorldTransform(rigidBodyTransform);
 }
 
 
@@ -91,6 +128,7 @@ AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
 	RigidBodyComponent(mass,
 					   posX,  posY,  posZ,
 					   rot,
+					   Vector3f(0.0f, 0.0f, 0.0f),
 					   shape,
 					   world_,
 					   collisionId) {
@@ -135,9 +173,9 @@ void AgentRigidBodyComponent::control(const Action& action) {
 	
 	if( action.move != 0 ) {
 		// forward and backward
-		targetLocalVelocity += btVector3( 0.0f,
-										  0.0f,
-										  -linearVelocityRate * action.move);
+		targetLocalVelocity += btVector3(0.0f,
+										 0.0f,
+										 -linearVelocityRate * action.move);
 	}
 
 	btTransform transform(body->getWorldTransform());

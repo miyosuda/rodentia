@@ -4,6 +4,8 @@
 
 #include "btBulletDynamicsCommon.h"
 
+#include "Vector3f.h"
+
 class Matrix4f;
 class Action;
 
@@ -11,11 +13,13 @@ class RigidBodyComponent {
 protected:
 	btDynamicsWorld* world;
 	btRigidBody* body;
+	Vector3f relativeCenter;
 
 public:
 	RigidBodyComponent(float mass,
 					   float posX, float posY, float posZ,
 					   float rot,
+					   const Vector3f& relativeCenter_,
 					   btCollisionShape* shape,
 					   btDynamicsWorld* world,
 					   int collisionId);

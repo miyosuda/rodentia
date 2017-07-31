@@ -153,11 +153,11 @@ void Environment::checkCollision() {
 		bool hasContact = false;
 
 		int numContacts = contactManifold->getNumContacts();
-        for(int j=0; j<numContacts; ++j) {
-            btManifoldPoint& pt = contactManifold->getContactPoint(j);
-            if (pt.getDistance() < 0.0f) {
+		for(int j=0; j<numContacts; ++j) {
+			btManifoldPoint& pt = contactManifold->getContactPoint(j);
+			if (pt.getDistance() < 0.0f) {
 				hasContact = true;
-            }
+			}
 		}
 
 		if( hasContact ) {
@@ -239,8 +239,9 @@ int Environment::addBox(float halfExtentX, float halfExtentY, float halfExtentZ,
 	Material* material = new Material(texture, shader);
 	const Mesh* mesh = meshManager.getBoxMesh(material);
 	Vector3f scale(halfExtentX, halfExtentY, halfExtentZ);
-	
-	return addObject(shape, posX, posY, posZ, rot, detectCollision, mesh, scale);
+
+	return addObject(shape, posX, posY, posZ, rot, Vector3f(0.0f, 0.0f, 0.0f),
+					 detectCollision, mesh, scale);
 }
 
 int Environment::addSphere(float radius,
@@ -256,7 +257,8 @@ int Environment::addSphere(float radius,
 	const Mesh* mesh = meshManager.getSphereMesh(material);
 	Vector3f scale(radius, radius, radius);
 	
-	return addObject(shape, posX, posY, posZ, rot, detectCollision, mesh, scale);
+	return addObject(shape, posX, posY, posZ, rot, Vector3f(0.0f, 0.0f, 0.0f),
+					 detectCollision, mesh, scale);
 }
 
 int Environment::addModel(const char* path,
@@ -283,15 +285,22 @@ int Environment::addModel(const char* path,
 	btCollisionShape* shape = collisionShapeManager.getBoxShape(halfExtent.x,
 																halfExtent.y,
 																halfExtent.z);
-	
+
+	// This scale is used for drawing.
 	Vector3f scale(scaleX, scaleY, scaleZ);
-	// TODO: relativeCenterの扱い. scaleもそこにどう絡めるかを考えないといけない.
-	return addObject(shape, posX, posY, posZ, rot, detectCollision, mesh, scale);
+
+	// This relative center offset is used for rigidbody
+	relativeCenter.x *= scaleX;
+	relativeCenter.y *= scaleY;
+	relativeCenter.z *= scaleZ;
+	
+	return addObject(shape, posX, posY, posZ, rot, relativeCenter, detectCollision, mesh, scale);
 }
 
 int Environment::addObject(btCollisionShape* shape,
 						   float posX, float posY, float posZ,
 						   float rot,
+						   const Vector3f& relativeCenter,
 						   bool detectCollision,
 						   const Mesh* mesh,
 						   const Vector3f& scale) {
@@ -309,6 +318,7 @@ int Environment::addObject(btCollisionShape* shape,
 	EnvironmentObject* object = new StageObject(
 		posX, posY, posZ,
 		rot,
+		relativeCenter,
 		shape,
 		world,
 		collisionId,
@@ -351,22 +361,26 @@ bool Environment::initRenderer(int width, int height, bool offscreen) {
 	} else {
 		renderer = new ScreenRenderer();
 	}
-	bool ret = renderer->init(width, height);
 	
-	if( ret ) {
-		Shader* lineShader = shaderManager.getShader("line");
-
-		// Set debug drawer
-		debugDrawer = new DebugDrawer(lineShader);
-		world->setDebugDrawer(debugDrawer);
-		int debugMode =
-			btIDebugDraw::DBG_DrawWireframe |
-			btIDebugDraw::DBG_DrawConstraints |
-			btIDebugDraw::DBG_DrawConstraintLimits;
-		debugDrawer->setDebugMode(debugMode);
+	bool ret = renderer->init(width, height);
+	if(!ret ) {
+		return false;
 	}
 
-	return ret;
+	// Set debug drawer
+	/*
+	Shader* lineShader = shaderManager.getShader("line");
+	// Set debug drawer
+	debugDrawer = new DebugDrawer(lineShader);
+	world->setDebugDrawer(debugDrawer);
+	int debugMode =
+		btIDebugDraw::DBG_DrawWireframe |
+		btIDebugDraw::DBG_DrawConstraints |
+		btIDebugDraw::DBG_DrawConstraintLimits;
+	debugDrawer->setDebugMode(debugMode);
+	*/
+
+	return true;
 }
 
 const void* Environment::getFrameBuffer() const {

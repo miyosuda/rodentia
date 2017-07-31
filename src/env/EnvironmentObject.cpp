@@ -41,6 +41,7 @@ void EnvironmentObject::draw(const Camera& camera) const {
 //---------------------------
 StageObject::StageObject(float posX, float posY, float posZ,
 						 float rot,
+						 const Vector3f& relativeCenter,
 						 btCollisionShape* shape,
 						 btDynamicsWorld* world,
 						 int collisionId,
@@ -51,6 +52,7 @@ StageObject::StageObject(float posX, float posY, float posZ,
 	rigidBodyComponent = new RigidBodyComponent(0.0f,
 												posX, posY, posZ,
 												rot,
+												relativeCenter,
 												shape,
 												world,
 												collisionId);
