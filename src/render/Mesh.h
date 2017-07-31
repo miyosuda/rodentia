@@ -7,6 +7,8 @@ using namespace std;
 
 class MeshFace;
 class Matrix4f;
+class Vector3f;
+
 
 class Mesh {
 private:
@@ -19,6 +21,7 @@ public:
 	void draw( const Matrix4f& modelMat,
 			   const Matrix4f& modelViewMat, 
 			   const Matrix4f& projectionMat ) const;
+	void calcBoundingBox(Vector3f& center, Vector3f& halfExtent) const;
 
 	int debugGetMeshFaceSize() const {
 		return meshFaces.size();

@@ -2,6 +2,8 @@
 #ifndef MESHFACEDATA_HEADER
 #define MESHFACEDATA_HEADER
 
+class Vector3f;
+
 class MeshFaceData {
 private:
 	float* vertices;
@@ -15,6 +17,7 @@ public:
 				  const unsigned short* indices_,
 				  int indicesSize_ );
 	~MeshFaceData();
+	void calcBoundingBox(Vector3f& minPos, Vector3f& maxPos) const;
 	
 	const float* getVertices() const {
 		return vertices;

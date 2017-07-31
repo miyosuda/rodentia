@@ -2,6 +2,7 @@
 #include "Material.h"
 #include "Matrix4f.h"
 #include "MeshFace.h"
+#include "MeshFaceData.h"
 
 /**
  * <!--  MeshFace():  -->
@@ -30,4 +31,11 @@ void MeshFace::draw( const Matrix4f& modelMat,
 				   modelMat,
 				   modelViewMat,
 				   modelViewProjectionMat);
+}
+
+/**
+ * <!--  calcBoundingBox():  -->
+ */
+void MeshFace::calcBoundingBox(Vector3f& minPos, Vector3f& maxPos) const {
+	meshFaceData.calcBoundingBox(minPos, maxPos);
 }

@@ -62,7 +62,7 @@ btCollisionShape* CollisionShapeManager::getCylinderShape(float halfExtentX,
 //      [Environment]
 //---------------------------
 
-bool Environment::init(int width, int height, bool offscreen) {	
+bool Environment::init(int width, int height, bool offscreen) {
 	// Setup the basic world
 	configuration = new btDefaultCollisionConfiguration();
 
@@ -141,7 +141,7 @@ void Environment::release() {
 	nextObjId = 0;
 }
 
-void Environment::checkCollision() {	
+void Environment::checkCollision() {
 	int numManifolds = world->getDispatcher()->getNumManifolds();
 	
 	for(int i=0; i<numManifolds; ++i) {
@@ -265,17 +265,27 @@ int Environment::addModel(const char* path,
 						  float rot,
 						  bool detectCollision) {
 	
-	// TODO: 現在仮のshapeを入れている！
-	btCollisionShape* shape = collisionShapeManager.getBoxShape(1.0f,
-																1.0f,
-																1.0f);
-	
 	const Mesh* mesh = meshManager.getModelMesh(path, textureManager, shaderManager);
 	if( mesh == nullptr ) {
-		return -1; 
+		return -1;
 	}
+
+	Vector3f relativeCenter;
+	Vector3f halfExtent;
+	
+	mesh->calcBoundingBox(relativeCenter, halfExtent);
+	
+	halfExtent.x *= scaleX;
+	halfExtent.y *= scaleY;
+	halfExtent.z *= scaleZ;
+
+	// collision shpaeの方にはあらかじめscaleを反映しておかないといけない
+	btCollisionShape* shape = collisionShapeManager.getBoxShape(halfExtent.x,
+																halfExtent.y,
+																halfExtent.z);
 	
 	Vector3f scale(scaleX, scaleY, scaleZ);
+	// TODO: relativeCenterの扱い. scaleもそこにどう絡めるかを考えないといけない.
 	return addObject(shape, posX, posY, posZ, rot, detectCollision, mesh, scale);
 }
 
