@@ -92,7 +92,8 @@ bool PNGDecoder::decode(void* buffer, int bufferSize, Image& image) {
 	}
 
 	for( int i=0; i<height; i++ ) {
-		lines[i] = (unsigned char*)image.getLineBuffer(i);
+		// Load upside down
+		lines[i] = (unsigned char*)image.getLineBuffer(height-1-i);
 	}
 
 	png_read_image( pngobj, lines );
