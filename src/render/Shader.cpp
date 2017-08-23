@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Matrix4f.h"
+#include "Vector3f.h"
 
 /**
  * <!--	 Shader():	-->
@@ -177,4 +178,10 @@ void Shader::endRender() const {
  * <!--  setColor():  -->
  */
 void Shader::setColor(const Vector4f& color) const {
+}
+
+/**
+ * <!--  setDirectionalLight():  -->
+ */
+void Shader::setDirectionalLight(const Vector3f& lightDir) const {
 }

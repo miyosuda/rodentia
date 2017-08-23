@@ -2,6 +2,7 @@
 
 #include "Matrix4f.h"
 #include "Matrix3f.h"
+#include "Vector3f.h"
 
 static const char* vertShaderSrc =
 	"#version 110\n"
@@ -14,15 +15,15 @@ static const char* vertShaderSrc =
 	""
 	"uniform mat4 modelViewProjectionMatrix; "
 	"uniform mat3 normalMatrix; "
-	"" 	
+	"uniform vec3 directionalLightDir0; " // Should be normalized
+	""
 	"void main() "
 	"{ "
 	"    vec3 normal = normalize(normalMatrix * vertexNormal); "
-	"    vec3 lightDir = vec3(1.0, -0.4, 0.3); "
 	"    vec4 diffuseColor = vec4(1.0, 1.0, 1.0, 1.0); "
 	"    vec4 ambientColor = vec4(0.3, 0.3, 0.3, 1.0); "
 	"    "
-	"    float nDotL = max(0.0, dot(normal, normalize(-lightDir)));"
+	"    float nDotL = max(0.0, dot(normal, -directionalLightDir0));"
 	"    texCoord = vertexTexCoord; "
 	"    varyColor = diffuseColor * nDotL + ambientColor; "
 	"    varyColor.w = 1.0;	"
@@ -58,6 +59,7 @@ bool DiffuseShader::init() {
 	textureCoordHandle = getAttribLocation("vertexTexCoord");
 	mvpMatrixHandle    = getUniformLocation("modelViewProjectionMatrix");
 	normalMatrixHandle = getUniformLocation("normalMatrix");
+	directionalLightDir0Handle = getUniformLocation("directionalLightDir0");
 
 	return true;
 }
@@ -79,6 +81,17 @@ void DiffuseShader::setMatrix(const Matrix4f& modelMat,
 	// Set model view projection matrix
 	glUniformMatrix4fv( mvpMatrixHandle, 1, GL_FALSE,
 						(GLfloat*)modelViewProjectionMat.getPointer() );
+}
+
+/**
+ * <!--  setDirectionalLight():  -->
+ */
+void DiffuseShader::setDirectionalLight(const Vector3f& lightDir) const {
+	Vector3f normalizedLightDir(lightDir);
+	normalizedLightDir.normalize();
+	//"    vec3 lightDir = vec3(1.0, -0.4, 0.3); "
+	glUniform3fv( directionalLightDir0Handle, 1,
+				  (const GLfloat*)normalizedLightDir.getPointer() );
 }
 
 /**

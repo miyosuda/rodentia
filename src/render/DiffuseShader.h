@@ -5,6 +5,7 @@
 #include "Shader.h"
 
 class Matrix4f;
+class Vector3f;
 
 class DiffuseShader : public Shader {
 private:
@@ -13,6 +14,7 @@ private:
 	int textureCoordHandle;
 	int mvpMatrixHandle;
 	int normalMatrixHandle;
+	int directionalLightDir0Handle;
 	
 public:
 	virtual bool init() override;
@@ -23,6 +25,7 @@ public:
 	virtual void beginRender(const float* vertices) const override;
 	virtual void render(const unsigned short* indices, int indicesSize) const override;
 	virtual void endRender() const override;
+	virtual void setDirectionalLight(const Vector3f& lightDir) const override;
 };
 
 #endif

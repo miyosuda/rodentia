@@ -6,6 +6,7 @@
 
 class Matrix4f;
 class Vector4f;
+class Vector3f;
 
 class Shader {
 protected:
@@ -32,6 +33,7 @@ public:
 	virtual void render(const unsigned short* indices, int indicesSize) const; 
 	virtual void endRender() const;
 	virtual void setColor(const Vector4f& color) const;
+	virtual void setDirectionalLight(const Vector3f& lightDir) const;
 };
 
 #endif
