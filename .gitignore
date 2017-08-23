@@ -6,6 +6,7 @@
 bin/
 **/cmake_install.cmake
 *.pyc
+**/Thumbs.db
 
 dist/
 build/

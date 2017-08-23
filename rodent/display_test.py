@@ -131,6 +131,14 @@ class Display(object):
                                   rot=0.0,
                                   detect_collision=True)
 
+    # add test model
+    model_path = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/apple0.obj"
+    self.env.add_model(path=model_path,
+                       scale=to_nd_float_array([1.0, 1.0, 1.0]),
+                       pos=to_nd_float_array([10.0, 0.0, 10.0]),
+                       rot=0.0,
+                       detect_collision=True)
+
     self.obj_ids_set.add(obj_id0)
     self.obj_ids_set.add(obj_id1)
     
