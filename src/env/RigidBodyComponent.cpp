@@ -40,8 +40,6 @@ RigidBodyComponent::RigidBodyComponent(float mass,
 	world(world_),
 	relativeCenter(relativeCenter_) {
 
-	printf("const: %f %f %f\n", relativeCenter.x, relativeCenter.y, relativeCenter.z); //..
-
 	btTransform drawTransform;
 	drawTransform.setIdentity();
 	drawTransform.setOrigin(btVector3(posX, posY, posZ));

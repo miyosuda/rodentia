@@ -130,17 +130,24 @@ class Display(object):
                                   pos=to_nd_float_array([5.0, 1.0, -5.0]),
                                   rot=0.0,
                                   detect_collision=True)
+    self.obj_ids_set.add(obj_id0)
+    self.obj_ids_set.add(obj_id1)
 
     # add test model
-    model_path = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/apple0.obj"
-    self.env.add_model(path=model_path,
+    model_path0 = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/apple0.obj"
+    self.env.add_model(path=model_path0,
                        scale=to_nd_float_array([1.0, 1.0, 1.0]),
                        pos=to_nd_float_array([10.0, 0.0, 10.0]),
                        rot=0.0,
                        detect_collision=True)
 
-    self.obj_ids_set.add(obj_id0)
-    self.obj_ids_set.add(obj_id1)
+    model_path1 = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/lemon0.obj"
+    self.env.add_model(path=model_path1,
+                       scale=to_nd_float_array([1.0, 1.0, 1.0]),
+                       pos=to_nd_float_array([-10.0, 0.0, 10.0]),
+                       rot=0.0,
+                       detect_collision=True)
+
     
     # Locate agent to default position
     self.env.locate_agent(pos=to_nd_float_array([0,0,0]),
