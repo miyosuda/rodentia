@@ -1,12 +1,13 @@
 #include "OffscreenRenderer.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 /**
  * <!--  init():  -->
  */
 bool OffscreenRenderer::init(int width, int height) {
 	auto renderErrorCallback = [](int error, const char* description) {
-		fprintf(stderr, "Error: %s\n", description);
+		printf("Error: %s\n", description);
 	};
 	
 	glfwSetErrorCallback(renderErrorCallback);
@@ -50,9 +51,6 @@ bool OffscreenRenderer::init(int width, int height) {
 	
 	glViewport(0, 0, frameBufferWidth, frameBufferHeight);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	float ratio = width / (float) height;
-	initCamera(ratio, true);
 
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);

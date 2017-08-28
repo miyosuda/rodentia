@@ -3,7 +3,6 @@
 
 #include "glinc.h"
 #include "play.h"
-#include "Matrix4f.h"
 
 #define DEFAULT_SCREEN_WIDTH   640
 #define DEFAULT_SCREEN_HEIGHT  480

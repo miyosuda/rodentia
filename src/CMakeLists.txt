@@ -38,6 +38,7 @@ add_library(rodent_code STATIC
 	render/Texture.cpp
 	render/TextureManager.cpp
 	render/DrawComponent.cpp
+	render/RenderingContext.cpp
 	importer/ObjImporter.cpp
 )
 

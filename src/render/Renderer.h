@@ -2,17 +2,11 @@
 #ifndef RENDERER_HEADER
 #define RENDERER_HEADER
 
-#include "Matrix4f.h"
-#include "Camera.h"
-
 class Renderer {
 protected:
-	Camera camera;
 	int frameBufferWidth;
 	int frameBufferHeight;
 
-	void initCamera(float ratio, bool flipping);
-	
 public:
 	Renderer()
 		:
@@ -22,8 +16,6 @@ public:
 	virtual ~Renderer() {
 	}
 
-	void setCameraMat(const Matrix4f& mat);
-	const Camera& getCamera() const { return camera; }
 	void renderPre();
 	
 	virtual bool init(int width, int height) = 0;

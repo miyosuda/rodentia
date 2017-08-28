@@ -213,13 +213,13 @@ void Environment::step(const Action& action, int stepNum, bool agentView) {
 			// Draw objects
 			for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
 				EnvironmentObject* object = itr->second;
-				object->draw(renderer->getCamera());
+				object->draw(renderingContext.getCamera());
 			}
 
 			if( debugDrawer != nullptr) {
 				// TODO: not drawn when drawing object mesh.
 				glDisable(GL_DEPTH_TEST);
-				const Camera& camera = renderer->getCamera();
+				const Camera& camera = renderingContext.getCamera();
 				debugDrawer->prepare(camera.getInvMat(),
 									 camera.getProjectionMat());
 				world->debugDrawWorld();
@@ -374,6 +374,9 @@ bool Environment::initRenderer(int width, int height, bool offscreen) {
 		return false;
 	}
 
+	float ratio = width / (float) height;
+	renderingContext.initCamera(ratio, offscreen);
+
 	// Set debug drawer
 	/*
 	Shader* lineShader = shaderManager.getShader("line");
@@ -423,9 +426,7 @@ int Environment::getFrameBufferSize() const {
 }
 
 void Environment::setRenderCamera(const Matrix4f& mat) {
-	if( renderer != nullptr ) {
-		renderer->setCameraMat(mat);
-	}
+	renderingContext.setCameraMat(mat);
 }
 
 void Environment::updateCameraToAgentView() {

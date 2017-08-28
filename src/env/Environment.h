@@ -12,6 +12,7 @@ using namespace std;
 #include "TextureManager.h"
 #include "ShaderManager.h"
 #include "RigidBodyComponent.h"
+#include "RenderingContext.h"
 
 class Action;
 class Matrix4f;
@@ -58,6 +59,7 @@ class Environment {
 	MeshManager meshManager;
 	TextureManager textureManager;
 	ShaderManager shaderManager;
+	RenderingContext renderingContext;
 
 	bool initRenderer(int width, int height, bool offscreen);
 	void prepareAgent(int floorObjId);
