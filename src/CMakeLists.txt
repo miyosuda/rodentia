@@ -56,7 +56,7 @@ set_target_properties(rodent_module PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_
 
 include_directories(common geom play render env importer)
 
-find_package(BULLET REQUIRED)
+find_package(Bullet REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLFW REQUIRED)
 find_package(PNG REQUIRED)
@@ -98,7 +98,7 @@ include_directories( ${OPENGL_INCLUDE_DIRS}
 					 ${GLFW_INCLUDE_DIRS}
 					 ${BULLET_INCLUDE_DIRS}
 					 ${PNG_INCLUDE_DIRS}
-					 ${PYTHON_INCLUDE_DIRS}					 
+					 ${PYTHON_INCLUDE_DIRS}
 					 ${NUMPY_INCLUDES}
 					 )
 
