@@ -1,6 +1,8 @@
 #include "LineShader.h"
 
 #include "Matrix4f.h"
+#include "RenderingContext.h"
+
 
 static const char* vertShaderSrc =
 	"#version 110\n"
@@ -44,15 +46,14 @@ bool LineShader::init() {
 }
 
 /**
- * <!--  setMatrix():  -->
+ * <!--  setup():  -->
  */
-void LineShader::setMatrix(const Matrix4f& modelMat,
-						   const Matrix4f& modelViewMat,
-						   const Matrix4f& modelViewProjectionMat) const {
-
+void LineShader::setup(const RenderingContext& context) const {
+	const Matrix4f& modelViewProjectionMat = context.getModelViewProjectionMat();
+	
 	// Set model view projection matrix
 	glUniformMatrix4fv( mvpMatrixHandle, 1, GL_FALSE,
-						(GLfloat*)modelViewProjectionMat.getPointer() );
+						(const GLfloat*)modelViewProjectionMat.getPointer() );
 }
 
 /**

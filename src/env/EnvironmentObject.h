@@ -11,8 +11,9 @@ class DrawComponent;
 class Action;
 class Matrix4f;
 class Vector3f;
-class Camera;
 class Mesh;
+class RenderingContext;
+
 
 class EnvironmentObject {
 protected:
@@ -24,11 +25,12 @@ public:
 	virtual ~EnvironmentObject();
 	int getCollisionId() const;
 	void getMat(Matrix4f& mat) const;
-	void draw(const Camera& camera) const;
+	void draw(RenderingContext& context) const;
 	btRigidBody* getRigidBody() {
 		return rigidBodyComponent->getRigidBody();
 	}
 };
+
 
 class StageObject : public EnvironmentObject {
 public:
@@ -41,6 +43,7 @@ public:
 				const Mesh* mesh,
 				const Vector3f& scale);
 };
+
 
 class AgentObject : public EnvironmentObject {
 public:	

@@ -4,9 +4,10 @@
 
 #include "glinc.h"
 
-class Matrix4f;
 class Vector4f;
 class Vector3f;
+class RenderingContext;
+
 
 class Shader {
 protected:
@@ -26,9 +27,7 @@ public:
 	int getAttribLocation(const char* name);
 
 	virtual bool init()=0;
-	virtual void setMatrix(const Matrix4f& modelMat,
-						   const Matrix4f& modelViewMat,
-						   const Matrix4f& modelViewProjectionMat) const;
+	virtual void setup(const RenderingContext& context) const;
 	virtual void beginRender(const float* vertices) const;
 	virtual void render(const unsigned short* indices, int indicesSize) const; 
 	virtual void endRender() const;

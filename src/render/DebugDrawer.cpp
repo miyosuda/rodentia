@@ -2,6 +2,8 @@
 #include "glinc.h"
 #include "Shader.h"
 #include "Matrix4f.h"
+#include "RenderingContext.h"
+
 
 /**
  * <!--  drawLine():  -->
@@ -65,13 +67,10 @@ void DebugDrawer::toggleDebugFlag(int flag) {
 /**
  * <!--  prepare():  -->
  */
-void DebugDrawer::prepare(const Matrix4f& modelViewMat,
-						  const Matrix4f& projectionMat) {
+void DebugDrawer::prepare(RenderingContext& context) {
 	Matrix4f modelMat;
 	modelMat.setIdentity();
-	
-	Matrix4f modelViewProjectionMat;
-	modelViewProjectionMat.mul(projectionMat, modelViewMat);
-	
-	lineShader->setMatrix(modelMat, modelViewMat, modelViewProjectionMat);
+
+	context.setModelMat(modelMat);
+	lineShader->setup(context);
 }

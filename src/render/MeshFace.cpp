@@ -24,13 +24,8 @@ MeshFace::~MeshFace() {
 /**
  * <!--  draw():  -->
  */
-void MeshFace::draw( const Matrix4f& modelMat,
-					 const Matrix4f& modelViewMat,
-					 const Matrix4f& modelViewProjectionMat) {
-	material->draw(meshFaceData,
-				   modelMat,
-				   modelViewMat,
-				   modelViewProjectionMat);
+void MeshFace::draw(const RenderingContext& context) {
+	material->draw(meshFaceData, context);
 }
 
 /**

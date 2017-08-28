@@ -4,7 +4,7 @@
 #include "Action.h"
 #include "Matrix4f.h"
 #include "Vector3f.h"
-#include "Camera.h"
+#include "RenderingContext.h"
 #include "Mesh.h"
 
 
@@ -28,11 +28,11 @@ void EnvironmentObject::getMat(Matrix4f& mat) const {
 	rigidBodyComponent->getMat(mat);
 }
 
-void EnvironmentObject::draw(const Camera& camera) const {
+void EnvironmentObject::draw(RenderingContext& context) const {
 	if( drawComponent != nullptr ) {
 		Matrix4f rigidBodyMat;
 		getMat(rigidBodyMat);
-		drawComponent->draw(camera, rigidBodyMat);
+		drawComponent->draw(context, rigidBodyMat);
 	}
 }
 

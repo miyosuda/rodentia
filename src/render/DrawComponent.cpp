@@ -1,5 +1,5 @@
 #include "DrawComponent.h"
-#include "Camera.h"
+#include "RenderingContext.h"
 #include "Mesh.h"
 #include "Vector3f.h"
 
@@ -25,20 +25,11 @@ DrawComponent::~DrawComponent() {
 /**
  * <!--  draw():  -->
  */
-void DrawComponent::draw(const Camera& camera, const Matrix4f& rigidBodyMat) const {
-	const Matrix4f& cameraInvMat = camera.getInvMat();
-	const Matrix4f& projectionMat = camera.getProjectionMat();
-
+void DrawComponent::draw(RenderingContext& context, const Matrix4f& rigidBodyMat) const {
 	Matrix4f modelMat;
 	modelMat.mul(rigidBodyMat, scaleMat);
 
-	Matrix4f modelViewMat;
-	modelViewMat.mul(cameraInvMat, modelMat);
-
-	Matrix4f modelViewProjectionMat;
-	modelViewProjectionMat.mul(projectionMat, modelViewMat);
-
-	mesh->draw(modelMat,
-			   modelViewMat,
-			   modelViewProjectionMat);
+	context.setModelMat(modelMat);
+	
+	mesh->draw(context);
 }

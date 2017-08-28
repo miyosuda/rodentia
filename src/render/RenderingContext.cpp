@@ -12,6 +12,19 @@ void RenderingContext::initCamera(float ratio, bool flipping) {
 }
 
 /**
+ * <!--  setModelMat():  -->
+ */
+void RenderingContext::setModelMat(Matrix4f modelMat_) {
+	modelMat.set(modelMat_);
+
+	const Matrix4f& viewMat = camera.getInvMat();
+	const Matrix4f& projectionMat = camera.getProjectionMat();	
+
+	modelViewMat.mul(viewMat, modelMat);
+	modelViewProjectionMat.mul(projectionMat, modelViewMat);
+}
+
+/**
  * <!--  setCameraMat():  -->
  */
 void RenderingContext::setCameraMat(const Matrix4f& mat) {

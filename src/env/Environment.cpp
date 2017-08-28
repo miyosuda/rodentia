@@ -213,15 +213,13 @@ void Environment::step(const Action& action, int stepNum, bool agentView) {
 			// Draw objects
 			for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
 				EnvironmentObject* object = itr->second;
-				object->draw(renderingContext.getCamera());
+				object->draw(renderingContext);
 			}
 
 			if( debugDrawer != nullptr) {
 				// TODO: not drawn when drawing object mesh.
 				glDisable(GL_DEPTH_TEST);
-				const Camera& camera = renderingContext.getCamera();
-				debugDrawer->prepare(camera.getInvMat(),
-									 camera.getProjectionMat());
+				debugDrawer->prepare(renderingContext);
 				world->debugDrawWorld();
 				glEnable(GL_DEPTH_TEST);
 			}

@@ -149,11 +149,9 @@ int Shader::getAttribLocation(const char* name) {
 }
 
 /**
- * <!--  setMatrix():  -->
+ * <!--  setup():  -->
  */
-void Shader::setMatrix(const Matrix4f& modelMat,
-					   const Matrix4f& modelViewMat,
-					   const Matrix4f& modelViewProjectionMat) const {
+void Shader::setup(const RenderingContext& context) const {
 }
 
 /**

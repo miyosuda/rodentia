@@ -6,6 +6,8 @@ class Material;
 class Matrix4f;
 class Vector3f;
 class MeshFaceData;
+class RenderingContext;
+
 
 class MeshFace {
 private:
@@ -16,9 +18,7 @@ public:
 	MeshFace( Material* material_,
 			  const MeshFaceData& meshFaceData );
 	~MeshFace();
-	void draw( const Matrix4f& modelMat,
-			   const Matrix4f& modelViewMat, 
-			   const Matrix4f& projectionMat );
+	void draw(const RenderingContext& context);
 	void calcBoundingBox(Vector3f& minPos, Vector3f& maxPos) const;
 
 	const MeshFaceData& debugGetMeshFaceData() const {

@@ -6,6 +6,8 @@
 
 class Shader;
 class Matrix4f;
+class RenderingContext;
+
 
 class DebugDrawer: public btIDebugDraw {
 private:
@@ -41,7 +43,7 @@ public:
 	virtual void draw3dText(const btVector3 &location, const char* textString) override {}
 	
 	void toggleDebugFlag(int flag);
-	void prepare(const Matrix4f& movelViewMat, const Matrix4f& projectionMat);
+	void prepare(RenderingContext& context);
 };
 
 #endif

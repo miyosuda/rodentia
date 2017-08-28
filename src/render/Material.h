@@ -6,6 +6,8 @@ class Texture;
 class Shader;
 class Matrix4f;
 class MeshFaceData;
+class RenderingContext;
+
 
 class Material {
 private:
@@ -21,9 +23,7 @@ public:
 	}
 
 	void draw(const MeshFaceData& meshFaceData,
-			  const Matrix4f& modelMat,
-			  const Matrix4f& modelViewMat,
-			  const Matrix4f& modelViewProjectionMat);
+			  const RenderingContext& context);
 };
 
 #endif

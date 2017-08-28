@@ -19,12 +19,10 @@ void Mesh::addMeshFace(MeshFace* meshFace) {
 	meshFaces.push_back(meshFace);
 }
 
-void Mesh::draw( const Matrix4f& modelMat,
-				 const Matrix4f& modelViewMat, 
-				 const Matrix4f& projectionMat ) const {
+void Mesh::draw(const RenderingContext& context) const {
 	int size = meshFaces.size();
 	for(int i=0; i<size; ++i) {
-		meshFaces[i]->draw(modelMat, modelViewMat, projectionMat);
+		meshFaces[i]->draw(context);
 	}
 }
 

@@ -3,6 +3,8 @@
 #include "Matrix4f.h"
 #include "Matrix3f.h"
 #include "Vector3f.h"
+#include "RenderingContext.h"
+
 
 static const char* vertShaderSrc =
 	"#version 110\n"
@@ -65,22 +67,23 @@ bool DiffuseShader::init() {
 }
 
 /**
- * <!--  setMatrix():  -->
+ * <!--  setup():  -->
  */
-void DiffuseShader::setMatrix(const Matrix4f& modelMat,
-							  const Matrix4f& modelViewMat,
-							  const Matrix4f& modelViewProjectionMat) const {
+void DiffuseShader::setup(const RenderingContext& context) const {
+	const Matrix4f& modelMat = context.getModelMat();
+	const Matrix4f& modelViewMat = context.getModelViewMat();
+	const Matrix4f& modelViewProjectionMat = context.getModelViewProjectionMat();
 	
 	// Set normal matrix by removing translate part.
 	Matrix3f normalMat;
 	normalMat.set(modelMat);
 
 	glUniformMatrix3fv( normalMatrixHandle, 1, GL_FALSE,
-						(GLfloat*)normalMat.getPointer() );
+						(const GLfloat*)normalMat.getPointer() );
 
 	// Set model view projection matrix
 	glUniformMatrix4fv( mvpMatrixHandle, 1, GL_FALSE,
-						(GLfloat*)modelViewProjectionMat.getPointer() );
+						(const GLfloat*)modelViewProjectionMat.getPointer() );
 }
 
 /**

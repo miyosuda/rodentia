@@ -3,14 +3,13 @@
 #include "Shader.h"
 #include "Matrix4f.h"
 #include "MeshFaceData.h"
+#include "RenderingContext.h"
 
 /**
  * <!--  draw():  -->
  */
 void Material::draw(const MeshFaceData& meshFaceData,
-					const Matrix4f& modelMat,
-					const Matrix4f& modelViewMat,
-					const Matrix4f& modelViewProjectionMat) {
+					const RenderingContext& context) {
 
 	if( texture != nullptr ) {
 		texture->bind();
@@ -23,7 +22,7 @@ void Material::draw(const MeshFaceData& meshFaceData,
 	shader->use();
 	shader->beginRender(meshFaceData.getVertices());
 
-	shader->setMatrix(modelMat, modelViewMat, modelViewProjectionMat);
+	shader->setup(context);
 
 	shader->render(meshFaceData.getIndices(),
 				   meshFaceData.getIndicesSize());
