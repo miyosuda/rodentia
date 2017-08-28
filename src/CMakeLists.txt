@@ -40,6 +40,7 @@ add_library(rodent_code STATIC
 	render/DrawComponent.cpp
 	render/RenderingContext.cpp
 	importer/ObjImporter.cpp
+	../external/glad/src/glad.c
 )
 
 add_executable(rodent
@@ -54,7 +55,7 @@ set_target_properties(rodent_module PROPERTIES PREFIX "")
 set_target_properties(rodent_module PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/rodent)
 
 
-include_directories(common geom play render env importer)
+include_directories(common geom play render env importer ../external/glad/include)
 
 find_package(Bullet REQUIRED)
 find_package(OpenGL REQUIRED)

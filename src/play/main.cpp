@@ -4,6 +4,7 @@
 #include "glinc.h"
 #include "play.h"
 
+
 #define DEFAULT_SCREEN_WIDTH   640
 #define DEFAULT_SCREEN_HEIGHT  480
 
@@ -132,7 +133,7 @@ static void errorCallback(int error, const char* description) {
 /**
  * main(): 
  */
-int main(int argc, char** argv) {
+int main(int argc, char** argv) {	
 	glfwSetErrorCallback(errorCallback);
 
 	if (!glfwInit()) {
@@ -153,6 +154,23 @@ int main(int argc, char** argv) {
 
 	// Disable resizing
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+	printf("pass0\n");
+
+	if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+		printf("pass1\n");
+		printf("Failed to init glad.\n");
+		return -1;
+	}
+
+	/*
+	if(!gladLoadGL()) {
+		printf("pass1\n");
+		printf("Failed to init glad!\n");
+	}
+	*/
+
+	printf("pass2\n");
 
 	GLFWwindow* window = glfwCreateWindow(DEFAULT_SCREEN_WIDTH,
 										  DEFAULT_SCREEN_HEIGHT,
