@@ -149,6 +149,12 @@ int Shader::getAttribLocation(const char* name) {
 }
 
 /**
+ * <!--  prepare():  -->
+ */
+void Shader::prepare(const RenderingContext& context) const {
+}
+
+/**
  * <!--  setup():  -->
  */
 void Shader::setup(const RenderingContext& context) const {
@@ -176,10 +182,4 @@ void Shader::endRender() const {
  * <!--  setColor():  -->
  */
 void Shader::setColor(const Vector4f& color) const {
-}
-
-/**
- * <!--  setDirectionalLight():  -->
- */
-void Shader::setDirectionalLight(const Vector3f& lightDir) const {
 }

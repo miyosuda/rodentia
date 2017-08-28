@@ -205,10 +205,9 @@ void Environment::step(const Action& action, int stepNum, bool agentView) {
 		// Debug drawing
 		if( renderer != nullptr ) {
 			// Set light
-			Vector3f lightDir(1.0f, -0.4f, 0.3f);
 			// TODO: stringで毎フレームとってくると無駄が多い？
 			Shader* shader = shaderManager.getShader("diffuse");
-			shader->setDirectionalLight(lightDir);
+			shader->prepare(renderingContext);
 			
 			// Draw objects
 			for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
