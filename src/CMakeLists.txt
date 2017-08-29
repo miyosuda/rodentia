@@ -124,19 +124,18 @@ set(BULLET_LIBRARIES
 )
 
 target_link_libraries(rodent
+					rodent_code
 					${OPENGL_LIBRARIES}
 					${GLFW_LIBRARIES}
 					${BULLET_LIBRARIES}
 					${PNG_LIBRARIES}
-					rodent_code
 					)
 
 target_link_libraries(rodent_module
+					rodent_code
 					${OPENGL_LIBRARIES}
 					${GLFW_LIBRARIES}
 					${BULLET_LIBRARIES}					
 					${PNG_LIBRARIES}
 					${PYTHON_LIBRARIES}
-					rodent_code
 					)
-					
