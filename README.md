@@ -2,58 +2,6 @@
 
 Work in progress.
 
-## Preparation (for MacOSX)
-
-### Install Bullet
-
-	$ wget https://github.com/bulletphysics/bullet3/archive/2.86.1.tar.gz -O bullet3-2.86.1.tar.gz
-	$ tar xvf bullet3-2.86.1.tar.gz
-	$ cd bullet3-2.86.1
-    $ cmake .
-    $ make -j4
-    $ make install
-
-### Install Google Test
-
-    $ git clone https://github.com/google/googletest.git
-	$ cd googletest
-    $ cmake .
-    $ make -j4
-    $ make install
-
-### Install GLFW
-
-    $ brew install glfw3
-
-
-## Preparation (for Ubuntu)
-
-### Install Bullet
-
-	$ wget https://github.com/bulletphysics/bullet3/archive/2.86.1.tar.gz -O bullet3-2.86.1.tar.gz
-	$ tar xvf bullet3-2.86.1.tar.gz
-	$ cd bullet3-2.86.1
-    $ cmake .
-    $ make -j4
-    $ sudo make install
-
-### Install Google Test
-
-    $ git clone https://github.com/google/googletest.git
-	$ cd googletest
-    $ cmake .
-    $ make -j4
-    $ sudo make install
-
-### Install GLFW
-
-    $ git clone https://github.com/glfw/glfw.git
-    $ cd glfw
-    $ cmake .
-    $ make -j4
-    $ sudo make install
-	
-
 ## Build Rodent
 
     $ git clone https://github.com/miyosuda/rodent.git
