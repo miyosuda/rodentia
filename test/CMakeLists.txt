@@ -4,20 +4,17 @@ SET(CMAKE_CXX_FLAGS "-Wall -std=c++11")
 
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-find_package(GTest REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(PNG REQUIRED)
 
 include_directories( ${GTEST_ROOT}/include/ )
-include_directories( ${GTEST_ROOT}/include/
-					 ../src/common
+include_directories( ../src/common
 					 ../src/geom
 					 ../src/play
 					 ../src/render
 					 ../src/env
 					 ../external/glad/include
 )
-link_directories( ${GTEST_ROOT}/lib/ )
 
 add_executable(rodent_test
 	${CMAKE_CURRENT_SOURCE_DIR}/matrix_test.cpp

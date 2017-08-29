@@ -1,10 +1,12 @@
 ### GLFW ###
 
-add_subdirectory (glfw)
+add_subdirectory(glfw)
 
 include_directories(
 	glfw/include/GLFW/
 )
+
+# TODO: check options below
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 set(OPENGL_LIBRARY
@@ -39,3 +41,8 @@ add_subdirectory( bullet3-2.86.1/src/BulletDynamics )
 add_subdirectory( bullet3-2.86.1/src/BulletInverseDynamics )
 add_subdirectory( bullet3-2.86.1/src/BulletSoftBody )
 add_subdirectory( bullet3-2.86.1/src/LinearMath )
+
+
+### GTEST ###
+
+add_subdirectory( googletest )
