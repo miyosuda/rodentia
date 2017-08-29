@@ -40,15 +40,16 @@ add_library(rodent_code STATIC
 	render/DrawComponent.cpp
 	render/RenderingContext.cpp
 	importer/ObjImporter.cpp
-	../external/glad/src/glad.c
 )
 
 add_executable(rodent
 	play/main.cpp
+	../external/glad/src/glad.c	
 )
 
 add_library(rodent_module SHARED
 	python/rodent_module.cpp
+	../external/glad/src/glad.c		
 )
 
 set_target_properties(rodent_module PROPERTIES PREFIX "")

@@ -15,6 +15,7 @@ include_directories( ${GTEST_ROOT}/include/
 					 ../src/play
 					 ../src/render
 					 ../src/env
+					 ../external/glad/include
 )
 link_directories( ${GTEST_ROOT}/lib/ )
 
@@ -22,11 +23,12 @@ add_executable(rodent_test
 	${CMAKE_CURRENT_SOURCE_DIR}/matrix_test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh_manager_test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh_face_data_test.cpp
+	../external/glad/src/glad.c
 )
 
 target_link_libraries( rodent_test
     ${OPENGL_LIBRARIES}
-	${PNG_LIBRARIES}	
+	${PNG_LIBRARIES}
 	rodent_code
 	gtest
 	gtest_main
