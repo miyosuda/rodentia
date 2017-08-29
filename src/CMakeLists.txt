@@ -72,9 +72,7 @@ if (BUILD_PYTHON3)
 	
 	find_package(NumPy REQUIRED)
 
-	message(STATUS "aaa") #..
-	message(STATUS ${NUMPY_INCLUDES}) #..
-	message(STATUS "bbb") #..
+	#message(STATUS ${NUMPY_INCLUDES}) #..
 
 else ()
 	
@@ -91,9 +89,11 @@ else ()
 	endif()
 
 	# TODO: workaround for brew environment
-	set(PYTHON_INCLUDE_DIRS "/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/include/python2.7")
-	set(PYTHON_LIBRARIES "/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/lib/libpython2.7.dylib")
-	set(NUMPY_INCLUDES "/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/core/include")
+	if(APPLE)
+		set(PYTHON_INCLUDE_DIRS "/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/include/python2.7")
+		set(PYTHON_LIBRARIES "/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/lib/libpython2.7.dylib")
+		set(NUMPY_INCLUDES "/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/core/include")
+	endif ()
 
 endif ()
 
