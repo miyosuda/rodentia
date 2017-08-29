@@ -59,7 +59,7 @@ set_target_properties(rodent_module PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_
 
 include_directories(common geom play render env importer
    ../external/glad/include
-   ../external/glfw/include/GLFW/
+   ../external/glfw/include
    ../external/bullet3-2.86.1/src/
 )
 
