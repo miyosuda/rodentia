@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
-SET(CMAKE_CXX_FLAGS "-Wall -std=c++11")
+SET(CMAKE_CXX_FLAGS "-Wall -std=c++11 -fPIC")
+SET(CMAKE_C_FLAGS "-Wall -fPIC")
 
 option(BUILD_PYTHON3 "Build Rodent Python3 binding instead of default Python2." OFF)
 
