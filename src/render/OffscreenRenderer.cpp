@@ -46,6 +46,11 @@ bool OffscreenRenderer::init(int width, int height) {
 	}
 
 	glfwMakeContextCurrent(window);
+
+	if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+		printf("Failed to init glad.\n");
+		return false;
+	}
 	
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
 	
