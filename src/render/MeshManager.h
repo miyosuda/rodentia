@@ -23,6 +23,7 @@ public:
 		sphereMeshData(nullptr) {
 	}
 	~MeshManager();
+	void release();
 	const Mesh* getBoxMesh(Material* material);
 	const Mesh* getSphereMesh(Material* material);
 	const Mesh* getModelMesh(const char* path,

@@ -43,6 +43,13 @@ void* TextureManager::readFile(const char* path, int& readSize) {
  * <!--  ~TextureManager():  -->
  */
 TextureManager::~TextureManager() {
+	release();
+}
+
+/**
+ * <!--  release():  -->
+ */
+void TextureManager::release() {
 	for (auto itr=textureMap.begin(); itr!=textureMap.end(); ++itr) {
 		Texture* texture = itr->second;
 		delete texture;

@@ -18,6 +18,7 @@ private:
 
 public:
 	~TextureManager();
+	void release();
 	Texture* loadTexture(const char* path);
 	Texture* getColorTexture(float r, float g, float b);
 };

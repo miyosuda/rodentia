@@ -15,6 +15,7 @@ private:
 
 public:
 	~ShaderManager();
+	void release();
 	Shader* getShader(const char* name);
 };
 

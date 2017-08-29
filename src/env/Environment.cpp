@@ -127,6 +127,10 @@ void Environment::release() {
 		debugDrawer = nullptr;
 	}
 
+	meshManager.release();
+	textureManager.release();
+	shaderManager.release();
+
 	delete world;
 	delete solver;
 	delete broadPhase;

@@ -78,11 +78,20 @@ static int boxIndicesSize = 36;
  * <!--  ~MeshManager():  -->
  */
 MeshManager::~MeshManager() {
+	release();
+}
+
+/**
+ * <!--  release():  -->
+ */
+void MeshManager::release() {
 	if( boxMeshData != nullptr ) {
 		delete boxMeshData;
+		boxMeshData = nullptr;
 	}
 	if( sphereMeshData != nullptr ) {
 		delete sphereMeshData;
+		sphereMeshData = nullptr;
 	}
 }
 

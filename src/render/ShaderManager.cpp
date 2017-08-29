@@ -10,11 +10,18 @@
  * <!--  ~ShaderManager():  -->
  */
 ShaderManager::~ShaderManager() {
+	release();
+}
+
+/**
+ * <!--  release():  -->
+ */
+void ShaderManager::release() {
 	for (auto itr=shaderMap.begin(); itr!=shaderMap.end(); ++itr) {
 		Shader* shader = itr->second;
 		delete shader;
 	}
-	shaderMap.clear();
+	shaderMap.clear();	
 }
 
 /**
