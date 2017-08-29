@@ -174,12 +174,6 @@ int main(int argc, char** argv) {
 		printf("Failed to init glad.\n");
 		return -1;
 	}
-	/*
-	if(!gladLoadGL()) {
-		printf("pass1\n");
-		printf("Failed to init glad!\n");
-	}
-	*/
 	
 	glfwSwapInterval(1);
 
