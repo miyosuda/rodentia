@@ -24,10 +24,11 @@ add_executable(rodent_test
 )
 
 target_link_libraries( rodent_test
-    ${OPENGL_LIBRARIES}
-	${PNG_LIBRARIES}
 	rodent_code
 	gtest
 	gtest_main
 	pthread
+	dl
+	${PNG_LIBRARIES}	
+    ${OPENGL_LIBRARIES}
 )

@@ -112,15 +112,15 @@ set(GLFW_LIBRARIES
 
 
 set(BULLET_LIBRARIES
-	Bullet3Collision
-	Bullet3Common
-	Bullet3Dynamics
-	Bullet3Geometry
-	BulletCollision
-	BulletDynamics
 	BulletInverseDynamics
+    BulletDynamics
 	BulletSoftBody
-	LinearMath	
+    BulletCollision
+	LinearMath  
+	Bullet3Collision
+	Bullet3Dynamics
+	Bullet3Common
+	Bullet3Geometry
 )
 
 target_link_libraries(rodent
@@ -139,3 +139,4 @@ target_link_libraries(rodent_module
 					${PYTHON_LIBRARIES}
 					rodent_code
 					)
+					
