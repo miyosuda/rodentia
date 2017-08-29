@@ -12,7 +12,9 @@ set(CMAKE_MODULE_PATH
 	${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 
+add_subdirectory(external)
 add_subdirectory(src)
 add_subdirectory(test)
+
 
 

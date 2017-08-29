@@ -57,11 +57,14 @@ set_target_properties(rodent_module PROPERTIES PREFIX "")
 set_target_properties(rodent_module PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/rodent)
 
 
-include_directories(common geom play render env importer ../external/glad/include)
+include_directories(common geom play render env importer
+   ../external/glad/include
+   ../external/glfw/include/GLFW/
+   ../external/bullet3-2.86.1/src/
+)
 
-find_package(Bullet REQUIRED)
+
 find_package(OpenGL REQUIRED)
-find_package(GLFW REQUIRED)
 find_package(PNG REQUIRED)
 
 if (BUILD_PYTHON3)
@@ -98,12 +101,26 @@ else ()
 endif ()
 
 include_directories( ${OPENGL_INCLUDE_DIRS}
-					 ${GLFW_INCLUDE_DIRS}
-					 ${BULLET_INCLUDE_DIRS}
 					 ${PNG_INCLUDE_DIRS}
 					 ${PYTHON_INCLUDE_DIRS}
 					 ${NUMPY_INCLUDES}
 					 )
+
+set(GLFW_LIBRARIES
+	glfw
+)
+
+set(BULLET_LIBRARIES
+	Bullet3Collision
+	Bullet3Common
+	Bullet3Dynamics
+	Bullet3Geometry
+	BulletCollision
+	BulletDynamics
+	BulletInverseDynamics
+	BulletSoftBody
+	LinearMath	
+)
 
 target_link_libraries(rodent
 					${OPENGL_LIBRARIES}
@@ -116,7 +133,7 @@ target_link_libraries(rodent
 target_link_libraries(rodent_module
 					${OPENGL_LIBRARIES}
 					${GLFW_LIBRARIES}
-					${BULLET_LIBRARIES}
+					${BULLET_LIBRARIES}					
 					${PNG_LIBRARIES}
 					${PYTHON_LIBRARIES}
 					rodent_code
