@@ -42,6 +42,9 @@ class Display(object):
     action = self.agent.choose_action()
     
     state, reward, terminal = self.env.step(action=action)
+
+    if reward != 0:
+      print("reward={}".format(reward))
     
     #self.total_reward += reward
 

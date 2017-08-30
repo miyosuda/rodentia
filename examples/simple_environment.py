@@ -4,6 +4,7 @@ from __future__ import division
 from __future__ import print_function
 
 import rodent
+import os
 
 MAX_STEP_NUM = 60 * 30
 
@@ -21,66 +22,106 @@ class SimpleEnvironment(object):
     self.env = rodent.Environment(width=width, height=height)
     self._prepare_wall()
     
-    self.obj_ids_set = set()
+    self.plus_obj_ids_set = set()
+    self.minus_obj_ids_set = set()
+    
     self.reset()
 
   def get_action_size(self):
     return len(SimpleEnvironment.ACTION_LIST)
 
   def _prepare_wall(self):
+    wall_distance = 30.0
+    
     # -Z
-    self.env.add_box(half_extent=[20.0, 1.0, 1.0],
-                     pos=[0.0, 1.0, -20.0],
+    self.env.add_box(half_extent=[wall_distance, 1.0, 1.0],
+                     pos=[0.0, 1.0, -wall_distance],
                      rot=0.0,
                      detect_collision=False)
     # +Z
-    self.env.add_box(half_extent=[20.0, 1.0, 1.0],
-                     pos=[0.0, 1.0, 20.0],
+    self.env.add_box(half_extent=[wall_distance, 1.0, 1.0],
+                     pos=[0.0, 1.0, wall_distance],
                      rot=0.0,
                      detect_collision=False)
     # -X
-    self.env.add_box(half_extent=[1.0, 1.0, 20.0],
-                     pos=[-20.0, 1.0, 0.0],
+    self.env.add_box(half_extent=[1.0, 1.0, wall_distance],
+                     pos=[-wall_distance, 1.0, 0.0],
                      rot=0.0,
                      detect_collision=False)
     # +X
-    self.env.add_box(half_extent=[1.0, 1.0, 20.0],
-                     pos=[20.0, 1.0, 0.0],
+    self.env.add_box(half_extent=[1.0, 1.0, wall_distance],
+                     pos=[wall_distance, 1.0, 0.0],
                      rot=0.0,
                      detect_collision=False)
+
+  def _locate_plus_reward_obj(self, x, z, rot):
+    model_path = os.path.dirname(os.path.abspath(__file__)) + "/data/apple0.obj"
+    pos_scale = 0.075
+    pos = [x * pos_scale, 0.0, z * pos_scale]
+    obj_id = self.env.add_model(path=model_path,
+                                scale=[1.0, 1.0, 1.0],
+                                pos=pos,
+                                rot=rot,
+                                detect_collision=True)
+    self.plus_obj_ids_set.add(obj_id)
+
+  def _locate_minus_reward_obj(self, x, z, rot):
+    model_path = os.path.dirname(os.path.abspath(__file__)) + "/data/lemon0.obj"
+    pos_scale = 0.075
+    pos = [x * pos_scale, 0.0, z * pos_scale]    
+    obj_id = self.env.add_model(path=model_path,
+                                scale=[1.0, 1.0, 1.0],
+                                pos=pos,
+                                rot=rot,
+                                detect_collision=True)
+    self.minus_obj_ids_set.add(obj_id)
   
   def reset(self):
     # Clear remaining reward objects
     self._clear_objects()
 
-    # Reward Sphere
-    obj_id0 = self.env.add_sphere(radius=1.0,
-                                  pos=[-5.0, 1.0, -5.0],
-                                  rot=0.0,
-                                  detect_collision=True)
+    # Add rewards
+    self._locate_plus_reward_obj(x=96, z=0, rot=0.625)
+    self._locate_plus_reward_obj(x=192, z=-112, rot=0.375)
+    self._locate_plus_reward_obj(x=-128, z=-32, rot=0.0)
+    self._locate_plus_reward_obj(x=-144, z=184, rot=0.0)
+    self._locate_plus_reward_obj(x=176, z=208, rot=0.75)
+    self._locate_plus_reward_obj(x=160, z=104, rot=0.0)
+    self._locate_plus_reward_obj(x=80, z=192, rot=0.5)
+    self._locate_plus_reward_obj(x=-120, z=-160, rot=0.375)
+    self._locate_plus_reward_obj(x=-248, z=80, rot=0.5)
+    self._locate_plus_reward_obj(x=96, z=-184, rot=0.0)
+    self._locate_plus_reward_obj(x=-64, z=272, rot=0.125)
+    self._locate_plus_reward_obj(x=288, z=-88, rot=0.875)
+    self._locate_plus_reward_obj(x=-312, z=-96, rot=0.125)
+    self._locate_plus_reward_obj(x=-256, z=-312, rot=0.875)
+    self._locate_plus_reward_obj(x=240, z=232, rot=0.0)
 
-    obj_id1 = self.env.add_sphere(radius=1.0,
-                                  pos=[5.0, 1.0, -5.0],
-                                  rot=0.0,
-                                  detect_collision=True)
-
-    self.obj_ids_set.add(obj_id0)
-    self.obj_ids_set.add(obj_id1)
+    self._locate_minus_reward_obj(x=-184, z=-232, rot=0.0)
+    self._locate_minus_reward_obj(x=104, z=-80, rot=0.0)
+    self._locate_minus_reward_obj(x=200, z=40, rot=0.25)
+    self._locate_minus_reward_obj(x=-240, z=-8, rot=0.625)
+    self._locate_minus_reward_obj(x=-48, z=152, rot=0.0)
+    self._locate_minus_reward_obj(x=48, z=-296, rot=0.875)
+    self._locate_minus_reward_obj(x=-248, z=216, rot=0.375)
     
     # Locate agent to default position
     self.env.locate_agent(pos=[0,0,0],
                           rot=0.0)
 
-    self.total_reward = 0
     self.step_num = 0
     obs = self.env.step(action=[0,0,0], num_steps=1)
-    screen = obs["screen"]    
+    screen = obs["screen"]
     return screen
 
   def _clear_objects(self):
-    for id in self.obj_ids_set:
+    for id in self.plus_obj_ids_set:
       self.env.remove_obj(id)
-    self.obj_ids_set = set()
+    for id in self.minus_obj_ids_set:
+      self.env.remove_obj(id)
+      
+    self.plus_obj_ids_set = set()
+    self.minus_obj_ids_set = set()
 
   def step(self, action):
     real_action = SimpleEnvironment.ACTION_LIST[action]
@@ -94,9 +135,17 @@ class SimpleEnvironment(object):
     reward = 0
     if len(collided) != 0:
       for id in collided:
-        reward += 1
+        if id in self.plus_obj_ids_set:
+          reward += 1
+          self.plus_obj_ids_set.remove(id)          
+        elif id in self.minus_obj_ids_set:
+          reward -= 1
+          self.minus_obj_ids_set.remove(id)
         self.env.remove_obj(id)
 
-    self.total_reward += reward
-    terminal = self.total_reward >= 2 or self.step_num >= MAX_STEP_NUM
-    return screen, reward, terminal   
+    
+    is_empty = len(self.plus_obj_ids_set) == 0
+    time_over = self.step_num >= MAX_STEP_NUM
+    terminal = is_empty or time_over
+    
+    return screen, reward, terminal
