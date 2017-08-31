@@ -139,15 +139,6 @@ public:
 	~MeshFaceData();
 	void calcBoundingBox(Vector3f& minPos, Vector3f& maxPos) const;
 	void draw() const;
-	
-	/*
-	int getVerticesSize() const {
-		return verticesSize;
-	}
-	int getIndicesSize() const {
-		return indicesSize;
-	}
-	*/
 };
 
 #endif

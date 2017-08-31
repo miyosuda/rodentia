@@ -22,14 +22,6 @@ public:
 	void draw(const RenderingContext& context) const;
 	void calcBoundingBox(Vector3f& center, Vector3f& halfExtent) const;
 
-	/*
-	int debugGetMeshFaceSize() const {
-		return meshFaces.size();
-	}
-	const MeshFace* debugGetMeshFace(int index) const {
-		return meshFaces[index];
-	}
-	*/
 };
 
 #endif
