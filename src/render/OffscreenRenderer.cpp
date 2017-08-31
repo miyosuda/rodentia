@@ -8,7 +8,7 @@
 bool OffscreenRenderer::init(int width, int height) {
 	bool ret;
 
-	ret = context.init();
+	ret = context.init(width, height);
 	
 	if( !ret ) {
 		printf("Failed to initialize GL context\n");
