@@ -1,11 +1,11 @@
-#include "FrameBuffer.h"
+#include "OffscreenFrameBuffer.h"
 #include <stdio.h>
 
 
 /**
- * <!--  FrameBuffer():  -->
+ * <!--  OffscreenFrameBuffer():  -->
  */
-FrameBuffer::FrameBuffer()
+OffscreenFrameBuffer::OffscreenFrameBuffer()
 	:
 	frameBufferId(0),
 	colorRenderBufferId(0),
@@ -13,16 +13,16 @@ FrameBuffer::FrameBuffer()
 }
 
 /**
- * <!--  ~FrameBuffer():  -->
+ * <!--  ~OffscreenFrameBuffer():  -->
  */
-FrameBuffer::~FrameBuffer() {
+OffscreenFrameBuffer::~OffscreenFrameBuffer() {
 	release();
 }
 
 /**
  * <!--  init():  -->
  */
-bool FrameBuffer::init(int width, int height) {
+bool OffscreenFrameBuffer::init(int width, int height) {
 	release();
 
 	// Color render buffer
@@ -62,7 +62,7 @@ bool FrameBuffer::init(int width, int height) {
 /**
  * <!--  release():  -->
  */
-void FrameBuffer::release() {
+void OffscreenFrameBuffer::release() {
 	if(frameBufferId != 0) {
 		glDeleteFramebuffers(1, &frameBufferId);
 		frameBufferId = 0;
@@ -78,11 +78,11 @@ void FrameBuffer::release() {
 }
 
 // Start using as rendering target
-void FrameBuffer::use() {
+void OffscreenFrameBuffer::use() {
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferId);
 }
 
 // End using as rendering target
-void FrameBuffer::unuse() {
+void OffscreenFrameBuffer::unuse() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

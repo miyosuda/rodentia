@@ -40,7 +40,7 @@ add_library(rodent_code STATIC
 	render/TextureManager.cpp
 	render/DrawComponent.cpp
 	render/RenderingContext.cpp
-	render/FrameBuffer.cpp
+	render/OffscreenFrameBuffer.cpp
 	render/GLContext.cpp
 	importer/ObjImporter.cpp
 )

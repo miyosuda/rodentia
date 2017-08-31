@@ -5,14 +5,14 @@
 #include "Renderer.h"
 #include "glinc.h"
 #include "GLContext.h"
-#include "FrameBuffer.h"
+#include "OffscreenFrameBuffer.h"
 
 
 class OffscreenRenderer : public Renderer {
 private:
 	GLContext context;	
 	void* buffer;
-	FrameBuffer frameBuffer;
+	OffscreenFrameBuffer frameBuffer;
 
 public:	
 	OffscreenRenderer()

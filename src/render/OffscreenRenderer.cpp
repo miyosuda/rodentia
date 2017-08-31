@@ -28,7 +28,7 @@ bool OffscreenRenderer::init(int width, int height) {
 	ret = frameBuffer.init(frameBufferWidth, frameBufferHeight);
 	
 	if( !ret ) {
-		printf("Failed to init frame buffer.\n");
+		printf("Failed to init offscreen frame buffer.\n");
 		return false;
 	}
 	

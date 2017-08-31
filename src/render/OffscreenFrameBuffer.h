@@ -4,7 +4,7 @@
 
 #include "glinc.h"
 
-class FrameBuffer {
+class OffscreenFrameBuffer {
 private:
 	// id of frame buffer object
 	GLuint frameBufferId;
@@ -14,8 +14,8 @@ private:
 	GLuint depthRenderBufferId;
 	
 public:
-	FrameBuffer();
-	~FrameBuffer();
+	OffscreenFrameBuffer();
+	~OffscreenFrameBuffer();
 	bool init(int width_, int height_);
 	void release();
 	void use();
