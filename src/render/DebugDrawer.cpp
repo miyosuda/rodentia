@@ -25,14 +25,17 @@ void DebugDrawer::drawLine(const btVector3 &from,
 	vertices[5] = to.z();
 
 	lineShader->use();
-	lineShader->beginRender(vertices);
 
+	// TODO:
+	/*
+	lineShader->beginRender(vertices);
 	unsigned short indices[2];
 	indices[0] = 0;
 	indices[1] = 1;
 	
 	lineShader->render(indices, 2);
 	lineShader->endRender();
+	*/
 }
 
 /**

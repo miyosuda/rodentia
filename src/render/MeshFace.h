@@ -21,9 +21,11 @@ public:
 	void draw(const RenderingContext& context);
 	void calcBoundingBox(Vector3f& minPos, Vector3f& maxPos) const;
 
+	/*
 	const MeshFaceData& debugGetMeshFaceData() const {
 		return meshFaceData;
 	}
+	*/
 };
 
 #endif

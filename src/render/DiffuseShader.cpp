@@ -95,9 +95,7 @@ void DiffuseShader::setup(const RenderingContext& context) const {
 						(const GLfloat*)modelViewProjectionMat.getPointer() );
 }
 
-/**
- * <!--  beginRender():  -->
- */
+/*
 void DiffuseShader::beginRender(const float* vertices) const {
 	const float* normals = vertices;
 	normals += 3;
@@ -120,18 +118,13 @@ void DiffuseShader::beginRender(const float* vertices) const {
 						  4*8, texCoords);
 }
 
-/**
- * <!--  render():  -->
- */
 void DiffuseShader::render(const unsigned short* indices, int indicesSize) const {
 	glDrawElements(GL_TRIANGLES, indicesSize, GL_UNSIGNED_SHORT, indices);
 }
 
-/**
- * <!--  endRender():  -->
- */
 void DiffuseShader::endRender() const {
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
 }
+*/

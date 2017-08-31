@@ -110,13 +110,19 @@ public:
 			indices_[i] = indices[i];
 		}
 
-		MeshFaceData* meshFaceData = new MeshFaceData(vertices_,
-													  verticesSize * 8,
-													  indices_,
-													  indicesSize);
+		MeshFaceData* meshFaceData = new MeshFaceData();
+		bool ret = meshFaceData->init(vertices_,
+									  verticesSize * 8,
+									  indices_,
+									  indicesSize);
+		
 		delete [] vertices_;
 		delete [] indices_;
-
+		
+		if( !ret ) {
+			return nullptr;
+		}
+		
 		return meshFaceData;
 	}
 

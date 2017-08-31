@@ -57,9 +57,7 @@ void LineShader::setup(const RenderingContext& context) const {
 						(const GLfloat*)modelViewProjectionMat.getPointer() );
 }
 
-/**
- * <!--  beginRender():  -->
- */
+/*
 void LineShader::beginRender(const float* vertices) const {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
@@ -69,19 +67,14 @@ void LineShader::beginRender(const float* vertices) const {
 	glEnableVertexAttribArray(vertexHandle);
 }
 
-/**
- * <!--  render():  -->
- */
 void LineShader::render(const unsigned short* indices, int indicesSize) const {
 	glDrawElements(GL_LINES, indicesSize, GL_UNSIGNED_SHORT, indices);
 }
 
-/**
- * <!--  endRender():  -->
- */
 void LineShader::endRender() const {
 	glDisableVertexAttribArray(vertexHandle);
 }
+*/
 
 /**
  * <!--  setColor():  -->

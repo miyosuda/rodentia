@@ -22,7 +22,7 @@
  [z]
 */
 
-static float boxVertices[] = {	
+static float boxVertices[] = {
 	// +z
 	-1.0f, -1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, // left bottom
 	 1.0f, -1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // right bottom
@@ -100,10 +100,16 @@ void MeshManager::release() {
  */
 const Mesh* MeshManager::getBoxMesh(Material* material) {
 	if( boxMeshData == nullptr ) {
-		MeshFaceData* meshFaceData = new MeshFaceData(boxVertices,
-													 boxVerticesSize,
-													 boxIndices,
-													 boxIndicesSize);
+		MeshFaceData* meshFaceData = new MeshFaceData();
+		bool ret = meshFaceData->init(boxVertices,
+									  boxVerticesSize,
+									  boxIndices,
+									  boxIndicesSize);
+		if( !ret ) {
+			delete meshFaceData;
+			return nullptr;
+		}
+		
 		MeshData* meshData = new MeshData();
 		meshData->addMeshFace(meshFaceData, "");
 		boxMeshData = meshData;
@@ -164,16 +170,24 @@ const Mesh* MeshManager::getSphereMesh(Material* material) {
 			}
 		}
 
-		MeshFaceData* meshFaceData = new MeshFaceData(vertices,
-													  verticesSize,
-													  indices,
-													  indicesSize);
+		MeshFaceData* meshFaceData = new MeshFaceData();
+
+		bool ret = meshFaceData->init(vertices,
+									  verticesSize,
+									  indices,
+									  indicesSize);
+
+		delete [] vertices;
+		delete [] indices;
+		
+		if( !ret ) {
+			delete meshFaceData;
+			return nullptr;
+		}
+		
 		MeshData* meshData = new MeshData();
 		meshData->addMeshFace(meshFaceData, "");
 		sphereMeshData = meshData;
-		
-		delete [] vertices;
-		delete [] indices;
 	}
 
 	return sphereMeshData->toMesh(material);
@@ -185,6 +199,8 @@ const Mesh* MeshManager::getSphereMesh(Material* material) {
 const Mesh* MeshManager::getModelMesh(const char* path,
 									  TextureManager& textureManager,
 									  ShaderManager& shaderManager) {
+	// TOOD: pathをキーにしてキャッシュする
+	
 	MeshData* meshData = ObjImporter::import(path);
 	if( meshData == nullptr ) {
 		return nullptr;

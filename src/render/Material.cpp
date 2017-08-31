@@ -20,12 +20,6 @@ void Material::draw(const MeshFaceData& meshFaceData,
 	}
 
 	shader->use();
-	shader->beginRender(meshFaceData.getVertices());
-
 	shader->setup(context);
-
-	shader->render(meshFaceData.getIndices(),
-				   meshFaceData.getIndicesSize());
-
-	shader->endRender();
+	meshFaceData.draw();
 }
