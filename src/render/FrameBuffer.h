@@ -8,13 +8,10 @@ class FrameBuffer {
 private:
 	// id of frame buffer object
 	GLuint frameBufferId;
-	// id of texture
-	GLuint frameBufferTextureId;
+	// id of color render buffer
+	GLuint colorRenderBufferId;
 	// id of depth render buffer
 	GLuint depthRenderBufferId;
-	
-	int width;
-	int height;
 	
 public:
 	FrameBuffer();
@@ -23,9 +20,6 @@ public:
 	void release();
 	void use();
 	void unuse();
-	void bind();
-	void unbind();
-	void setViewport();
 };
 
 #endif
