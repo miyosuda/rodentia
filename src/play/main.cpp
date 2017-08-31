@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "glinc.h"
+#include <GLFW/glfw3.h>
 #include "play.h"
 
 
@@ -141,8 +142,11 @@ int main(int argc, char** argv) {
 	}
 
 	// Set GL version
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// RGB 24bit format (No alpha)
 	glfwWindowHint(GLFW_RED_BITS, 8);
@@ -158,6 +162,7 @@ int main(int argc, char** argv) {
 	GLFWwindow* window = glfwCreateWindow(DEFAULT_SCREEN_WIDTH,
 										  DEFAULT_SCREEN_HEIGHT,
 										  "rodent", NULL, NULL);
+	
 	if (!window) {
 		glfwTerminate();
 		exit(EXIT_FAILURE);

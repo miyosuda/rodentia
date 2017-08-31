@@ -17,3 +17,5 @@ debug.png
 check.py
 
 **/CTestTestfile.cmake
+
+debug_install.sh

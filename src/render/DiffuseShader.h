@@ -9,9 +9,9 @@ class Vector3f;
 
 class DiffuseShader : public Shader {
 private:
-	int vertexHandle;
-	int normalHandle;
-	int textureCoordHandle;
+	//int vertexHandle;
+	//int normalHandle;
+	//int textureCoordHandle;
 	int mvpMatrixHandle;
 	int normalMatrixHandle;
 	int invLightDirHandle;

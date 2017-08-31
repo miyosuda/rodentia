@@ -4,17 +4,20 @@
 
 #include "Renderer.h"
 #include "glinc.h"
+#include "GLContext.h"
+#include "FrameBuffer.h"
+
 
 class OffscreenRenderer : public Renderer {
 private:
-	GLFWwindow* window;
+	GLContext context;	
 	void* buffer;
+	FrameBuffer frameBuffer;
 
 public:	
 	OffscreenRenderer()
 		:
 		Renderer(),
-		window(nullptr),
 		buffer(nullptr) {
 	}
 

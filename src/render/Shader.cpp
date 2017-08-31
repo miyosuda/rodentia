@@ -19,13 +19,6 @@ Shader::~Shader() {
 }
 
 /**
- * <!--  bindAttributes():  -->
- */
-void Shader::bindAttributes() {
-	// Override if wan't to bind attribute index manually
-}
-
-/**
  * <!--	 compileShader():  -->
  */
 int Shader::compileShader(GLenum type, const char* src) {
@@ -77,8 +70,6 @@ bool Shader::load(const char* vertShaderSrc, const char* fragShaderSrc) {
 	glAttachShader(program, vertShader);
 	glAttachShader(program, fragShader);
 	
-	bindAttributes();
-
 	glLinkProgram(program);
 	
 	GLint logLength;

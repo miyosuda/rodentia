@@ -5,10 +5,10 @@
 
 
 static const char* vertShaderSrc =
-	"#version 110\n"
-	"attribute vec4 vertexPosition; "
+	"#version 330\n"
+	"layout(location = 0) in vec4 vertexPosition; "
 	""
-	"varying vec4 varyColor; "
+	"out vec4 varyColor; "
 	""
 	"uniform mat4 modelViewProjectionMatrix; "
 	"uniform vec4 lineColor; "
@@ -20,13 +20,14 @@ static const char* vertShaderSrc =
 	"} ";
 
 static const char* fragShaderSrc =
-	"#version 110\n"
+	"#version 330\n"
 	" "
-	"varying vec4 varyColor; "
+	"in vec4 varyColor; "
+	"out vec3 color; "	
 	" "
 	"void main() "
 	"{ "
-	"    gl_FragColor = varyColor; "
+	"    color = varyColor; "
 	"} ";
 
 /**

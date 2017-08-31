@@ -12,7 +12,6 @@ class RenderingContext;
 class Shader {
 protected:
 	GLuint program;
-	virtual void bindAttributes();
 	bool load(const char* vertShaderSrc, const char* fragShaderSrc);	
 	
 public:

@@ -7,17 +7,17 @@
 
 
 static const char* vertShaderSrc =
-	"#version 110\n"
-	"attribute vec4 vertexPosition; "
-	"attribute vec3 vertexNormal; "
-	"attribute vec2 vertexTexCoord; "
+	"#version 330 core\n"
+	"layout(location = 0) in vec4 vertexPosition; "
+	"layout(location = 1) in vec3 vertexNormal; "
+	"layout(location = 2) in vec2 vertexTexCoord; "
 	""
-	"varying vec2 texCoord; "
-	"varying vec4 varyColor; "
+	"out vec2 texCoord; "
+	"out vec4 varyColor; "
 	""
 	"uniform mat4 modelViewProjectionMatrix; "
 	"uniform mat3 normalMatrix; "
-	"uniform vec3 invLightDir; " // Should be normalized
+	"uniform vec3 invLightDir; " // Already normalized
 	""
 	"void main() "
 	"{ "
@@ -34,17 +34,18 @@ static const char* vertShaderSrc =
 	"} ";
 
 static const char* fragShaderSrc =
-	"#version 110\n"
+	"#version 330 core\n"
 	" "
-	"varying vec2 texCoord;	"
-	"varying vec4 varyColor; "
+	"in vec2 texCoord;	"
+	"in vec4 varyColor; "
+	"out vec3 color; "	
 	" "
 	"uniform sampler2D texSampler2D; "
 	" "
 	"void main() "
 	"{ "
-	"    vec4 baseColor = texture2D(texSampler2D, texCoord); "
-	"    gl_FragColor = baseColor * varyColor; "
+	"    vec4 baseColor = texture(texSampler2D, texCoord); "
+	"    color = (baseColor * varyColor).rgb; "
 	"} ";
 
 /**
@@ -56,9 +57,6 @@ bool DiffuseShader::init() {
 		return false;
 	}
 	
-	vertexHandle       = getAttribLocation("vertexPosition");
-	normalHandle       = getAttribLocation("vertexNormal");
-	textureCoordHandle = getAttribLocation("vertexTexCoord");
 	mvpMatrixHandle    = getUniformLocation("modelViewProjectionMatrix");
 	normalMatrixHandle = getUniformLocation("normalMatrix");
 	invLightDirHandle  = getUniformLocation("invLightDir");
@@ -109,17 +107,17 @@ void DiffuseShader::beginRender(const float* vertices) const {
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE,
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
 						  4*8, vertices);
-	glEnableVertexAttribArray(vertexHandle);
 
-	glVertexAttribPointer(normalHandle, 3, GL_FLOAT, GL_FALSE,
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
 						  4*8, normals);
-	glEnableVertexAttribArray(normalHandle);
 
-	glVertexAttribPointer(textureCoordHandle, 2, GL_FLOAT, GL_FALSE,
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,
 						  4*8, texCoords);
-	glEnableVertexAttribArray(textureCoordHandle);
 }
 
 /**
@@ -133,7 +131,7 @@ void DiffuseShader::render(const unsigned short* indices, int indicesSize) const
  * <!--  endRender():  -->
  */
 void DiffuseShader::endRender() const {
-	glDisableVertexAttribArray(vertexHandle);
-	glDisableVertexAttribArray(normalHandle);
-	glDisableVertexAttribArray(textureCoordHandle);
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
 }
