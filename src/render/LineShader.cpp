@@ -27,7 +27,7 @@ static const char* fragShaderSrc =
 	" "
 	"void main() "
 	"{ "
-	"    color = varyColor; "
+	"    color = varyColor.rgb; "
 	"} ";
 
 /**
@@ -39,7 +39,6 @@ bool LineShader::init() {
 		return false;
 	}
 	
-	vertexHandle    = getAttribLocation("vertexPosition");
 	mvpMatrixHandle = getUniformLocation("modelViewProjectionMatrix");
 	lineColorHandle = getUniformLocation("lineColor");
 
@@ -56,25 +55,6 @@ void LineShader::setup(const RenderingContext& context) const {
 	glUniformMatrix4fv( mvpMatrixHandle, 1, GL_FALSE,
 						(const GLfloat*)modelViewProjectionMat.getPointer() );
 }
-
-/*
-void LineShader::beginRender(const float* vertices) const {
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	
-	// Now assuming 3 floats packed vertices
-	glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE,
-						  0, vertices);
-	glEnableVertexAttribArray(vertexHandle);
-}
-
-void LineShader::render(const unsigned short* indices, int indicesSize) const {
-	glDrawElements(GL_LINES, indicesSize, GL_UNSIGNED_SHORT, indices);
-}
-
-void LineShader::endRender() const {
-	glDisableVertexAttribArray(vertexHandle);
-}
-*/
 
 /**
  * <!--  setColor():  -->

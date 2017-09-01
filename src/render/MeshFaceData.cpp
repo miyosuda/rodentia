@@ -20,7 +20,7 @@ bool MeshFaceData::init( const float* vertices,
 	
 	// Set min max pos for bounding box.
 	minPos.set(FLT_MAX, FLT_MAX, FLT_MAX);
-	maxPos.set(FLT_MIN, FLT_MIN, FLT_MIN);		
+	maxPos.set(FLT_MIN, FLT_MIN, FLT_MIN);
 	
 	for(int i=0; i<verticesSize/8; ++i) {
 		float vx = vertices[8*i+0];

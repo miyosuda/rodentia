@@ -151,15 +151,6 @@ void Shader::prepare(const RenderingContext& context) const {
 void Shader::setup(const RenderingContext& context) const {
 }
 
-/*
-void Shader::beginRender(const float* vertices) const {
-}
-void Shader::render(const unsigned short* indices, int indicesSize) const {
-}
-void Shader::endRender() const {
-}
-*/
-
 /**
  * <!--  setColor():  -->
  */

@@ -94,37 +94,3 @@ void DiffuseShader::setup(const RenderingContext& context) const {
 	glUniformMatrix4fv( mvpMatrixHandle, 1, GL_FALSE,
 						(const GLfloat*)modelViewProjectionMat.getPointer() );
 }
-
-/*
-void DiffuseShader::beginRender(const float* vertices) const {
-	const float* normals = vertices;
-	normals += 3;
-
-	const float* texCoords = vertices;
-	texCoords += 6;
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-						  4*8, vertices);
-
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
-						  4*8, normals);
-
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,
-						  4*8, texCoords);
-}
-
-void DiffuseShader::render(const unsigned short* indices, int indicesSize) const {
-	glDrawElements(GL_TRIANGLES, indicesSize, GL_UNSIGNED_SHORT, indices);
-}
-
-void DiffuseShader::endRender() const {
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
-	glDisableVertexAttribArray(2);
-}
-*/
