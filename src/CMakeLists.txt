@@ -47,12 +47,12 @@ add_library(rodent_code STATIC
 
 add_executable(rodent
 	play/main.cpp
-	../external/glad/src/glad.c	
+	../third_party/glad/src/glad.c	
 )
 
 add_library(rodent_module SHARED
 	python/rodent_module.cpp
-	../external/glad/src/glad.c		
+	../third_party/glad/src/glad.c		
 )
 
 set_target_properties(rodent_module PROPERTIES PREFIX "")
@@ -60,9 +60,9 @@ set_target_properties(rodent_module PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_
 
 
 include_directories(common geom play render env importer
-   ../external/glad/include
-   ../external/glfw/include
-   ../external/bullet3-2.86.1/src/
+   ../third_party/glad/include
+   ../third_party/glfw/include
+   ../third_party/bullet3-2.86.1/src/
 )
 
 

@@ -13,14 +13,14 @@ include_directories( ../src/common
 					 ../src/play
 					 ../src/render
 					 ../src/env
-					 ../external/glad/include
+					 ../third_party/glad/include
 )
 
 add_executable(rodent_test
 	${CMAKE_CURRENT_SOURCE_DIR}/matrix_test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh_manager_test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh_face_data_test.cpp
-	../external/glad/src/glad.c
+	../third_party/glad/src/glad.c
 )
 
 target_link_libraries( rodent_test
