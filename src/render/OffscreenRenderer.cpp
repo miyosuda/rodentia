@@ -40,7 +40,7 @@ bool OffscreenRenderer::init(int width, int height) {
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
 	
-	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glClearColor(0.54f, 0.80f, 0.98f, 1.0f);
 
 	buffer = calloc(4, getFrameBufferSize()/4);
 	return true;
