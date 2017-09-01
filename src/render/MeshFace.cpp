@@ -10,7 +10,7 @@
 MeshFace::MeshFace( Material* material_,
 					const MeshFaceData& meshFaceData_ )
 	:
-	material(material_),	
+	material(material_),
 	meshFaceData(meshFaceData_) {
 }
 

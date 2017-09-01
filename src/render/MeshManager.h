@@ -2,6 +2,12 @@
 #ifndef MESHMANAGER_HEADER
 #define MESHMANAGER_HEADER
 
+#include <map>
+#include <string>
+
+using namespace std;
+
+
 class Mesh;
 class MeshData;
 class MeshFaceData;
@@ -14,7 +20,7 @@ class MeshManager {
 private:
 	MeshData* boxMeshData;
 	MeshData* sphereMeshData;
-	// TODO: map<string, MeshData*> modelMeshDataMap;
+	map<string, MeshData*> modelMeshDataMap;
 
 public:
 	MeshManager()

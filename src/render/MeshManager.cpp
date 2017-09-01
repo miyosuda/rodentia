@@ -93,6 +93,12 @@ void MeshManager::release() {
 		delete sphereMeshData;
 		sphereMeshData = nullptr;
 	}
+	
+	for (auto itr=modelMeshDataMap.begin(); itr!=modelMeshDataMap.end(); ++itr) {
+		MeshData* meshData = itr->second;
+		delete meshData;
+	}
+	modelMeshDataMap.clear();
 }
 
 /**
@@ -199,12 +205,18 @@ const Mesh* MeshManager::getSphereMesh(Material* material) {
 const Mesh* MeshManager::getModelMesh(const char* path,
 									  TextureManager& textureManager,
 									  ShaderManager& shaderManager) {
-	// TOOD: pathをキーにしてキャッシュする
+	auto itr = modelMeshDataMap.find(path);
+	if( itr != modelMeshDataMap.end() ) {
+		MeshData* meshData = itr->second;
+		return meshData->toMesh(textureManager, shaderManager);
+	}
 	
 	MeshData* meshData = ObjImporter::import(path);
 	if( meshData == nullptr ) {
 		return nullptr;
 	}
 
+	modelMeshDataMap[path] = meshData;
+	
 	return meshData->toMesh(textureManager, shaderManager);
 }
