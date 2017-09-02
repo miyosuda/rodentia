@@ -371,7 +371,7 @@ bool Environment::initRenderer(int width, int height, bool offscreen) {
 	}
 	
 	bool ret = renderer->init(width, height);
-	if(!ret ) {
+	if(!ret) {
 		return false;
 	}
 
@@ -383,6 +383,11 @@ bool Environment::initRenderer(int width, int height, bool offscreen) {
 	Shader* lineShader = shaderManager.getShader("line");
 	// Set debug drawer
 	debugDrawer = new DebugDrawer(lineShader);
+	ret  = debugDrawer->init();
+	if(!ret) {
+		return false;
+	}
+	
 	world->setDebugDrawer(debugDrawer);
 	int debugMode =
 		btIDebugDraw::DBG_DrawWireframe |

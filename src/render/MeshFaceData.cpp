@@ -36,16 +36,26 @@ bool MeshFaceData::init( const float* vertices,
 		if( vz > maxPos.z ) { maxPos.z = vz; }
 	}
 
-	// Set gl buffer objects
-
-	// TODO: Add errro check
+	// Set GL buffer objects
+	bool ret;
 	
-	indexBuffer.init(indices, indicesSize);
+	ret = indexBuffer.init(indices, indicesSize);
+	if(!ret) {
+		return false;
+	}
 	
-	vertexArray.init();
-	vertexBuffer.init(vertices, verticesSize);
+	ret = vertexArray.init();
+	if(!ret) {
+		return false;
+	}
+	
+	ret = vertexBuffer.init(vertices, verticesSize);
+	if(!ret) {
+		return false;
+	}
+	
 	vertexBuffer.bind();
-
+	
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4*8, (void*)0);
 	glEnableVertexAttribArray(1);

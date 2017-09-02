@@ -16,6 +16,8 @@ void DebugDrawer::drawLine(const btVector3 &from,
 
 	lineShader->setColor(Vector4f(color.x(), color.y(), color.z(), 1.0f));
 
+	// TODO: Too slow now
+
 	float vertices[6];
 	vertices[0] = from.x();
 	vertices[1] = from.y();
@@ -24,18 +26,58 @@ void DebugDrawer::drawLine(const btVector3 &from,
 	vertices[4] = to.y();
 	vertices[5] = to.z();
 
+	vertexBuffer.modify(vertices, 6);
+
 	lineShader->use();
 
-	// TODO:
-	/*
-	lineShader->beginRender(vertices);
-	unsigned short indices[2];
-	indices[0] = 0;
-	indices[1] = 1;
+	vertexArray.bind();
+	indexBuffer.bind();
 	
-	lineShader->render(indices, 2);
-	lineShader->endRender();
-	*/
+	glDrawElements(GL_LINES, 2, GL_UNSIGNED_SHORT, 0);
+	
+	vertexArray.unbind();
+
+	indexBuffer.unbind();
+}
+
+/**
+ * <!--  init():  -->
+ */
+bool DebugDrawer::init() {
+	bool ret;
+
+	const unsigned short indices[2] = {
+		0, 1
+	};
+	
+	ret = indexBuffer.init(indices, 2);
+	if(!ret) {
+		return false;
+	}
+	
+	ret = vertexArray.init();
+	if(!ret) {
+		return false;
+	}
+
+	const float vertices[6] = {
+		0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f,
+	};
+	ret = vertexBuffer.init(vertices, 6);
+	if(!ret) {
+		return false;
+	}
+
+	vertexBuffer.bind();
+	
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4*3, (void*)0);
+	
+	vertexBuffer.unbind();
+	vertexArray.unbind();
+	
+	return true;
 }
 
 /**

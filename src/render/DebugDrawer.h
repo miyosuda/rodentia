@@ -4,6 +4,8 @@
 
 #include "btBulletDynamicsCommon.h"
 
+#include "BufferObjects.h"
+
 class Shader;
 class Matrix4f;
 class RenderingContext;
@@ -13,6 +15,10 @@ class DebugDrawer: public btIDebugDraw {
 private:
 	int debugMode;
 	Shader* lineShader;
+
+	VertexArray vertexArray;
+	VertexBuffer vertexBuffer;
+	IndexBuffer indexBuffer;
 	
 public:
 	DebugDrawer(Shader* lineShader_)
@@ -20,6 +26,7 @@ public:
 		lineShader(lineShader_) {
 	}
 	
+	bool init();
 	// debug mode functions
 	virtual void setDebugMode(int debugMode_) override {
 		debugMode = debugMode_;
