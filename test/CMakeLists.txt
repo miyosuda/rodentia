@@ -18,8 +18,6 @@ include_directories( ../src/common
 
 add_executable(rodent_test
 	${CMAKE_CURRENT_SOURCE_DIR}/matrix_test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/mesh_manager_test.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/mesh_face_data_test.cpp
 	../third_party/glad/src/glad.c
 )
 
