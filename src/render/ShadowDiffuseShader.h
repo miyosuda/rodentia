@@ -1,14 +1,17 @@
 // -*- C++ -*-
-#ifndef DIFFUSESHADER_HEADER
-#define DIFFUSESHADER_HEADER
+#ifndef SHADOWDIFFUSESHADER_HEADER
+#define SHADOWDIFFUSESHADER_HEADER
 
 #include "Shader.h"
 
-class DiffuseShader : public Shader {
+class ShadowDiffuseShader : public Shader {
 private:
 	int mvpMatrixHandle;
+	int depthBiasMvpMatrixHandle;
 	int normalMatrixHandle;
 	int invLightDirHandle;
+	int textureHandle;
+	int shadowMapHandle;
 	
 public:
 	virtual bool init() override;

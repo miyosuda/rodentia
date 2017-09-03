@@ -42,6 +42,9 @@ add_library(rodent_code STATIC
 	render/RenderingContext.cpp
 	render/OffscreenFrameBuffer.cpp
 	render/GLContext.cpp
+	render/DepthFrameBuffer.cpp
+	render/ShadowDepthShader.cpp
+	render/ShadowDiffuseShader.cpp
 	importer/ObjImporter.cpp
 )
 

@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "Vector3f.h"
 
 /**
  * <!--  setProjectionMatrix():  -->
@@ -35,8 +36,8 @@ Camera::Camera() {
  * @param ratio        w/h (when portrait ratio is bigger than 1.0)
  * @param flipping     if true render upside down
  */
-void Camera::init(float znear_, float zfar_, float focalLength, float ratio,
-				  bool flipping) {
+void Camera::initPerspective(float znear_, float zfar_, float focalLength, float ratio,
+							 bool flipping) {
 	znear = znear_;
 	float h = znear * 35.0f / focalLength;
 	float w = h * ratio;
@@ -46,9 +47,74 @@ void Camera::init(float znear_, float zfar_, float focalLength, float ratio,
 }
 
 /**
+ * <!--  initOrtho():  -->
+ */
+void Camera::initOrtho(float znear_, float zfar,
+					   float width, float height) {
+	znear = znear_;
+	nearWidth = width;
+
+	float sx = 2.0f / width;
+	float sy = 2.0f / height;
+	float sz = -2.0f / (zfar-znear);
+	float tz = -(zfar+znear) / (zfar-znear);
+
+	Matrix4f& m = projectionMat;
+	m.m00 = sx;    m.m01 = 0.0f;  m.m02 = 0.0f;  m.m03 = 0.0f;
+	m.m10 = 0.0f;  m.m11 = sy;    m.m12 = 0.0f;  m.m13 = 0.0f;
+	m.m20 = 0.0f;  m.m21 = 0.0f;  m.m22 = sz;    m.m23 = tz;
+	m.m30 = 0.0f;  m.m31 = 0.0f;  m.m32 = 0.0f;  m.m33 = 1.0f;
+}
+
+/**
  * <!--  setMat():  -->
  */
 void Camera::setMat(const Matrix4f& mat_) {
 	mat.set(mat_);
+	invMat.invertRT(mat);
+}
+
+/**
+ * <!--  lookAt():  -->
+ */
+void Camera::lookAt( const Vector3f& fromPos,
+					 const Vector3f& toPos,
+					 const Vector3f& up ) {
+	Vector3f forward;
+	forward.sub(toPos, fromPos);
+	forward.normalize();
+
+	Vector3f side;
+	side.cross(forward, up);
+
+	if( side.lengthSquared() < 0.00001f ) {
+		side.set(1.0f, 0.0f, 0.0f);
+	} else {
+		side.normalize();
+	}
+
+	Vector3f newUp;
+	newUp.cross(side, forward);
+
+	mat.setZero();
+	
+	mat.m00 = side.x;
+	mat.m10 = side.y;
+	mat.m20 = side.z;
+
+	mat.m01 = newUp.x;
+	mat.m11 = newUp.y;
+	mat.m21 = newUp.z;
+
+	mat.m02 = -forward.x;
+	mat.m12 = -forward.y;
+	mat.m22 = -forward.z;
+
+	mat.m03 = fromPos.x;
+	mat.m13 = fromPos.y;
+	mat.m23 = fromPos.z;
+	
+	mat.m33 = 1.0f;
+	
 	invMat.invertRT(mat);
 }

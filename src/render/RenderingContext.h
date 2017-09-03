@@ -10,11 +10,23 @@
 class RenderingContext {
 private:
 	Camera camera;
+	Camera lightCamera;
 
+	// Directional light direction.
 	Vector3f lightDir;
-	Matrix4f modelMat;               // model matrix for current drawing object.
-	Matrix4f modelViewMat;           // Cached model view matrix
-	Matrix4f modelViewProjectionMat; // Cached model view projection matrix
+	// Model matrix for current drawing object.
+	Matrix4f modelMat;
+	// Cached model view matrix
+	Matrix4f modelViewMat;
+	// Cached model view projection matrix
+	Matrix4f modelViewProjectionMat;
+
+	// Matrix to convert viewport coord(-1~1) to textue coord. (0~1)
+	const Matrix4f depthBiasMat;
+	// Model view projection matrix for depth from light view.
+	Matrix4f depthModelViewProjectionMat;
+	// Matrix of (depthBiasMat * depthModelViewProjectionMat)
+	Matrix4f depthBiasModelViewProjectionMat;
 
 public:
 	RenderingContext();
@@ -35,6 +47,12 @@ public:
 	}
 	const Matrix4f& getModelViewProjectionMat() const {
 		return modelViewProjectionMat;
+	}
+	const Matrix4f& getDepthModelViewProjectionMat() const {
+		return depthModelViewProjectionMat;
+	}
+	const Matrix4f& getDepthBiasModelViewProjectionMat() const {
+		return depthBiasModelViewProjectionMat;
 	}
 };
 
