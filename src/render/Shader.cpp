@@ -111,7 +111,7 @@ bool Shader::load(const char* vertShaderSrc, const char* fragShaderSrc) {
 /**
  * <!--  use():  -->
  */
-void Shader::use() {
+void Shader::use() const {
 	glUseProgram(program);
 }
 

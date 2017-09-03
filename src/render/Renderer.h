@@ -11,7 +11,7 @@ private:
 	int frameBufferWidth;
 	int frameBufferHeight;
 
-	GLContext context;	
+	GLContext context;
 	void* buffer;
 	OffscreenFrameBuffer frameBuffer;
 
@@ -24,8 +24,8 @@ public:
 	}
 
 	bool init(int width, int height);
-	void renderPre();	
-	void renderPost(); 
+	void prepareRendering();
+	void finishRendering();
 	void release();
 
 	int getFrameBufferWidth()  const { return frameBufferWidth;  }

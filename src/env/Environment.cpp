@@ -177,7 +177,7 @@ void Environment::checkCollision() {
 void Environment::step(const Action& action, int stepNum, bool agentView) {
 	const float deltaTime = 1.0f/60.0f;
 
-	renderer.renderPre();
+	renderer.prepareRendering();
 	
 	if(world) {
 		collidedIds.clear();
@@ -218,7 +218,7 @@ void Environment::step(const Action& action, int stepNum, bool agentView) {
 		}
 	}
 
-	renderer.renderPost();
+	renderer.finishRendering();
 }
 
 int Environment::addBox(const Vector3f& halfExtent,
@@ -261,7 +261,8 @@ int Environment::addModel(const char* path,
 						  const Vector3f& pos,
 						  float rot,
 						  bool detectCollision) {
-	
+
+	// Load mesh from .obj data file
 	const Mesh* mesh = meshManager.getModelMesh(path, textureManager, shaderManager);
 	if( mesh == nullptr ) {
 		return -1;
@@ -276,7 +277,7 @@ int Environment::addModel(const char* path,
 	halfExtent.y *= scale.y;
 	halfExtent.z *= scale.z;
 
-	// collision shpaeの方にはあらかじめscaleを反映しておかないといけない
+	// We need to apply scale to collision shape in advance.
 	btCollisionShape* shape = collisionShapeManager.getBoxShape(halfExtent.x,
 																halfExtent.y,
 																halfExtent.z);

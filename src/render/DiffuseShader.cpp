@@ -68,6 +68,8 @@ bool DiffuseShader::init() {
  * <!--  prepare():  -->
  */
 void DiffuseShader::prepare(const RenderingContext& context) const {
+	use();
+	
 	const Vector3f& lightDir = context.getLightDir();
 	Vector3f invLightDir(lightDir);
 	invLightDir *= -1.0f;

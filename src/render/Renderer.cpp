@@ -35,7 +35,25 @@ bool Renderer::init(int width, int height) {
 		printf("Failed to init offscreen frame buffer.\n");
 		return false;
 	}
+
+	buffer = calloc(4, getFrameBufferSize()/4);
 	
+	return true;
+}
+
+/**
+ * <!--  release():  -->
+ */
+void Renderer::release() {
+	free(buffer);
+	buffer = nullptr;
+	context.release();
+}
+
+/**
+ * <!--  prepareRendering():  -->
+ */
+void Renderer::prepareRendering() {
 	frameBuffer.use();
 	
 	glViewport(0, 0, frameBufferWidth, frameBufferHeight);
@@ -45,29 +63,12 @@ bool Renderer::init(int width, int height) {
 	glEnable(GL_DEPTH_TEST);
 	
 	glClearColor(0.54f, 0.80f, 0.98f, 1.0f);
-
-	buffer = calloc(4, getFrameBufferSize()/4);
-	return true;
-}
-
-/**
- * <!--  release():  -->
- */
-void Renderer::release() {
-	free(buffer);
-	context.release();
-}
-
-/**
- * <!--  renderPre():  -->
- */
-void Renderer::renderPre() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 /**
- * <!--  renderPost():  -->
+ * <!--  finishRendering():  -->
  */
-void Renderer::renderPost() {
+void Renderer::finishRendering() {
 	glReadPixels(0, 0, frameBufferWidth, frameBufferHeight, GL_RGB, GL_UNSIGNED_BYTE, buffer);
 }

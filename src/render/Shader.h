@@ -19,7 +19,7 @@ public:
 	virtual ~Shader();
 	int compileShader(GLenum type, const char* src);
 
-	void use();
+	void use() const;
 	void release();
 	
 	int getUniformLocation(const char* name);
