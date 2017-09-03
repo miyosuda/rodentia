@@ -109,6 +109,8 @@ public:
 	void removeObject(int id);
 	void locateAgent(const Vector3f& pos,
 					 float rot);
+	void setLightDir(const Vector3f& dir);
+
 
 	const void* getFrameBuffer() const;
 	int getFrameBufferWidth() const;

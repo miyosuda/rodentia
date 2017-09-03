@@ -24,8 +24,6 @@ public:
 	void setCameraMat(const Matrix4f& mat);
 	void setLightDir(const Vector3f& lightDir_); 
 
-	//const Camera& getCamera() const { return camera; }
-
 	const Vector3f& getLightDir() const {
 		return lightDir;
 	}

@@ -360,6 +360,10 @@ void Environment::locateAgent(const Vector3f& pos,
 	}
 }
 
+void Environment::setLightDir(const Vector3f& dir) {
+	renderingContext.setLightDir(dir);
+}
+
 bool Environment::initRenderer(int width, int height, bool offscreen) {
 	if( offscreen ) {
 		renderer = new OffscreenRenderer();

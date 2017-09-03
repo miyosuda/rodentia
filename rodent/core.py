@@ -34,7 +34,7 @@ class Environment(object):
     """
     convert list arg to numpy ndarray.
     """    
-    return self.env.add_sphere(radius=2.0,
+    return self.env.add_sphere(radius=radius,
                                pos=to_nd_float_array(pos),
                                rot=rot,
                                detect_collision=detect_collision)
@@ -53,8 +53,14 @@ class Environment(object):
     """
     convert list arg to numpy ndarray.
     """
-    self.env.locate_agent(pos=to_nd_float_array([0.0, 1.0, 0.0]),
-                          rot=0.0)
+    self.env.locate_agent(pos=to_nd_float_array(pos),
+                          rot=rot)
+
+  def set_light_dir(self, dir):
+    """
+    convert list arg to numpy ndarray.
+    """
+    self.env.set_light_dir(dir=to_nd_float_array(dir))
 
   def step(self, action, num_steps=1):
     """

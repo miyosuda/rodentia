@@ -86,6 +86,11 @@ static void locateAgent(Environment* environment,
 	environment->locateAgent(Vector3f(posX, posY, posZ), rot);
 }
 
+static void setLightDir(Environment* environment,
+						float dirX, float dirY, float dirZ) {
+	environment->setLightDir(Vector3f(dirX, dirY, dirZ));
+}
+
 static int getActionSize(Environment* environment) {
 	return Action::getActionSize();
 }
@@ -490,6 +495,39 @@ static PyObject* Env_locate_agent(EnvObject* self, PyObject* args, PyObject* kwd
 	return Py_None;
 }
 
+static PyObject* Env_set_light_dir(EnvObject* self, PyObject* args, PyObject* kwds) {
+	PyObject* dirObj = nullptr;
+
+	// Get argument
+	const char* kwlist[] = {"dir", nullptr};
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!", const_cast<char**>(kwlist),
+									 &PyArray_Type, &dirObj) ) {
+		return nullptr;
+	}
+	
+	if (self->environment == nullptr) {
+		PyErr_SetString(PyExc_RuntimeError, "rodent environment not setup");
+		return nullptr;
+	}
+
+	// dir
+	const float* dirArr = getFloatArrayData(dirObj, 3, "dir");
+	if( dirArr == nullptr ) {
+		return nullptr;
+	}
+	
+	float dirX = dirArr[0];
+	float dirY = dirArr[1];
+	float dirZ = dirArr[2];
+
+	setLightDir(self->environment,
+				dirX, dirY, dirZ);
+
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
 // dic step(action)
 // int add_box(half_extent, pos, rot, detect_collision)
 // int add_sphere(radius, pos, rot, detect_collision)
@@ -510,6 +548,8 @@ static PyMethodDef EnvObject_methods[] = {
 	 "Remove object"},
 	{"locate_agent", (PyCFunction)Env_locate_agent, METH_VARARGS | METH_KEYWORDS,
 	 "Locate agent"},
+	{"set_light_dir", (PyCFunction)Env_set_light_dir, METH_VARARGS | METH_KEYWORDS,
+	 "Set directional light direction"},
 	{nullptr}
 };
 

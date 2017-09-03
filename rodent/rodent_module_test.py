@@ -42,6 +42,9 @@ class RodentModuleTest(unittest.TestCase):
     env.locate_agent(pos=to_nd_float_array([0.0, 1.0, 0.0]),
                      rot=0.0)
 
+    # Set light direction
+    env.set_light_dir(dir=to_nd_float_array([0.0, -1.0, 0.0]))
+    
     # Check step with action
     action = np.array([10, 0, 0], dtype=np.int32)
 
