@@ -7,6 +7,7 @@
 static const char* vertShaderSrc =
 	"#version 330\n"
 	"layout(location = 0) in vec4 vertexPosition; "
+	"layout(location = 1) in vec3 vertexColor; "
 	""
 	"out vec4 varyColor; "
 	""
@@ -15,7 +16,7 @@ static const char* vertShaderSrc =
 	"" 	
 	"void main() "
 	"{ "
-	"    varyColor = lineColor; "
+	"    varyColor = vec4(vertexColor,1); "
 	"    gl_Position = modelViewProjectionMatrix * vertexPosition; "
 	"} ";
 
@@ -40,8 +41,6 @@ bool LineShader::init() {
 	}
 	
 	mvpMatrixHandle = getUniformLocation("modelViewProjectionMatrix");
-	lineColorHandle = getUniformLocation("lineColor");
-
 	return true;
 }
 
@@ -54,11 +53,4 @@ void LineShader::setup(const RenderingContext& context) const {
 	// Set model view projection matrix
 	glUniformMatrix4fv( mvpMatrixHandle, 1, GL_FALSE,
 						(const GLfloat*)modelViewProjectionMat.getPointer() );
-}
-
-/**
- * <!--  setColor():  -->
- */
-void LineShader::setColor(const Vector4f& color) const {
-	glUniform4fv( lineColorHandle, 1, (const GLfloat*)color.getPointer() );
 }

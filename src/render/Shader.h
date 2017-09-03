@@ -28,9 +28,6 @@ public:
 	virtual bool init()=0;
 	virtual void prepare(const RenderingContext& context) const;
 	virtual void setup(const RenderingContext& context) const;
-
-	// TODO: LineShaderでしか使っていないので、共通化やめる？
-	virtual void setColor(const Vector4f& color) const;
 };
 
 #endif

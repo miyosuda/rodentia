@@ -150,9 +150,3 @@ void Shader::prepare(const RenderingContext& context) const {
  */
 void Shader::setup(const RenderingContext& context) const {
 }
-
-/**
- * <!--  setColor():  -->
- */
-void Shader::setColor(const Vector4f& color) const {
-}

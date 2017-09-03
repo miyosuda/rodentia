@@ -6,41 +6,6 @@
 
 
 /**
- * <!--  drawLine():  -->
- */
-void DebugDrawer::drawLine(const btVector3 &from,
-						   const btVector3 &to,
-						   const btVector3 &color) {
-
-	// draws a simple line of pixels between points.
-
-	lineShader->setColor(Vector4f(color.x(), color.y(), color.z(), 1.0f));
-
-	// TODO: Too slow now
-
-	float vertices[6];
-	vertices[0] = from.x();
-	vertices[1] = from.y();
-	vertices[2] = from.z();
-	vertices[3] = to.x();
-	vertices[4] = to.y();
-	vertices[5] = to.z();
-
-	vertexBuffer.modify(vertices, 6);
-
-	lineShader->use();
-
-	vertexArray.bind();
-	indexBuffer.bind();
-	
-	glDrawElements(GL_LINES, 2, GL_UNSIGNED_SHORT, 0);
-	
-	vertexArray.unbind();
-
-	indexBuffer.unbind();
-}
-
-/**
  * <!--  init():  -->
  */
 bool DebugDrawer::init() {
@@ -60,11 +25,11 @@ bool DebugDrawer::init() {
 		return false;
 	}
 
-	const float vertices[6] = {
-		0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f,
+	const float vertices[12] = {
+		0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // x, y, z, r, g, b
+		0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 	};
-	ret = vertexBuffer.init(vertices, 6);
+	ret = vertexBuffer.init(vertices, 12);
 	if(!ret) {
 		return false;
 	}
@@ -72,12 +37,57 @@ bool DebugDrawer::init() {
 	vertexBuffer.bind();
 	
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4*3, (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4*6, (void*)0);
+
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 4*6, (void*)(4*3));
 	
 	vertexBuffer.unbind();
 	vertexArray.unbind();
 	
 	return true;
+}
+
+/**
+ * <!--  drawLine():  -->
+ */
+void DebugDrawer::drawLine(const btVector3 &from,
+						   const btVector3 &to,
+						   const btVector3 &color) {
+
+	// draws a simple line of pixels between points.
+	
+	// TODO: Too slow now
+	
+	float vertices[12];
+	vertices[0] = from.x();
+	vertices[1] = from.y();
+	vertices[2] = from.z();
+
+	vertices[3] = color.x();
+	vertices[4] = color.y();
+	vertices[5] = color.z();
+	
+	vertices[6] = to.x();
+	vertices[7] = to.y();
+	vertices[8] = to.z();
+
+	vertices[9]  = color.x();
+	vertices[10] = color.y();
+	vertices[11] = color.z();
+
+	vertexBuffer.modify(vertices, 12);
+
+	lineShader->use();
+
+	vertexArray.bind();
+	indexBuffer.bind();
+	
+	glDrawElements(GL_LINES, 2, GL_UNSIGNED_SHORT, 0);
+	
+	vertexArray.unbind();
+
+	indexBuffer.unbind();
 }
 
 /**
