@@ -24,7 +24,7 @@ static Environment* createEnvironment() {
 }
 
 static bool initEnvironment(Environment* environment, int width, int height) {
-	if( !environment->init(width, height, true) ) {
+	if( !environment->init(width, height) ) {
 		return false;
 	}
 	

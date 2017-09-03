@@ -1,8 +1,3 @@
-### GLFW ###
-
-add_subdirectory(glfw)
-
-
 ### BULLET ###
 
 set(BULLET_VERSION 2.86.1)

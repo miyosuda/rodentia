@@ -13,6 +13,7 @@ using namespace std;
 #include "ShaderManager.h"
 #include "RigidBodyComponent.h"
 #include "RenderingContext.h"
+#include "Renderer.h"
 
 class Action;
 class Matrix4f;
@@ -50,7 +51,7 @@ class Environment {
 	btDiscreteDynamicsWorld* world;
 
 	AgentObject* agent;
-	Renderer* renderer;
+	Renderer renderer;
 	int nextObjId;
 	set<int> collidedIds;
 	map<int, EnvironmentObject*> objectMap; // <obj-id, EnvironmentObject>
@@ -61,7 +62,7 @@ class Environment {
 	ShaderManager shaderManager;
 	RenderingContext renderingContext;
 
-	bool initRenderer(int width, int height, bool offscreen);
+	bool initRenderer(int width, int height);
 	void prepareAgent(int floorObjId);
 	void checkCollision();
 	int addObject(btCollisionShape* shape,
@@ -82,7 +83,6 @@ public:
 		configuration(nullptr),
 		world(nullptr),
 		agent(nullptr),
-		renderer(nullptr),
 		nextObjId(0),
 		debugDrawer(nullptr) {
 	}
@@ -90,7 +90,7 @@ public:
 	~Environment() {
 	}
 
-	bool init(int width, int height, bool offscreen);
+	bool init(int width, int height);
 	void release();
 	void step(const Action& action, int stepNum, bool agentView);
 	int addBox(const Vector3f& halfExtent,

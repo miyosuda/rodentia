@@ -11,15 +11,11 @@ if(APPLE)
 endif()
 
 add_library(rodent_code STATIC
-	play/TrackBall.cpp
-	play/play.cpp
 	env/Environment.cpp
 	env/RigidBodyComponent.cpp
 	env/EnvironmentObject.cpp
 	render/DebugDrawer.cpp
 	render/Renderer.cpp
-	render/OffscreenRenderer.cpp
-	render/ScreenRenderer.cpp
 	render/DiffuseShader.cpp
 	render/Image.cpp
 	render/Camera.cpp
@@ -30,10 +26,8 @@ add_library(rodent_code STATIC
 	render/MeshFaceData.cpp
 	render/MeshData.cpp		
 	render/MeshManager.cpp
-	render/OffscreenRenderer.cpp
 	render/PNGDecoder.cpp
 	render/Renderer.cpp
-	render/ScreenRenderer.cpp
 	render/Shader.cpp
 	render/ShaderManager.cpp
 	render/Texture.cpp
@@ -48,14 +42,9 @@ add_library(rodent_code STATIC
 	importer/ObjImporter.cpp
 )
 
-add_executable(rodent
-	play/main.cpp
-	../third_party/glad/src/glad.c	
-)
-
 add_library(rodent_module SHARED
 	python/rodent_module.cpp
-	../third_party/glad/src/glad.c		
+	../third_party/glad/src/glad.c
 )
 
 set_target_properties(rodent_module PROPERTIES PREFIX "")
@@ -64,7 +53,6 @@ set_target_properties(rodent_module PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_
 
 include_directories(common geom play render env importer
    ../third_party/glad/include
-   ../third_party/glfw/include
    ../third_party/bullet3-2.86.1/src/
 )
 
@@ -111,11 +99,6 @@ include_directories( ${OPENGL_INCLUDE_DIRS}
 					 ${NUMPY_INCLUDES}
 					 )
 
-set(GLFW_LIBRARIES
-	glfw
-)
-
-
 set(BULLET_LIBRARIES
 	BulletInverseDynamics
     BulletDynamics
@@ -128,18 +111,9 @@ set(BULLET_LIBRARIES
 	Bullet3Geometry
 )
 
-target_link_libraries(rodent
-					rodent_code
-					${OPENGL_LIBRARIES}
-					${GLFW_LIBRARIES}
-					${BULLET_LIBRARIES}
-					${PNG_LIBRARIES}
-					)
-
 target_link_libraries(rodent_module
 					rodent_code
 					${OPENGL_LIBRARIES}
-					${GLFW_LIBRARIES}
 					${BULLET_LIBRARIES}					
 					${PNG_LIBRARIES}
 					${PYTHON_LIBRARIES}

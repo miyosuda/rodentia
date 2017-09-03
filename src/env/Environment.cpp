@@ -1,8 +1,6 @@
 #include "Environment.h"
 #include <stdio.h>
 
-#include "OffscreenRenderer.h"
-#include "ScreenRenderer.h"
 #include "DebugDrawer.h"
 #include "DrawComponent.h"
 #include "Mesh.h"
@@ -63,7 +61,7 @@ btCollisionShape* CollisionShapeManager::getCylinderShape(float halfExtentX,
 //      [Environment]
 //---------------------------
 
-bool Environment::init(int width, int height, bool offscreen) {
+bool Environment::init(int width, int height) {
 	// Setup the basic world
 	configuration = new btDefaultCollisionConfiguration();
 
@@ -82,7 +80,7 @@ bool Environment::init(int width, int height, bool offscreen) {
 
 	nextObjId = 0;
 
-	bool ret = initRenderer(width, height, offscreen);
+	bool ret = initRenderer(width, height);
 	if( !ret ) {
 		return false;
 	}
@@ -137,12 +135,7 @@ void Environment::release() {
 	delete dispatcher;
 	delete configuration;
 
-	if( renderer != nullptr ) {
-		renderer->release();
-		delete renderer;
-		renderer = nullptr;
-	}
-
+	renderer.release();
 	nextObjId = 0;
 }
 
@@ -184,9 +177,7 @@ void Environment::checkCollision() {
 void Environment::step(const Action& action, int stepNum, bool agentView) {
 	const float deltaTime = 1.0f/60.0f;
 
-	if( renderer != nullptr ) {
-		renderer->renderPre();
-	}
+	renderer.renderPre();
 	
 	if(world) {
 		collidedIds.clear();
@@ -205,33 +196,29 @@ void Environment::step(const Action& action, int stepNum, bool agentView) {
 		if( agentView ) {
 			updateCameraToAgentView();
 		}
-		
-		// Debug drawing
-		if( renderer != nullptr ) {
-			// Set light
-			// TODO: stringで毎フレームとってくると無駄が多い？
-			Shader* shader = shaderManager.getShader("diffuse");
-			shader->prepare(renderingContext);
-			
-			// Draw objects
-			for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
-				EnvironmentObject* object = itr->second;
-				object->draw(renderingContext);
-			}
 
-			if( debugDrawer != nullptr) {
-				// TODO: not drawn when drawing object mesh.
-				glDisable(GL_DEPTH_TEST);
-				debugDrawer->prepare(renderingContext);
-				world->debugDrawWorld();
-				glEnable(GL_DEPTH_TEST);
-			}
+		// Set light
+		// TODO: stringで毎フレームとってくると無駄が多い？
+		Shader* shader = shaderManager.getShader("diffuse");
+		shader->prepare(renderingContext);
+		
+		// Draw objects
+		for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
+			EnvironmentObject* object = itr->second;
+			object->draw(renderingContext);
+		}
+
+		// Debug drawing
+		if( debugDrawer != nullptr) {
+			// TODO: not drawn when drawing object mesh.
+			glDisable(GL_DEPTH_TEST);
+			debugDrawer->prepare(renderingContext);
+			world->debugDrawWorld();
+			glEnable(GL_DEPTH_TEST);
 		}
 	}
 
-	if( renderer != nullptr ) {
-		renderer->renderPost();
-	}
+	renderer.renderPost();
 }
 
 int Environment::addBox(const Vector3f& halfExtent,
@@ -364,20 +351,14 @@ void Environment::setLightDir(const Vector3f& dir) {
 	renderingContext.setLightDir(dir);
 }
 
-bool Environment::initRenderer(int width, int height, bool offscreen) {
-	if( offscreen ) {
-		renderer = new OffscreenRenderer();
-	} else {
-		renderer = new ScreenRenderer();
-	}
-	
-	bool ret = renderer->init(width, height);
+bool Environment::initRenderer(int width, int height) {
+	bool ret = renderer.init(width, height);
 	if(!ret) {
 		return false;
 	}
 
 	float ratio = width / (float) height;
-	renderingContext.initCamera(ratio, offscreen);
+	renderingContext.initCamera(ratio);
 
 	// Set debug drawer
 	/*
@@ -401,35 +382,19 @@ bool Environment::initRenderer(int width, int height, bool offscreen) {
 }
 
 const void* Environment::getFrameBuffer() const {
-	if( renderer != nullptr ) {
-		return renderer->getBuffer();
-	} else {
-		return nullptr;
-	}
+	return renderer.getBuffer();
 }
 
 int Environment::getFrameBufferWidth() const {
-	if( renderer != nullptr ) {
-		return renderer->getFrameBufferWidth();
-	} else {
-		return 0;
-	}
+	return renderer.getFrameBufferWidth();
 }
 
 int Environment::getFrameBufferHeight() const {
-	if( renderer != nullptr ) {
-		return renderer->getFrameBufferHeight();
-	} else {
-		return 0;
-	}
+	return renderer.getFrameBufferHeight();
 }
 
 int Environment::getFrameBufferSize() const {
-	if( renderer != nullptr ) {
-		return renderer->getFrameBufferSize();
-	} else {
-		return 0;
-	}
+	return renderer.getFrameBufferSize();
 }
 
 void Environment::setRenderCamera(const Matrix4f& mat) {

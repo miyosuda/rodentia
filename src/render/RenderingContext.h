@@ -31,7 +31,7 @@ private:
 public:
 	RenderingContext();
 	
-	void initCamera(float ratio, bool flipping);
+	void initCamera(float ratio, bool flipping=true);
 	void setModelMat(Matrix4f modelMat_);
 	void setCameraMat(const Matrix4f& mat);
 	void setLightDir(const Vector3f& lightDir_); 
