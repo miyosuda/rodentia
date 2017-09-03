@@ -84,12 +84,12 @@ void playInit(int width, int height) {
 	environment.init(width, height, false);
 
 	// Locate test objects
-	environment.addBox(3.0f, 3.0f, 3.0f,
-					   10.0f, 3.0f, 3.0f,
+	environment.addBox(Vector3f(3.0f, 3.0f, 3.0f),
+					   Vector3f(10.0f, 3.0f, 3.0f),
 					   M_PI * 0.25f,
 					   false);
 	environment.addSphere(1.0f,
-						  5.0f, 1.0f, -5.0f,
+						  Vector3f(5.0f, 1.0f, -5.0f),
 						  0.0f,
 						  true);
 }

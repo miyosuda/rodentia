@@ -30,7 +30,7 @@ static void convertRigidBodyTransformToDrawMatrix4f(const btTransform& transform
 //---------------------------
 
 RigidBodyComponent::RigidBodyComponent(float mass,
-									   float posX, float posY, float posZ,
+									   const Vector3f& pos,
 									   float rot,
 									   const Vector3f& relativeCenter_,
 									   btCollisionShape* shape,
@@ -42,7 +42,7 @@ RigidBodyComponent::RigidBodyComponent(float mass,
 
 	btTransform drawTransform;
 	drawTransform.setIdentity();
-	drawTransform.setOrigin(btVector3(posX, posY, posZ));
+	drawTransform.setOrigin(btVector3(pos.x, pos.y, pos.z));
 	drawTransform.getBasis().setEulerZYX(0.0f, rot, 0.0f);
 
 	btTransform relativeCenterTransform;
@@ -91,12 +91,10 @@ void RigidBodyComponent::getMat(Matrix4f& mat) const {
 	convertRigidBodyTransformToDrawMatrix4f(body->getWorldTransform(), relativeCenter, mat);
 }
 
-void RigidBodyComponent::locate(float posX, float posY, float posZ,
-								float rot) {
-
+void RigidBodyComponent::locate(const Vector3f& pos, float rot) {
 	btTransform drawTransform;
 	drawTransform.setIdentity();
-	drawTransform.setOrigin(btVector3(posX, posY, posZ));
+	drawTransform.setOrigin(btVector3(pos.x, pos.y, pos.z));
 	drawTransform.getBasis().setEulerZYX(0.0f, rot, 0.0f);
 
 	btTransform relativeCenterTransform;
@@ -116,7 +114,7 @@ void RigidBodyComponent::locate(float posX, float posY, float posZ,
 // [AgentRigidBodyComponent]
 //---------------------------
 AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
-												 float posX, float posY, float posZ,
+												 const Vector3f& pos,
 												 float rot,
 												 btCollisionShape* shape,
 												 btDynamicsWorld* world_,
@@ -124,7 +122,7 @@ AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
 												 int collisionId)
 	:
 	RigidBodyComponent(mass,
-					   posX,  posY,  posZ,
+					   pos,
 					   rot,
 					   Vector3f(0.0f, 0.0f, 0.0f),
 					   shape,

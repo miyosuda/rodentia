@@ -88,8 +88,8 @@ bool Environment::init(int width, int height, bool offscreen) {
 	}
 	
 	// Add floor stage object
-	int floorObjId = addBox(200.0f, 10.0f, 200.0f,
-							0.0f, -10.0f, 0.0f,
+	int floorObjId = addBox(Vector3f(200.0f, 10.0f, 200.0f),
+							Vector3f(0.0f, -10.0f, 0.0f),
 							0.0f,
 							false);
 
@@ -234,26 +234,26 @@ void Environment::step(const Action& action, int stepNum, bool agentView) {
 	}
 }
 
-int Environment::addBox(float halfExtentX, float halfExtentY, float halfExtentZ,
-						float posX, float posY, float posZ,
+int Environment::addBox(const Vector3f& halfExtent,
+						const Vector3f& pos,
 						float rot,
 						bool detectCollision) {
-	btCollisionShape* shape = collisionShapeManager.getBoxShape(halfExtentX,
-																halfExtentY,
-																halfExtentZ);
+	btCollisionShape* shape = collisionShapeManager.getBoxShape(halfExtent.x,
+																halfExtent.y,
+																halfExtent.z);
 	// TODO:
 	Texture* texture = textureManager.getColorTexture(1.0f, 1.0f, 1.0f);
 	Shader* shader = shaderManager.getShader("diffuse");
 	Material* material = new Material(texture, shader);
 	const Mesh* mesh = meshManager.getBoxMesh(material);
-	Vector3f scale(halfExtentX, halfExtentY, halfExtentZ);
+	Vector3f scale(halfExtent.x, halfExtent.y, halfExtent.z);
 
-	return addObject(shape, posX, posY, posZ, rot, Vector3f(0.0f, 0.0f, 0.0f),
+	return addObject(shape, pos, rot, Vector3f(0.0f, 0.0f, 0.0f),
 					 detectCollision, mesh, scale);
 }
 
 int Environment::addSphere(float radius,
-						   float posX, float posY, float posZ,
+						   const Vector3f& pos,
 						   float rot,
 						   bool detectCollision) {
 	btCollisionShape* shape = collisionShapeManager.getSphereShape(radius);
@@ -265,13 +265,13 @@ int Environment::addSphere(float radius,
 	const Mesh* mesh = meshManager.getSphereMesh(material);
 	Vector3f scale(radius, radius, radius);
 	
-	return addObject(shape, posX, posY, posZ, rot, Vector3f(0.0f, 0.0f, 0.0f),
+	return addObject(shape, pos, rot, Vector3f(0.0f, 0.0f, 0.0f),
 					 detectCollision, mesh, scale);
 }
 
 int Environment::addModel(const char* path,
-						  float scaleX, float scaleY, float scaleZ,
-						  float posX, float posY, float posZ,
+						  const Vector3f& scale,
+						  const Vector3f& pos,
 						  float rot,
 						  bool detectCollision) {
 	
@@ -285,28 +285,25 @@ int Environment::addModel(const char* path,
 	
 	mesh->calcBoundingBox(relativeCenter, halfExtent);
 	
-	halfExtent.x *= scaleX;
-	halfExtent.y *= scaleY;
-	halfExtent.z *= scaleZ;
+	halfExtent.x *= scale.x;
+	halfExtent.y *= scale.y;
+	halfExtent.z *= scale.z;
 
 	// collision shpaeの方にはあらかじめscaleを反映しておかないといけない
 	btCollisionShape* shape = collisionShapeManager.getBoxShape(halfExtent.x,
 																halfExtent.y,
 																halfExtent.z);
 
-	// This scale is used for drawing.
-	Vector3f scale(scaleX, scaleY, scaleZ);
-
 	// This relative center offset is used for rigidbody
-	relativeCenter.x *= scaleX;
-	relativeCenter.y *= scaleY;
-	relativeCenter.z *= scaleZ;
+	relativeCenter.x *= scale.x;
+	relativeCenter.y *= scale.y;
+	relativeCenter.z *= scale.z;
 	
-	return addObject(shape, posX, posY, posZ, rot, relativeCenter, detectCollision, mesh, scale);
+	return addObject(shape, pos, rot, relativeCenter, detectCollision, mesh, scale);
 }
 
 int Environment::addObject(btCollisionShape* shape,
-						   float posX, float posY, float posZ,
+						   const Vector3f& pos,
 						   float rot,
 						   const Vector3f& relativeCenter,
 						   bool detectCollision,
@@ -324,7 +321,7 @@ int Environment::addObject(btCollisionShape* shape,
 	}
 
 	EnvironmentObject* object = new StageObject(
-		posX, posY, posZ,
+		pos,
 		rot,
 		relativeCenter,
 		shape,
@@ -356,10 +353,10 @@ void Environment::removeObject(int id) {
 	}
 }
 
-void Environment::locateAgent(float posX, float posY, float posZ,
+void Environment::locateAgent(const Vector3f& pos,
 							  float rot) {
 	if( agent != nullptr ) {
-		agent->locate(posX, posY, posZ, rot);
+		agent->locate(pos, rot);
 	}
 }
 

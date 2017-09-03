@@ -39,7 +39,7 @@ void EnvironmentObject::draw(RenderingContext& context) const {
 //---------------------------
 //      [StageObject]
 //---------------------------
-StageObject::StageObject(float posX, float posY, float posZ,
+StageObject::StageObject(const Vector3f& pos,
 						 float rot,
 						 const Vector3f& relativeCenter,
 						 btCollisionShape* shape,
@@ -50,7 +50,7 @@ StageObject::StageObject(float posX, float posY, float posZ,
 	:
 	EnvironmentObject() {
 	rigidBodyComponent = new RigidBodyComponent(0.0f,
-												posX, posY, posZ,
+												pos,
 												rot,
 												relativeCenter,
 												shape,
@@ -69,7 +69,7 @@ AgentObject::AgentObject(btCollisionShape* shape,
 	:
 	EnvironmentObject() {
 	rigidBodyComponent = new AgentRigidBodyComponent(1.0f,
-													 0.0f, 1.0, 0.0f,
+													 Vector3f(0.0f, 1.0, 0.0f),
 													 0.0f,
 													 shape,
 													 world,
@@ -81,7 +81,7 @@ void AgentObject::control(const Action& action) {
 	rigidBodyComponent->control(action);
 }
 
-void AgentObject::locate(float posX, float posY, float posZ,
+void AgentObject::locate(const Vector3f& pos,
 						 float rot) {
-	rigidBodyComponent->locate(posX, posY, posZ, rot);
+	rigidBodyComponent->locate(pos, rot);
 }

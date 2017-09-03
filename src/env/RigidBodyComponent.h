@@ -17,7 +17,7 @@ protected:
 
 public:
 	RigidBodyComponent(float mass,
-					   float posX, float posY, float posZ,
+					   const Vector3f& pos,
 					   float rot,
 					   const Vector3f& relativeCenter_,
 					   btCollisionShape* shape,
@@ -27,8 +27,7 @@ public:
 	int getCollisionId() const;
 	virtual void control(const Action& action);
 	void getMat(Matrix4f& mat) const;
-	void locate(float posX, float posY, float posZ,
-				float rot);
+	void locate(const Vector3f& pos, float rot);
 	btRigidBody* getRigidBody() { return body; }
 
 };
@@ -36,7 +35,7 @@ public:
 class AgentRigidBodyComponent : public RigidBodyComponent {
 public:
 	AgentRigidBodyComponent(float mass,
-							float posX, float posY, float posZ,
+							const Vector3f& pos,
 							float rot,
 							btCollisionShape* shape,
 							btDynamicsWorld* world,

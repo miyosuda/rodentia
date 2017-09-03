@@ -5,6 +5,7 @@
 
 #include "Environment.h"
 #include "Action.h"
+#include "Vector3f.h"
 
 #define RODENT_MODULE_VERSION "0.0.1"
 
@@ -44,8 +45,8 @@ static int addBox(Environment* environment,
 				  float posX, float posY, float posZ,
 				  float rot,
 				  bool detectCollision) {
-	return environment->addBox(halfExtentX, halfExtentY, halfExtentZ,
-							   posX, posY, posZ,
+	return environment->addBox(Vector3f(halfExtentX, halfExtentY, halfExtentZ),
+							   Vector3f(posX, posY, posZ),
 							   rot,
 							   detectCollision);
 }
@@ -56,7 +57,7 @@ static int addSphere(Environment* environment,
 					 float rot,
 					 bool detectCollision) {
 	return environment->addSphere(radius,
-								  posX, posY, posZ,
+								  Vector3f(posX, posY, posZ),
 								  rot,
 								  detectCollision);
 }
@@ -68,8 +69,8 @@ static int addModel(Environment* environment,
 					float rot,
 					bool detectCollision) {
 	return environment->addModel(path,
-								 scaleX, scaleY, scaleZ,
-								 posX, posY, posZ,
+								 Vector3f(scaleX, scaleY, scaleZ),
+								 Vector3f(posX, posY, posZ),
 								 rot,
 								 detectCollision);
 }
@@ -82,7 +83,7 @@ static void removeObj(Environment* environment,
 static void locateAgent(Environment* environment,
 						float posX, float posY, float posZ,
 						float rot) {
-	environment->locateAgent(posX, posY, posZ, rot);
+	environment->locateAgent(Vector3f(posX, posY, posZ), rot);
 }
 
 static int getActionSize(Environment* environment) {

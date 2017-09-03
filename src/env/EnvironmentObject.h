@@ -34,7 +34,7 @@ public:
 
 class StageObject : public EnvironmentObject {
 public:
-	StageObject(float posX, float posY, float posZ,
+	StageObject(const Vector3f& pos,
 				float rot,
 				const Vector3f& relativeCenter,
 				btCollisionShape* shape,
@@ -52,7 +52,7 @@ public:
 				btRigidBody* floorBody,
 				int collisionId);
 	void control(const Action& action);
-	void locate(float posX, float posY, float posZ,
+	void locate(const Vector3f& pos,
 				float rot);
 };
 

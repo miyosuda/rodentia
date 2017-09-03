@@ -65,7 +65,7 @@ class Environment {
 	void prepareAgent(int floorObjId);
 	void checkCollision();
 	int addObject(btCollisionShape* shape,
-				  float posX, float posY, float posZ,
+				  const Vector3f& pos,
 				  float rot,
 				  const Vector3f& relativeCenter,
 				  bool detectCollision,
@@ -93,21 +93,21 @@ public:
 	bool init(int width, int height, bool offscreen);
 	void release();
 	void step(const Action& action, int stepNum, bool agentView);
-	int addBox(float halfExtentX, float halfExtentY, float halfExtentZ,
-			   float posX, float posY, float posZ,
+	int addBox(const Vector3f& halfExtent,
+			   const Vector3f& pos,
 			   float rot,
 			   bool detectCollision);
 	int addSphere(float radius,
-				  float posX, float posY, float posZ,
+				  const Vector3f& pos,
 				  float rot,
 				  bool detectCollision);
 	int addModel(const char* path,
-				 float scaleX, float scaleY, float scaleZ,
-				 float posX, float posY, float posZ,
+				 const Vector3f& sale,
+				 const Vector3f& pos,
 				 float rot,
 				 bool detectCollision);
 	void removeObject(int id);
-	void locateAgent(float posX, float posY, float posZ,
+	void locateAgent(const Vector3f& pos,
 					 float rot);
 
 	const void* getFrameBuffer() const;
