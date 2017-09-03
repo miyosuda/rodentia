@@ -171,6 +171,9 @@ def main():
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         running = False
+      if event.type == KEYDOWN:
+        if event.key == K_ESCAPE:
+          running = False
     
     display.update()
     clock.tick(FPS)
