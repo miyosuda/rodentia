@@ -159,7 +159,7 @@ public:
 	}
     
 	void debugDump() const {
-		printf("( %f, %f, %f)¥n", x, y, z);
+		printf("( %f, %f, %f)\n", x, y, z);
 	}
 };	
 

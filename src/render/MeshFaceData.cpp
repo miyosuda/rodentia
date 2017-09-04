@@ -22,7 +22,7 @@ bool MeshFaceData::init( const float* vertices,
 		float vx = vertices[8*i+0];
 		float vy = vertices[8*i+1];
 		float vz = vertices[8*i+2];
-		boundingBox.meregeVertex(vx, vy, vz);
+		boundingBox.mergeVertex(vx, vy, vz);
 	}
 
 	// Set GL buffer objects

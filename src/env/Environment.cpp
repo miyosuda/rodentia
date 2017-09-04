@@ -282,12 +282,10 @@ int Environment::addModel(const char* path,
 		return -1;
 	}
 
+	const BoundingBox& boundingBox = mesh->getBoundingBox();
+	
 	Vector3f relativeCenter;
 	Vector3f halfExtent;
-
-	BoundingBox boundingBox;
-	mesh->calcBoundingBox(boundingBox);
-	
 	boundingBox.getCenter(relativeCenter);
 	boundingBox.getHalfExtent(halfExtent);
 	

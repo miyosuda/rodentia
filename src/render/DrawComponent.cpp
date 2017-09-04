@@ -33,3 +33,18 @@ void DrawComponent::draw(RenderingContext& context, const Matrix4f& rigidBodyMat
 	
 	mesh->draw(context);
 }
+
+/**
+ * <!--  calcBoundingBox():  -->
+ */
+void DrawComponent::calcBoundingBox(const Matrix4f& rigidBodyMat,
+									BoundingBox& boundingBox) const {
+	const BoundingBox& meshBoundingBox = mesh->getBoundingBox();
+	float scaleX = scaleMat.getElement(0,0);
+	float scaleY = scaleMat.getElement(1,1);
+	float scaleZ = scaleMat.getElement(2,2);
+	
+	meshBoundingBox.transform(scaleX, scaleY, scaleZ,
+							  rigidBodyMat,
+							  boundingBox);
+}

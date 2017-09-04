@@ -1,4 +1,4 @@
-#include "../src/geom/Matrix4f.h"
+#include "Matrix4f.h"
 #include <gtest/gtest.h>
 
 namespace {

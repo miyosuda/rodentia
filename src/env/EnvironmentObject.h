@@ -13,6 +13,7 @@ class Matrix4f;
 class Vector3f;
 class Mesh;
 class RenderingContext;
+class BoundingBox;
 
 
 class EnvironmentObject {
@@ -29,6 +30,7 @@ public:
 	btRigidBody* getRigidBody() {
 		return rigidBodyComponent->getRigidBody();
 	}
+	bool calcBoundingBox(BoundingBox& boundingBox);
 };
 
 

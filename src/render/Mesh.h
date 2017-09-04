@@ -5,23 +5,24 @@
 #include <vector>
 using namespace std;
 
+#include "BoundingBox.h"
+
 class MeshFace;
 class Matrix4f;
-class BoundingBox;
 class RenderingContext;
 
 
 class Mesh {
 private:
 	vector<MeshFace*> meshFaces;
+	BoundingBox boundingBox;
 
 public:
 	Mesh() {}
 	~Mesh();
 	void addMeshFace(MeshFace* meshFace);
 	void draw(const RenderingContext& context) const;
-	void calcBoundingBox(BoundingBox& boundingBox) const;
-
+	const BoundingBox& getBoundingBox() const { return boundingBox; }
 };
 
 #endif

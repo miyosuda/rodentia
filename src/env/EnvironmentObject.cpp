@@ -36,6 +36,17 @@ void EnvironmentObject::draw(RenderingContext& context) const {
 	}
 }
 
+bool EnvironmentObject::calcBoundingBox(BoundingBox& boundingBox) {
+	if( drawComponent != nullptr ) {
+		Matrix4f rigidBodyMat;
+		getMat(rigidBodyMat);
+		drawComponent->calcBoundingBox(rigidBodyMat, boundingBox);
+		return true;
+	} else {
+		return false;
+	}
+}
+
 //---------------------------
 //      [StageObject]
 //---------------------------
