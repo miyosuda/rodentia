@@ -198,8 +198,7 @@ void Environment::step(const Action& action, int stepNum, bool agentView) {
 		}
 
 		// Set light
-		// TODO: stringで毎フレームとってくると無駄が多い？
-		Shader* shader = shaderManager.getShader("diffuse");
+		Shader* shader = shaderManager.getDiffuseShader();
 		shader->prepare(renderingContext);
 		
 		// Draw objects
@@ -230,7 +229,7 @@ int Environment::addBox(const Vector3f& halfExtent,
 																halfExtent.z);
 	// TODO:
 	Texture* texture = textureManager.getColorTexture(1.0f, 1.0f, 1.0f);
-	Shader* shader = shaderManager.getShader("diffuse");
+	Shader* shader = shaderManager.getDiffuseShader();
 	Material* material = new Material(texture, shader);
 	const Mesh* mesh = meshManager.getBoxMesh(material);
 	Vector3f scale(halfExtent.x, halfExtent.y, halfExtent.z);
@@ -247,7 +246,7 @@ int Environment::addSphere(float radius,
 
 	// TODO:
 	Texture* texture = textureManager.getColorTexture(1.0f, 0.0f, 0.0f);
-	Shader* shader = shaderManager.getShader("diffuse");
+	Shader* shader = shaderManager.getDiffuseShader();
 	Material* material = new Material(texture, shader);
 	const Mesh* mesh = meshManager.getSphereMesh(material);
 	Vector3f scale(radius, radius, radius);
@@ -353,7 +352,7 @@ void Environment::setLightDir(const Vector3f& dir) {
 }
 
 bool Environment::prepareDebugDrawer() {
-	Shader* lineShader = shaderManager.getShader("line");
+	Shader* lineShader = shaderManager.getLineShader();
 	// Set debug drawer
 	debugDrawer = new DebugDrawer(lineShader);
 	bool ret = debugDrawer->init();

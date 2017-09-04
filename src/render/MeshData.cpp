@@ -60,7 +60,7 @@ Mesh* MeshData::toMesh(TextureManager& textureManager, ShaderManager& shaderMana
 			}
 		}
 		
-		Shader* shader = shaderManager.getShader("diffuse");
+		Shader* shader = shaderManager.getDiffuseShader();
 		Material* material = new Material(texture, shader);
 		MeshFace* meshFace = new MeshFace(material,
 										  *meshFaceDatas[i]);

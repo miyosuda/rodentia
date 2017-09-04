@@ -11,12 +11,22 @@ class Shader;
 
 class ShaderManager {
 private:
-	map<string, Shader*> shaderMap;
+	enum ShaderType {
+		DIFFUSE,
+		LINE
+	};
+	
+	Shader* diffuseShader;	
+	Shader* lineShader;
+
+	Shader* createShader(ShaderType shaderType);
 
 public:
+	ShaderManager();
 	~ShaderManager();
 	void release();
-	Shader* getShader(const char* name);
+	Shader* getDiffuseShader();
+	Shader* getLineShader();
 };
 
 #endif

@@ -7,6 +7,15 @@
 #include "LineShader.h"
 
 /**
+ * <!--  ShaderManager():  -->
+ */
+ShaderManager::ShaderManager()
+	:
+	diffuseShader(nullptr),
+	lineShader(nullptr) {
+}
+
+/**
  * <!--  ~ShaderManager():  -->
  */
 ShaderManager::~ShaderManager() {
@@ -17,41 +26,58 @@ ShaderManager::~ShaderManager() {
  * <!--  release():  -->
  */
 void ShaderManager::release() {
-	for (auto itr=shaderMap.begin(); itr!=shaderMap.end(); ++itr) {
-		Shader* shader = itr->second;
-		delete shader;
+	if( diffuseShader != nullptr ) {
+		delete diffuseShader;
+		diffuseShader = nullptr;
 	}
-	shaderMap.clear();	
+	if( lineShader != nullptr ) {
+		delete lineShader;
+		lineShader = nullptr;
+	}	
 }
 
 /**
- * <!--  getShader():  -->
+ * <!--  createShader():  -->
  */
-Shader* ShaderManager::getShader(const char* name) {
-	string nameStr = name;
+Shader* ShaderManager::createShader(ShaderType shaderType) {
+	Shader* shader = nullptr;
 	
-	auto itr = shaderMap.find(nameStr);
-	if( itr != shaderMap.end() ) {
-		Shader* shader = itr->second;
+	switch(shaderType) {
+	case DIFFUSE:
+		shader = new DiffuseShader();
+		break;
+	case LINE:
+		shader = new LineShader();
+		break;
+	default:
+		return nullptr;
+	}
+
+	bool ret = shader->init();
+	if(!ret) {
+		delete shader;
+		return nullptr;
+	} else {
 		return shader;
 	}
+}
 
-	Shader* shader = nullptr;
-
-	if( nameStr == "diffuse" ) {
-		shader = new DiffuseShader();
-	} else if( nameStr == "line" ) {
-		shader = new LineShader();
+/**
+ * <!--  getDiffuseShader():  -->
+ */
+Shader* ShaderManager::getDiffuseShader() {
+	if( diffuseShader == nullptr ) {
+		diffuseShader = createShader(DIFFUSE);
 	}
+	return diffuseShader;
+}
 
-	if( shader != nullptr ) {
-		bool ret = shader->init();
-		if( !ret ) {
-			delete shader;
-			return nullptr;
-		}
-		shaderMap[nameStr] = shader;
+/**
+ * <!--  getLineShader():  -->
+ */
+Shader* ShaderManager::getLineShader() {
+	if( lineShader == nullptr ) {
+		diffuseShader = createShader(LINE);
 	}
-
-	return shader;
+	return lineShader;
 }
