@@ -62,28 +62,23 @@ public:
 		}
 	}
 	
-	bool init(const float* array, int arraySize) {
+	bool init(const float* array, int arraySize, bool dynamic=false) {
 		glGenBuffers(1, &handle);
 		bind();
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * arraySize,
-					 array,
-					 GL_STATIC_DRAW);
+
+		if( dynamic ) {
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * arraySize, array, GL_DYNAMIC_DRAW);
+		} else {
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * arraySize, array, GL_STATIC_DRAW);
+		}
+		
 		return glGetError() == GL_NO_ERROR;
 	}
 
-    // Used only for debug purpose because very slow. (LineShader for debug drawing)
+    // Used only for debug purpose. (LineShader for debug drawing)
 	void modify(const float* array, int arraySize) {
 		bind();
-		
-		float *ptr = (float*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-		
-		if(ptr) {
-			for(int i=0; i<arraySize; ++i) {
-				ptr[i] = array[i];
-			}
-		}
-		
-		glUnmapBuffer(GL_ARRAY_BUFFER);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * arraySize, array);
 	}
 
 	void bind() const {

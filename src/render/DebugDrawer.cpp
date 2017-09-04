@@ -29,7 +29,7 @@ bool DebugDrawer::init() {
 		0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // x, y, z, r, g, b
 		0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 	};
-	ret = vertexBuffer.init(vertices, 12);
+	ret = vertexBuffer.init(vertices, 12, true); // dyanmic=true
 	if(!ret) {
 		return false;
 	}
@@ -56,8 +56,6 @@ void DebugDrawer::drawLine(const btVector3 &from,
 						   const btVector3 &color) {
 
 	// draws a simple line of pixels between points.
-	
-	// TODO: Too slow now
 	
 	float vertices[12];
 	vertices[0] = from.x();

@@ -43,17 +43,20 @@ bool MeshFaceData::init( const float* vertices,
 	if(!ret) {
 		return false;
 	}
-	
-	ret = vertexArray.init();
-	if(!ret) {
-		return false;
-	}
-	
+
 	ret = vertexBuffer.init(vertices, verticesSize);
 	if(!ret) {
 		return false;
 	}
 	
+	ret = vertexArray.init();
+	if(!ret) {
+		return false;
+	}
+
+	vertexArray.bind();
+
+	// このvertexBuffer.bind()は 後続のglVertexAttribPointer()の対象を指定する為に行っている.
 	vertexBuffer.bind();
 	
 	glEnableVertexAttribArray(0);
@@ -62,10 +65,15 @@ bool MeshFaceData::init( const float* vertices,
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 4*8, (void*)(4*3));
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 4*8, (void*)(4*6));
-	
-	vertexBuffer.unbind();
-	vertexArray.unbind();
 
+	// このindexBuffer.bind() は VAOに対して行っている.
+	indexBuffer.bind();
+
+	vertexBuffer.unbind();
+
+	// VAOのbind解除. indexBufferへのバインドは消える.
+	vertexArray.unbind();
+	
 	return true;
 }
 
@@ -83,13 +91,10 @@ void MeshFaceData::release() {
  */
 void MeshFaceData::draw() const {
 	vertexArray.bind();
-	indexBuffer.bind();
 	
 	glDrawElements( GL_TRIANGLES, indicesSize, GL_UNSIGNED_SHORT, 0 );
 	
 	vertexArray.unbind();
-
-	indexBuffer.unbind();
 }
 
 /**
