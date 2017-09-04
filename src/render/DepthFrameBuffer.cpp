@@ -79,7 +79,6 @@ void DepthFrameBuffer::release() {
 // Start using as rendering target
 void DepthFrameBuffer::use() {
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferId);
-	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 // End using as rendering target

@@ -1,6 +1,6 @@
 // -*- C++ -*-
-#ifndef FRAMEBUFFER_HEADER
-#define FRAMEBUFFER_HEADER
+#ifndef OFFSCREENFRAMEBUFFER_HEADER
+#define OFFSCREENFRAMEBUFFER_HEADER
 
 #include "glinc.h"
 
@@ -12,6 +12,9 @@ private:
 	GLuint colorRenderBufferId;
 	// id of depth render buffer
 	GLuint depthRenderBufferId;
+
+	int width;
+	int height;
 	
 public:
 	OffscreenFrameBuffer();
@@ -20,6 +23,7 @@ public:
 	void release();
 	void use();
 	void unuse();
+	void setViewport();
 };
 
 #endif

@@ -17,6 +17,8 @@ private:
 	VertexBuffer vertexBuffer;
 	IndexBuffer indexBuffer;
 
+	VertexArray depthVertexArray;
+
 	void release();
 
 public:
@@ -27,7 +29,7 @@ public:
 			  int indicesSize_ );
 	~MeshFaceData();
 	void calcBoundingBox(Vector3f& minPos, Vector3f& maxPos) const;
-	void draw() const;
+	void draw(bool forShadow) const;
 };
 
 #endif

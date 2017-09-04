@@ -176,8 +176,6 @@ void Environment::checkCollision() {
 
 void Environment::step(const Action& action, int stepNum, bool agentView) {
 	const float deltaTime = 1.0f/60.0f;
-
-	renderer.prepareRendering();
 	
 	if(world) {
 		collidedIds.clear();
@@ -200,6 +198,20 @@ void Environment::step(const Action& action, int stepNum, bool agentView) {
 		// Set light
 		Shader* shader = shaderManager.getDiffuseShader();
 		shader->prepare(renderingContext);
+
+		// Start shadow rendering path
+		renderer.prepareShadowDepthRendering();
+		renderingContext.setPath(RenderingContext::SHADOW);
+
+		// Draw objects
+		for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
+			EnvironmentObject* object = itr->second;
+			object->draw(renderingContext);
+		}
+
+		// Start normal rendering path
+		renderer.prepareRendering();
+		renderingContext.setPath(RenderingContext::NORMAL);
 		
 		// Draw objects
 		for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
@@ -215,9 +227,9 @@ void Environment::step(const Action& action, int stepNum, bool agentView) {
 			world->debugDrawWorld();
 			glEnable(GL_DEPTH_TEST);
 		}
-	}
 
-	renderer.finishRendering();
+		renderer.finishRendering();
+	}
 }
 
 int Environment::addBox(const Vector3f& halfExtent,
@@ -230,7 +242,8 @@ int Environment::addBox(const Vector3f& halfExtent,
 	// TODO:
 	Texture* texture = textureManager.getColorTexture(1.0f, 1.0f, 1.0f);
 	Shader* shader = shaderManager.getDiffuseShader();
-	Material* material = new Material(texture, shader);
+	Shader* shadowDepthShader = shaderManager.getShadowDepthShader();
+	Material* material = new Material(texture, shader, shadowDepthShader);
 	const Mesh* mesh = meshManager.getBoxMesh(material);
 	Vector3f scale(halfExtent.x, halfExtent.y, halfExtent.z);
 
@@ -247,7 +260,8 @@ int Environment::addSphere(float radius,
 	// TODO:
 	Texture* texture = textureManager.getColorTexture(1.0f, 0.0f, 0.0f);
 	Shader* shader = shaderManager.getDiffuseShader();
-	Material* material = new Material(texture, shader);
+	Shader* shadowDepthShader = shaderManager.getShadowDepthShader();
+	Material* material = new Material(texture, shader, shadowDepthShader);
 	const Mesh* mesh = meshManager.getSphereMesh(material);
 	Vector3f scale(radius, radius, radius);
 	
@@ -340,8 +354,7 @@ void Environment::removeObject(int id) {
 	}
 }
 
-void Environment::locateAgent(const Vector3f& pos,
-							  float rot) {
+void Environment::locateAgent(const Vector3f& pos, float rot) {
 	if( agent != nullptr ) {
 		agent->locate(pos, rot);
 	}

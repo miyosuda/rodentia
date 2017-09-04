@@ -12,7 +12,15 @@ RenderingContext::RenderingContext()
 		0.0f, 0.0f, 0.5f, 0.0f,
 		0.5f, 0.5f, 0.5f, 1.0f)
 {
+	setPath(SHADOW);
 	setLightDir(Vector3f(1.0f, -0.4f, 0.3f));
+}
+
+/**
+ * <!--  setPath():  -->
+ */
+void RenderingContext::setPath(Path path_) {
+	path = path_;
 }
 
 /**
@@ -25,8 +33,10 @@ void RenderingContext::initCamera(float ratio, bool flipping) {
 	
 	camera.initPerspective(nearClip, farClip, focalLength, ratio, flipping);
 
-	// TODO:
-	lightCamera.initOrtho(-10.0f, 20.0f, 20.0f, 20.0f);
+	// TODO: 状況におうじて幅を変える必要あり
+	// TODO: flipping必要？
+	//lightCamera.initOrtho(-10.0f, 20.0f, 20.0f, 20.0f);
+	lightCamera.initOrtho(-10.0f, 20.0f, 40.0f, 40.0f);
 }
 
 /**
@@ -34,6 +44,8 @@ void RenderingContext::initCamera(float ratio, bool flipping) {
  */
 void RenderingContext::setModelMat(Matrix4f modelMat_) {
 	modelMat.set(modelMat_);
+
+	// TODO: Pathに応じた最適化ができる
 
 	// Set matrix for normal rendering
 	const Matrix4f& viewMat = camera.getInvMat();

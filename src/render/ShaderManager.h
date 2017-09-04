@@ -29,10 +29,9 @@ public:
 	ShaderManager();
 	~ShaderManager();
 	void release();
-	Shader* getDiffuseShader();
+	Shader* getDiffuseShader(bool useShadow=true);
 	Shader* getLineShader();
-	Shader* getShadowDiffuseShader();
-	Shader* getShadowDepthShader();	
+	Shader* getShadowDepthShader(bool useShadow=true);
 };
 
 #endif

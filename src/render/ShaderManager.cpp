@@ -84,11 +84,18 @@ Shader* ShaderManager::createShader(ShaderType shaderType) {
 /**
  * <!--  getDiffuseShader():  -->
  */
-Shader* ShaderManager::getDiffuseShader() {
-	if( diffuseShader == nullptr ) {
-		diffuseShader = createShader(DIFFUSE);
+Shader* ShaderManager::getDiffuseShader(bool useShadow) {
+	if( useShadow ) {
+		if( shadowDiffuseShader == nullptr ) {
+			shadowDiffuseShader = createShader(SHADOW_DIFFUSE);
+		}
+		return shadowDiffuseShader;
+	} else {
+		if( diffuseShader == nullptr ) {
+			diffuseShader = createShader(DIFFUSE);
+		}
+		return diffuseShader;
 	}
-	return diffuseShader;
 }
 
 /**
@@ -102,21 +109,15 @@ Shader* ShaderManager::getLineShader() {
 }
 
 /**
- * <!--  getShadowDiffuseShader():  -->
- */
-Shader* ShaderManager::getShadowDiffuseShader() {
-	if( shadowDiffuseShader == nullptr ) {
-		shadowDiffuseShader = createShader(SHADOW_DIFFUSE);
-	}
-	return shadowDiffuseShader;	
-}
-
-/**
  * <!--  getShadowDepthShader():  -->
  */
-Shader* ShaderManager::getShadowDepthShader() {
-	if( shadowDepthShader == nullptr ) {
-		shadowDepthShader = createShader(SHADOW_DEPTH);
+Shader* ShaderManager::getShadowDepthShader(bool useShadow) {
+	if( useShadow ) {
+		if( shadowDepthShader == nullptr ) {
+			shadowDepthShader = createShader(SHADOW_DEPTH);
+		}
+		return shadowDepthShader;
+	} else {
+		return nullptr;
 	}
-	return shadowDepthShader;
 }

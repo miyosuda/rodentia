@@ -29,6 +29,7 @@ bool Renderer::init(int width, int height) {
 	frameBufferWidth = width;
 	frameBufferHeight = height;
 
+	// Setup rendering frame buffer
 	ret = frameBuffer.init(frameBufferWidth, frameBufferHeight);
 	
 	if( !ret ) {
@@ -36,6 +37,14 @@ bool Renderer::init(int width, int height) {
 		return false;
 	}
 
+	// Setup shadow depth frame buffer
+	// TODO: バッファサイズ調整
+	ret = depthFrameBuffer.init(1024, 1024);
+	if( !ret ) {
+		printf("Failed to init shadow depth buffer.\n");
+		return false;
+	}
+	
 	buffer = calloc(4, getFrameBufferSize()/4);
 	
 	return true;
@@ -45,9 +54,29 @@ bool Renderer::init(int width, int height) {
  * <!--  release():  -->
  */
 void Renderer::release() {
-	free(buffer);
-	buffer = nullptr;
+	if( buffer != nullptr ) {
+		free(buffer);
+		buffer = nullptr;
+	}
 	context.release();
+}
+
+/**
+ * <!--  prepareShadowDepthRendering():  -->
+ */
+void Renderer::prepareShadowDepthRendering() {
+	depthFrameBuffer.use();
+	
+	depthFrameBuffer.setViewport();
+
+	//glFrontFace(GL_CW); // flipped because camera is inverted
+	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_BACK);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+	
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
 /**
@@ -56,14 +85,23 @@ void Renderer::release() {
 void Renderer::prepareRendering() {
 	frameBuffer.use();
 	
-	glViewport(0, 0, frameBufferWidth, frameBufferHeight);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	frameBuffer.setViewport();
 
-	glDepthFunc(GL_LESS);
+	glFrontFace(GL_CW); // flipped because camera is inverted
+	
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 	
 	glClearColor(0.54f, 0.80f, 0.98f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//..
+	glEnable(GL_TEXTURE_2D);
+	glActiveTexture(GL_TEXTURE1);
+	depthFrameBuffer.bind();
+	//..
 }
 
 /**

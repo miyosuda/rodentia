@@ -61,11 +61,13 @@ Mesh* MeshData::toMesh(TextureManager& textureManager, ShaderManager& shaderMana
 		}
 		
 		Shader* shader = shaderManager.getDiffuseShader();
-		Material* material = new Material(texture, shader);
-		MeshFace* meshFace = new MeshFace(material,
-										  *meshFaceDatas[i]);
+		Shader* shadowDepthShader = shaderManager.getShadowDepthShader();
+		
+		Material* material = new Material(texture, shader, shadowDepthShader);
+		MeshFace* meshFace = new MeshFace(material, *meshFaceDatas[i]);
+		
 		mesh->addMeshFace(meshFace);
 	}
-
+	
 	return mesh;
 }

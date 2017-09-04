@@ -8,7 +8,14 @@
 
 
 class RenderingContext {
+public:	
+	enum Path {
+		SHADOW, // rendering shadow depth (1st path)
+		NORMAL, // noral rendering (2nd path)
+	};
+	
 private:
+	Path path;
 	Camera camera;
 	Camera lightCamera;
 
@@ -34,7 +41,10 @@ public:
 	void initCamera(float ratio, bool flipping=true);
 	void setModelMat(Matrix4f modelMat_);
 	void setCameraMat(const Matrix4f& mat);
-	void setLightDir(const Vector3f& lightDir_); 
+	void setLightDir(const Vector3f& lightDir_);
+
+	void setPath(Path path_);
+	bool isRenderingShadow() const { return path == SHADOW; }
 
 	const Vector3f& getLightDir() const {
 		return lightDir;

@@ -1,6 +1,6 @@
 // -*- C++ -*-
-#ifndef FRAMEBUFFER_HEADER
-#define FRAMEBUFFER_HEADER
+#ifndef DEPTHFRAMEBUFFER_HEADER
+#define DEPTHFRAMEBUFFER_HEADER
 
 #include "glinc.h"
 

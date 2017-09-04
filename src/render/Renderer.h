@@ -5,6 +5,7 @@
 #include "glinc.h"
 #include "GLContext.h"
 #include "OffscreenFrameBuffer.h"
+#include "DepthFrameBuffer.h"
 
 class Renderer {
 private:
@@ -14,6 +15,7 @@ private:
 	GLContext context;
 	void* buffer;
 	OffscreenFrameBuffer frameBuffer;
+	DepthFrameBuffer depthFrameBuffer;
 
 public:
 	Renderer()
@@ -24,6 +26,7 @@ public:
 	}
 
 	bool init(int width, int height);
+	void prepareShadowDepthRendering();
 	void prepareRendering();
 	void finishRendering();
 	void release();

@@ -9,7 +9,9 @@ OffscreenFrameBuffer::OffscreenFrameBuffer()
 	:
 	frameBufferId(0),
 	colorRenderBufferId(0),
-	depthRenderBufferId(0) {
+	depthRenderBufferId(0),
+	width(0),
+	height(0) {
 }
 
 /**
@@ -22,7 +24,10 @@ OffscreenFrameBuffer::~OffscreenFrameBuffer() {
 /**
  * <!--  init():  -->
  */
-bool OffscreenFrameBuffer::init(int width, int height) {
+bool OffscreenFrameBuffer::init(int width_, int height_) {
+	width = width_;
+	height = height_;
+	
 	release();
 
 	// Color render buffer
@@ -85,4 +90,8 @@ void OffscreenFrameBuffer::use() {
 // End using as rendering target
 void OffscreenFrameBuffer::unuse() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void OffscreenFrameBuffer::setViewport() {
+	glViewport(0, 0, width, height);
 }

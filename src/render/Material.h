@@ -13,13 +13,16 @@ class Material {
 private:
 	Texture* texture;
 	Shader* shader;
+	Shader* shadowDepthShader;
 
 public:
 	Material(Texture* texture_,
-			 Shader* shader_)
+			 Shader* shader_,
+			 Shader* shadowDepthShader_)
 		:
 		texture(texture_),
-		shader(shader_) {
+		shader(shader_),
+		shadowDepthShader(shadowDepthShader_) {
 	}
 
 	void draw(const MeshFaceData& meshFaceData,

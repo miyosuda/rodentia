@@ -48,12 +48,12 @@ bool MeshFaceData::init( const float* vertices,
 	if(!ret) {
 		return false;
 	}
-	
+
+	// Rendering用のVAO設定
 	ret = vertexArray.init();
 	if(!ret) {
 		return false;
 	}
-
 	vertexArray.bind();
 
 	// このvertexBuffer.bind()は 後続のglVertexAttribPointer()の対象を指定する為に行っている.
@@ -73,7 +73,23 @@ bool MeshFaceData::init( const float* vertices,
 
 	// VAOのbind解除. indexBufferへのバインドは消える.
 	vertexArray.unbind();
+
+	// Shadow Depth用のVAO設定
+	ret = depthVertexArray.init();
+	if(!ret) {
+		return false;
+	}
+	depthVertexArray.bind();
+
+	vertexBuffer.bind();
 	
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4*8, (void*)0);
+
+	indexBuffer.bind();
+	vertexBuffer.unbind();
+
+	depthVertexArray.unbind();
 	return true;
 }
 
@@ -84,17 +100,27 @@ void MeshFaceData::release() {
 	vertexBuffer.release();
 	indexBuffer.release();
 	vertexArray.release();
+
+	depthVertexArray.release();
 }
 
 /**
  * <!--  draw():  -->
  */
-void MeshFaceData::draw() const {
-	vertexArray.bind();
+void MeshFaceData::draw(bool forShadow) const {
+	if( forShadow ) {
+		depthVertexArray.bind();
+	} else {
+		vertexArray.bind();
+	}
 	
 	glDrawElements( GL_TRIANGLES, indicesSize, GL_UNSIGNED_SHORT, 0 );
-	
-	vertexArray.unbind();
+
+	if( forShadow ) {
+		depthVertexArray.unbind();
+	} else {
+		vertexArray.unbind();
+	}
 }
 
 /**
