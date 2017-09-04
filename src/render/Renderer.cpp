@@ -69,13 +69,13 @@ void Renderer::prepareShadowDepthRendering() {
 	
 	depthFrameBuffer.setViewport();
 
-	//glFrontFace(GL_CW); // flipped because camera is inverted
-	//glEnable(GL_CULL_FACE);
-	//glCullFace(GL_BACK);
+	glFrontFace(GL_CCW); // Default
+	glEnable(GL_CULL_FACE); 
+	glCullFace(GL_FRONT); // Cull front face
+	
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
@@ -87,21 +87,20 @@ void Renderer::prepareRendering() {
 	
 	frameBuffer.setViewport();
 
-	glFrontFace(GL_CW); // flipped because camera is inverted
-	
+	glFrontFace(GL_CW); // Flipped because camera is inverted as upside down
 	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+	glCullFace(GL_BACK); // Cull back face
+	
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	
 	glClearColor(0.54f, 0.80f, 0.98f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//..
+	// Set depth frame buffer for texture slot 1
 	glEnable(GL_TEXTURE_2D);
 	glActiveTexture(GL_TEXTURE1);
 	depthFrameBuffer.bind();
-	//..
 }
 
 /**

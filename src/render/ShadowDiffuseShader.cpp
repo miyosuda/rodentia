@@ -8,7 +8,6 @@
 
 static const char* vertShaderSrc =
 	"#version 330 core\n"
-	//"layout(location = 0) in vec4 vertexPosition; " // TODO:
 	"layout(location = 0) in vec3 vertexPosition; "
 	"layout(location = 1) in vec3 vertexNormal; "
 	"layout(location = 2) in vec2 vertexTexCoord; "
@@ -42,9 +41,8 @@ static const char* vertShaderSrc =
 	"    "
 	"    texCoord = vertexTexCoord; "
 	"    "
-	//"    gl_Position = modelViewProjectionMatrix * vertexPosition; "
 	"    gl_Position = modelViewProjectionMatrix * vec4(vertexPosition,1); "
-	"    shadowTexCoord = depthBiasModelViewProjectionMatrix * vec4(vertexPosition,1); " // TODO:
+	"    shadowTexCoord = depthBiasModelViewProjectionMatrix * vec4(vertexPosition,1); "
 	"} ";
 
 static const char* fragShaderSrc =

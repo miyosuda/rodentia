@@ -34,7 +34,6 @@ void RenderingContext::initCamera(float ratio, bool flipping) {
 	camera.initPerspective(nearClip, farClip, focalLength, ratio, flipping);
 
 	// TODO: 状況におうじて幅を変える必要あり
-	// TODO: flipping必要？
 	//lightCamera.initOrtho(-10.0f, 20.0f, 20.0f, 20.0f);
 	lightCamera.initOrtho(-10.0f, 20.0f, 40.0f, 40.0f);
 }
@@ -45,24 +44,25 @@ void RenderingContext::initCamera(float ratio, bool flipping) {
 void RenderingContext::setModelMat(Matrix4f modelMat_) {
 	modelMat.set(modelMat_);
 
-	// TODO: Pathに応じた最適化ができる
-
-	// Set matrix for normal rendering
-	const Matrix4f& viewMat = camera.getInvMat();
-	const Matrix4f& projectionMat = camera.getProjectionMat();
-
-	modelViewMat.mul(viewMat, modelMat);
-	modelViewProjectionMat.mul(projectionMat, modelViewMat);
-
-	// Set matrix for shadow depth rendering
+	// Set matrix for shadow depth rendering & normal rendering
 	const Matrix4f& depthViewMat = lightCamera.getInvMat();
 	const Matrix4f& depthProjectionMat = lightCamera.getProjectionMat();
-	
+
 	Matrix4f depthModelViewMat;
 	depthModelViewMat.mul(depthViewMat, modelMat);
-	
+	// Used both for shadow depth rendering and normal rendering
 	depthModelViewProjectionMat.mul(depthProjectionMat, depthModelViewMat);
-	depthBiasModelViewProjectionMat.mul(depthBiasMat, depthModelViewProjectionMat);
+
+	if( !isRenderingShadow() ) {
+		// Set matrix for normal rendering
+		const Matrix4f& viewMat = camera.getInvMat();
+		const Matrix4f& projectionMat = camera.getProjectionMat();
+
+		modelViewMat.mul(viewMat, modelMat);
+		modelViewProjectionMat.mul(projectionMat, modelViewMat);
+
+		depthBiasModelViewProjectionMat.mul(depthBiasMat, depthModelViewProjectionMat);
+	}
 }
 
 /**
