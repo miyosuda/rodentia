@@ -20,7 +20,9 @@ public:
 	Camera();
 	void initPerspective(float znear_, float zfar, float focalLength, float ratio,
 						 bool flipping);
-	void initOrtho(float znear_, float zfar, float width, float height);
+	//void initOrtho(float znear_, float zfar, float width, float height);
+	void initOrtho(float znear_, float zfar,
+				   float left, float right, float bottom, float top);
 
 	void setMat(const Matrix4f& mat_);
 	const Matrix4f& getMat() const {

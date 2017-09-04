@@ -6,6 +6,8 @@
 #include "Camera.h"
 #include "Vector3f.h"
 
+class BoundingBox;
+
 
 class RenderingContext {
 public:	
@@ -45,6 +47,7 @@ public:
 
 	void setPath(Path path_);
 	bool isRenderingShadow() const { return path == SHADOW; }
+	void setBoundingBoxForShadow(const BoundingBox& boundingBox);
 
 	const Vector3f& getLightDir() const {
 		return lightDir;

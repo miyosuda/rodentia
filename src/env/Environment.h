@@ -43,6 +43,7 @@ public:
 };
 
 class Environment {
+private:
 	CollisionShapeManager collisionShapeManager;
 	btBroadphaseInterface* broadPhase;
 	btCollisionDispatcher* dispatcher;
@@ -65,6 +66,7 @@ class Environment {
 	bool initRenderer(int width, int height);
 	void prepareAgent(int floorObjId);
 	void checkCollision();
+	void prepareShadow();
 	int addObject(btCollisionShape* shape,
 				  const Vector3f& pos,
 				  float rot,

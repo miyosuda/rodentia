@@ -119,5 +119,5 @@ void BoundingBox::transform(float scaleX, float scaleY, float scaleZ,
  * <!--  isInitalized():  -->
  */
 bool BoundingBox::isInitalized() const {
-	return minPos.x > FLT_MAX - 0.00000001f;
+	return minPos.x < FLT_MAX - 0.00000001f;
 }

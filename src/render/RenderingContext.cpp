@@ -1,4 +1,5 @@
 #include "RenderingContext.h"
+#include "BoundingBox.h"
 
 
 /**
@@ -35,7 +36,7 @@ void RenderingContext::initCamera(float ratio, bool flipping) {
 
 	// TODO: 状況におうじて幅を変える必要あり
 	//lightCamera.initOrtho(-10.0f, 20.0f, 20.0f, 20.0f);
-	lightCamera.initOrtho(-10.0f, 20.0f, 40.0f, 40.0f);
+	lightCamera.initOrtho(-10.0f, 20.0f, -20.0f, 20.0f, -20.0f, 20.0f);
 }
 
 /**
@@ -82,4 +83,23 @@ void RenderingContext::setLightDir(const Vector3f& lightDir_) {
 	lightCamera.lookAt( Vector3f(0.0f, 0.0f, 0.0f),
 						lightDir,
 						Vector3f(0.0f, 1.0f, 0.0f) );
+}
+
+/**
+ * <!--  setBoundingBoxForShadow():  -->
+ */
+void RenderingContext::setBoundingBoxForShadow(const BoundingBox& boundingBox) {
+	const Matrix4f& mat = lightCamera.getInvMat();
+
+	BoundingBox transformedBoundingBox;
+	boundingBox.transform(1.0f, 1.0f, 1.0f,
+						  mat,
+						  transformedBoundingBox);
+	
+	const Vector3f& minPos = transformedBoundingBox.getMinPos();
+	const Vector3f& maxPos = transformedBoundingBox.getMaxPos();
+
+	lightCamera.initOrtho(minPos.z, maxPos.z,
+						  minPos.x, maxPos.x,
+						  minPos.y, maxPos.y);
 }

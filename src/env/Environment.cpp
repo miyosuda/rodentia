@@ -87,7 +87,9 @@ bool Environment::init(int width, int height) {
 	}
 	
 	// Add floor stage object
-	int floorObjId = addBox(Vector3f(200.0f, 10.0f, 200.0f),
+	//int floorObjId = addBox(Vector3f(200.0f, 10.0f, 200.0f),
+	// TODO: 床のサイズをどう指定するか
+	int floorObjId = addBox(Vector3f(20.0f, 10.0f, 20.0f),
 							Vector3f(0.0f, -10.0f, 0.0f),
 							0.0f,
 							false);
@@ -175,10 +177,27 @@ void Environment::checkCollision() {
 	}
 }
 
+void Environment::prepareShadow() {
+	// Calculate bouding box
+	BoundingBox stageBoundingBox;
+	for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
+		EnvironmentObject* object = itr->second;
+		BoundingBox boundingBox;
+		if( object->calcBoundingBox(boundingBox) ) {
+			stageBoundingBox.merge(boundingBox);
+		}
+	}
+
+	if( stageBoundingBox.isInitalized() ) {
+		renderingContext.setBoundingBoxForShadow(stageBoundingBox);
+	}
+}
+
 void Environment::step(const Action& action, int stepNum, bool agentView) {
 	const float deltaTime = 1.0f/60.0f;
 	
 	if(world) {
+		// Process rigid body simulation
 		collidedIds.clear();
 
 		for(int i=0; i<stepNum; ++i) {
@@ -192,11 +211,14 @@ void Environment::step(const Action& action, int stepNum, bool agentView) {
 			checkCollision();
 		}
 
+		// Update agent view camera
 		if( agentView ) {
 			updateCameraToAgentView();
 		}
 
-		// Set light
+		prepareShadow();
+		
+		// Set light direction to shader
 		Shader* shader = shaderManager.getDiffuseShader();
 		shader->prepare(renderingContext);
 
