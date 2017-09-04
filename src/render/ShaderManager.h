@@ -13,11 +13,15 @@ class ShaderManager {
 private:
 	enum ShaderType {
 		DIFFUSE,
-		LINE
+		LINE,
+		SHADOW_DIFFUSE,
+		SHADOW_DEPTH,
 	};
 	
 	Shader* diffuseShader;	
 	Shader* lineShader;
+	Shader* shadowDiffuseShader;
+	Shader* shadowDepthShader;
 
 	Shader* createShader(ShaderType shaderType);
 
@@ -27,6 +31,8 @@ public:
 	void release();
 	Shader* getDiffuseShader();
 	Shader* getLineShader();
+	Shader* getShadowDiffuseShader();
+	Shader* getShadowDepthShader();	
 };
 
 #endif

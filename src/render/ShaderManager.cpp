@@ -5,6 +5,8 @@
 #include "Shader.h"
 #include "DiffuseShader.h"
 #include "LineShader.h"
+#include "ShadowDiffuseShader.h"
+#include "ShadowDepthShader.h"
 
 /**
  * <!--  ShaderManager():  -->
@@ -12,7 +14,10 @@
 ShaderManager::ShaderManager()
 	:
 	diffuseShader(nullptr),
-	lineShader(nullptr) {
+	lineShader(nullptr),
+	shadowDiffuseShader(nullptr),
+	shadowDepthShader(nullptr)
+{
 }
 
 /**
@@ -33,6 +38,14 @@ void ShaderManager::release() {
 	if( lineShader != nullptr ) {
 		delete lineShader;
 		lineShader = nullptr;
+	}
+	if( shadowDiffuseShader != nullptr ) {
+		delete shadowDiffuseShader;
+		shadowDiffuseShader = nullptr;
+	}
+	if( shadowDepthShader != nullptr ) {
+		delete shadowDepthShader;
+		shadowDepthShader = nullptr;
 	}	
 }
 
@@ -48,6 +61,12 @@ Shader* ShaderManager::createShader(ShaderType shaderType) {
 		break;
 	case LINE:
 		shader = new LineShader();
+		break;
+	case SHADOW_DIFFUSE:
+		shader = new ShadowDiffuseShader();
+		break;
+	case SHADOW_DEPTH:
+		shader = new ShadowDepthShader();
 		break;
 	default:
 		return nullptr;
@@ -80,4 +99,24 @@ Shader* ShaderManager::getLineShader() {
 		diffuseShader = createShader(LINE);
 	}
 	return lineShader;
+}
+
+/**
+ * <!--  getShadowDiffuseShader():  -->
+ */
+Shader* ShaderManager::getShadowDiffuseShader() {
+	if( shadowDiffuseShader == nullptr ) {
+		shadowDiffuseShader = createShader(SHADOW_DIFFUSE);
+	}
+	return shadowDiffuseShader;	
+}
+
+/**
+ * <!--  getShadowDepthShader():  -->
+ */
+Shader* ShaderManager::getShadowDepthShader() {
+	if( shadowDepthShader == nullptr ) {
+		shadowDepthShader = createShader(SHADOW_DEPTH);
+	}
+	return shadowDepthShader;
 }
