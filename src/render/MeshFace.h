@@ -7,6 +7,7 @@ class Matrix4f;
 class Vector3f;
 class MeshFaceData;
 class RenderingContext;
+class BoundingBox;
 
 
 class MeshFace {
@@ -19,7 +20,7 @@ public:
 			  const MeshFaceData& meshFaceData );
 	~MeshFace();
 	void draw(const RenderingContext& context);
-	void calcBoundingBox(Vector3f& minPos, Vector3f& maxPos) const;
+	const BoundingBox& getBoundingBox() const;
 };
 
 #endif

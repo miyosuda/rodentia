@@ -4,14 +4,15 @@
 
 #include "Vector3f.h"
 #include "BufferObjects.h"
+#include "BoundingBox.h"
+
 
 class MeshFaceData {
 private:
 	int verticesSize;
 	int indicesSize;
 
-	Vector3f minPos;
-	Vector3f maxPos;
+	BoundingBox boundingBox;
 
 	VertexArray vertexArray;
 	VertexBuffer vertexBuffer;
@@ -28,8 +29,8 @@ public:
 			  const unsigned short* indices,
 			  int indicesSize_ );
 	~MeshFaceData();
-	void calcBoundingBox(Vector3f& minPos, Vector3f& maxPos) const;
 	void draw(bool forShadow) const;
+	const BoundingBox& getBoundingBox() const { return boundingBox; }
 };
 
 #endif

@@ -4,7 +4,7 @@
 
 #include "MeshFace.h"
 #include "Matrix4f.h"
-#include "Vector3f.h"
+#include "BoundingBox.h"
 
 
 Mesh::~Mesh() {
@@ -26,19 +26,9 @@ void Mesh::draw(const RenderingContext& context) const {
 	}
 }
 
-void Mesh::calcBoundingBox(Vector3f& center, Vector3f& halfExtent) const {
+void Mesh::calcBoundingBox(BoundingBox& boundingBox) const {
 	int size = meshFaces.size();
-
-	Vector3f minPos(FLT_MAX, FLT_MAX, FLT_MAX);
-	Vector3f maxPos(FLT_MIN, FLT_MIN, FLT_MIN);
-	
 	for(int i=0; i<size; ++i) {
-		meshFaces[i]->calcBoundingBox(minPos, maxPos);
+		boundingBox.merge(meshFaces[i]->getBoundingBox());
 	}
-
-	halfExtent.sub(maxPos, minPos);
-	halfExtent *= 0.5f;
-
-	center.add(maxPos, minPos);
-	center *= 0.5f;
 }

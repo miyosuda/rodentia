@@ -7,7 +7,7 @@ using namespace std;
 
 class MeshFace;
 class Matrix4f;
-class Vector3f;
+class BoundingBox;
 class RenderingContext;
 
 
@@ -20,7 +20,7 @@ public:
 	~Mesh();
 	void addMeshFace(MeshFace* meshFace);
 	void draw(const RenderingContext& context) const;
-	void calcBoundingBox(Vector3f& center, Vector3f& halfExtent) const;
+	void calcBoundingBox(BoundingBox& boundingBox) const;
 
 };
 

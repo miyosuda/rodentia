@@ -29,8 +29,8 @@ void MeshFace::draw(const RenderingContext& context) {
 }
 
 /**
- * <!--  calcBoundingBox():  -->
+ * <!--  getBoundingBox():  -->
  */
-void MeshFace::calcBoundingBox(Vector3f& minPos, Vector3f& maxPos) const {
-	meshFaceData.calcBoundingBox(minPos, maxPos);
+const BoundingBox& MeshFace::getBoundingBox() const {
+	return meshFaceData.getBoundingBox();
 }

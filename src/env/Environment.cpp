@@ -11,6 +11,7 @@
 #include "Action.h"
 #include "Shader.h"
 #include "EnvironmentObject.h"
+#include "BoundingBox.h"
 
 static const int ID_IGNORE_COLLISION = -1;
 static const int ID_AGENT = -2;
@@ -283,8 +284,12 @@ int Environment::addModel(const char* path,
 
 	Vector3f relativeCenter;
 	Vector3f halfExtent;
+
+	BoundingBox boundingBox;
+	mesh->calcBoundingBox(boundingBox);
 	
-	mesh->calcBoundingBox(relativeCenter, halfExtent);
+	boundingBox.getCenter(relativeCenter);
+	boundingBox.getHalfExtent(halfExtent);
 	
 	halfExtent.x *= scale.x;
 	halfExtent.y *= scale.y;
