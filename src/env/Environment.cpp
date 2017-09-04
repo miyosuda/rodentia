@@ -352,6 +352,25 @@ void Environment::setLightDir(const Vector3f& dir) {
 	renderingContext.setLightDir(dir);
 }
 
+bool Environment::prepareDebugDrawer() {
+	Shader* lineShader = shaderManager.getShader("line");
+	// Set debug drawer
+	debugDrawer = new DebugDrawer(lineShader);
+	bool ret = debugDrawer->init();
+	if(!ret) {
+		return false;
+	}
+	
+	world->setDebugDrawer(debugDrawer);
+	int debugMode =
+		btIDebugDraw::DBG_DrawWireframe |
+		btIDebugDraw::DBG_DrawConstraints |
+		btIDebugDraw::DBG_DrawConstraintLimits;
+	debugDrawer->setDebugMode(debugMode);
+
+	return true;
+}
+
 bool Environment::initRenderer(int width, int height) {
 	bool ret = renderer.init(width, height);
 	if(!ret) {
@@ -363,20 +382,10 @@ bool Environment::initRenderer(int width, int height) {
 
 	// Set debug drawer
 	/*
-	Shader* lineShader = shaderManager.getShader("line");
-	// Set debug drawer
-	debugDrawer = new DebugDrawer(lineShader);
-	ret  = debugDrawer->init();
+	ret = prepareDebugDrawer();
 	if(!ret) {
 		return false;
 	}
-	
-	world->setDebugDrawer(debugDrawer);
-	int debugMode =
-		btIDebugDraw::DBG_DrawWireframe |
-		btIDebugDraw::DBG_DrawConstraints |
-		btIDebugDraw::DBG_DrawConstraintLimits;
-	debugDrawer->setDebugMode(debugMode);
 	*/
 
 	return true;

@@ -106,8 +106,7 @@ void DebugDrawer::drawContactPoint(const btVector3 &pointOnB,
  * <!--  toggleDebugFlag():  -->
  */
 void DebugDrawer::toggleDebugFlag(int flag) {
-	// checks if a flag is set and enables/
-	// disables it
+	// checks if a flag is set and enables/disables it
 	if (debugMode & flag) {
 		// flag is enabled, so disable it
 		debugMode = debugMode & (~flag);

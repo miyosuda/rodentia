@@ -74,6 +74,8 @@ class Environment {
 				  const Vector3f& scale);
 	EnvironmentObject* findObject(int id);
 
+	bool prepareDebugDrawer();
+
 public:
 	Environment()
 		:
