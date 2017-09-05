@@ -16,6 +16,22 @@ namespace {
 
 	TEST_F(Matrix4fTest, invert) {
 		Matrix4f mat0;
+		mat0.set(1.0f, 2.0f, 3.0f, 4.0f,
+				 0.0f, 1.0f, 0.0f, 0.0f,
+				 0.0f, 1.0f, 2.0f, 3.0f,
+				 1.0f, 0.0f, 3.0f, 1.0f);
+
+		Matrix4f mat1(mat0);
+
+		Matrix4f tmpMat;
+		mat0.invert(tmpMat);
+		tmpMat.invert(mat0);
+		
+		checkMatrixNear(mat1, mat0);
+	}	
+
+	TEST_F(Matrix4fTest, invert2) {
+		Matrix4f mat0;
 
 		mat0.set(1.0f, 2.0f, 3.0f, 4.0f,
 				 0.0f, 1.0f, 0.0f, 0.0f,

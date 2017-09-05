@@ -293,6 +293,39 @@ public:
 			+(m02*m13 - m03*m12) * (m20*m31 - m21*m30);
 	}
 
+	void invert(const Matrix4f& m) {
+		float s = m.determinant();
+		if (s == 0.0f) {
+			printf("matrix was singular\n");
+			return;
+		}
+		
+		s = 1.0f/s;
+		set(
+			m.m11*(m.m22*m.m33 - m.m23*m.m32) + m.m12*(m.m23*m.m31 - m.m21*m.m33) + m.m13*(m.m21*m.m32 - m.m22*m.m31),
+			m.m12*(m.m20*m.m33 - m.m23*m.m30) + m.m13*(m.m22*m.m30 - m.m20*m.m32) + m.m10*(m.m23*m.m32 - m.m22*m.m33),
+			m.m13*(m.m20*m.m31 - m.m21*m.m30) + m.m10*(m.m21*m.m33 - m.m23*m.m31) + m.m11*(m.m23*m.m30 - m.m20*m.m33),
+			m.m10*(m.m22*m.m31 - m.m21*m.m32) + m.m11*(m.m20*m.m32 - m.m22*m.m30) + m.m12*(m.m21*m.m30 - m.m20*m.m31),
+
+			m.m21*(m.m02*m.m33 - m.m03*m.m32) + m.m22*(m.m03*m.m31 - m.m01*m.m33) + m.m23*(m.m01*m.m32 - m.m02*m.m31),
+			m.m22*(m.m00*m.m33 - m.m03*m.m30) + m.m23*(m.m02*m.m30 - m.m00*m.m32) + m.m20*(m.m03*m.m32 - m.m02*m.m33),
+			m.m23*(m.m00*m.m31 - m.m01*m.m30) + m.m20*(m.m01*m.m33 - m.m03*m.m31) + m.m21*(m.m03*m.m30 - m.m00*m.m33),
+			m.m20*(m.m02*m.m31 - m.m01*m.m32) + m.m21*(m.m00*m.m32 - m.m02*m.m30) + m.m22*(m.m01*m.m30 - m.m00*m.m31),
+
+			m.m31*(m.m02*m.m13 - m.m03*m.m12) + m.m32*(m.m03*m.m11 - m.m01*m.m13) + m.m33*(m.m01*m.m12 - m.m02*m.m11),
+			m.m32*(m.m00*m.m13 - m.m03*m.m10) + m.m33*(m.m02*m.m10 - m.m00*m.m12) + m.m30*(m.m03*m.m12 - m.m02*m.m13),
+			m.m33*(m.m00*m.m11 - m.m01*m.m10) + m.m30*(m.m01*m.m13 - m.m03*m.m11) + m.m31*(m.m03*m.m10 - m.m00*m.m13),
+			m.m30*(m.m02*m.m11 - m.m01*m.m12) + m.m31*(m.m00*m.m12 - m.m02*m.m10) + m.m32*(m.m01*m.m10 - m.m00*m.m11),
+
+			m.m01*(m.m13*m.m22 - m.m12*m.m23) + m.m02*(m.m11*m.m23 - m.m13*m.m21) + m.m03*(m.m12*m.m21 - m.m11*m.m22),
+			m.m02*(m.m13*m.m20 - m.m10*m.m23) + m.m03*(m.m10*m.m22 - m.m12*m.m20) + m.m00*(m.m12*m.m23 - m.m13*m.m22),
+			m.m03*(m.m11*m.m20 - m.m10*m.m21) + m.m00*(m.m13*m.m21 - m.m11*m.m23) + m.m01*(m.m10*m.m23 - m.m13*m.m20),
+			m.m00*(m.m11*m.m22 - m.m12*m.m21) + m.m01*(m.m12*m.m20 - m.m10*m.m22) + m.m02*(m.m10*m.m21 - m.m11*m.m20)
+			);
+
+		(*this) *= s;
+	}
+
 	void invert() {
 		float s = determinant();
 		if (s == 0.0f) {
