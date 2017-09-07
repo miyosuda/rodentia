@@ -61,7 +61,7 @@ static const char* fragShaderSrc =
 	"{ "
 	"	 float bias = 0.005; "
 	"    vec4 baseColor = texture(texSampler2D, texCoord); "
-	"    float visibility = texture( shadowMap, vec3(shadowTexCoord.xy, (shadowTexCoord.z-bias)/shadowTexCoord.w) ); "
+	"    float visibility = texture( shadowMap, vec3(shadowTexCoord.xy/shadowTexCoord.w, (shadowTexCoord.z-bias)/shadowTexCoord.w) ); "
 	"    vec4 tmpColor = shadowColor + (varyColor - shadowColor) * visibility; "
 	"    color = (baseColor * tmpColor).rgb; "
 	"} ";

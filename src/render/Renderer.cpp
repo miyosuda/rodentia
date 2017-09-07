@@ -39,7 +39,7 @@ bool Renderer::init(int width, int height) {
 
 	// Setup shadow depth frame buffer
 	// TODO: バッファサイズ調整
-	ret = depthFrameBuffer.init(1024, 1024);
+	ret = depthFrameBuffer.init(512, 512);
 	if( !ret ) {
 		printf("Failed to init shadow depth buffer.\n");
 		return false;

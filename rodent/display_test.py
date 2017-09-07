@@ -137,7 +137,7 @@ class Display(object):
     model_path0 = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/apple0.obj"
     self.env.add_model(path=model_path0,
                        scale=to_nd_float_array([1.0, 1.0, 1.0]),
-                       pos=to_nd_float_array([10.0, 0.0, 10.0]),
+                       pos=to_nd_float_array([0.0, 0.0, -10.0]), # +z pos
                        rot=0.0,
                        detect_collision=True)
 
@@ -154,7 +154,7 @@ class Display(object):
                           rot=0.0)
 
     # Set light direction
-    self.env.set_light_dir(dir=to_nd_float_array([-0.7,-1,-0.5]))
+    self.env.set_light_dir(dir=to_nd_float_array([-0.5, -2.0, 0.5]))
 
     self.total_reward = 0
     self.step_num = 0

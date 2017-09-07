@@ -19,6 +19,7 @@ include_directories( ../src/common
 add_executable(rodent_test
 	${CMAKE_CURRENT_SOURCE_DIR}/matrix_test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/bounding_box_test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/camera_test.cpp
 	../third_party/glad/src/glad.c
 )
 

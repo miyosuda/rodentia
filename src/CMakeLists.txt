@@ -39,6 +39,7 @@ add_library(rodent_code STATIC
 	render/DepthFrameBuffer.cpp
 	render/ShadowDepthShader.cpp
 	render/ShadowDiffuseShader.cpp
+	render/LSPSM.cpp
 	importer/ObjImporter.cpp
 	geom/BoundingBox.cpp
 )

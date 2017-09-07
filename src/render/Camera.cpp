@@ -10,16 +10,18 @@ static void setProjectionMatrix(Matrix4f& m,
 								bool flipping) {
 	float a = 2.0f * near / w;
 	float b = 2.0f * near / h;
+
 	if( flipping ) {
 		b = -b;
 	}
+	
 	float c = - (far + near) / (far - near);
 	float d = -2.0f * far * near / (far - near);
 	
 	m.m00 = a; m.m01 = 0; m.m02 = 0;  m.m03 = 0;
 	m.m10 = 0; m.m11 = b; m.m12 = 0;  m.m13 = 0;
 	m.m20 = 0; m.m21 = 0; m.m22 = c;  m.m23 = d;
-	m.m30 = 0; m.m31 = 0; m.m32 = -1; m.m33 = 1;
+	m.m30 = 0; m.m31 = 0; m.m32 = -1; m.m33 = 0;
 }
 
 /**
@@ -49,28 +51,6 @@ void Camera::initPerspective(float znear_, float zfar_, float focalLength, float
 /**
  * <!--  initOrtho():  -->
  */
-/*
-void Camera::initOrtho(float znear_, float zfar,
-					   float width, float height) {
-	znear = znear_;
-	nearWidth = width;
-
-	float sx = 2.0f / width;
-	float sy = 2.0f / height;
-	float sz = -2.0f / (zfar-znear);
-	float tz = -(zfar+znear) / (zfar-znear);
-
-	Matrix4f& m = projectionMat;
-	m.m00 = sx;    m.m01 = 0.0f;  m.m02 = 0.0f;  m.m03 = 0.0f;
-	m.m10 = 0.0f;  m.m11 = sy;    m.m12 = 0.0f;  m.m13 = 0.0f;
-	m.m20 = 0.0f;  m.m21 = 0.0f;  m.m22 = sz;    m.m23 = tz;
-	m.m30 = 0.0f;  m.m31 = 0.0f;  m.m32 = 0.0f;  m.m33 = 1.0f;
-}
-*/
-
-/**
- * <!--  initOrtho():  -->
- */
 void Camera::initOrtho(float znear_, float zfar,
 					   float left, float right, float bottom, float top) {
 	znear = znear_;
@@ -87,7 +67,7 @@ void Camera::initOrtho(float znear_, float zfar,
 	m.m00 = sx;    m.m01 = 0.0f;  m.m02 = 0.0f;  m.m03 = tx;
 	m.m10 = 0.0f;  m.m11 = sy;    m.m12 = 0.0f;  m.m13 = ty;
 	m.m20 = 0.0f;  m.m21 = 0.0f;  m.m22 = sz;    m.m23 = tz;
-	m.m30 = 0.0f;  m.m31 = 0.0f;  m.m32 = 0.0f;  m.m33 = 1.0f; 
+	m.m30 = 0.0f;  m.m31 = 0.0f;  m.m32 = 0.0f;  m.m33 = 1.0f;
 }
 
 /**

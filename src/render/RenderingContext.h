@@ -6,7 +6,12 @@
 #include "Camera.h"
 #include "Vector3f.h"
 
+#include "LSPSM.h"
+
 class BoundingBox;
+
+
+#define USE_OLD_SHADOW_MAP 0
 
 
 class RenderingContext {
@@ -19,7 +24,10 @@ public:
 private:
 	Path path;
 	Camera camera;
+	
+#if USE_OLD_SHADOW_MAP	
 	Camera lightCamera;
+#endif	
 
 	// Directional light direction.
 	Vector3f lightDir;
@@ -36,6 +44,9 @@ private:
 	Matrix4f depthModelViewProjectionMat;
 	// Matrix of (depthBiasMat * depthModelViewProjectionMat)
 	Matrix4f depthBiasModelViewProjectionMat;
+
+	LSPSM lspsm;
+	void updateLSPSM();
 
 public:
 	RenderingContext();
