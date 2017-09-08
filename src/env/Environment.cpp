@@ -89,7 +89,8 @@ bool Environment::init(int width, int height) {
 	// Add floor stage object
 	//int floorObjId = addBox(Vector3f(200.0f, 10.0f, 200.0f),
 	// TODO: 床のサイズをどう指定するか
-	int floorObjId = addBox(Vector3f(20.0f, 10.0f, 20.0f),
+	int floorObjId = addBox(nullptr,
+							Vector3f(20.0f, 10.0f, 20.0f),
 							Vector3f(0.0f, -10.0f, 0.0f),
 							0.0f,
 							false);
@@ -255,33 +256,45 @@ void Environment::step(const Action& action, int stepNum, bool agentView) {
 	}
 }
 
-int Environment::addBox(const Vector3f& halfExtent,
+int Environment::addBox(const char* texturePath,
+						const Vector3f& halfExtent,
 						const Vector3f& pos,
 						float rot,
 						bool detectCollision) {
 	btCollisionShape* shape = collisionShapeManager.getBoxShape(halfExtent.x,
 																halfExtent.y,
 																halfExtent.z);
-	// TODO:
-	Texture* texture = textureManager.getColorTexture(1.0f, 1.0f, 1.0f);
+	Texture* texture = nullptr;
+	if( texturePath != nullptr) {
+		texture = textureManager.loadTexture(texturePath);
+	}
+	if( texture == nullptr ) {
+		texture = textureManager.getColorTexture(1.0f, 1.0f, 1.0f);
+	}
 	Shader* shader = shaderManager.getDiffuseShader();
 	Shader* shadowDepthShader = shaderManager.getShadowDepthShader();
 	Material* material = new Material(texture, shader, shadowDepthShader);
-	const Mesh* mesh = meshManager.getBoxMesh(material);
+	const Mesh* mesh = meshManager.getBoxMesh(material, halfExtent);
 	Vector3f scale(halfExtent.x, halfExtent.y, halfExtent.z);
 
 	return addObject(shape, pos, rot, Vector3f(0.0f, 0.0f, 0.0f),
 					 detectCollision, mesh, scale);
 }
 
-int Environment::addSphere(float radius,
+int Environment::addSphere(const char* texturePath,
+						   float radius,
 						   const Vector3f& pos,
 						   float rot,
 						   bool detectCollision) {
 	btCollisionShape* shape = collisionShapeManager.getSphereShape(radius);
-
-	// TODO:
-	Texture* texture = textureManager.getColorTexture(1.0f, 0.0f, 0.0f);
+	
+	Texture* texture = nullptr;
+	if( texturePath != nullptr) {
+		texture = textureManager.loadTexture(texturePath);
+	}
+	if( texture == nullptr ) {
+		texture = textureManager.getColorTexture(1.0f, 1.0f, 1.0f);
+	}
 	Shader* shader = shaderManager.getDiffuseShader();
 	Shader* shadowDepthShader = shaderManager.getShadowDepthShader();
 	Material* material = new Material(texture, shader, shadowDepthShader);

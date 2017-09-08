@@ -97,11 +97,13 @@ public:
 	bool init(int width, int height);
 	void release();
 	void step(const Action& action, int stepNum, bool agentView);
-	int addBox(const Vector3f& halfExtent,
+	int addBox(const char* texturePath,
+			   const Vector3f& halfExtent,
 			   const Vector3f& pos,
 			   float rot,
 			   bool detectCollision);
-	int addSphere(float radius,
+	int addSphere(const char* texturePath,
+				  float radius,
 				  const Vector3f& pos,
 				  float rot,
 				  bool detectCollision);

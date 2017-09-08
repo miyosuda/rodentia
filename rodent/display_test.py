@@ -36,31 +36,39 @@ class Display(object):
     pygame.display.set_caption('rodent')
 
   def prepare_wall(self):
+    texture_path = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/wall0.png"
+    
     # -Z
-    self.env.add_box(half_extent=to_nd_float_array([20.0, 1.0, 1.0]),
+    self.env.add_box(texture_path=texture_path,
+                     half_extent=to_nd_float_array([20.0, 1.0, 1.0]),
                      pos=to_nd_float_array([0.0, 1.0, -20.0]),
                      rot=0.0,
                      detect_collision=False)
     # +Z
-    self.env.add_box(half_extent=to_nd_float_array([20.0, 1.0, 1.0]),
+    self.env.add_box(texture_path=texture_path,
+                     half_extent=to_nd_float_array([20.0, 1.0, 1.0]),
                      pos=to_nd_float_array([0.0, 1.0, 20.0]),
                      rot=0.0,
                      detect_collision=False)
     # -X
-    self.env.add_box(half_extent=to_nd_float_array([1.0, 1.0, 20.0]),
+    self.env.add_box(texture_path=texture_path,
+                     half_extent=to_nd_float_array([1.0, 1.0, 20.0]),
                      pos=to_nd_float_array([-20.0, 1.0, 0.0]),
                      rot=0.0,
                      detect_collision=False)
     # +X
-    self.env.add_box(half_extent=to_nd_float_array([1.0, 1.0, 20.0]),
+    self.env.add_box(texture_path=texture_path,
+                     half_extent=to_nd_float_array([1.0, 1.0, 20.0]),
                      pos=to_nd_float_array([20.0, 1.0, 0.0]),
                      rot=0.0,
                      detect_collision=False)
 
-    # Pole
-    self.env.add_box(half_extent=to_nd_float_array([0.3, 2.0, 0.3]),
-                     pos=to_nd_float_array([10.0, 2.0, 8.0]),
-                     rot=0.0,
+    # Debug box
+    self.env.add_box(texture_path=texture_path,
+                     half_extent=to_nd_float_array([1.0, 1.0, 1.0]),
+                     pos=to_nd_float_array([0.0, 1.0, -5.0]),
+                     rot=3.141592,
+                     #rot=0,
                      detect_collision=False)
 
   def update(self):
@@ -125,15 +133,19 @@ class Display(object):
   def reset(self):
     # Clear remaining reward objects
     self.clear_objects()
+
+    texture_path = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/wall0.png"
     
     # Reward Sphere
-    obj_id0 = self.env.add_sphere(radius=1.0,
-                                  pos=to_nd_float_array([-5.0, 1.0, -5.0]),
+    obj_id0 = self.env.add_sphere(texture_path=texture_path,
+                                  radius=1.0,
+                                  pos=to_nd_float_array([-5.0, 1.0, 5.0]),
                                   rot=0.0,
                                   detect_collision=True)
 
-    obj_id1 = self.env.add_sphere(radius=1.0,
-                                  pos=to_nd_float_array([5.0, 1.0, -5.0]),
+    obj_id1 = self.env.add_sphere(texture_path=texture_path,
+                                  radius=1.0,
+                                  pos=to_nd_float_array([5.0, 1.0, 5.0]),
                                   rot=0.0,
                                   detect_collision=True)
     self.obj_ids_set.add(obj_id0)
@@ -143,14 +155,14 @@ class Display(object):
     model_path0 = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/apple0.obj"
     self.env.add_model(path=model_path0,
                        scale=to_nd_float_array([1.0, 1.0, 1.0]),
-                       pos=to_nd_float_array([0.0, 0.0, -10.0]), # +z pos
+                       pos=to_nd_float_array([0.0, 0.0, 10.0]), # +z pos
                        rot=0.0,
                        detect_collision=True)
 
     model_path1 = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/lemon0.obj"
     self.env.add_model(path=model_path1,
                        scale=to_nd_float_array([1.0, 1.0, 1.0]),
-                       pos=to_nd_float_array([-10.0, 0.0, 10.0]),
+                       pos=to_nd_float_array([10.0, 0.0, 10.0]),
                        rot=0.0,
                        detect_collision=True)
 
@@ -160,7 +172,7 @@ class Display(object):
                           rot=0.0)
 
     # Set light direction
-    self.env.set_light_dir(dir=to_nd_float_array([-0.5, -2.0, 0.5]))
+    self.env.set_light_dir(dir=to_nd_float_array([-0.5, -1.0, -0.5]))
 
     self.total_reward = 0
     self.step_num = 0

@@ -21,20 +21,22 @@ class Environment(object):
   def __init__(self, width, height):
     self.env = rodent_module.Env(width=width, height=height)
 
-  def add_box(self, half_extent, pos, rot, detect_collision):
+  def add_box(self, texture_path, half_extent, pos, rot, detect_collision):
     """
     convert list arg to numpy ndarray.
     """
-    return self.env.add_box(half_extent=to_nd_float_array(half_extent),
+    return self.env.add_box(texture_path=texture_path,
+                            half_extent=to_nd_float_array(half_extent),
                             pos=to_nd_float_array(pos),
                             rot=rot,
                             detect_collision=detect_collision)
 
-  def add_sphere(self, radius, pos, rot, detect_collision):
+  def add_sphere(self, texture_path, radius, pos, rot, detect_collision):
     """
     convert list arg to numpy ndarray.
     """    
-    return self.env.add_sphere(radius=radius,
+    return self.env.add_sphere(texture_path=texture_path,
+                               radius=radius,
                                pos=to_nd_float_array(pos),
                                rot=rot,
                                detect_collision=detect_collision)

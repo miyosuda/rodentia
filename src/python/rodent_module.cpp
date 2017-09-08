@@ -41,22 +41,26 @@ static void stepEnvironment(Environment* environment, const Action& action, int 
 }
 
 static int addBox(Environment* environment,
+				  const char* texturePath,
 				  float halfExtentX, float halfExtentY, float halfExtentZ,
 				  float posX, float posY, float posZ,
 				  float rot,
 				  bool detectCollision) {
-	return environment->addBox(Vector3f(halfExtentX, halfExtentY, halfExtentZ),
+	return environment->addBox(texturePath,
+							   Vector3f(halfExtentX, halfExtentY, halfExtentZ),
 							   Vector3f(posX, posY, posZ),
 							   rot,
 							   detectCollision);
 }
 
 static int addSphere(Environment* environment,
+					 const char* texturePath,
 					 float radius,
 					 float posX, float posY, float posZ,
 					 float rot,
 					 bool detectCollision) {
-	return environment->addSphere(radius,
+	return environment->addSphere(texturePath,
+								  radius,
 								  Vector3f(posX, posY, posZ),
 								  rot,
 								  detectCollision);
@@ -288,15 +292,18 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 }
 
 static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
+	const char* texturePath = "";
 	PyObject* halfExtentObj = nullptr;
 	PyObject* posObj = nullptr;
 	float rot;
 	int detectCollision;
 
 	// Get argument
-	const char* kwlist[] = {"half_extent", "pos", "rot", "detect_collision", nullptr};
+	const char* kwlist[] = {"texture_path", "half_extent", "pos", "rot", "detect_collision",
+							nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!O!fi", const_cast<char**>(kwlist),
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!fi", const_cast<char**>(kwlist),
+									 &texturePath,
 									 &PyArray_Type, &halfExtentObj,
 									 &PyArray_Type, &posObj,
 									 &rot,
@@ -330,6 +337,7 @@ static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
 	float posZ = posArr[2];
 
 	int id = addBox(self->environment,
+					texturePath,
 					halfExtentX, halfExtentY, halfExtentZ,
 					posX, posY, posZ,
 					rot, detectCollision != 0);
@@ -341,15 +349,18 @@ static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
 }
 
 static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds) {
+	const char* texturePath = "";
 	float radius;
 	PyObject* posObj = nullptr;
 	float rot;
 	int detectCollision;
 
 	// Get argument
-	const char* kwlist[] = {"radius", "pos", "rot", "detect_collision", nullptr};
+	const char* kwlist[] = {"texture_path", "radius", "pos", "rot", "detect_collision",
+							nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "fO!fi", const_cast<char**>(kwlist),
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sfO!fi", const_cast<char**>(kwlist),
+									 &texturePath,
 									 &radius,
 									 &PyArray_Type, &posObj,
 									 &rot,
@@ -373,6 +384,7 @@ static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds)
 	float posZ = posArr[2];
 
 	int id = addSphere(self->environment,
+					   texturePath,
 					   radius,
 					   posX, posY, posZ,
 					   rot, detectCollision != 0);
@@ -384,7 +396,7 @@ static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds)
 
 static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) {
 	const char* path = "";
-	PyObject* scaleObj = nullptr;	
+	PyObject* scaleObj = nullptr;
 	PyObject* posObj = nullptr;
 	float rot;
 	int detectCollision;

@@ -9,7 +9,8 @@ public:
 	~Texture();
 	void release();
 	void init(const void* buffer, int width, int height,
-			  bool hasAlpha=true);
+			  bool hasAlpha=true,
+			  bool loop=true);
 	void bind() const;
 };
 
