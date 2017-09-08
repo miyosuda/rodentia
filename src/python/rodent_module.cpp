@@ -23,8 +23,10 @@ static Environment* createEnvironment() {
 	return environment;
 }
 
-static bool initEnvironment(Environment* environment, int width, int height) {
-	if( !environment->init(width, height) ) {
+static bool initEnvironment(Environment* environment, int width, int height,
+							float floorSizeX, float floorSizeZ,
+							const char* floorTexturePath) {
+	if( !environment->init(width, height, floorSizeX, floorSizeZ, floorTexturePath) ) {
 		return false;
 	}
 	
@@ -180,25 +182,45 @@ static PyObject* EnvObject_new(PyTypeObject* type,
 	return (PyObject*)self;
 }
 
-static int Env_init(EnvObject* self, PyObject* args, PyObject* kwds) {
-	const char *kwlist[] = { "width", "height", nullptr };
+static int Env_init(EnvObject* self, PyObject* args, PyObject* kwds) {	
+	const char *kwlist[] = { "width",
+							 "height",
+							 "floor_size",
+							 "floor_texture_path",
+							 nullptr };
 
 	// Get argument
 	int width;
 	int height;
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "ii", const_cast<char**>(kwlist),
-									 &width, &height)) {
+	PyObject* floorSizeObj = nullptr;
+	const char* floorTexturePath = "";
+
+	//.. ここで落ちている
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "iiO!s", const_cast<char**>(kwlist),
+									 &width,
+									 &height,
+									 &PyArray_Type, &floorSizeObj,
+									 &floorTexturePath)) {
 		PyErr_SetString(PyExc_RuntimeError, "init argument shortage");
 		return -1;
 	}
-	
+
 	if (self->environment == nullptr) {
 		PyErr_SetString(PyExc_RuntimeError, "rodent environment not setup");
 		return -1;
 	}
 
+	const float* floorSizeArr = getFloatArrayData(floorSizeObj, 2, "floor_size");
+	if( floorSizeArr == nullptr ) {
+		return -1;
+	}
+
+	float floorSizeX = floorSizeArr[0];
+	float floorSizeZ = floorSizeArr[1];
+
 	// Initialize environment
-	if ( !initEnvironment(self->environment, width, height) ) {
+	if ( !initEnvironment(self->environment, width, height,
+						  floorSizeX, floorSizeZ, floorTexturePath) ) {
 		PyErr_Format(PyExc_RuntimeError, "Failed to init environment.");
 		return -1;
 	}

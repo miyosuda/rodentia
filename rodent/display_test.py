@@ -22,7 +22,11 @@ class Display(object):
   def __init__(self, display_size):
     self.width  = 640
     self.height = 480
-    self.env = rodent_module.Env(width=self.width, height=self.height)
+    floor_texture_path = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/floor0.png"
+    self.env = rodent_module.Env(width=self.width,
+                                 height=self.height,
+                                 floor_size=to_nd_float_array([20,20]),
+                                 floor_texture_path=floor_texture_path)
 
     self.prepare_wall()
 
@@ -172,7 +176,7 @@ class Display(object):
                           rot=0.0)
 
     # Set light direction
-    self.env.set_light_dir(dir=to_nd_float_array([-0.5, -1.0, -0.5]))
+    self.env.set_light_dir(dir=to_nd_float_array([-0.5, -1.0, -0.4]))
 
     self.total_reward = 0
     self.step_num = 0

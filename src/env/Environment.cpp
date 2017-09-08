@@ -62,7 +62,8 @@ btCollisionShape* CollisionShapeManager::getCylinderShape(float halfExtentX,
 //      [Environment]
 //---------------------------
 
-bool Environment::init(int width, int height) {
+bool Environment::init(int width, int height, float floorSizeX, float floorSizeZ,
+					   const char* floorTexturePath) {
 	// Setup the basic world
 	configuration = new btDefaultCollisionConfiguration();
 
@@ -87,10 +88,8 @@ bool Environment::init(int width, int height) {
 	}
 	
 	// Add floor stage object
-	//int floorObjId = addBox(Vector3f(200.0f, 10.0f, 200.0f),
-	// TODO: 床のサイズをどう指定するか
-	int floorObjId = addBox(nullptr,
-							Vector3f(20.0f, 10.0f, 20.0f),
+	int floorObjId = addBox(floorTexturePath,
+							Vector3f(floorSizeX, 10.0f, floorSizeZ),
 							Vector3f(0.0f, -10.0f, 0.0f),
 							0.0f,
 							false);
@@ -265,7 +264,9 @@ int Environment::addBox(const char* texturePath,
 																halfExtent.y,
 																halfExtent.z);
 	Texture* texture = nullptr;
-	if( texturePath != nullptr) {
+
+	const string texturePathStr(texturePath);
+	if( texturePathStr != "" ) {
 		texture = textureManager.loadTexture(texturePath);
 	}
 	if( texture == nullptr ) {

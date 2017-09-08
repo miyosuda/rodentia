@@ -18,8 +18,12 @@ class Environment(object):
   """
   rodent module Env wrapper.
   """
-  def __init__(self, width, height):
-    self.env = rodent_module.Env(width=width, height=height)
+  def __init__(self, width, height, floor_size=[20.0,20.0], floor_texture_path=""):
+    self.env = rodent_module.Env(width=width,
+                                 height=height.
+                                 floor_size=to_nd_float_array(floor_size),
+                                 floor_texture_path=floor_texture_path)
+    )
 
   def add_box(self, texture_path, half_extent, pos, rot, detect_collision):
     """
