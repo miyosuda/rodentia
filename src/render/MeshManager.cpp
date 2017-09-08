@@ -166,13 +166,13 @@ const Mesh* MeshManager::getSphereMesh(Material* material) {
 				unsigned short index1 = r * sectors + (s+1);
 				unsigned short index2 = (r+1) * sectors + (s+1);
 				unsigned short index3 = (r+1) * sectors + s;
-				
+
 				*ind++ = index0;
+				*ind++ = index2;
 				*ind++ = index1;
-				*ind++ = index2;
 				*ind++ = index0;
+				*ind++ = index3;				
 				*ind++ = index2;
-				*ind++ = index3;
 			}
 		}
 

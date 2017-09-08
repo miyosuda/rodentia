@@ -57,6 +57,12 @@ class Display(object):
                      rot=0.0,
                      detect_collision=False)
 
+    # Pole
+    self.env.add_box(half_extent=to_nd_float_array([0.3, 2.0, 0.3]),
+                     pos=to_nd_float_array([10.0, 2.0, 8.0]),
+                     rot=0.0,
+                     detect_collision=False)
+
   def update(self):
     self.surface.fill(BLACK)
     self.process()

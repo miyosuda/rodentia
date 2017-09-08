@@ -28,25 +28,25 @@ public:
 
 class LSPSM {
 private:
-	// カメラの位置
+	// Camera position
 	Vector3f eyePosition;
-	// カメラの視線ベクトル
+	// Camera eye direction
 	Vector3f viewDir;
-	// ライトベクトル
+	// Light direction
 	Vector3f lightDir;
 
-	// カメラのビュー行列を設定
+	// Camera view matrix
 	Matrix4f eyeViewMat;
-	// カメラの射影行列
+	// Camera projection matrix
 	Matrix4f eyeProjMat;
-	// ライトのビュー行列
+	// Light view marix
 	Matrix4f lightViewMat;
-	// ライトの射影行列
+	// Light projection matrix
 	Matrix4f lightProjMat;
-	// ライトのビュー射影行列 (最終的に計算される行列)
+	// Light view proection matrix (=result)
 	Matrix4f lightViewProjMat;
 
-	// ニア平面までの距離
+	// distance to near clip plane
 	float nearClip;
 
 	void computeUpVector(const Vector3f& viewDir,

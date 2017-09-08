@@ -11,9 +11,6 @@
 class BoundingBox;
 
 
-#define USE_OLD_SHADOW_MAP 0
-
-
 class RenderingContext {
 public:	
 	enum Path {
@@ -25,10 +22,6 @@ private:
 	Path path;
 	Camera camera;
 	
-#if USE_OLD_SHADOW_MAP	
-	Camera lightCamera;
-#endif	
-
 	// Directional light direction.
 	Vector3f lightDir;
 	// Model matrix for current drawing object.
