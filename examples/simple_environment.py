@@ -5,6 +5,9 @@ from __future__ import print_function
 
 import rodent
 import os
+import math
+import random
+
 
 MAX_STEP_NUM = 60 * 30
 
@@ -19,37 +22,47 @@ class SimpleEnvironment(object):
   ]
 
   def __init__(self, width, height):
-    self.env = rodent.Environment(width=width, height=height)
+    floor_texture_path = os.path.dirname(os.path.abspath(__file__)) + "/floor0.png"
+    
+    self.env = rodent.Environment(width=width, height=height,
+                                  floor_size=[60,60],
+                                  floor_texture_path=floor_texture_path)
     self._prepare_wall()
     
     self.plus_obj_ids_set = set()
     self.minus_obj_ids_set = set()
     
     self.reset()
-
+    
   def get_action_size(self):
     return len(SimpleEnvironment.ACTION_LIST)
 
   def _prepare_wall(self):
     wall_distance = 30.0
+
+    wall_texture_path = os.path.dirname(os.path.abspath(__file__)) + "/data/wall0.png"
     
     # -Z
-    self.env.add_box(half_extent=[wall_distance, 1.0, 1.0],
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[wall_distance, 1.0, 1.0],
                      pos=[0.0, 1.0, -wall_distance],
                      rot=0.0,
                      detect_collision=False)
     # +Z
-    self.env.add_box(half_extent=[wall_distance, 1.0, 1.0],
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[wall_distance, 1.0, 1.0],
                      pos=[0.0, 1.0, wall_distance],
                      rot=0.0,
                      detect_collision=False)
     # -X
-    self.env.add_box(half_extent=[1.0, 1.0, wall_distance],
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[1.0, 1.0, wall_distance],
                      pos=[-wall_distance, 1.0, 0.0],
                      rot=0.0,
                      detect_collision=False)
     # +X
-    self.env.add_box(half_extent=[1.0, 1.0, wall_distance],
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[1.0, 1.0, wall_distance],
                      pos=[wall_distance, 1.0, 0.0],
                      rot=0.0,
                      detect_collision=False)
@@ -106,6 +119,8 @@ class SimpleEnvironment(object):
     self._locate_minus_reward_obj(x=-248, z=216, rot=0.375)
     
     # Locate agent to default position
+    rot = math.pi * random.random()
+    
     self.env.locate_agent(pos=[0,0,0],
                           rot=0.0)
 

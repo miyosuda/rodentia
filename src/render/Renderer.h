@@ -17,6 +17,8 @@ private:
 	OffscreenFrameBuffer frameBuffer;
 	DepthFrameBuffer depthFrameBuffer;
 
+	int calcDepthFrameBufferSize(int width, int height);
+
 public:
 	Renderer()
 		:

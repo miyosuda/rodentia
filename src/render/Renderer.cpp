@@ -5,6 +5,32 @@
 
 #include "glinc.h"
 
+/**
+ * <!--  calcDepthFrameBufferSize():  -->
+ *
+ * Calculate size of depth buffer for shadow mapping based on view width and height.
+ */
+int Renderer::calcDepthFrameBufferSize(int width, int height) {
+	int minSize = width;
+	if( height < minSize ) {
+		minSize = height;
+	}
+
+	int result = 64;
+	while(true) {
+		if( result >= minSize ) {
+			break;
+		}
+		result *= 2;
+	}
+	if( result > 1024 ) {
+		// Max shadow mapp depth buffer size is 1024x1024 
+		result = 1024;
+	}
+
+	return result;
+}
+
 
 /**
  * <!--  init():  -->
@@ -38,8 +64,8 @@ bool Renderer::init(int width, int height) {
 	}
 
 	// Setup shadow depth frame buffer
-	// TODO: バッファサイズ調整
-	ret = depthFrameBuffer.init(512, 512);
+	int depthFrameBufferSize = calcDepthFrameBufferSize(width, height);
+	ret = depthFrameBuffer.init(depthFrameBufferSize, depthFrameBufferSize);
 	if( !ret ) {
 		printf("Failed to init shadow depth buffer.\n");
 		return false;
@@ -94,7 +120,8 @@ void Renderer::prepareRendering() {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	
-	glClearColor(0.54f, 0.80f, 0.98f, 1.0f);
+	//glClearColor(0.54f, 0.80f, 0.98f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Set depth frame buffer for texture slot 1

@@ -89,7 +89,7 @@ bool Environment::init(int width, int height, float floorSizeX, float floorSizeZ
 	
 	// Add floor stage object
 	int floorObjId = addBox(floorTexturePath,
-							Vector3f(floorSizeX, 10.0f, floorSizeZ),
+							Vector3f(floorSizeX*0.5f, 10.0f, floorSizeZ*0.5f),
 							Vector3f(0.0f, -10.0f, 0.0f),
 							0.0f,
 							false);

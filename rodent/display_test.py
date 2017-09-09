@@ -22,10 +22,11 @@ class Display(object):
   def __init__(self, display_size):
     self.width  = 640
     self.height = 480
-    floor_texture_path = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/floor0.png"
+
+    floor_texture_path = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/floor3.png"
     self.env = rodent_module.Env(width=self.width,
                                  height=self.height,
-                                 floor_size=to_nd_float_array([20,20]),
+                                 floor_size=to_nd_float_array([40,40]),
                                  floor_texture_path=floor_texture_path)
 
     self.prepare_wall()
@@ -40,7 +41,7 @@ class Display(object):
     pygame.display.set_caption('rodent')
 
   def prepare_wall(self):
-    texture_path = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/wall0.png"
+    texture_path = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/wall2.png"
     
     # -Z
     self.env.add_box(texture_path=texture_path,
@@ -71,8 +72,7 @@ class Display(object):
     self.env.add_box(texture_path=texture_path,
                      half_extent=to_nd_float_array([1.0, 1.0, 1.0]),
                      pos=to_nd_float_array([0.0, 1.0, -5.0]),
-                     rot=3.141592,
-                     #rot=0,
+                     rot=0,
                      detect_collision=False)
 
   def update(self):
@@ -138,7 +138,7 @@ class Display(object):
     # Clear remaining reward objects
     self.clear_objects()
 
-    texture_path = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/wall0.png"
+    texture_path = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/red.png"
     
     # Reward Sphere
     obj_id0 = self.env.add_sphere(texture_path=texture_path,
