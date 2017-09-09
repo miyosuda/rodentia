@@ -1,22 +1,30 @@
-# Rodent sim
+# Rodent
 
-Work in progress.
+*Rodent* is a 3D learning environment for MacOSX and Linux.
 
-## Build Rodent
+## Getting started on MacOSX
+
+For Python2
 
     $ git clone https://github.com/miyosuda/rodent.git
     $ cd rodent
     $ cmake .
-    $ make -j4
-
-For python3,
-
-    $ cmake . -DBUILD_PYTHON3=ON
-    
-TODO: Direct include/lib path setting for numpy on MacOSX
-
-## Install
-
+	$ make -j4
     $ python setup.py bdist_wheel
-    $ cd dist
-    $ pip install rodent-0.0.1-py2-none-any.whl
+    $ pip install dist/rodent-0.0.1-py2-none-any.whl
+
+For Python3
+
+    $ git clone https://github.com/miyosuda/rodent.git
+    $ cd rodent
+	$ cmake . -DBUILD_PYTHON3=ON
+	$ make -j4
+    $ python setup.py bdist_wheel
+    $ pip install dist/rodent-0.0.1-py3-none-any.whl
+
+
+
+
+
+
+
