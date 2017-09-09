@@ -22,17 +22,21 @@ class RodentModuleTest(unittest.TestCase):
   def testEnv(self):
     width  = 84 * 4
     height = 84 * 4
-    env = rodent_module.Env(width=width, height=height)
+    env = rodent_module.Env(width=width, height=height,
+                            floor_size=to_nd_float_array([10,10]),
+                            floor_texture_path="")
 
     # Check setup interfaces
     # Add box
-    env.add_box(half_extent=to_nd_float_array([5.0, 5.0, 5.0]),
+    env.add_box(texture_path="",
+                half_extent=to_nd_float_array([5.0, 5.0, 5.0]),
                 pos=to_nd_float_array([10.0, 5.0, 10.0]),
                 rot=0.0,
                 detect_collision=False)
 
     # Add Sphere
-    sphere_id = env.add_sphere(radius=2.0,
+    sphere_id = env.add_sphere(texture_path="",
+                               radius=2.0,
                                pos=to_nd_float_array([0.0, 2.0, -5.0]),
                                rot=0.0,
                                detect_collision=True)
