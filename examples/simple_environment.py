@@ -119,7 +119,7 @@ class SimpleEnvironment(object):
     self._locate_minus_reward_obj(x=-248, z=216, rot=0.375)
     
     # Locate agent to default position
-    rot = math.pi * random.random()
+    rot = 2.0 * math.pi * random.random()
     
     self.env.locate_agent(pos=[0,0,0],
                           rot=0.0)
