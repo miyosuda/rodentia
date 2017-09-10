@@ -26,14 +26,13 @@ class RodentModuleTest(unittest.TestCase):
     width  = 84 * 4
     height = 84 * 4
     env = rodent.rodent_module.Env(width=width, height=height,
-                                   floor_size=to_nd_float_array([30,30]),
-                                   floor_texture_path="")
+                                   bg_color=to_nd_float_array([1.0, 1.0, 1.0]))
 
     # Check setup interfaces
     # Add box
     env.add_box(texture_path="",
-                half_extent=to_nd_float_array([1.0, 1.0, 1.0]),
-                pos=to_nd_float_array([0.0, 1.0, -10.0]),
+                half_extent=to_nd_float_array([30.0, 1.0, 30.0]),
+                pos=to_nd_float_array([0.0, -1.0, 0.0]),
                 rot=0.0,
                 detect_collision=False)
 

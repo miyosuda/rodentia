@@ -94,8 +94,7 @@ public:
 	~Environment() {
 	}
 
-	bool init(int width, int height, float floorSizeX, float floorSizeZ,
-			  const char* floorTexturePath);
+	bool init(int width, int height, const Vector3f& bgColor);
 	void release();
 	void step(const Action& action, int stepNum, bool agentView);
 	int addBox(const char* texturePath,

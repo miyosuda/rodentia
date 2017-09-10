@@ -28,9 +28,8 @@ class NavMazeStaticEnvironment(object):
     floor_texture_path = self.data_path + "floor0.png"
     
     self.env = rodent.Environment(width=width, height=height,
-                                  floor_size=[60,60],
-                                  floor_texture_path=floor_texture_path)
-    self._prepare_wall()
+                                  bg_color=[0,0,0])
+    self._prepare_stage()
     
     self.plus_obj_ids_set = set()
     self.minus_obj_ids_set = set()
@@ -40,8 +39,17 @@ class NavMazeStaticEnvironment(object):
   def get_action_size(self):
     return len(NavMazeStaticEnvironment.ACTION_LIST)
 
-  def _prepare_wall(self):
+  def _prepare_stage(self):
+    # Floor
+    floor_texture_path = self.data_path + "floor0.png"
 
+    self.env.add_box(texture_path=floor_texture_path,
+                     half_extent=[60.0, 1.0, 60.0],
+                     pos=[0.0, -1.0, 0.0],
+                     rot=0.0,
+                     detect_collision=False)    
+
+    # Wall
     wall_texture_path = self.data_path +  "wall0.png"
     wall_thickness = 0.1
     

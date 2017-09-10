@@ -24,9 +24,8 @@ static Environment* createEnvironment() {
 }
 
 static bool initEnvironment(Environment* environment, int width, int height,
-							float floorSizeX, float floorSizeZ,
-							const char* floorTexturePath) {
-	if( !environment->init(width, height, floorSizeX, floorSizeZ, floorTexturePath) ) {
+							float bgColorR, float bgColorG, float bgColorB) {
+	if( !environment->init(width, height, Vector3f(bgColorR, bgColorG, bgColorB)) ) {
 		return false;
 	}
 	
@@ -185,22 +184,18 @@ static PyObject* EnvObject_new(PyTypeObject* type,
 static int Env_init(EnvObject* self, PyObject* args, PyObject* kwds) {	
 	const char *kwlist[] = { "width",
 							 "height",
-							 "floor_size",
-							 "floor_texture_path",
+							 "bg_color",
 							 nullptr };
 
 	// Get argument
 	int width;
 	int height;
-	PyObject* floorSizeObj = nullptr;
-	const char* floorTexturePath = "";
+	PyObject* bgColorObj = nullptr;
 
-	//.. ここで落ちている
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "iiO!s", const_cast<char**>(kwlist),
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "iiO!", const_cast<char**>(kwlist),
 									 &width,
 									 &height,
-									 &PyArray_Type, &floorSizeObj,
-									 &floorTexturePath)) {
+									 &PyArray_Type, &bgColorObj)) {
 		PyErr_SetString(PyExc_RuntimeError, "init argument shortage");
 		return -1;
 	}
@@ -210,17 +205,18 @@ static int Env_init(EnvObject* self, PyObject* args, PyObject* kwds) {
 		return -1;
 	}
 
-	const float* floorSizeArr = getFloatArrayData(floorSizeObj, 2, "floor_size");
-	if( floorSizeArr == nullptr ) {
+	const float* bgColorArr = getFloatArrayData(bgColorObj, 3, "bg_color");
+	if( bgColorArr == nullptr ) {
 		return -1;
 	}
 
-	float floorSizeX = floorSizeArr[0];
-	float floorSizeZ = floorSizeArr[1];
+	float bgColorR = bgColorArr[0];
+	float bgColorG = bgColorArr[1];
+	float bgColorB = bgColorArr[1];
 
 	// Initialize environment
 	if ( !initEnvironment(self->environment, width, height,
-						  floorSizeX, floorSizeZ, floorTexturePath) ) {
+						  bgColorR, bgColorG, bgColorB) ) {
 		PyErr_Format(PyExc_RuntimeError, "Failed to init environment.");
 		return -1;
 	}

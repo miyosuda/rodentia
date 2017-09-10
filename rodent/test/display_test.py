@@ -29,11 +29,10 @@ class Display(object):
     floor_texture_path = self.data_path + "floor3.png"
     self.env = rodent.Environment(width=self.width,
                                   height=self.height,
-                                  floor_size=[40,40],
-                                  floor_texture_path=floor_texture_path)
+                                  bg_color=[0.1,0.1,0.1])
 
-    #self.prepare_wall()
-    self.prepare_maze()
+    #self.prepare_stage()
+    self.prepare_maze_stage()
 
     self.obj_ids_set = set()
     
@@ -44,42 +43,61 @@ class Display(object):
     self.surface = pygame.display.set_mode(display_size, 0, 24)
     pygame.display.set_caption('rodent')
 
-  def prepare_wall(self):
-    texture_path = self.data_path + "wall2.png"
+  def prepare_stage(self):
+    floor_texture_path = self.data_path + "floor3.png"
+
+    # Floor
+    self.env.add_box(texture_path=floor_texture_path,
+                     half_extent=[20.0, 1.0, 20.0],
+                     pos=[0.0, -1.0, 0.0],
+                     rot=0.0,
+                     detect_collision=False)
+    
+    
+    wall_texture_path = self.data_path + "wall2.png"
     
     # -Z
-    self.env.add_box(texture_path=texture_path,
+    self.env.add_box(texture_path=wall_texture_path,
                      half_extent=[20.0, 1.0, 1.0],
                      pos=[0.0, 1.0, -20.0],
                      rot=0.0,
                      detect_collision=False)
     # +Z
-    self.env.add_box(texture_path=texture_path,
+    self.env.add_box(texture_path=wall_texture_path,
                      half_extent=[20.0, 1.0, 1.0],
                      pos=[0.0, 1.0, 20.0],
                      rot=0.0,
                      detect_collision=False)
     # -X
-    self.env.add_box(texture_path=texture_path,
+    self.env.add_box(texture_path=wall_texture_path,
                      half_extent=[1.0, 1.0, 20.0],
                      pos=[-20.0, 1.0, 0.0],
                      rot=0.0,
                      detect_collision=False)
     # +X
-    self.env.add_box(texture_path=texture_path,
+    self.env.add_box(texture_path=wall_texture_path,
                      half_extent=[1.0, 1.0, 20.0],
                      pos=[20.0, 1.0, 0.0],
                      rot=0.0,
                      detect_collision=False)
 
     # Debug box
-    self.env.add_box(texture_path=texture_path,
+    self.env.add_box(texture_path=wall_texture_path,
                      half_extent=[1.0, 1.0, 1.0],
                      pos=[0.0, 1.0, -5.0],
                      rot=0,
                      detect_collision=False)
 
-  def prepare_maze(self):
+  def prepare_maze_stage(self):
+    floor_texture_path = self.data_path + "floor3.png"
+
+    # Floor
+    self.env.add_box(texture_path=floor_texture_path,
+                     half_extent=[20.0, 1.0, 20.0],
+                     pos=[0.0, -1.0, 0.0],
+                     rot=0.0,
+                     detect_collision=False)
+    
     wall_texture_path = self.data_path +  "wall0.png"
     wall_thickness = 0.1
     

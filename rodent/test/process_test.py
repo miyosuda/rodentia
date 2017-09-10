@@ -17,8 +17,16 @@ COMMAND_TERMINATE = 1
 
 def worker(conn):
   env = rodent.Environment(width=84, height=84,
-                           floor_size=[10,10],
-                           floor_texture_path="")
+                           bg_color=[0.0, 0.0, 0.0])
+
+  # Add floor
+  env.add_box(texture_path="",
+              half_extent=[10.0, 1.0, 10.0],
+              pos=[0.0, -1.0, 0.0],
+              rot=0.0,
+              detect_collision=False)
+
+  # Add sphere
   sphere_id = env.add_sphere(texture_path="",
                              radius=1.0,
                              pos=[0.0, 2.0, -5.0],

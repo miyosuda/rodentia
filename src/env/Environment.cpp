@@ -62,8 +62,7 @@ btCollisionShape* CollisionShapeManager::getCylinderShape(float halfExtentX,
 //      [Environment]
 //---------------------------
 
-bool Environment::init(int width, int height, float floorSizeX, float floorSizeZ,
-					   const char* floorTexturePath) {
+bool Environment::init(int width, int height, const Vector3f& bgColor) {
 	// Setup the basic world
 	configuration = new btDefaultCollisionConfiguration();
 
@@ -86,14 +85,6 @@ bool Environment::init(int width, int height, float floorSizeX, float floorSizeZ
 	if( !ret ) {
 		return false;
 	}
-	
-	// Add floor stage object
-	// TODO: floorを別途明示的に追加する必要なくなったので整理すること
-	int floorObjId = addBox(floorTexturePath,
-							Vector3f(floorSizeX*0.5f, 10.0f, floorSizeZ*0.5f),
-							Vector3f(0.0f, -10.0f, 0.0f),
-							0.0f,
-							false);
 
 	world->setGravity(btVector3(0, -10, 0));
 

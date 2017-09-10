@@ -11,6 +11,7 @@ import random
 
 MAX_STEP_NUM = 60 * 30
 
+
 class SeekAvoidEnvironment(object):
   ACTION_LIST = [
     [-20,   0,   0], # look_left
@@ -24,12 +25,9 @@ class SeekAvoidEnvironment(object):
   def __init__(self, width, height):
     self.data_path = os.path.dirname(os.path.abspath(__file__)) + "/../data/"
     
-    floor_texture_path = self.data_path + "floor0.png"
-    
     self.env = rodent.Environment(width=width, height=height,
-                                  floor_size=[60,60],
-                                  floor_texture_path=floor_texture_path)
-    self._prepare_wall()
+                                  bg_color=[0,0,0])
+    self._prepare_stage()
     
     self.plus_obj_ids_set = set()
     self.minus_obj_ids_set = set()
@@ -39,7 +37,17 @@ class SeekAvoidEnvironment(object):
   def get_action_size(self):
     return len(SeekAvoidEnvironment.ACTION_LIST)
 
-  def _prepare_wall(self):
+  def _prepare_stage(self):
+    # Floor
+    floor_texture_path = self.data_path + "floor0.png"
+
+    self.env.add_box(texture_path=floor_texture_path,
+                     half_extent=[60.0, 1.0, 60.0],
+                     pos=[0.0, -1.0, 0.0],
+                     rot=0.0,
+                     detect_collision=False)
+
+    # Wall
     wall_distance = 30.0
 
     wall_texture_path = self.data_path +  "wall0.png"
