@@ -11,7 +11,7 @@ import random
 
 MAX_STEP_NUM = 60 * 30
 
-class SimpleEnvironment(object):
+class SeekAvoidEnvironment(object):
   ACTION_LIST = [
     [-20,   0,   0], # look_left
     [ 20,   0,   0], # look_right
@@ -22,7 +22,9 @@ class SimpleEnvironment(object):
   ]
 
   def __init__(self, width, height):
-    floor_texture_path = os.path.dirname(os.path.abspath(__file__)) + "/floor0.png"
+    self.data_path = os.path.dirname(os.path.abspath(__file__)) + "/../data/"
+    
+    floor_texture_path = self.data_path + "floor0.png"
     
     self.env = rodent.Environment(width=width, height=height,
                                   floor_size=[60,60],
@@ -35,12 +37,12 @@ class SimpleEnvironment(object):
     self.reset()
     
   def get_action_size(self):
-    return len(SimpleEnvironment.ACTION_LIST)
+    return len(SeekAvoidEnvironment.ACTION_LIST)
 
   def _prepare_wall(self):
     wall_distance = 30.0
 
-    wall_texture_path = os.path.dirname(os.path.abspath(__file__)) + "/data/wall0.png"
+    wall_texture_path = self.data_path +  "wall0.png"
     
     # -Z
     self.env.add_box(texture_path=wall_texture_path,
@@ -68,7 +70,7 @@ class SimpleEnvironment(object):
                      detect_collision=False)
 
   def _locate_plus_reward_obj(self, x, z, rot):
-    model_path = os.path.dirname(os.path.abspath(__file__)) + "/data/apple0.obj"
+    model_path = self.data_path + "apple0.obj"
     pos_scale = 0.075
     pos = [x * pos_scale, 0.0, z * pos_scale]
     obj_id = self.env.add_model(path=model_path,
@@ -79,9 +81,9 @@ class SimpleEnvironment(object):
     self.plus_obj_ids_set.add(obj_id)
 
   def _locate_minus_reward_obj(self, x, z, rot):
-    model_path = os.path.dirname(os.path.abspath(__file__)) + "/data/lemon0.obj"
+    model_path = self.data_path + "lemon0.obj"
     pos_scale = 0.075
-    pos = [x * pos_scale, 0.0, z * pos_scale]    
+    pos = [x * pos_scale, 0.0, z * pos_scale]
     obj_id = self.env.add_model(path=model_path,
                                 scale=[1.0, 1.0, 1.0],
                                 pos=pos,
@@ -142,7 +144,7 @@ class SimpleEnvironment(object):
     self.minus_obj_ids_set = set()
 
   def step(self, action):
-    real_action = SimpleEnvironment.ACTION_LIST[action]
+    real_action = SeekAvoidEnvironment.ACTION_LIST[action]
 
     obs = self.env.step(action=real_action, num_steps=1)
     self.step_num += 1
