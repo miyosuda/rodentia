@@ -64,7 +64,7 @@ private:
 	RenderingContext renderingContext;
 
 	bool initRenderer(int width, int height);
-	void prepareAgent(int floorObjId);
+	void prepareAgent();
 	void checkCollision();
 	void prepareShadow();
 	int addObject(btCollisionShape* shape,

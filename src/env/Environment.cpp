@@ -88,6 +88,7 @@ bool Environment::init(int width, int height, float floorSizeX, float floorSizeZ
 	}
 	
 	// Add floor stage object
+	// TODO: floorを別途明示的に追加する必要なくなったので整理すること
 	int floorObjId = addBox(floorTexturePath,
 							Vector3f(floorSizeX*0.5f, 10.0f, floorSizeZ*0.5f),
 							Vector3f(0.0f, -10.0f, 0.0f),
@@ -97,17 +98,14 @@ bool Environment::init(int width, int height, float floorSizeX, float floorSizeZ
 	world->setGravity(btVector3(0, -10, 0));
 
 	// Add agent object
-	prepareAgent(floorObjId);
+	prepareAgent();
 
 	return true;
 }
 
-void Environment::prepareAgent(int floorObjId) {
-	EnvironmentObject* floorObj = findObject(floorObjId);
-	btRigidBody* floorBody = floorObj->getRigidBody();
-	
-	btCollisionShape* shape = collisionShapeManager.getCylinderShape(1.0f, 1.0f, 1.0f);
-	agent = new AgentObject(shape, world, floorBody, ID_AGENT);
+void Environment::prepareAgent() {
+	btCollisionShape* shape = collisionShapeManager.getCylinderShape(0.3f, 1.0f, 0.3f);
+	agent = new AgentObject(shape, world, ID_AGENT);
 }
 
 void Environment::release() {
@@ -395,7 +393,10 @@ void Environment::removeObject(int id) {
 
 void Environment::locateAgent(const Vector3f& pos, float rot) {
 	if( agent != nullptr ) {
-		agent->locate(pos, rot);
+		// TODO: Use raycast to find agent Y pos.
+		Vector3f adjustedPos(pos);
+		adjustedPos.y = 1.0f;
+		agent->locate(adjustedPos, rot);
 	}
 }
 

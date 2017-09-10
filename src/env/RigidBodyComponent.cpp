@@ -118,7 +118,6 @@ AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
 												 float rot,
 												 btCollisionShape* shape,
 												 btDynamicsWorld* world_,
-												 btRigidBody* floorBody,
 												 int collisionId)
 	:
 	RigidBodyComponent(mass,
@@ -135,21 +134,8 @@ AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
 	// Set damping
 	body->setDamping(btScalar(0.05), btScalar(0.85));
 
-	// Set stand-up constraint
-	// TODO: Agent can't move vertically with this constraint setting
-	btTransform frameInA, frameInB;
-	frameInA = btTransform::getIdentity();
-	frameInB = btTransform::getIdentity();
-	frameInA.setOrigin(btVector3(0.0, 10.0, 0.0));
-	frameInB.setOrigin(btVector3(0.0, -1.0, 0.0));
-	btGeneric6DofConstraint* constraint =
-		new btGeneric6DofConstraint(*floorBody, *body,
-									frameInA, frameInB,
-									true);
-
-	constraint->setLinearLowerLimit(btVector3(-SIMD_INFINITY, 0, -SIMD_INFINITY));
-	constraint->setLinearUpperLimit(btVector3( SIMD_INFINITY, 0,  SIMD_INFINITY));
-	world->addConstraint(constraint);
+	// Disable rotaion around x,z axis 
+	body->setAngularFactor(btVector3(0.0f, 1.0f, 0.0f));
 }
 
 void AgentRigidBodyComponent::control(const Action& action) {

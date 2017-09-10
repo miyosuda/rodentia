@@ -51,7 +51,6 @@ class AgentObject : public EnvironmentObject {
 public:	
 	AgentObject(btCollisionShape* shape,
 				btDynamicsWorld* world,
-				btRigidBody* floorBody,
 				int collisionId);
 	void control(const Action& action);
 	void locate(const Vector3f& pos,

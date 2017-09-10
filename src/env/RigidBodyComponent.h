@@ -39,7 +39,6 @@ public:
 							float rot,
 							btCollisionShape* shape,
 							btDynamicsWorld* world,
-							btRigidBody* floorBody,
 							int collisionId);
 	virtual void control(const Action& action) override;
 	void getMat(Matrix4f& mat) const;

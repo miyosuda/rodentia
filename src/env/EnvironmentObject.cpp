@@ -75,7 +75,6 @@ StageObject::StageObject(const Vector3f& pos,
 //---------------------------
 AgentObject::AgentObject(btCollisionShape* shape,
 						 btDynamicsWorld* world,
-						 btRigidBody* floorBody,
 						 int collisionId)
 	:
 	EnvironmentObject() {
@@ -84,7 +83,6 @@ AgentObject::AgentObject(btCollisionShape* shape,
 													 0.0f,
 													 shape,
 													 world,
-													 floorBody,
 													 collisionId);
 }
 
