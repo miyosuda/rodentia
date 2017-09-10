@@ -7,21 +7,19 @@ import unittest
 import numpy as np
 from multiprocessing import Process, Pipe
 
-import rodent_module
+
+import rodent
 
 COMMAND_ACTION    = 0
 COMMAND_TERMINATE = 1
 
-def to_nd_float_array(list_obj):
-  return np.array(list_obj, dtype=np.float32)
-
 def worker(conn):
-  env = rodent_module.Env(width=84, height=84,
-                          floor_size=to_nd_float_array([10,10]),
-                          floor_texture_path="")
+  env = rodent.Environment(width=84, height=84,
+                           floor_size=[10,10],
+                           floor_texture_path="")
   sphere_id = env.add_sphere(texture_path="",
                              radius=1.0,
-                             pos=to_nd_float_array([0.0, 2.0, -5.0]),
+                             pos=[0.0, 2.0, -5.0],
                              rot=0.0,
                              detect_collision=True)
   conn.send(0)

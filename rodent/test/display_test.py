@@ -9,25 +9,24 @@ import os
 from collections import deque
 import pygame, sys
 from pygame.locals import *
-import rodent_module
+import rodent
 
 BLACK = (0, 0, 0)
 
 MAX_STEP_NUM = 60 * 30
-
-def to_nd_float_array(list_obj):
-  return np.array(list_obj, dtype=np.float32)
 
 class Display(object):
   def __init__(self, display_size):
     self.width  = 640
     self.height = 480
 
-    floor_texture_path = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/floor3.png"
-    self.env = rodent_module.Env(width=self.width,
-                                 height=self.height,
-                                 floor_size=to_nd_float_array([40,40]),
-                                 floor_texture_path=floor_texture_path)
+    self.data_path = os.path.dirname(os.path.abspath(__file__)) + "/../../examples/data/"
+
+    floor_texture_path = self.data_path + "floor3.png"
+    self.env = rodent.Environment(width=self.width,
+                                  height=self.height,
+                                  floor_size=[40,40],
+                                  floor_texture_path=floor_texture_path)
 
     self.prepare_wall()
 
@@ -41,37 +40,37 @@ class Display(object):
     pygame.display.set_caption('rodent')
 
   def prepare_wall(self):
-    texture_path = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/wall2.png"
+    texture_path = self.data_path + "wall2.png"
     
     # -Z
     self.env.add_box(texture_path=texture_path,
-                     half_extent=to_nd_float_array([20.0, 1.0, 1.0]),
-                     pos=to_nd_float_array([0.0, 1.0, -20.0]),
+                     half_extent=[20.0, 1.0, 1.0],
+                     pos=[0.0, 1.0, -20.0],
                      rot=0.0,
                      detect_collision=False)
     # +Z
     self.env.add_box(texture_path=texture_path,
-                     half_extent=to_nd_float_array([20.0, 1.0, 1.0]),
-                     pos=to_nd_float_array([0.0, 1.0, 20.0]),
+                     half_extent=[20.0, 1.0, 1.0],
+                     pos=[0.0, 1.0, 20.0],
                      rot=0.0,
                      detect_collision=False)
     # -X
     self.env.add_box(texture_path=texture_path,
-                     half_extent=to_nd_float_array([1.0, 1.0, 20.0]),
-                     pos=to_nd_float_array([-20.0, 1.0, 0.0]),
+                     half_extent=[1.0, 1.0, 20.0],
+                     pos=[-20.0, 1.0, 0.0],
                      rot=0.0,
                      detect_collision=False)
     # +X
     self.env.add_box(texture_path=texture_path,
-                     half_extent=to_nd_float_array([1.0, 1.0, 20.0]),
-                     pos=to_nd_float_array([20.0, 1.0, 0.0]),
+                     half_extent=[1.0, 1.0, 20.0],
+                     pos=[20.0, 1.0, 0.0],
                      rot=0.0,
                      detect_collision=False)
 
     # Debug box
     self.env.add_box(texture_path=texture_path,
-                     half_extent=to_nd_float_array([1.0, 1.0, 1.0]),
-                     pos=to_nd_float_array([0.0, 1.0, -5.0]),
+                     half_extent=[1.0, 1.0, 1.0],
+                     pos=[0.0, 1.0, -5.0],
                      rot=0,
                      detect_collision=False)
 
@@ -138,45 +137,46 @@ class Display(object):
     # Clear remaining reward objects
     self.clear_objects()
 
-    texture_path = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/red.png"
+    texture_path = self.data_path + "red.png"
     
     # Reward Sphere
     obj_id0 = self.env.add_sphere(texture_path=texture_path,
                                   radius=1.0,
-                                  pos=to_nd_float_array([-5.0, 1.0, 5.0]),
+                                  pos=[-5.0, 1.0, 5.0],
                                   rot=0.0,
                                   detect_collision=True)
 
     obj_id1 = self.env.add_sphere(texture_path=texture_path,
                                   radius=1.0,
-                                  pos=to_nd_float_array([5.0, 1.0, 5.0]),
+                                  pos=[5.0, 1.0, 5.0],
                                   rot=0.0,
                                   detect_collision=True)
     self.obj_ids_set.add(obj_id0)
     self.obj_ids_set.add(obj_id1)
 
     # add test model
-    model_path0 = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/apple0.obj"
+    model_path0 = self.data_path + "apple0.obj"
+    
     self.env.add_model(path=model_path0,
-                       scale=to_nd_float_array([1.0, 1.0, 1.0]),
-                       pos=to_nd_float_array([0.0, 0.0, 10.0]), # +z pos
+                       scale=[1.0, 1.0, 1.0],
+                       pos=[0.0, 0.0, 10.0], # +z pos
                        rot=0.0,
                        detect_collision=True)
 
-    model_path1 = os.path.dirname(os.path.abspath(__file__)) + "/" + "../examples/data/lemon0.obj"
+    model_path1 = self.data_path + "lemon0.obj"
     self.env.add_model(path=model_path1,
-                       scale=to_nd_float_array([1.0, 1.0, 1.0]),
-                       pos=to_nd_float_array([10.0, 0.0, 10.0]),
+                       scale=[1.0, 1.0, 1.0],
+                       pos=[10.0, 0.0, 10.0],
                        rot=0.0,
                        detect_collision=True)
 
     
     # Locate agent to default position
-    self.env.locate_agent(pos=to_nd_float_array([0,0,0]),
+    self.env.locate_agent(pos=[0,0,0],
                           rot=0.0)
 
     # Set light direction
-    self.env.set_light_dir(dir=to_nd_float_array([-0.5, -1.0, -0.4]))
+    self.env.set_light_dir(dir=[-0.5, -1.0, -0.4])
 
     self.total_reward = 0
     self.step_num = 0

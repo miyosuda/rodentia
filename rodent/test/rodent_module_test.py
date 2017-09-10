@@ -8,7 +8,8 @@ import unittest
 import numpy as np
 import scipy.misc
 
-import rodent_module
+import rodent
+
 
 def to_nd_float_array(list_obj):
   return np.array(list_obj, dtype=np.float32)
@@ -16,27 +17,27 @@ def to_nd_float_array(list_obj):
 
 class RodentModuleTest(unittest.TestCase):
   def testVersion(self):
-    version = rodent_module.version();
+    version = rodent.rodent_module.version();
     self.assertEqual(version, "0.0.1")
 
   def testEnv(self):
     width  = 84 * 4
     height = 84 * 4
-    env = rodent_module.Env(width=width, height=height,
-                            floor_size=to_nd_float_array([10,10]),
-                            floor_texture_path="")
+    env = rodent.rodent_module.Env(width=width, height=height,
+                                   floor_size=to_nd_float_array([30,30]),
+                                   floor_texture_path="")
 
     # Check setup interfaces
     # Add box
     env.add_box(texture_path="",
-                half_extent=to_nd_float_array([5.0, 5.0, 5.0]),
-                pos=to_nd_float_array([10.0, 5.0, 10.0]),
+                half_extent=to_nd_float_array([1.0, 1.0, 1.0]),
+                pos=to_nd_float_array([0.0, 1.0, -10.0]),
                 rot=0.0,
                 detect_collision=False)
 
     # Add Sphere
     sphere_id = env.add_sphere(texture_path="",
-                               radius=2.0,
+                               radius=1.0,
                                pos=to_nd_float_array([0.0, 2.0, -5.0]),
                                rot=0.0,
                                detect_collision=True)
@@ -47,7 +48,7 @@ class RodentModuleTest(unittest.TestCase):
                      rot=0.0)
 
     # Set light direction
-    env.set_light_dir(dir=to_nd_float_array([0.0, -1.0, 0.0]))
+    env.set_light_dir(dir=to_nd_float_array([-1.0, -1.0, 0.0]))
     
     # Check step with action
     action = np.array([10, 0, 0], dtype=np.int32)
