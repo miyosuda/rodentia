@@ -21,10 +21,3 @@ For Python3
 	$ make -j4
     $ python setup.py bdist_wheel
     $ pip install dist/rodent-0.0.1-py3-none-any.whl
-
-
-
-
-
-
-
