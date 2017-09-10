@@ -251,10 +251,7 @@ class NavMazeStaticEnvironment(object):
     self.minus_obj_ids_set = set()
 
   def step(self, action):
-    if action == -1:
-      real_action = [0, 0, 0] # TODO: 仮対応中
-    else:
-      real_action = NavMazeStaticEnvironment.ACTION_LIST[action]
+    real_action = NavMazeStaticEnvironment.ACTION_LIST[action]
 
     obs = self.env.step(action=real_action, num_steps=1)
     self.step_num += 1
