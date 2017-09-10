@@ -9,7 +9,11 @@ import os
 from collections import deque
 import pygame, sys
 from pygame.locals import *
+import sys
+sys.path.append(os.getcwd())
+
 import rodent
+
 
 BLACK = (0, 0, 0)
 
@@ -28,7 +32,8 @@ class Display(object):
                                   floor_size=[40,40],
                                   floor_texture_path=floor_texture_path)
 
-    self.prepare_wall()
+    #self.prepare_wall()
+    self.prepare_maze()
 
     self.obj_ids_set = set()
     
@@ -73,6 +78,171 @@ class Display(object):
                      pos=[0.0, 1.0, -5.0],
                      rot=0,
                      detect_collision=False)
+
+  def prepare_maze(self):
+    wall_texture_path = self.data_path +  "wall0.png"
+    wall_thickness = 0.1
+    
+    # [Center room]
+    # -Z
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[1.0, 1.0, wall_thickness],
+                     pos=[0.0, 1.0, -4.0],
+                     rot=0.0,
+                     detect_collision=False)
+
+    # +X
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[wall_thickness, 1.0, 3.0],
+                     pos=[1.0, 1.0, -1.0],
+                     rot=0.0,
+                     detect_collision=False)
+
+    # +Z
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[2.0, 1.0, wall_thickness],
+                     pos=[-1.0, 1.0, 2.0],
+                     rot=0.0,
+                     detect_collision=False)
+
+    # -X
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[wall_thickness, 1.0, 1.0],
+                     pos=[-3.0, 1.0, 1.0],
+                     rot=0.0,
+                     detect_collision=False)
+
+    # -X
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[wall_thickness, 1.0, 1.0],
+                     pos=[-3.0, 1.0, -3.0],
+                     rot=0.0,
+                     detect_collision=False)
+
+    # [Outer wall]
+    # Left (-X) wall
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[wall_thickness, 1.0, 10.0],
+                     pos=[-5.0, 1.0, 0.0],
+                     rot=0.0,
+                     detect_collision=False)
+
+    # Right (+X) wall
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[wall_thickness, 1.0, 10.0],
+                     pos=[5.0, 1.0, 0.0],
+                     rot=0.0,
+                     detect_collision=False)
+
+    # -Z wall
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[5.0, 1.0, wall_thickness],
+                     pos=[0.0, 1.0, -10.0],
+                     rot=0.0,
+                     detect_collision=False)
+    # +Z wall
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[5.0, 1.0, wall_thickness],
+                     pos=[0.0, 1.0, 10.0],
+                     rot=0.0,
+                     detect_collision=False)    
+
+    # [-Z L]
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[2.0, 1.0, wall_thickness],
+                     pos=[-1.0, 1.0, -6.0],
+                     rot=0.0,
+                     detect_collision=False)
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[wall_thickness, 1.0, 2.0],
+                     pos=[-3.0, 1.0, -8.0],
+                     rot=0.0,
+                     detect_collision=False)
+
+    # [-Z 7]
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[2.0, 1.0, wall_thickness],
+                     pos=[1.0, 1.0, -8.0],
+                     rot=0.0,
+                     detect_collision=False)
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[wall_thickness, 1.0, 3.0],
+                     pos=[3.0, 1.0, 0.0],
+                     rot=0.0,
+                     detect_collision=False)
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[1.0, 1.0, wall_thickness],
+                     pos=[2.0, 1.0, -2.0],
+                     rot=0.0,
+                     detect_collision=False)
+
+    # ゴール横大パネル
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[2.0, 1.0, wall_thickness],
+                     pos=[3.0, 1.0, 0.0],
+                     rot=0.0,
+                     detect_collision=False)
+    # ゴール横小パネル
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[1.0, 1.0, wall_thickness],
+                     pos=[2.0, 1.0, 2.0],
+                     rot=0.0,
+                     detect_collision=False)
+
+    # 椅子型
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[1.0, 1.0, wall_thickness],
+                     pos=[2.0, 1.0, 4.0],
+                     rot=0.0,
+                     detect_collision=False)
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[wall_thickness, 1.0, 1.0],
+                     pos=[3.0, 1.0, 5.0],
+                     rot=0.0,
+                     detect_collision=False)
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[1.0, 1.0, wall_thickness],
+                     pos=[4.0, 1.0, 6.0],
+                     rot=0.0,
+                     detect_collision=False)
+
+    # 足の長い椅子型
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[2.0, 1.0, wall_thickness],
+                     pos=[-1.0, 1.0, 6.0],
+                     rot=0.0,
+                     detect_collision=False)
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[wall_thickness, 1.0, 1.0],
+                     pos=[1.0, 1.0, 7.0],
+                     rot=0.0,
+                     detect_collision=False)
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[1.0, 1.0, wall_thickness],
+                     pos=[2.0, 1.0, 8.0],
+                     rot=0.0,
+                     detect_collision=False)
+
+    # 横一直線
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[wall_thickness, 1.0, 2.0],
+                     pos=[-1.0, 1.0, 4.0],
+                     rot=0.0,
+                     detect_collision=False)
+
+    # 下1枚
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[1.0, 1.0, wall_thickness],
+                     pos=[-4.0, 1.0, 4.0],
+                     rot=0.0,
+                     detect_collision=False)
+
+    # 下2枚
+    self.env.add_box(texture_path=wall_texture_path,
+                     half_extent=[2.0, 1.0, wall_thickness],
+                     pos=[-3.0, 1.0, 8.0],
+                     rot=0.0,
+                     detect_collision=False)    
 
   def update(self):
     self.surface.fill(BLACK)

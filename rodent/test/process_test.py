@@ -6,9 +6,11 @@ from __future__ import print_function
 import unittest
 import numpy as np
 from multiprocessing import Process, Pipe
-
+import os, sys
+sys.path.append(os.getcwd())
 
 import rodent
+
 
 COMMAND_ACTION    = 0
 COMMAND_TERMINATE = 1
