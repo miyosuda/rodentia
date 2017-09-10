@@ -1,5 +1,3 @@
-# Rodent
-
 ![rodent_logo](./doc/image/rodent_logo.png)
 
 *Rodent* is a 3D learning environment for MacOSX and Linux.
