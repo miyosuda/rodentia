@@ -33,7 +33,7 @@ class Environment(object):
                                  height=height,
                                  bg_color=to_nd_float_array(bg_color))
 
-  def add_box(self, texture_path, half_extent, pos, rot, detect_collision):
+  def add_box(self, texture_path, half_extent, pos, rot=0.0, detect_collision=False):
     """Add box object.
     Args:
       texture_path: Path for the texture (.png file)
@@ -52,7 +52,7 @@ class Environment(object):
                             rot=rot,
                             detect_collision=detect_collision)
 
-  def add_sphere(self, texture_path, radius, pos, rot, detect_collision):
+  def add_sphere(self, texture_path, radius, pos, rot=0.0, detect_collision=False):
     """Add sphere object.
     Args:
       texture_path: Path for the texture (.png file)
@@ -71,7 +71,7 @@ class Environment(object):
                                rot=rot,
                                detect_collision=detect_collision)
 
-  def add_model(self, path, scale, pos, rot, detect_collision):
+  def add_model(self, path, scale, pos, rot=0.0, detect_collision=False):
     """Add model object with .obj format.
     Args:
       path: Path for the .obj file.
