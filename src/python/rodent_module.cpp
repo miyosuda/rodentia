@@ -554,30 +554,10 @@ static PyObject* Env_locate_agent(EnvObject* self, PyObject* args, PyObject* kwd
 	return Py_None;
 }
 
-static PyObject* Env_get_obj_info(EnvObject* self, PyObject* args, PyObject* kwds) {
-	int id;
-
-	// Get argument
-	const char* kwlist[] = {"id", nullptr};
-
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", const_cast<char**>(kwlist),
-									 &id)) {
-		return nullptr;
-	}
-	
-	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodent environment not setup");
-		return nullptr;
-	}
-
-	EnvironmentObjectInfo info;
-	bool ret = getObjectInfo(self->environment, id, info);
-
-	if(!ret) {
-		Py_INCREF(Py_None);
-		return Py_None;
-	}
-
+/**
+ * Common function to get result dict object for get_obj_info() and get_agent_info().
+ */
+static PyObject* get_info_dif_obj(const EnvironmentObjectInfo& info) {
 	// Create output dictionary
 	PyObject* resultDic = PyDict_New();
 	if (resultDic == nullptr) {
@@ -625,6 +605,33 @@ static PyObject* Env_get_obj_info(EnvObject* self, PyObject* args, PyObject* kwd
 	return resultDic;
 }
 
+static PyObject* Env_get_obj_info(EnvObject* self, PyObject* args, PyObject* kwds) {
+	int id;
+
+	// Get argument
+	const char* kwlist[] = {"id", nullptr};
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", const_cast<char**>(kwlist),
+									 &id)) {
+		return nullptr;
+	}
+	
+	if (self->environment == nullptr) {
+		PyErr_SetString(PyExc_RuntimeError, "rodent environment not setup");
+		return nullptr;
+	}
+
+	EnvironmentObjectInfo info;
+	bool ret = getObjectInfo(self->environment, id, info);
+
+	if(!ret) {
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+
+	return get_info_dif_obj(info);
+}
+
 static PyObject* Env_get_agent_info(EnvObject* self, PyObject* args, PyObject* kwds) {
 	if (self->environment == nullptr) {
 		PyErr_SetString(PyExc_RuntimeError, "rodent environment not setup");
@@ -639,51 +646,7 @@ static PyObject* Env_get_agent_info(EnvObject* self, PyObject* args, PyObject* k
 		return Py_None;
 	}
 
-	// Create output dictionary
-	PyObject* resultDic = PyDict_New();
-	if (resultDic == nullptr) {
-		PyErr_NoMemory();
-		return nullptr;
-	}
-
-	long* vecDims = new long[1];
-	vecDims[0] = 3;
-
-	PyArrayObject* posArray = (PyArrayObject*)PyArray_SimpleNew(
-		1, // int nd
-		vecDims, // vecims
-		NPY_FLOAT32); // float typenum
-
-	PyArrayObject* velocityArray = (PyArrayObject*)PyArray_SimpleNew(
-		1, // int nd
-		vecDims, // vecims
-		NPY_FLOAT32); // float typenum
-
-	PyArrayObject* eulerAnglesArray = (PyArrayObject*)PyArray_SimpleNew(
-		1, // int nd
-		vecDims, // vecims
-		NPY_FLOAT32); // float typenum
-
-	delete [] vecDims;
-
-	memcpy(PyArray_BYTES(posArray), info.pos.getPointer(),
-		   PyArray_NBYTES(posArray));
-	memcpy(PyArray_BYTES(velocityArray), info.velocity.getPointer(),
-		   PyArray_NBYTES(velocityArray));
-	memcpy(PyArray_BYTES(eulerAnglesArray), info.eulerAngles.getPointer(),
-		   PyArray_NBYTES(eulerAnglesArray));
-
-	// Put list to dictionary
-	PyDict_SetItemString(resultDic, "pos", (PyObject*)posArray);
-	PyDict_SetItemString(resultDic, "velocity", (PyObject*)velocityArray);
-	PyDict_SetItemString(resultDic, "euler_angles", (PyObject*)eulerAnglesArray);
-
-	// Decrease ref count of array
-	Py_DECREF((PyObject*)posArray);
-	Py_DECREF((PyObject*)velocityArray);
-	Py_DECREF((PyObject*)eulerAnglesArray);
-
-	return resultDic;
+	return get_info_dif_obj(info);
 }
 
 static PyObject* Env_set_light_dir(EnvObject* self, PyObject* args, PyObject* kwds) {
