@@ -1,4 +1,6 @@
 -----------------------------------------------------------------------------
+License for the main part of "rodent"
+-----------------------------------------------------------------------------
 
    Copyright Copyright (c) 2017, Narrative Nights Inc. All rights reserved.
 
@@ -14,6 +16,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
+
+
+-----------------------------------------------------------------------------
+License for "tinyobjloader" library
 -----------------------------------------------------------------------------
 
 The MIT License (MIT)
