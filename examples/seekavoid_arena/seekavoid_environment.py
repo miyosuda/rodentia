@@ -9,29 +9,35 @@ import math
 import random
 
 
-MAX_STEP_NUM = 60 * 30
+MAX_STEP_NUM = 60 * 20 # 20 seconds * 60 frames 
 
 
 class SeekAvoidEnvironment(object):
   ACTION_LIST = [
-    [-20,   0,   0], # look_left
-    [ 20,   0,   0], # look_right
-    [  0,   -1,  0], # strafe_left
-    [  0,    1,  0], # strafe_right
-    [  0,    0,  1], # forward
-    [  0,    0, -1], # backward
+    [ 10,  0,  0], # look_left
+    [-10,  0,  0], # look_right
+    [  0,  1,  0], # strafe_left
+    [  0, -1,  0], # strafe_right
+    [  0,  0,  1], # forward
+    [  0,  0, -1], # backward
   ]
 
   def __init__(self, width, height):
+    # Where model and texture data are located 
     self.data_path = os.path.dirname(os.path.abspath(__file__)) + "/../data/"
-    
+
+    # Create environment
     self.env = rodent.Environment(width=width, height=height,
                                   bg_color=[0,0,0])
+
+    # Prepare stage objects
     self._prepare_stage()
-    
+
+    # Object id for collision checking
     self.plus_obj_ids_set = set()
     self.minus_obj_ids_set = set()
-    
+
+    # Reset stage
     self.reset()
     
   def get_action_size(self):
@@ -78,6 +84,7 @@ class SeekAvoidEnvironment(object):
                      detect_collision=False)
 
   def _locate_plus_reward_obj(self, x, z, rot):
+    """ Locate positive reward object """
     model_path = self.data_path + "apple0.obj"
     pos_scale = 0.075
     pos = [x * pos_scale, 0.0, z * pos_scale]
@@ -89,6 +96,7 @@ class SeekAvoidEnvironment(object):
     self.plus_obj_ids_set.add(obj_id)
 
   def _locate_minus_reward_obj(self, x, z, rot):
+    """ Locate negative reward object """
     model_path = self.data_path + "lemon0.obj"
     pos_scale = 0.075
     pos = [x * pos_scale, 0.0, z * pos_scale]
@@ -100,10 +108,10 @@ class SeekAvoidEnvironment(object):
     self.minus_obj_ids_set.add(obj_id)
 
   def _reset_sub(self):
-    # Clear remaining reward objects
+    # First clear remaining reward objects
     self._clear_objects()
 
-    # Add rewards
+    # Add reward objects
     self._locate_plus_reward_obj(x=96, z=0, rot=0.625)
     self._locate_plus_reward_obj(x=192, z=-112, rot=0.375)
     self._locate_plus_reward_obj(x=-128, z=-32, rot=0.0)
@@ -128,12 +136,13 @@ class SeekAvoidEnvironment(object):
     self._locate_minus_reward_obj(x=48, z=-296, rot=0.875)
     self._locate_minus_reward_obj(x=-248, z=216, rot=0.375)
     
-    # Locate agent to default position
+    # Locate agent to default position with randomized orientation
     rot = 2.0 * math.pi * random.random()
     
     self.env.locate_agent(pos=[0,0,0],
-                          rot=0.0)
+                          rot=rot)
 
+    # Reset environment and get screen
     obs = self.env.step(action=[0,0,0], num_steps=1)
     screen = obs["screen"]
     return screen
@@ -143,6 +152,7 @@ class SeekAvoidEnvironment(object):
     return self._reset_sub()
 
   def _clear_objects(self):
+    # Create reward objects
     for id in self.plus_obj_ids_set:
       self.env.remove_obj(id)
     for id in self.minus_obj_ids_set:
@@ -152,6 +162,7 @@ class SeekAvoidEnvironment(object):
     self.minus_obj_ids_set = set()
 
   def step(self, action):
+    # Get action value to set to environment
     real_action = SeekAvoidEnvironment.ACTION_LIST[action]
 
     obs = self.env.step(action=real_action, num_steps=1)
@@ -160,6 +171,7 @@ class SeekAvoidEnvironment(object):
     screen = obs["screen"]
     collided = obs["collided"]
 
+    # Check collision
     reward = 0
     if len(collided) != 0:
       for id in collided:
@@ -169,10 +181,13 @@ class SeekAvoidEnvironment(object):
         elif id in self.minus_obj_ids_set:
           reward -= 1
           self.minus_obj_ids_set.remove(id)
+        # Remove reward object from environment
         self.env.remove_obj(id)
 
-    
+    # Check if all positive rewards are taken
     is_empty = len(self.plus_obj_ids_set) == 0
+
+    # Episode ends when step size exceeds MAX_STEP_NUM
     terminal = self.step_num >= MAX_STEP_NUM
     
     if (not terminal) and is_empty:

@@ -40,6 +40,7 @@ class Display(object):
     self.process()
     pygame.display.update()
 
+  """
   def get_manual_action(self):
     pressed = pygame.key.get_pressed()
 
@@ -56,10 +57,11 @@ class Display(object):
     if pressed[K_s]:
       return 5
     return -1
+  """
 
   def process(self):
-    #action = self.agent.choose_action(self.last_state)
-    action = self.get_manual_action()
+    #action = self.get_manual_action()    
+    action = self.agent.choose_action(self.last_state)
     
     state, reward, terminal = self.env.step(action=action)
 

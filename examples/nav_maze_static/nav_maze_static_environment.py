@@ -9,17 +9,17 @@ import math
 import random
 
 
-MAX_STEP_NUM = 60 * 30
+MAX_STEP_NUM = 60 * 60 # 60 seconds * 60 frames
 
 
 class NavMazeStaticEnvironment(object):
   ACTION_LIST = [
-    [ 5,   0,   0], # look_left
-    [-5,   0,   0], # look_right
-    [  0,    1,  0], # strafe_left
-    [  0,   -1,  0], # strafe_right
-    [  0,    0,  1], # forward
-    [  0,    0, -1], # backward
+    [ 10,  0,  0], # look_left
+    [-10,  0,  0], # look_right
+    [  0,  1,  0], # strafe_left
+    [  0, -1,  0], # strafe_right
+    [  0,  0,  1], # forward
+    [  0,  0, -1], # backward
   ]
 
   def __init__(self, width, height):
@@ -158,7 +158,7 @@ class NavMazeStaticEnvironment(object):
                      rot=0.0,
                      detect_collision=False)    
 
-    # [-Z L]
+    # [-Z L shape]
     self.env.add_box(texture_path=wall_texture_path,
                      half_extent=[2.0, 1.0, wall_thickness],
                      pos=[-1.0, 1.0, -6.0],
@@ -170,7 +170,7 @@ class NavMazeStaticEnvironment(object):
                      rot=0.0,
                      detect_collision=False)
 
-    # [-Z 7]
+    # [-Z 7 shape]
     self.env.add_box(texture_path=wall_texture_path,
                      half_extent=[2.0, 1.0, wall_thickness],
                      pos=[1.0, 1.0, -8.0],
@@ -187,20 +187,20 @@ class NavMazeStaticEnvironment(object):
                      rot=0.0,
                      detect_collision=False)
 
-    # ゴール横大パネル
+    # Large panel beside goal
     self.env.add_box(texture_path=wall_texture_path,
                      half_extent=[2.0, 1.0, wall_thickness],
                      pos=[3.0, 1.0, 0.0],
                      rot=0.0,
                      detect_collision=False)
-    # ゴール横小パネル
+    # Small panel beside goal
     self.env.add_box(texture_path=wall_texture_path,
                      half_extent=[1.0, 1.0, wall_thickness],
                      pos=[2.0, 1.0, 2.0],
                      rot=0.0,
                      detect_collision=False)
 
-    # 椅子型
+    # Chair shape
     self.env.add_box(texture_path=wall_texture_path,
                      half_extent=[1.0, 1.0, wall_thickness],
                      pos=[2.0, 1.0, 4.0],
@@ -217,7 +217,7 @@ class NavMazeStaticEnvironment(object):
                      rot=0.0,
                      detect_collision=False)
 
-    # 足の長い椅子型
+    # Bigge chair shape
     self.env.add_box(texture_path=wall_texture_path,
                      half_extent=[2.0, 1.0, wall_thickness],
                      pos=[-1.0, 1.0, 6.0],
@@ -234,21 +234,21 @@ class NavMazeStaticEnvironment(object):
                      rot=0.0,
                      detect_collision=False)
 
-    # 横一直線
+    # Side line
     self.env.add_box(texture_path=wall_texture_path,
                      half_extent=[wall_thickness, 1.0, 2.0],
                      pos=[-1.0, 1.0, 4.0],
                      rot=0.0,
                      detect_collision=False)
 
-    # 下1枚
+    # One panel below
     self.env.add_box(texture_path=wall_texture_path,
                      half_extent=[1.0, 1.0, wall_thickness],
                      pos=[-4.0, 1.0, 4.0],
                      rot=0.0,
                      detect_collision=False)
 
-    # 下2枚
+    # Twoe panels below
     self.env.add_box(texture_path=wall_texture_path,
                      half_extent=[2.0, 1.0, wall_thickness],
                      pos=[-3.0, 1.0, 8.0],
@@ -281,6 +281,7 @@ class NavMazeStaticEnvironment(object):
       self.reward_obj_ids_set.add(obj_id)
 
   def _locate_agent(self):
+    # Choose random position and orientation for the agent.
     start_pos_index = random.randint(0, len(self.start_pos_list)-1)
     start_pos = self.start_pos_list[start_pos_index]
     rot = 2.0 * math.pi * random.random()
@@ -304,24 +305,22 @@ class NavMazeStaticEnvironment(object):
     return self._reset_sub()
 
   def step(self, action):
-    #..
-    if action == -1:
-      real_action = [0,0,0]
-    else:
-      real_action = NavMazeStaticEnvironment.ACTION_LIST[action]
-    #..
-    
-    #real_action = NavMazeStaticEnvironment.ACTION_LIST[action]
+    #if action == -1:
+    #  real_action = [0,0,0]
+    #else:
+    #  real_action = NavMazeStaticEnvironment.ACTION_LIST[action]
+    real_action = NavMazeStaticEnvironment.ACTION_LIST[action]
 
     obs = self.env.step(action=real_action, num_steps=1)
     self.step_num += 1
     
     screen = obs["screen"]
-    collided = obs["collided"]
+    collided = obs["collided"] # ids for collided objects
 
     reward = 0
     goal_arrived = False
-    
+
+    # Check collision
     if len(collided) != 0:
       for id in collided:
         if id in self.reward_obj_ids_set:
