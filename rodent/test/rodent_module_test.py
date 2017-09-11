@@ -33,6 +33,7 @@ class RodentModuleTest(unittest.TestCase):
                 half_extent=to_nd_float_array([30.0, 1.0, 30.0]),
                 pos=to_nd_float_array([0.0, -1.0, 0.0]),
                 rot=0.0,
+                mass=0.0,
                 detect_collision=False)
 
     # Add Sphere
@@ -40,6 +41,7 @@ class RodentModuleTest(unittest.TestCase):
                                radius=1.0,
                                pos=to_nd_float_array([0.0, 2.0, -5.0]),
                                rot=0.0,
+                               mass=1.0,
                                detect_collision=True)
     print("sphere_id={}".format(sphere_id))
 

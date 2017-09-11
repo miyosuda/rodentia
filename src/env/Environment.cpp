@@ -248,6 +248,7 @@ int Environment::addBox(const char* texturePath,
 						const Vector3f& halfExtent,
 						const Vector3f& pos,
 						float rot,
+						float mass,
 						bool detectCollision) {
 	btCollisionShape* shape = collisionShapeManager.getBoxShape(halfExtent.x,
 																halfExtent.y,
@@ -267,7 +268,7 @@ int Environment::addBox(const char* texturePath,
 	const Mesh* mesh = meshManager.getBoxMesh(material, halfExtent);
 	Vector3f scale(halfExtent.x, halfExtent.y, halfExtent.z);
 
-	return addObject(shape, pos, rot, Vector3f(0.0f, 0.0f, 0.0f),
+	return addObject(shape, pos, rot, mass, Vector3f(0.0f, 0.0f, 0.0f),
 					 detectCollision, mesh, scale);
 }
 
@@ -275,6 +276,7 @@ int Environment::addSphere(const char* texturePath,
 						   float radius,
 						   const Vector3f& pos,
 						   float rot,
+						   float mass,
 						   bool detectCollision) {
 	btCollisionShape* shape = collisionShapeManager.getSphereShape(radius);
 	
@@ -291,7 +293,7 @@ int Environment::addSphere(const char* texturePath,
 	const Mesh* mesh = meshManager.getSphereMesh(material);
 	Vector3f scale(radius, radius, radius);
 	
-	return addObject(shape, pos, rot, Vector3f(0.0f, 0.0f, 0.0f),
+	return addObject(shape, pos, rot, mass, Vector3f(0.0f, 0.0f, 0.0f),
 					 detectCollision, mesh, scale);
 }
 
@@ -299,6 +301,7 @@ int Environment::addModel(const char* path,
 						  const Vector3f& scale,
 						  const Vector3f& pos,
 						  float rot,
+						  float mass,
 						  bool detectCollision) {
 
 	// Load mesh from .obj data file
@@ -328,12 +331,13 @@ int Environment::addModel(const char* path,
 	relativeCenter.y *= scale.y;
 	relativeCenter.z *= scale.z;
 	
-	return addObject(shape, pos, rot, relativeCenter, detectCollision, mesh, scale);
+	return addObject(shape, pos, rot, mass, relativeCenter, detectCollision, mesh, scale);
 }
 
 int Environment::addObject(btCollisionShape* shape,
 						   const Vector3f& pos,
 						   float rot,
+						   float mass,
 						   const Vector3f& relativeCenter,
 						   bool detectCollision,
 						   const Mesh* mesh,
@@ -352,6 +356,7 @@ int Environment::addObject(btCollisionShape* shape,
 	EnvironmentObject* object = new StageObject(
 		pos,
 		rot,
+		mass,
 		relativeCenter,
 		shape,
 		world,

@@ -52,6 +52,7 @@ bool EnvironmentObject::calcBoundingBox(BoundingBox& boundingBox) {
 //---------------------------
 StageObject::StageObject(const Vector3f& pos,
 						 float rot,
+						 float mass,
 						 const Vector3f& relativeCenter,
 						 btCollisionShape* shape,
 						 btDynamicsWorld* world,
@@ -60,7 +61,7 @@ StageObject::StageObject(const Vector3f& pos,
 						 const Vector3f& scale)
 	:
 	EnvironmentObject() {
-	rigidBodyComponent = new RigidBodyComponent(0.0f,
+	rigidBodyComponent = new RigidBodyComponent(mass,
 												pos,
 												rot,
 												relativeCenter,

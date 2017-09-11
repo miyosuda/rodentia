@@ -70,6 +70,7 @@ private:
 	int addObject(btCollisionShape* shape,
 				  const Vector3f& pos,
 				  float rot,
+				  float mass,
 				  const Vector3f& relativeCenter,
 				  bool detectCollision,
 				  const Mesh* mesh,
@@ -101,16 +102,19 @@ public:
 			   const Vector3f& halfExtent,
 			   const Vector3f& pos,
 			   float rot,
+			   float mass,
 			   bool detectCollision);
 	int addSphere(const char* texturePath,
 				  float radius,
 				  const Vector3f& pos,
 				  float rot,
+				  float mass,
 				  bool detectCollision);
 	int addModel(const char* path,
 				 const Vector3f& sale,
 				 const Vector3f& pos,
 				 float rot,
+				 float mass,
 				 bool detectCollision);
 	void removeObject(int id);
 	void locateAgent(const Vector3f& pos,

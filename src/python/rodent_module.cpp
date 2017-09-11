@@ -46,11 +46,13 @@ static int addBox(Environment* environment,
 				  float halfExtentX, float halfExtentY, float halfExtentZ,
 				  float posX, float posY, float posZ,
 				  float rot,
+				  float mass,
 				  bool detectCollision) {
 	return environment->addBox(texturePath,
 							   Vector3f(halfExtentX, halfExtentY, halfExtentZ),
 							   Vector3f(posX, posY, posZ),
 							   rot,
+							   mass,
 							   detectCollision);
 }
 
@@ -59,11 +61,13 @@ static int addSphere(Environment* environment,
 					 float radius,
 					 float posX, float posY, float posZ,
 					 float rot,
+					 float mass,
 					 bool detectCollision) {
 	return environment->addSphere(texturePath,
 								  radius,
 								  Vector3f(posX, posY, posZ),
 								  rot,
+								  mass,
 								  detectCollision);
 }
 
@@ -72,11 +76,13 @@ static int addModel(Environment* environment,
 					float scaleX, float scaleY, float scaleZ,
 					float posX, float posY, float posZ,
 					float rot,
+					float mass,
 					bool detectCollision) {
 	return environment->addModel(path,
 								 Vector3f(scaleX, scaleY, scaleZ),
 								 Vector3f(posX, posY, posZ),
 								 rot,
+								 mass,
 								 detectCollision);
 }
 
@@ -314,17 +320,19 @@ static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
 	PyObject* halfExtentObj = nullptr;
 	PyObject* posObj = nullptr;
 	float rot;
+	float mass;
 	int detectCollision;
 
 	// Get argument
-	const char* kwlist[] = {"texture_path", "half_extent", "pos", "rot", "detect_collision",
+	const char* kwlist[] = {"texture_path", "half_extent", "pos", "rot", "mass", "detect_collision",
 							nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!fi", const_cast<char**>(kwlist),
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!ffi", const_cast<char**>(kwlist),
 									 &texturePath,
 									 &PyArray_Type, &halfExtentObj,
 									 &PyArray_Type, &posObj,
 									 &rot,
+									 &mass,
 									 &detectCollision)) {
 		return nullptr;
 	}
@@ -358,7 +366,9 @@ static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
 					texturePath,
 					halfExtentX, halfExtentY, halfExtentZ,
 					posX, posY, posZ,
-					rot, detectCollision != 0);
+					rot,
+					mass,
+					detectCollision != 0);
 	
 	// Returning object ID	
 	PyObject* idObj = PyInt_FromLong(id);
@@ -371,17 +381,19 @@ static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds)
 	float radius;
 	PyObject* posObj = nullptr;
 	float rot;
+	float mass;
 	int detectCollision;
 
 	// Get argument
-	const char* kwlist[] = {"texture_path", "radius", "pos", "rot", "detect_collision",
+	const char* kwlist[] = {"texture_path", "radius", "pos", "rot", "mass", "detect_collision",
 							nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sfO!fi", const_cast<char**>(kwlist),
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sfO!ffi", const_cast<char**>(kwlist),
 									 &texturePath,
 									 &radius,
 									 &PyArray_Type, &posObj,
 									 &rot,
+									 &mass,
 									 &detectCollision)) {
 		return nullptr;
 	}
@@ -405,7 +417,9 @@ static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds)
 					   texturePath,
 					   radius,
 					   posX, posY, posZ,
-					   rot, detectCollision != 0);
+					   rot,
+					   mass,
+					   detectCollision != 0);
 
 	// Returning object ID
 	PyObject* idObj = PyInt_FromLong(id);
@@ -417,16 +431,18 @@ static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) 
 	PyObject* scaleObj = nullptr;
 	PyObject* posObj = nullptr;
 	float rot;
+	float mass;
 	int detectCollision;
 
 	// Get argument
-	const char* kwlist[] = {"path", "scale", "pos", "rot", "detect_collision", nullptr};
+	const char* kwlist[] = {"path", "scale", "pos", "rot", "mass", "detect_collision", nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!fi", const_cast<char**>(kwlist),
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!ffi", const_cast<char**>(kwlist),
 									 &path,
 									 &PyArray_Type, &scaleObj,
 									 &PyArray_Type, &posObj,
 									 &rot,
+									 &mass,
 									 &detectCollision)) {
 		return nullptr;
 	}
@@ -460,7 +476,9 @@ static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) 
 					  path,
 					  scaleX, scaleY, scaleZ,
 					  posX, posY, posZ,
-					  rot, detectCollision != 0);
+					  rot,
+					  mass,
+					  detectCollision != 0);
 
 	// Returning object ID
 	PyObject* idObj = PyInt_FromLong(id);

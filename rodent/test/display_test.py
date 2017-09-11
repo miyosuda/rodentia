@@ -30,8 +30,8 @@ class Display(object):
                                   height=self.height,
                                   bg_color=[0.0,0.0,0.0])
 
-    #self.prepare_stage()
-    self.prepare_maze_stage()
+    self.prepare_stage()
+    #self.prepare_maze_stage()
 
     self.obj_ids_set = set()
     
@@ -296,10 +296,12 @@ class Display(object):
     collided = obs["collided"]
 
     reward = 0
+    """    
     if len(collided) != 0:
       for id in collided:
         reward += 1
         self.env.remove_obj(id)
+    """
 
     self.total_reward += reward
     terminal = self.total_reward >= 2 or self.step_num >= MAX_STEP_NUM
@@ -331,12 +333,14 @@ class Display(object):
                                   radius=1.0,
                                   pos=[-5.0, 1.0, 5.0],
                                   rot=0.0,
+                                  mass=1.0,
                                   detect_collision=True)
 
     obj_id1 = self.env.add_sphere(texture_path=texture_path,
                                   radius=1.0,
                                   pos=[5.0, 1.0, 5.0],
                                   rot=0.0,
+                                  mass=1.0,
                                   detect_collision=True)
     self.obj_ids_set.add(obj_id0)
     self.obj_ids_set.add(obj_id1)
@@ -348,6 +352,7 @@ class Display(object):
                        scale=[1.0, 1.0, 1.0],
                        pos=[0.0, 0.0, 10.0], # +z pos
                        rot=0.0,
+                       mass=1.0,
                        detect_collision=True)
 
     model_path1 = self.data_path + "lemon0.obj"
@@ -355,6 +360,7 @@ class Display(object):
                        scale=[1.0, 1.0, 1.0],
                        pos=[10.0, 0.0, 10.0],
                        rot=0.0,
+                       mass=1.0,
                        detect_collision=True)
 
     

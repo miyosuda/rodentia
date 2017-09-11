@@ -33,13 +33,15 @@ class Environment(object):
                                  height=height,
                                  bg_color=to_nd_float_array(bg_color))
 
-  def add_box(self, texture_path, half_extent, pos, rot=0.0, detect_collision=False):
+  def add_box(self, texture_path, half_extent, pos, rot=0.0, mass=0.0, detect_collision=False):
     """Add box object.
     Args:
       texture_path: Path for the texture (.png file)
       half_extent: (x,y,z) float values for half extent size of the box.
       pos: (x,y,z) float values for the center of the box.
       rot: A float value for head angle of the object (in radian)
+      mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
+            but if mass > 0, the object is physically simulated.
       detect_collision: A bool value for indicating whether the object is included for collision
                         check result. If this argument is True, object's id is included when 
                         the agenet collides with this object.
@@ -50,34 +52,40 @@ class Environment(object):
                             half_extent=to_nd_float_array(half_extent),
                             pos=to_nd_float_array(pos),
                             rot=rot,
+                            mass=mass,
                             detect_collision=detect_collision)
 
-  def add_sphere(self, texture_path, radius, pos, rot=0.0, detect_collision=False):
+  def add_sphere(self, texture_path, radius, pos, rot=0.0, mass=0.0, detect_collision=False):
     """Add sphere object.
     Args:
       texture_path: Path for the texture (.png file)
       radius: float values for the raius of the shpere.
       pos: (x,y,z) float values for the center of the sphere.
       rot: A float value for head angle of the object (in radian)
+      mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
+            but if mass > 0, the object is physically simulated.
       detect_collision: A bool value for indicating whether the object is included for collision
                         check result. If this argument is True, object's id is included when 
                         the agenet collides with this object.
     Returns:
       Int value for the object id.
-    """    
+    """
     return self.env.add_sphere(texture_path=texture_path,
                                radius=radius,
                                pos=to_nd_float_array(pos),
                                rot=rot,
+                               mass=mass,
                                detect_collision=detect_collision)
 
-  def add_model(self, path, scale, pos, rot=0.0, detect_collision=False):
+  def add_model(self, path, scale, pos, rot=0.0, mass=0.0, detect_collision=False):
     """Add model object with .obj format.
     Args:
       path: Path for the .obj file.
       scale: (x,y,z) float values for the scaling of the object.
       pos: (x,y,z) float values for the origin of the object.
       rot: A float value for head angle of the model (in radian)
+      mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
+            but if mass > 0, the object is physically simulated.
       detect_collision: A bool value for indicating whether the object is included for collision
                         check result. If this argument is True, object's id is included when 
                         the agenet collides with this object.
@@ -88,6 +96,7 @@ class Environment(object):
                               scale=to_nd_float_array(scale),
                               pos=to_nd_float_array(pos),
                               rot=rot,
+                              mass=mass,
                               detect_collision=detect_collision)
   
   def locate_agent(self, pos, rot):
