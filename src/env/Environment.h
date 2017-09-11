@@ -63,7 +63,7 @@ private:
 	ShaderManager shaderManager;
 	RenderingContext renderingContext;
 
-	bool initRenderer(int width, int height);
+	bool initRenderer(int width, int height, const Vector3f& bgColor);
 	void prepareAgent();
 	void checkCollision();
 	void prepareShadow();

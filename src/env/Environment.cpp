@@ -81,7 +81,7 @@ bool Environment::init(int width, int height, const Vector3f& bgColor) {
 
 	nextObjId = 0;
 
-	bool ret = initRenderer(width, height);
+	bool ret = initRenderer(width, height, bgColor);
 	if( !ret ) {
 		return false;
 	}
@@ -414,8 +414,8 @@ bool Environment::prepareDebugDrawer() {
 	return true;
 }
 
-bool Environment::initRenderer(int width, int height) {
-	bool ret = renderer.init(width, height);
+bool Environment::initRenderer(int width, int height, const Vector3f& bgColor) {
+	bool ret = renderer.init(width, height, bgColor);
 	if(!ret) {
 		return false;
 	}

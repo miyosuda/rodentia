@@ -6,11 +6,14 @@
 #include "GLContext.h"
 #include "OffscreenFrameBuffer.h"
 #include "DepthFrameBuffer.h"
+#include "Vector3f.h"
+
 
 class Renderer {
 private:
 	int frameBufferWidth;
 	int frameBufferHeight;
+	Vector3f bgColor;
 
 	GLContext context;
 	void* buffer;
@@ -24,10 +27,11 @@ public:
 		:
 		frameBufferWidth(0),
 		frameBufferHeight(0),
+		bgColor(0.0f, 0.0f, 0.0f),
 		buffer(nullptr) {
 	}
 
-	bool init(int width, int height);
+	bool init(int width, int height, const Vector3f& bgColor_);
 	void prepareShadowDepthRendering();
 	void prepareRendering();
 	void finishRendering();

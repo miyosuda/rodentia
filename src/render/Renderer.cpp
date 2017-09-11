@@ -35,9 +35,10 @@ int Renderer::calcDepthFrameBufferSize(int width, int height) {
 /**
  * <!--  init():  -->
  */
-bool Renderer::init(int width, int height) {
+bool Renderer::init(int width, int height, const Vector3f& bgColor_) {
+	bgColor.set(bgColor_);
+	
 	bool ret;
-
 	ret = context.init(width, height);
 	
 	if( !ret ) {
@@ -120,8 +121,7 @@ void Renderer::prepareRendering() {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	
-	//glClearColor(0.54f, 0.80f, 0.98f, 1.0f);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(bgColor.x, bgColor.y, bgColor.y, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Set depth frame buffer for texture slot 1
