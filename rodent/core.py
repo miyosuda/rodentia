@@ -133,3 +133,25 @@ class Environment(object):
       id: Int value for deleting object's id
     """
     self.env.remove_obj(id=id)
+
+  def get_obj_info(self, id):
+    """Get object information.
+    Args:
+      id: Int value for object's id
+    Returns:
+      Dictionary which contains the object's current state info.
+        "pos": numpy nd_array (float32)
+        "velocity" numpy nd_array (float32)
+        "euler_angles" numpy nd_array (float32)
+    """
+    return self.env.get_obj_info(id=id)
+
+  def get_agent_info(self):
+    """Get agent information.
+    Returns:
+      Dictionary which contains the agent's current state info.
+        "pos": numpy nd_array (float32)
+        "velocity" numpy nd_array (float32)
+        "euler_angles" numpy nd_array (float32)
+    """
+    return self.env.get_agent_info()

@@ -688,8 +688,9 @@ static PyObject* Env_set_light_dir(EnvObject* self, PyObject* args, PyObject* kw
 // int add_model(path, scale, pos, rot, detect_collision)
 // void remove_obj(id)
 // void locate_agent(pos, rot)
-// void set_light_dir(dir)
 // dic get_object_info(id)
+// dic get_agent_info()
+// void set_light_dir(dir)
 
 static PyMethodDef EnvObject_methods[] = {
 	{"step", (PyCFunction)Env_step, METH_VARARGS | METH_KEYWORDS,
