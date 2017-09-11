@@ -28,7 +28,7 @@ void RenderingContext::setPath(Path path_) {
  * <!--  initCamera():  -->
  */
 void RenderingContext::initCamera(float ratio, bool flipping) {
-	const float nearClip = 0.1f;
+	const float nearClip = 0.05f;
 	const float farClip = 50.0f;
 	const float focalLength = 50.0f;
 	

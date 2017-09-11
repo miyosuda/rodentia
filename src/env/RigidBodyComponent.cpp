@@ -139,7 +139,7 @@ AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
 }
 
 void AgentRigidBodyComponent::control(const Action& action) {
-	const float linearVelocityRate = 20.0f;
+	const float linearVelocityRate = 15.0f;
 	const float angularVelocityRate = 0.5f;
 	const float impulseLengthLimit = 1.0f;
 	

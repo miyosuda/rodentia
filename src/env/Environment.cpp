@@ -95,7 +95,7 @@ bool Environment::init(int width, int height, const Vector3f& bgColor) {
 }
 
 void Environment::prepareAgent() {
-	btCollisionShape* shape = collisionShapeManager.getCylinderShape(0.3f, 1.0f, 0.3f);
+	btCollisionShape* shape = collisionShapeManager.getCylinderShape(0.25f, 1.0f, 0.25f);
 	agent = new AgentObject(shape, world, ID_AGENT);
 }
 

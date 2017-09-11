@@ -8,8 +8,7 @@ import unittest
 import numpy as np
 import scipy.misc
 import sys
-sys.path.append(os.getcwd())
-
+sys.path.insert(0, os.getcwd())
 import rodent
 
 

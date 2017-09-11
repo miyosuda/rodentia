@@ -25,15 +25,48 @@ class NavMazeStaticEnvironment(object):
   def __init__(self, width, height):
     self.data_path = os.path.dirname(os.path.abspath(__file__)) + "/../data/"
     
-    floor_texture_path = self.data_path + "floor0.png"
-    
     self.env = rodent.Environment(width=width, height=height,
-                                  bg_color=[0,0,0])
+                                  bg_color=[0,0,0])    
+    # Start pos
+    self.start_pos_list = []
+    self.start_pos_list.append([4, 0, 9])
+    self.start_pos_list.append([4, 0, 7])
+    self.start_pos_list.append([4, 0, -1])
+    self.start_pos_list.append([4, 0, -3])
+    self.start_pos_list.append([4, 0, -5])
+    self.start_pos_list.append([4, 0, -7])
+    self.start_pos_list.append([4, 0, -9])
+    self.start_pos_list.append([2, 0, 9])
+    self.start_pos_list.append([2, 0, 7])
+    self.start_pos_list.append([2, 0, -1])
+    self.start_pos_list.append([2, 0, -3])
+    self.start_pos_list.append([2, 0, -5])
+    self.start_pos_list.append([2, 0, -9])
+    self.start_pos_list.append([0, 0, 9])
+    self.start_pos_list.append([0, 0, 7])
+    self.start_pos_list.append([0, 0, 1])
+    self.start_pos_list.append([0, 0, -1])
+    self.start_pos_list.append([0, 0, -3])
+    self.start_pos_list.append([0, 0, -5])
+
+    # Reward pos
+    self.reward_pos_list = []
+    self.reward_pos_list.append([2, 0.3, -7])
+    self.reward_pos_list.append([0, 0.3, -7])
+    self.reward_pos_list.append([0, 0.3, -9])
+    self.reward_pos_list.append([-2, 0.3, 7])
+    self.reward_pos_list.append([-2, 0.3, 9])
+
+    # Reard obj ids
+    self.reward_obj_ids_set = set()
+
+    # Goal pos
+    self.goal_pos = [4, 1, 1]
+
+    # Prepare wall and floor and goal object.
     self._prepare_stage()
-    
-    self.plus_obj_ids_set = set()
-    self.minus_obj_ids_set = set()
-    
+
+    # Reset scene
     self.reset()
     
   def get_action_size(self):
@@ -47,7 +80,15 @@ class NavMazeStaticEnvironment(object):
                      half_extent=[60.0, 1.0, 60.0],
                      pos=[0.0, -1.0, 0.0],
                      rot=0.0,
-                     detect_collision=False)    
+                     detect_collision=False)
+
+    # Goal object (Red Sphere)
+    goal_texture_path = self.data_path + "red.png"
+    self.goal_obj_id = self.env.add_sphere(texture_path=goal_texture_path,
+                                           radius=0.5,
+                                           pos=self.goal_pos,
+                                           rot=0.0,
+                                           detect_collision=True)
 
     # Wall
     wall_texture_path = self.data_path +  "wall0.png"
@@ -137,9 +178,9 @@ class NavMazeStaticEnvironment(object):
                      detect_collision=False)
     self.env.add_box(texture_path=wall_texture_path,
                      half_extent=[wall_thickness, 1.0, 3.0],
-                     pos=[3.0, 1.0, 0.0],
+                     pos=[3.0, 1.0, -5.0],
                      rot=0.0,
-                     detect_collision=False)
+                     detect_collision=False)    
     self.env.add_box(texture_path=wall_texture_path,
                      half_extent=[1.0, 1.0, wall_thickness],
                      pos=[2.0, 1.0, -2.0],
@@ -214,33 +255,46 @@ class NavMazeStaticEnvironment(object):
                      rot=0.0,
                      detect_collision=False)
 
-    
+  def _clear_reward_objects(self):
+    for id in self.reward_obj_ids_set:
+      self.env.remove_obj(id)
+    self.reward_obj_ids_set = set()
 
-  def _locate_plus_reward_obj(self, x, z, rot):
+  def _locate_reward_objects(self):
+    # Clear remaining reward objects first
+    self._clear_reward_objects()
+
+    # Choose random 3 positions for rewards
     model_path = self.data_path + "apple0.obj"
-    pos_scale = 0.075
-    pos = [x * pos_scale, 0.0, z * pos_scale]
-    obj_id = self.env.add_model(path=model_path,
-                                scale=[1.0, 1.0, 1.0],
-                                pos=pos,
-                                rot=rot,
-                                detect_collision=True)
-    self.plus_obj_ids_set.add(obj_id)
+    
+    random.shuffle(self.reward_pos_list)
+
+    for i in range(3):
+      reward_pos = self.reward_pos_list[i]
+      scale = 0.3
+      obj_id = self.env.add_model(path=model_path,
+                                  scale=[scale, scale, scale],
+                                  pos=reward_pos,
+                                  rot=0.0,
+                                  detect_collision=True)
+      # Store object id for collision checking
+      self.reward_obj_ids_set.add(obj_id)
+
+  def _locate_agent(self):
+    start_pos_index = random.randint(0, len(self.start_pos_list)-1)
+    start_pos = self.start_pos_list[start_pos_index]
+    rot = 2.0 * math.pi * random.random()
+    self.env.locate_agent(pos=start_pos,
+                          rot=rot)
 
   def _reset_sub(self):
-    # Clear remaining reward objects
-    self._clear_objects()
+    # Locate reward objects
+    self._locate_reward_objects()
 
-    # Add rewards
-    # TODO:
-    self._locate_plus_reward_obj(x=96, z=0, rot=0.625)
-    
-    # Locate agent to default position
-    rot = 2.0 * math.pi * random.random()
-    
-    self.env.locate_agent(pos=[0,0,0],
-                          rot=0.0)
+    # Locate agent
+    self._locate_agent()
 
+    # Reset environmenet and return screen image
     obs = self.env.step(action=[0,0,0], num_steps=1)
     screen = obs["screen"]
     return screen
@@ -249,17 +303,15 @@ class NavMazeStaticEnvironment(object):
     self.step_num = 0
     return self._reset_sub()
 
-  def _clear_objects(self):
-    for id in self.plus_obj_ids_set:
-      self.env.remove_obj(id)
-    for id in self.minus_obj_ids_set:
-      self.env.remove_obj(id)
-      
-    self.plus_obj_ids_set = set()
-    self.minus_obj_ids_set = set()
-
   def step(self, action):
-    real_action = NavMazeStaticEnvironment.ACTION_LIST[action]
+    #..
+    if action == -1:
+      real_action = [0,0,0]
+    else:
+      real_action = NavMazeStaticEnvironment.ACTION_LIST[action]
+    #..
+    
+    #real_action = NavMazeStaticEnvironment.ACTION_LIST[action]
 
     obs = self.env.step(action=real_action, num_steps=1)
     self.step_num += 1
@@ -268,21 +320,26 @@ class NavMazeStaticEnvironment(object):
     collided = obs["collided"]
 
     reward = 0
+    goal_arrived = False
+    
     if len(collided) != 0:
       for id in collided:
-        if id in self.plus_obj_ids_set:
+        if id in self.reward_obj_ids_set:
+          # If collided with reward object
           reward += 1
-          self.plus_obj_ids_set.remove(id)
-        elif id in self.minus_obj_ids_set:
-          reward -= 1
-          self.minus_obj_ids_set.remove(id)
-        self.env.remove_obj(id)
+          # Remove reward object
+          self.reward_obj_ids_set.remove(id)
+          self.env.remove_obj(id)
+        elif id == self.goal_obj_id:
+          # If collided with goal object
+          reward += 10
+          goal_arrived = True
 
-    
-    is_empty = len(self.plus_obj_ids_set) == 0
+    # Episode ends when step size exceeds MAX_STEP_NUM
     terminal = self.step_num >= MAX_STEP_NUM
     
-    if (not terminal) and is_empty:
+    if (not terminal) and goal_arrived:
+      # Reset rewards and locate agent to random position
       screen = self._reset_sub()
     
     return screen, reward, terminal

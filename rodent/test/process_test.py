@@ -7,8 +7,7 @@ import unittest
 import numpy as np
 from multiprocessing import Process, Pipe
 import os, sys
-sys.path.append(os.getcwd())
-
+sys.path.insert(0, os.getcwd())
 import rodent
 
 

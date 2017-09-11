@@ -10,8 +10,7 @@ from collections import deque
 import pygame, sys
 from pygame.locals import *
 import sys
-sys.path.append(os.getcwd())
-
+sys.path.insert(0, os.getcwd())
 import rodent
 
 
@@ -185,7 +184,7 @@ class Display(object):
                      detect_collision=False)
     self.env.add_box(texture_path=wall_texture_path,
                      half_extent=[wall_thickness, 1.0, 3.0],
-                     pos=[3.0, 1.0, 0.0],
+                     pos=[3.0, 1.0, -5.0],
                      rot=0.0,
                      detect_collision=False)
     self.env.add_box(texture_path=wall_texture_path,
