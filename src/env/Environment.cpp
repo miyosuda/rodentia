@@ -400,6 +400,26 @@ void Environment::setLightDir(const Vector3f& dir) {
 	renderingContext.setLightDir(dir);
 }
 
+bool Environment::getObjectInfo(int id, EnvironmentObjectInfo& info) const {
+	auto itr = objectMap.find(id);
+	if( itr != objectMap.end() ) {
+		const EnvironmentObject* object = itr->second;
+		object->getInfo(info);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool Environment::getAgentInfo(EnvironmentObjectInfo& info) const {
+	if( agent != nullptr ) {
+		agent->getInfo(info);
+		return true;
+	} else {
+		return false;
+	}
+}
+
 bool Environment::prepareDebugDrawer() {
 	Shader* lineShader = shaderManager.getLineShader();
 	// Set debug drawer

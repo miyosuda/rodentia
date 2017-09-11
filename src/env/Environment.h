@@ -22,6 +22,7 @@ class Renderer;
 class DebugDrawer;
 class Camera;
 class EnvironmentObject;
+class EnvironmentObjectInfo;
 class AgentObject;
 
 
@@ -120,7 +121,8 @@ public:
 	void locateAgent(const Vector3f& pos,
 					 float rot);
 	void setLightDir(const Vector3f& dir);
-
+	bool getObjectInfo(int id, EnvironmentObjectInfo& info) const;
+	bool getAgentInfo(EnvironmentObjectInfo& info) const;
 
 	const void* getFrameBuffer() const;
 	int getFrameBufferWidth() const;

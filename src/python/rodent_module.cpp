@@ -6,6 +6,7 @@
 #include "Environment.h"
 #include "Action.h"
 #include "Vector3f.h"
+#include "EnvironmentObject.h"
 
 #define RODENT_MODULE_VERSION "0.0.1"
 
@@ -95,6 +96,16 @@ static void locateAgent(Environment* environment,
 						float posX, float posY, float posZ,
 						float rot) {
 	environment->locateAgent(Vector3f(posX, posY, posZ), rot);
+}
+
+static bool getObjectInfo(Environment* environment,
+						  int id, EnvironmentObjectInfo& info) {
+	return environment->getObjectInfo(id, info);
+}
+
+static bool getAgentInfo(Environment* environment,
+						 EnvironmentObjectInfo& info) {
+	return environment->getAgentInfo(info);
 }
 
 static void setLightDir(Environment* environment,
@@ -543,6 +554,138 @@ static PyObject* Env_locate_agent(EnvObject* self, PyObject* args, PyObject* kwd
 	return Py_None;
 }
 
+static PyObject* Env_get_obj_info(EnvObject* self, PyObject* args, PyObject* kwds) {
+	int id;
+
+	// Get argument
+	const char* kwlist[] = {"id", nullptr};
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", const_cast<char**>(kwlist),
+									 &id)) {
+		return nullptr;
+	}
+	
+	if (self->environment == nullptr) {
+		PyErr_SetString(PyExc_RuntimeError, "rodent environment not setup");
+		return nullptr;
+	}
+
+	EnvironmentObjectInfo info;
+	bool ret = getObjectInfo(self->environment, id, info);
+
+	if(!ret) {
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+
+	// Create output dictionary
+	PyObject* resultDic = PyDict_New();
+	if (resultDic == nullptr) {
+		PyErr_NoMemory();
+		return nullptr;
+	}
+
+	long* vecDims = new long[1];
+	vecDims[0] = 3;
+
+	PyArrayObject* posArray = (PyArrayObject*)PyArray_SimpleNew(
+		1, // int nd
+		vecDims, // vecims
+		NPY_FLOAT32); // float typenum
+
+	PyArrayObject* velocityArray = (PyArrayObject*)PyArray_SimpleNew(
+		1, // int nd
+		vecDims, // vecims
+		NPY_FLOAT32); // float typenum
+
+	PyArrayObject* eulerAnglesArray = (PyArrayObject*)PyArray_SimpleNew(
+		1, // int nd
+		vecDims, // vecims
+		NPY_FLOAT32); // float typenum
+
+	delete [] vecDims;
+
+	memcpy(PyArray_BYTES(posArray), info.pos.getPointer(),
+		   PyArray_NBYTES(posArray));
+	memcpy(PyArray_BYTES(velocityArray), info.velocity.getPointer(),
+		   PyArray_NBYTES(velocityArray));
+	memcpy(PyArray_BYTES(eulerAnglesArray), info.eulerAngles.getPointer(),
+		   PyArray_NBYTES(eulerAnglesArray));
+
+	// Put list to dictionary
+	PyDict_SetItemString(resultDic, "pos", (PyObject*)posArray);
+	PyDict_SetItemString(resultDic, "velocity", (PyObject*)velocityArray);
+	PyDict_SetItemString(resultDic, "euler_angles", (PyObject*)eulerAnglesArray);
+
+	// Decrease ref count of array
+	Py_DECREF((PyObject*)posArray);
+	Py_DECREF((PyObject*)velocityArray);
+	Py_DECREF((PyObject*)eulerAnglesArray);
+
+	return resultDic;
+}
+
+static PyObject* Env_get_agent_info(EnvObject* self, PyObject* args, PyObject* kwds) {
+	if (self->environment == nullptr) {
+		PyErr_SetString(PyExc_RuntimeError, "rodent environment not setup");
+		return nullptr;
+	}
+
+	EnvironmentObjectInfo info;
+	bool ret = getAgentInfo(self->environment, info);
+
+	if(!ret) {
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+
+	// Create output dictionary
+	PyObject* resultDic = PyDict_New();
+	if (resultDic == nullptr) {
+		PyErr_NoMemory();
+		return nullptr;
+	}
+
+	long* vecDims = new long[1];
+	vecDims[0] = 3;
+
+	PyArrayObject* posArray = (PyArrayObject*)PyArray_SimpleNew(
+		1, // int nd
+		vecDims, // vecims
+		NPY_FLOAT32); // float typenum
+
+	PyArrayObject* velocityArray = (PyArrayObject*)PyArray_SimpleNew(
+		1, // int nd
+		vecDims, // vecims
+		NPY_FLOAT32); // float typenum
+
+	PyArrayObject* eulerAnglesArray = (PyArrayObject*)PyArray_SimpleNew(
+		1, // int nd
+		vecDims, // vecims
+		NPY_FLOAT32); // float typenum
+
+	delete [] vecDims;
+
+	memcpy(PyArray_BYTES(posArray), info.pos.getPointer(),
+		   PyArray_NBYTES(posArray));
+	memcpy(PyArray_BYTES(velocityArray), info.velocity.getPointer(),
+		   PyArray_NBYTES(velocityArray));
+	memcpy(PyArray_BYTES(eulerAnglesArray), info.eulerAngles.getPointer(),
+		   PyArray_NBYTES(eulerAnglesArray));
+
+	// Put list to dictionary
+	PyDict_SetItemString(resultDic, "pos", (PyObject*)posArray);
+	PyDict_SetItemString(resultDic, "velocity", (PyObject*)velocityArray);
+	PyDict_SetItemString(resultDic, "euler_angles", (PyObject*)eulerAnglesArray);
+
+	// Decrease ref count of array
+	Py_DECREF((PyObject*)posArray);
+	Py_DECREF((PyObject*)velocityArray);
+	Py_DECREF((PyObject*)eulerAnglesArray);
+
+	return resultDic;
+}
+
 static PyObject* Env_set_light_dir(EnvObject* self, PyObject* args, PyObject* kwds) {
 	PyObject* dirObj = nullptr;
 
@@ -582,6 +725,8 @@ static PyObject* Env_set_light_dir(EnvObject* self, PyObject* args, PyObject* kw
 // int add_model(path, scale, pos, rot, detect_collision)
 // void remove_obj(id)
 // void locate_agent(pos, rot)
+// void set_light_dir(dir)
+// dic get_object_info(id)
 
 static PyMethodDef EnvObject_methods[] = {
 	{"step", (PyCFunction)Env_step, METH_VARARGS | METH_KEYWORDS,
@@ -596,6 +741,10 @@ static PyMethodDef EnvObject_methods[] = {
 	 "Remove object"},
 	{"locate_agent", (PyCFunction)Env_locate_agent, METH_VARARGS | METH_KEYWORDS,
 	 "Locate agent"},
+	{"get_obj_info", (PyCFunction)Env_get_obj_info, METH_VARARGS | METH_KEYWORDS,
+	 "Get object information"},
+	{"get_agent_info", (PyCFunction)Env_get_agent_info, METH_VARARGS | METH_KEYWORDS,
+	 "Get agent information"},	
 	{"set_light_dir", (PyCFunction)Env_set_light_dir, METH_VARARGS | METH_KEYWORDS,
 	 "Set directional light direction"},
 	{nullptr}
@@ -606,7 +755,7 @@ static PyTypeObject rodent_EnvType = {
 #if PY_MAJOR_VERSION >= 3
 	PyVarObject_HEAD_INIT(nullptr, 0) // ob_size
 #else
-	PyObject_HEAD_INIT(nullptr) 0, // ob_size	
+	PyObject_HEAD_INIT(nullptr) 0, // ob_size
 #endif
 	"rodent_module.Env",           // tp_name
 	sizeof(EnvObject),             // tp_basicsize

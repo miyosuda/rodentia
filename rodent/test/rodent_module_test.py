@@ -71,5 +71,22 @@ class RodentModuleTest(unittest.TestCase):
 
     print("collided size={}".format(len(collided)))
 
+    # Get object info
+    info = env.get_obj_info(sphere_id)
+
+    # Check shape
+    self.assertEqual( (3,), info["pos"].shape )
+    self.assertEqual( (3,), info["velocity"].shape )
+    self.assertEqual( (3,), info["euler_angles"].shape )
+
+    # Get agent info
+    info = env.get_agent_info()
+
+    # Check shape
+    self.assertEqual( (3,), info["pos"].shape )
+    self.assertEqual( (3,), info["velocity"].shape )
+    self.assertEqual( (3,), info["euler_angles"].shape )
+    
+
 if __name__ == '__main__':
   unittest.main()

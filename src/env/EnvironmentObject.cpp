@@ -7,6 +7,35 @@
 #include "RenderingContext.h"
 #include "Mesh.h"
 
+//---------------------------
+// [EnvironmentObjectInfo]
+//---------------------------
+void EnvironmentObjectInfo::calcEulerAngles(const Matrix4f& mat,
+											Vector3f& eulerAngles) {
+    float sy = sqrt(mat.m00 * mat.m00 + mat.m10 * mat.m10);
+	bool isSingular = sy < 1e-6;
+ 
+	float rx, ry, rz;
+    if(!isSingular) {
+        rx = atan2f(mat.m21, mat.m22);
+        ry = atan2f(-mat.m20, sy);
+        rz = atan2f(mat.m10, mat.m00);
+    } else {
+        rx = atan2f(-mat.m12, mat.m11);
+        ry = atan2f(-mat.m20, sy);
+		rz = 0.0f;
+	}
+	eulerAngles.set(rx, ry, rz);
+}
+
+void EnvironmentObjectInfo::set(const Matrix4f& mat, const Vector3f& velocity_) {
+	velocity.set(velocity_);
+
+	const Vector4f& trans = mat.getColumnRef(3);
+	pos.set(trans.x, trans.y, trans.z);
+
+	calcEulerAngles(mat, eulerAngles);
+}
 
 //---------------------------
 //   [EnvironmentObject]
@@ -45,6 +74,16 @@ bool EnvironmentObject::calcBoundingBox(BoundingBox& boundingBox) {
 	} else {
 		return false;
 	}
+}
+
+void EnvironmentObject::getInfo(EnvironmentObjectInfo& info) const {
+	Matrix4f mat;
+	getMat(mat);
+	
+	Vector3f velocity;
+	rigidBodyComponent->getVeclocity(velocity);
+	
+	info.set(mat, velocity);
 }
 
 //---------------------------

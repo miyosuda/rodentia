@@ -9,6 +9,7 @@
 class Matrix4f;
 class Action;
 
+
 class RigidBodyComponent {
 protected:
 	btDynamicsWorld* world;
@@ -27,6 +28,7 @@ public:
 	int getCollisionId() const;
 	virtual void control(const Action& action);
 	void getMat(Matrix4f& mat) const;
+	void getVeclocity(Vector3f& velocity) const;
 	void locate(const Vector3f& pos, float rot);
 	btRigidBody* getRigidBody() { return body; }
 

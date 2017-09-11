@@ -15,7 +15,26 @@ class Mesh;
 class RenderingContext;
 class BoundingBox;
 
+//---------------------------
+// [EnvironmentObjectInfo]
+//---------------------------
+class EnvironmentObjectInfo {
+public:
+	Vector3f pos;
+	Vector3f velocity;
+	Vector3f eulerAngles;	
+	
+private:
+	void calcEulerAngles(const Matrix4f& mat, Vector3f& eulerAngles);
+	
+public:	
+	void set(const Matrix4f& mat, const Vector3f& velocity_);
+};
 
+
+//---------------------------
+//   [EnvironmentObject]
+//---------------------------
 class EnvironmentObject {
 protected:
 	RigidBodyComponent* rigidBodyComponent;
@@ -31,9 +50,13 @@ public:
 		return rigidBodyComponent->getRigidBody();
 	}
 	bool calcBoundingBox(BoundingBox& boundingBox);
+	void getInfo(EnvironmentObjectInfo& info) const;
 };
 
 
+//---------------------------
+//      [StageObject]
+//---------------------------
 class StageObject : public EnvironmentObject {
 public:
 	StageObject(const Vector3f& pos,
@@ -47,7 +70,9 @@ public:
 				const Vector3f& scale);
 };
 
-
+//---------------------------
+//      [AgentObject]
+//---------------------------
 class AgentObject : public EnvironmentObject {
 public:	
 	AgentObject(btCollisionShape* shape,

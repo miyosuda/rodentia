@@ -91,6 +91,11 @@ void RigidBodyComponent::getMat(Matrix4f& mat) const {
 	convertRigidBodyTransformToDrawMatrix4f(body->getWorldTransform(), relativeCenter, mat);
 }
 
+void RigidBodyComponent::getVeclocity(Vector3f& velocity) const {
+	const btVector3& v = body->getLinearVelocity();
+	velocity.set(v.x(), v.y(), v.z());
+}
+
 void RigidBodyComponent::locate(const Vector3f& pos, float rot) {
 	btTransform drawTransform;
 	drawTransform.setIdentity();
