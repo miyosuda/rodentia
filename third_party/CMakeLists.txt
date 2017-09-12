@@ -21,7 +21,3 @@ add_subdirectory( bullet3-2.86.1/src/BulletInverseDynamics )
 add_subdirectory( bullet3-2.86.1/src/BulletSoftBody )
 add_subdirectory( bullet3-2.86.1/src/LinearMath )
 
-
-### GTEST ###
-
-add_subdirectory( googletest )
