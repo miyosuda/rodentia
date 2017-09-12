@@ -8,7 +8,7 @@
 #include "Vector3f.h"
 #include "EnvironmentObject.h"
 
-#define RODENT_MODULE_VERSION "0.0.1"
+#define RODENT_MODULE_VERSION "0.1.0"
 
 #if PY_MAJOR_VERSION >= 3
 #define PyInt_FromLong PyLong_FromLong

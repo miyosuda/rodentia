@@ -4,7 +4,6 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
-import cv2
 import os
 from collections import deque
 import pygame, sys
@@ -387,6 +386,7 @@ def main():
       if event.type == pygame.QUIT:
         running = False
       if event.type == KEYDOWN:
+        print("keydown");
         if event.key == K_ESCAPE:
           running = False
     

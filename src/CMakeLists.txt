@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.0)
 
+option(BUILD_PYTHON3 "Build Rodent Python3 binding instead of default Python2." OFF)
+option(USE_HOMEBREW "Use homebrew setting for MacOSX" OFF)
+
 SET(CMAKE_CXX_FLAGS "-Wall -std=c++11 -fPIC")
 SET(CMAKE_C_FLAGS "-Wall -fPIC")
-
-option(BUILD_PYTHON3 "Build Rodent Python3 binding instead of default Python2." OFF)
 
 # OS-dependent specifics
 if(APPLE)
@@ -65,34 +66,27 @@ find_package(PNG REQUIRED)
 if (BUILD_PYTHON3)
 
 	find_package(PythonInterp 3 REQUIRED)
-	STRING(REGEX REPLACE "([0-9.]+)\\.[0-9]+" "\\1" python3_version ${PYTHON_VERSION_STRING})
-	find_package(PythonLibs ${python3_version} REQUIRED)
+	STRING(REGEX REPLACE "([0-9.]+)\\.[0-9]+" "\\1"
+		   PYTHON3_SHORT_VERSION ${PYTHON_VERSION_STRING})
+	find_package(PythonLibs ${PYTHON3_SHORT_VERSION} REQUIRED)
 	
 	find_package(NumPy REQUIRED)
-
-	#message(STATUS ${NUMPY_INCLUDES}) #..
 
 else ()
 	
 	find_package(PythonInterp 2 REQUIRED)
-	STRING( REGEX REPLACE "([0-9.]+)\\.[0-9]+" "\\1" python_version ${PYTHON_VERSION_STRING} )
-	find_package(PythonLibs ${python_version} REQUIRED)
-	find_package(NumPy REQUIRED)
+	STRING( REGEX REPLACE "([0-9.]+)\\.[0-9]+" "\\1"
+			PYTHON_SHORT_VERSION ${PYTHON_VERSION_STRING} )
 	
-	if (PYTHON_NUMPY_FOUND)
-		message("NumPy found")
-		add_definitions(-DUSE_NUMPY)
+	if(USE_HOMEBREW)
+	    message(STATUS "Use homebrew setting for python lib")
+	    find_package(PythonLibsHomebrew ${PYTHON_SHORT_VERSION} REQUIRED)
 	else()
-		message("NumPy not found")
+		find_package(PythonLibs ${PYTHON_SHORT_VERSION} REQUIRED)
 	endif()
 
-	# TODO: workaround for brew environment
-	if(APPLE)
-		set(PYTHON_INCLUDE_DIRS "/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/include/python2.7")
-		set(PYTHON_LIBRARIES "/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/lib/libpython2.7.dylib")
-		set(NUMPY_INCLUDES "/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/core/include")
-	endif ()
-
+	find_package(NumPy REQUIRED)
+	
 endif ()
 
 include_directories( ${OPENGL_INCLUDE_DIRS}

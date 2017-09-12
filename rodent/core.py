@@ -1,4 +1,4 @@
-import rodent_module
+from . import rodent_module
 import numpy as np
 
 def to_nd_float_array(list_obj):
