@@ -8,6 +8,11 @@ dependencies:
   pre:
     - sudo apt-get update
     - sudo apt-get install -y python-dev
+    - pip install --upgrade pip
+    - pip install numpy
+    - pip install pygame
+    - pip install scipy
+    - pip install pillow
   cache_directories:
     - ~/cmake-3.6.2-Linux-x86_64
   override:

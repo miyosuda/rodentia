@@ -5,7 +5,6 @@ from __future__ import print_function
 
 import numpy as np
 import os
-from collections import deque
 import pygame, sys
 from pygame.locals import *
 import sys
