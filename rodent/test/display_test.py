@@ -386,7 +386,6 @@ def main():
       if event.type == pygame.QUIT:
         running = False
       if event.type == KEYDOWN:
-        print("keydown");
         if event.key == K_ESCAPE:
           running = False
     

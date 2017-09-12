@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
-add_definitions("-Wno-deprecated-declarations")
-SET(CMAKE_CXX_FLAGS "-Wall -std=c++11")
+option(BUILD_PYTHON3 "Build Rodent Python3 binding instead of default Python2." OFF)
+option(USE_HOMEBREW "Use homebrew setting for MacOSX" OFF)
 
 project(rodent)
 
@@ -15,6 +15,3 @@ set(CMAKE_MODULE_PATH
 add_subdirectory(third_party)
 add_subdirectory(src)
 add_subdirectory(test)
-
-
-

@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
 
-option(BUILD_PYTHON3 "Build Rodent Python3 binding instead of default Python2." OFF)
-option(USE_HOMEBREW "Use homebrew setting for MacOSX" OFF)
 
 SET(CMAKE_CXX_FLAGS "-Wall -std=c++11 -fPIC")
 SET(CMAKE_C_FLAGS "-Wall -fPIC")
