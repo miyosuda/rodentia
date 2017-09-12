@@ -5,6 +5,8 @@ machine:
     PATH: "/home/ubuntu/cmake-3.6.2-Linux-x86_64/bin:$PATH"
 
 dependencies:
+  pre:
+    - apt-get install python-dev
   cache_directories:
     - ~/cmake-3.6.2-Linux-x86_64
   override:
