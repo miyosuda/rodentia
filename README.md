@@ -46,6 +46,7 @@ If you have trouble under Homebrew environment
 
 For Python2
 
+	$ sudo apt-get install -y python-dev
     $ git clone https://github.com/miyosuda/rodent.git
     $ cd rodent
     $ cmake .
@@ -59,6 +60,7 @@ For Python2
 
 For Python3
 
+	$ sudo apt-get install -y python3-dev
     $ git clone https://github.com/miyosuda/rodent.git
     $ cd rodent
 	$ cmake . -DBUILD_PYTHON3=ON

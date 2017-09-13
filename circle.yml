@@ -1,6 +1,4 @@
 machine:
-  timezone:
-    Europe/London
   environment:
     PATH: "/home/ubuntu/cmake-3.6.2-Linux-x86_64/bin:$PATH"
 
@@ -25,3 +23,6 @@ dependencies:
       fi
     - cmake .; make
 
+test:
+  override:
+    - ./bin/rodent_test
