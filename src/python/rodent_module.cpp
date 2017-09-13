@@ -236,7 +236,7 @@ static int Env_init(EnvObject* self, PyObject* args, PyObject* kwds) {
 
 	float bgColorR = bgColorArr[0];
 	float bgColorG = bgColorArr[1];
-	float bgColorB = bgColorArr[1];
+	float bgColorB = bgColorArr[2];
 
 	// Initialize environment
 	if ( !initEnvironment(self->environment, width, height,

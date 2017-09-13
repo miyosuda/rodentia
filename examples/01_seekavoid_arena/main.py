@@ -8,6 +8,7 @@ import pygame, sys
 from pygame.locals import *
 
 from seekavoid_environment import SeekAvoidEnvironment
+from movie_writer import MovieWriter
 
 BLACK = (0, 0, 0)
 
@@ -40,10 +41,33 @@ class Display(object):
     self.process()
     pygame.display.update()
 
+  def get_real_action(self):
+    lookAction = 0
+    strafeAction = 0
+    moveAction = 0
+
+    pressed = pygame.key.get_pressed()
+
+    if pressed[K_q]:
+      lookAction += 10
+    if pressed[K_e]:
+      lookAction -= 10
+    if pressed[K_a]:
+      strafeAction += 1
+    if pressed[K_d]:
+      strafeAction -= 1
+    if pressed[K_w]:
+      moveAction += 1
+    if pressed[K_s]:
+      moveAction -= 1
+    return [lookAction, strafeAction, moveAction]
+
   def process(self):
-    action = self.agent.choose_action(self.last_state)
+    #action = self.agent.choose_action(self.last_state)
+    #state, reward, terminal = self.env.step(action=action)
     
-    state, reward, terminal = self.env.step(action=action)
+    real_action = self.get_real_action()
+    state, reward, terminal = self.env.step(real_action=real_action)
 
     if reward != 0:
       print("reward={}".format(reward))
@@ -56,16 +80,27 @@ class Display(object):
     if terminal:
       self.last_state = self.env.reset()
 
+  def get_frame(self):
+    data = self.surface.get_buffer().raw
+    return data
+
       
 def main():
-  display_size = (256, 256)
+  display_size = (640, 480)
   display = Display(display_size)
   clock = pygame.time.Clock()
   
   running = True
   FPS = 60
 
+  writer = MovieWriter("seekavoid.mov", display_size, FPS)
+
   while running:
+    frame_str = display.get_frame()
+    d = np.fromstring(frame_str, dtype=np.uint8)
+    d = d.reshape((display_size[1], display_size[0], 3))
+    writer.add_frame(d)
+    
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         running = False
@@ -75,6 +110,8 @@ def main():
     
     display.update()
     clock.tick(FPS)
+
+  writer.close()
     
 if __name__ == '__main__':
   main()

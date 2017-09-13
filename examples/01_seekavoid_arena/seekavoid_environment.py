@@ -28,7 +28,7 @@ class SeekAvoidEnvironment(object):
 
     # Create environment
     self.env = rodent.Environment(width=width, height=height,
-                                  bg_color=[0,0,0])
+                                  bg_color=[0.66, 0.91, 0.98])
 
     # Prepare stage objects
     self._prepare_stage()
@@ -161,9 +161,10 @@ class SeekAvoidEnvironment(object):
     self.plus_obj_ids_set = set()
     self.minus_obj_ids_set = set()
 
-  def step(self, action):
+  #def step(self, action):
+  def step(self, real_action):
     # Get action value to set to environment
-    real_action = SeekAvoidEnvironment.ACTION_LIST[action]
+    #real_action = SeekAvoidEnvironment.ACTION_LIST[action]
 
     obs = self.env.step(action=real_action, num_steps=1)
     self.step_num += 1

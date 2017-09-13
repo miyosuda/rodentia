@@ -8,6 +8,7 @@ import pygame, sys
 from pygame.locals import *
 
 from nav_maze_static_environment import NavMazeStaticEnvironment
+from movie_writer import MovieWriter
 
 BLACK = (0, 0, 0)
 
@@ -40,30 +41,33 @@ class Display(object):
     self.process()
     pygame.display.update()
 
-  """
-  def get_manual_action(self):
+  def get_real_action(self):
+    lookAction = 0
+    strafeAction = 0
+    moveAction = 0
+
     pressed = pygame.key.get_pressed()
 
     if pressed[K_q]:
-      return 0
+      lookAction += 10
     if pressed[K_e]:
-      return 1
+      lookAction -= 10
     if pressed[K_a]:
-      return 2
+      strafeAction += 1
     if pressed[K_d]:
-      return 3
+      strafeAction -= 1
     if pressed[K_w]:
-      return 4
+      moveAction += 1
     if pressed[K_s]:
-      return 5
-    return -1
-  """
+      moveAction -= 1
+    return [lookAction, strafeAction, moveAction]
 
   def process(self):
-    #action = self.get_manual_action()    
-    action = self.agent.choose_action(self.last_state)
-    
-    state, reward, terminal = self.env.step(action=action)
+    #action = self.agent.choose_action(self.last_state)
+    #state, reward, terminal = self.env.step(action=action)
+
+    real_action = self.get_real_action()
+    state, reward, terminal = self.env.step(real_action=real_action)
 
     if reward != 0:
       print("reward={}".format(reward))
@@ -76,16 +80,27 @@ class Display(object):
     if terminal:
       self.last_state = self.env.reset()
 
+  def get_frame(self):
+    data = self.surface.get_buffer().raw
+    return data
+
       
 def main():
-  display_size = (256, 256)
+  display_size = (640, 480)
   display = Display(display_size)
   clock = pygame.time.Clock()
   
   running = True
   FPS = 60
 
+  writer = MovieWriter("navmaze.mov", display_size, FPS)
+
   while running:
+    frame_str = display.get_frame()
+    d = np.fromstring(frame_str, dtype=np.uint8)
+    d = d.reshape((display_size[1], display_size[0], 3))
+    writer.add_frame(d)
+    
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         running = False
@@ -95,6 +110,8 @@ def main():
     
     display.update()
     clock.tick(FPS)
+
+  writer.close()
     
 if __name__ == '__main__':
   main()

@@ -165,8 +165,8 @@ const Mesh* MeshManager::getBoxMesh(Material* material,
 			loopV = textureLoopSize.y;
 		} else if( (i/4) < 4 ) {
 			// Y面
-			loopU = textureLoopSize.x;
-			loopV = textureLoopSize.z;
+			loopU = textureLoopSize.z;
+			loopV = textureLoopSize.x;
 		} else {
 			// X面
 			loopU = textureLoopSize.z;

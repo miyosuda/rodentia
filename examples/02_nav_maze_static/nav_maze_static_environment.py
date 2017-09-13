@@ -304,12 +304,9 @@ class NavMazeStaticEnvironment(object):
     self.step_num = 0
     return self._reset_sub()
 
-  def step(self, action):
-    #if action == -1:
-    #  real_action = [0,0,0]
-    #else:
-    #  real_action = NavMazeStaticEnvironment.ACTION_LIST[action]
-    real_action = NavMazeStaticEnvironment.ACTION_LIST[action]
+  #def step(self, action):
+  def step(self, real_action):
+    #real_action = NavMazeStaticEnvironment.ACTION_LIST[action]
 
     obs = self.env.step(action=real_action, num_steps=1)
     self.step_num += 1

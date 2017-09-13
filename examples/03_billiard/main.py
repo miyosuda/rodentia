@@ -8,6 +8,7 @@ import pygame, sys
 from pygame.locals import *
 
 from billiard_environment import BilliardEnvironment
+from movie_writer import MovieWriter
 
 BLACK = (0, 0, 0)
 
@@ -73,6 +74,10 @@ class Display(object):
     if terminal:
       self.last_state = self.env.reset()
 
+  def get_frame(self):
+    data = self.surface.get_buffer().raw
+    return data
+
       
 def main():
   display_size = (640, 480)
@@ -82,7 +87,14 @@ def main():
   running = True
   FPS = 60
 
+  writer = MovieWriter("billiard.mov", display_size, FPS)
+
   while running:
+    frame_str = display.get_frame()
+    d = np.fromstring(frame_str, dtype=np.uint8)
+    d = d.reshape((display_size[1], display_size[0], 3))
+    writer.add_frame(d)
+    
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         running = False
@@ -92,6 +104,8 @@ def main():
     
     display.update()
     clock.tick(FPS)
+
+  writer.close()
     
 if __name__ == '__main__':
   main()
