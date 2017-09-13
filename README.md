@@ -4,6 +4,7 @@
 
 You can easily design learning tasks with python script. All of the scene objects can be updated with regid body simulation.
 
+[![preview](./doc/image/preview.png)](https://youtu.be/6thMDZlAzkk)
 
 ## Getting started on MacOSX
 
