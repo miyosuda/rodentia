@@ -387,12 +387,17 @@ void Environment::removeObject(int id) {
 	}
 }
 
+void Environment::locateObject(int id, const Vector3f& pos, float rot) {
+	auto itr = objectMap.find(id);
+	if( itr != objectMap.end() ) {
+		EnvironmentObject* object = objectMap[id];
+		object->locate(pos, rot);
+	}
+}
+
 void Environment::locateAgent(const Vector3f& pos, float rot) {
 	if( agent != nullptr ) {
-		// TODO: Use raycast to find agent Y pos.
-		Vector3f adjustedPos(pos);
-		adjustedPos.y = 1.0f;
-		agent->locate(adjustedPos, rot);
+		agent->locate(pos, rot);
 	}
 }
 

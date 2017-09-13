@@ -98,8 +98,19 @@ class Environment(object):
                               rot=rot,
                               mass=mass,
                               detect_collision=detect_collision)
+
+  def locate_object(self, id, pos, rot=0.0):
+    """Locate object to given position and orientataion.
+    Args:
+      id: Int value for object's id
+      pos: (x,y,z) float values for agent's location.
+      rot: A float value for head angle of the model (in radian)
+    """
+    self.env.locate_object(id=id,
+                          pos=to_nd_float_array(pos),
+                          rot=rot)  
   
-  def locate_agent(self, pos, rot):
+  def locate_agent(self, pos, rot=0.0):
     """Locate agenet to given position and orientataion.
     Args:
       pos: (x,y,z) float values for agent's location.
@@ -118,7 +129,7 @@ class Environment(object):
   def step(self, action, num_steps=1):
     """Step environment process and returns result.
     Args:
-      action: Float array with 3 elements.
+      action: Int array with 3 elements.
       num_steps: Int value for iteration count.
     Returns:
       Dictionary which contains the result of this step calculation.

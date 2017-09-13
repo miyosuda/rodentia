@@ -7,7 +7,7 @@ import numpy as np
 import pygame, sys
 from pygame.locals import *
 
-from nav_maze_static_environment import NavMazeStaticEnvironment
+from seekavoid_environment import SeekAvoidEnvironment
 
 BLACK = (0, 0, 0)
 
@@ -25,7 +25,7 @@ class Display(object):
     self.width = display_size[0]
     self.height = display_size[1]
     
-    self.env = NavMazeStaticEnvironment(width=self.width, height=self.height)
+    self.env = SeekAvoidEnvironment(width=self.width, height=self.height)
     self.agent = RandomAgent(self.env.get_action_size())
 
     pygame.init()
@@ -40,27 +40,7 @@ class Display(object):
     self.process()
     pygame.display.update()
 
-  """
-  def get_manual_action(self):
-    pressed = pygame.key.get_pressed()
-
-    if pressed[K_q]:
-      return 0
-    if pressed[K_e]:
-      return 1
-    if pressed[K_a]:
-      return 2
-    if pressed[K_d]:
-      return 3
-    if pressed[K_w]:
-      return 4
-    if pressed[K_s]:
-      return 5
-    return -1
-  """
-
   def process(self):
-    #action = self.get_manual_action()    
     action = self.agent.choose_action(self.last_state)
     
     state, reward, terminal = self.env.step(action=action)
@@ -78,7 +58,7 @@ class Display(object):
 
       
 def main():
-  display_size = (84*4, 84*4)
+  display_size = (256, 256)
   display = Display(display_size)
   clock = pygame.time.Clock()
   

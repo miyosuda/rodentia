@@ -92,6 +92,13 @@ static void removeObj(Environment* environment,
 	environment->removeObject(id);
 }
 
+static void locateObject(Environment* environment,
+						 int id,
+						 float posX, float posY, float posZ,
+						 float rot) {
+	environment->locateObject(id, Vector3f(posX, posY, posZ), rot);
+}
+
 static void locateAgent(Environment* environment,
 						float posX, float posY, float posZ,
 						float rot) {
@@ -518,6 +525,45 @@ static PyObject* Env_remove_obj(EnvObject* self, PyObject* args, PyObject* kwds)
 	return Py_None;
 }
 
+static PyObject* Env_locate_object(EnvObject* self, PyObject* args, PyObject* kwds) {
+	int id;
+	PyObject* posObj = nullptr;
+	float rot;
+
+	// Get argument
+	const char* kwlist[] = {"id", "pos", "rot", nullptr};
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "iO!f", const_cast<char**>(kwlist),
+									 &id,
+									 &PyArray_Type, &posObj,
+									 &rot)) {
+		return nullptr;
+	}
+	
+	if (self->environment == nullptr) {
+		PyErr_SetString(PyExc_RuntimeError, "rodent environment not setup");
+		return nullptr;
+	}
+
+	// pos
+	const float* posArr = getFloatArrayData(posObj, 3, "pos");
+	if( posArr == nullptr ) {
+		return nullptr;
+	}
+	
+	float posX = posArr[0];
+	float posY = posArr[1];
+	float posZ = posArr[2];
+
+	locateObject(self->environment,
+				 id,
+				 posX, posY, posZ,
+				 rot);
+
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
 static PyObject* Env_locate_agent(EnvObject* self, PyObject* args, PyObject* kwds) {
 	PyObject* posObj = nullptr;
 	float rot;
@@ -687,6 +733,7 @@ static PyObject* Env_set_light_dir(EnvObject* self, PyObject* args, PyObject* kw
 // int add_sphere(radius, pos, rot, detect_collision)
 // int add_model(path, scale, pos, rot, detect_collision)
 // void remove_obj(id)
+// void locate_object(id, pos, rot)
 // void locate_agent(pos, rot)
 // dic get_object_info(id)
 // dic get_agent_info()
@@ -703,6 +750,8 @@ static PyMethodDef EnvObject_methods[] = {
 	 "Add model object"},
 	{"remove_obj", (PyCFunction)Env_remove_obj, METH_VARARGS | METH_KEYWORDS,
 	 "Remove object"},
+	{"locate_object", (PyCFunction)Env_locate_object, METH_VARARGS | METH_KEYWORDS,
+	 "Locate object"},
 	{"locate_agent", (PyCFunction)Env_locate_agent, METH_VARARGS | METH_KEYWORDS,
 	 "Locate agent"},
 	{"get_obj_info", (PyCFunction)Env_get_obj_info, METH_VARARGS | METH_KEYWORDS,

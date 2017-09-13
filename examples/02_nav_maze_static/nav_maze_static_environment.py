@@ -77,7 +77,7 @@ class NavMazeStaticEnvironment(object):
     floor_texture_path = self.data_path + "floor0.png"
 
     self.env.add_box(texture_path=floor_texture_path,
-                     half_extent=[60.0, 1.0, 60.0],
+                     half_extent=[6.0, 1.0, 12.0],
                      pos=[0.0, -1.0, 0.0],
                      rot=0.0,
                      detect_collision=False)

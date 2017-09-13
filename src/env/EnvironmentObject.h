@@ -51,6 +51,7 @@ public:
 	}
 	bool calcBoundingBox(BoundingBox& boundingBox);
 	void getInfo(EnvironmentObjectInfo& info) const;
+	void locate(const Vector3f& pos, float rot);
 };
 
 
@@ -79,8 +80,6 @@ public:
 				btDynamicsWorld* world,
 				int collisionId);
 	void control(const Action& action);
-	void locate(const Vector3f& pos,
-				float rot);
 };
 
 #endif

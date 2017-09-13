@@ -86,6 +86,10 @@ void EnvironmentObject::getInfo(EnvironmentObjectInfo& info) const {
 	info.set(mat, velocity);
 }
 
+void EnvironmentObject::locate(const Vector3f& pos, float rot) {
+	rigidBodyComponent->locate(pos, rot);
+}
+
 //---------------------------
 //      [StageObject]
 //---------------------------
@@ -128,9 +132,4 @@ AgentObject::AgentObject(btCollisionShape* shape,
 
 void AgentObject::control(const Action& action) {
 	rigidBodyComponent->control(action);
-}
-
-void AgentObject::locate(const Vector3f& pos,
-						 float rot) {
-	rigidBodyComponent->locate(pos, rot);
 }

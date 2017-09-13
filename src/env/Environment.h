@@ -118,8 +118,8 @@ public:
 				 float mass,
 				 bool detectCollision);
 	void removeObject(int id);
-	void locateAgent(const Vector3f& pos,
-					 float rot);
+	void locateObject(int id, const Vector3f& pos, float rot);
+	void locateAgent(const Vector3f& pos, float rot);
 	void setLightDir(const Vector3f& dir);
 	bool getObjectInfo(int id, EnvironmentObjectInfo& info) const;
 	bool getAgentInfo(EnvironmentObjectInfo& info) const;
