@@ -29,7 +29,7 @@ void RenderingContext::setPath(Path path_) {
  */
 void RenderingContext::initCamera(float ratio, bool flipping) {
 	const float nearClip = 0.05f;
-	const float farClip = 50.0f;
+	const float farClip = 80.0f;
 	const float focalLength = 50.0f;
 	
 	camera.initPerspective(nearClip, farClip, focalLength, ratio, flipping);

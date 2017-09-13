@@ -121,7 +121,7 @@ void Renderer::prepareRendering() {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	
-	glClearColor(bgColor.x, bgColor.y, bgColor.y, 1.0f);
+	glClearColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Set depth frame buffer for texture slot 1

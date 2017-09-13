@@ -26,7 +26,7 @@ class NavMazeStaticEnvironment(object):
     self.data_path = os.path.dirname(os.path.abspath(__file__)) + "/../data/"
     
     self.env = rodent.Environment(width=width, height=height,
-                                  bg_color=[0,0,0])    
+                                  bg_color=[0.66, 0.91, 0.98])
     # Start pos
     self.start_pos_list = []
     self.start_pos_list.append([4, 0, 9])

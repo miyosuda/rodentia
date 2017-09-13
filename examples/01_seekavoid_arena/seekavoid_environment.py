@@ -28,7 +28,7 @@ class SeekAvoidEnvironment(object):
 
     # Create environment
     self.env = rodent.Environment(width=width, height=height,
-                                  bg_color=[0,0,0])
+                                  bg_color=[0.66, 0.91, 0.98])
 
     # Prepare stage objects
     self._prepare_stage()
