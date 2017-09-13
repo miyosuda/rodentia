@@ -24,9 +24,9 @@ If you have trouble under Homebrew environment, use
 
     $ cmake -DUSE_HOMEBREW=ON .
 
-instead of `cmake .`
+instead of `$ cmake .`
 
-(When version of python exe and python libs doesn't match, an error ocurrs when executed like hthis. 
+(When version of python exe and python library doesn't match, an error ocurrs like this,
 
     Fatal Python error: PyThreadState_Get: no current thread
 	Abort trap: 6
