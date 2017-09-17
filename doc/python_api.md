@@ -125,15 +125,21 @@ Locate agent to given position and orientataion.
 
 
 
-## set_light_dir
+## set_light
 
-Set direction of directional light.
+Set light parameters
 
-    set_light_dir(dir):
+    set_light(dir=[-0.5, -1.0, -0.4],
+              color=[1.0, 1.0, 1.0],
+              ambient_color=[0.4, 0.4, 0.4],
+              shadow_rate=0.2)
 
 #### Argsuments:
 
 - `dir`: (x,y,z) Light direction.
+- `color`: (r,g,b) Light color (0.0~1.0)
+- `ambient_color`: (r,g,b) Ambient light color (0.0~1.0)
+- `shadow_rate`: A float, shadow color rate (0.0~1.0)
 
 ## step
 
