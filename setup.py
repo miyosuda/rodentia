@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
   name='rodent',
 
-  version='0.1.0',
+  version='0.1.1',
 
   description='3D reinforcement learning platform',
   long_description="Rodent is a 3D reinforcement learning platform.",
@@ -13,19 +13,17 @@ setup(
   author='Kosuke Miyoshi',
   author_email='miyosuda@gmail.com',
 
-  install_requires=['numpy'],
+  install_requires=['numpy(>=1.11.0)'],
   packages=['rodent'],
   package_data={'rodent': ['rodent_module.so']},
 
   license='Apache 2.0',
 
   classifiers=[
-    'Development Status :: 2 - Pre-Alpha',
-
+    'Development Status :: 3 - Alpha',
     'Intended Audience :: Science/Research',
     'Topic :: Scientific/Engineering :: Artificial Intelligence',
-
-    'License :: OSI Approved :: Apache License, 2.0',
+    'License :: OSI Approved :: Apache Software License',
 
     # Specify the Python versions you support here. In particular, ensure
     # that you indicate whether you support Python 2, Python 3 or both.
