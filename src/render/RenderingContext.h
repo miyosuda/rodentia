@@ -24,6 +24,13 @@ private:
 	
 	// Directional light direction.
 	Vector3f lightDir;
+	// Light color
+	Vector4f lightColor;
+	// Ambient color
+	Vector4f ambientColor;
+	// Shadow color rate
+	float shadowColorRate;
+	
 	// Model matrix for current drawing object.
 	Matrix4f modelMat;
 	// Cached model view matrix
@@ -47,7 +54,10 @@ public:
 	void initCamera(float ratio, bool flipping=true);
 	void setModelMat(Matrix4f modelMat_);
 	void setCameraMat(const Matrix4f& mat);
-	void setLightDir(const Vector3f& lightDir_);
+	void setLight(const Vector3f& lightDir_,
+				  const Vector3f& lightColor_,
+				  const Vector3f& ambientColor_,
+				  float shadowColorRate_);
 
 	void setPath(Path path_);
 	bool isRenderingShadow() const { return path == SHADOW; }
@@ -55,6 +65,15 @@ public:
 
 	const Vector3f& getLightDir() const {
 		return lightDir;
+	}
+	const Vector4f& getLightColor() const {
+		return lightColor;
+	}
+	const Vector4f& getAmbientColor() const {
+		return ambientColor;
+	}
+	float getShadowColorRate() const {
+		return shadowColorRate;
 	}
 	const Matrix4f& getModelMat() const {
 		return modelMat;

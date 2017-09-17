@@ -401,8 +401,14 @@ void Environment::locateAgent(const Vector3f& pos, float rot) {
 	}
 }
 
-void Environment::setLightDir(const Vector3f& dir) {
-	renderingContext.setLightDir(dir);
+void Environment::setLight(const Vector3f& lightDir,
+						   const Vector3f& lightColor,
+						   const Vector3f& ambientColor,
+						   float shadowColorRate) {
+	renderingContext.setLight(lightDir,
+							  lightColor,
+							  ambientColor,
+							  shadowColorRate);
 }
 
 bool Environment::getObjectInfo(int id, EnvironmentObjectInfo& info) const {

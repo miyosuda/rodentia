@@ -122,7 +122,10 @@ public:
 	void removeObject(int id);
 	void locateObject(int id, const Vector3f& pos, float rot);
 	void locateAgent(const Vector3f& pos, float rot);
-	void setLightDir(const Vector3f& dir);
+	void setLight(const Vector3f& lightDir,
+				  const Vector3f& lightColor,
+				  const Vector3f& ambientColor,
+				  float shadowColorRate);
 	bool getObjectInfo(int id, EnvironmentObjectInfo& info) const;
 	bool getAgentInfo(EnvironmentObjectInfo& info) const;
 	void replaceObjectTextures(int id, const vector<string>& texturePathes);

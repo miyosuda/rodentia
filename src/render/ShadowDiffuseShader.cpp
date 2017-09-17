@@ -15,28 +15,27 @@ static const char* vertShaderSrc =
 	"out vec2 texCoord; "
 	"out vec4 shadowTexCoord; "
 	"out vec4 varyColor; "
-	"out vec4 shadowColor; "	
+	"out vec4 shadowColor; "
 	" "
 	"uniform mat4 modelViewProjectionMatrix; "
+	"uniform mat4 depthBiasModelViewProjectionMatrix; "
 	"uniform mat3 normalMatrix; "
 	"uniform vec3 invLightDir; " // Already normalized
-	"uniform mat4 depthBiasModelViewProjectionMatrix; "
+	"uniform vec4 lightColor; "
+	"uniform vec4 ambientColor; "
+	"uniform float shadowColorRate; "
 	" "
 	"void main() "
 	"{ "
 	"    vec3 worldNormal = normalize(normalMatrix * vertexNormal); "	
 	"    float diffuse = dot(worldNormal, normalize(invLightDir));"
 	"    "
-	"    vec4 diffuseColor = vec4(1.0, 1.0, 1.0, 1.0); "
-	//"    vec4 ambientColor = vec4(0.3, 0.3, 0.3, 1.0); "
-	"    vec4 ambientColor = vec4(0.4, 0.4, 0.4, 1.0); "
-	"    "
 	"    varyColor = ambientColor; "
 	"    shadowColor = ambientColor; "
 	"    "
 	"    if(diffuse > 0.0) { "
-	"        vec4 temp = diffuseColor * diffuse; "
-	"        shadowColor += temp * 0.2; "
+	"        vec4 temp = lightColor * diffuse; "
+	"        shadowColor += temp * shadowColorRate; "
 	"        varyColor += temp; "
 	"    } "
 	"    "
@@ -81,10 +80,12 @@ bool ShadowDiffuseShader::init() {
 	depthBiasMvpMatrixHandle = getUniformLocation("depthBiasModelViewProjectionMatrix");
 	normalMatrixHandle = getUniformLocation("normalMatrix");
 	invLightDirHandle  = getUniformLocation("invLightDir");
+	lightColorHandle   = getUniformLocation("lightColor");
+	ambientColorHandle = getUniformLocation("ambientColor");
+	shadowColorRateHandle   = getUniformLocation("shadowColorRate");
 
 	textureHandle      = getUniformLocation("texSampler2D");
 	shadowMapHandle    = getUniformLocation("shadowMap");
-
 	return true;
 }
 
@@ -94,10 +95,19 @@ bool ShadowDiffuseShader::init() {
 void ShadowDiffuseShader::prepare(const RenderingContext& context) const {
 	const Vector3f& lightDir = context.getLightDir();
 	Vector3f invLightDir(lightDir);
-	invLightDir *= -1.0f;
-	
+	invLightDir *= -1.0f;  	
 	glUniform3fv( invLightDirHandle, 1,
 				  (const GLfloat*)invLightDir.getPointer() );
+
+	const Vector4f& lightColor = context.getLightColor();
+	const Vector4f& ambientColor = context.getAmbientColor();
+	float shadowColorRate = context.getShadowColorRate();
+
+	glUniform4fv( lightColorHandle, 1,
+				  (const GLfloat*)lightColor.getPointer() );
+	glUniform4fv( ambientColorHandle, 1,
+				  (const GLfloat*)ambientColor.getPointer() );
+	glUniform1f( shadowColorRateHandle, shadowColorRate );
 }
 
 /**

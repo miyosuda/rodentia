@@ -60,6 +60,8 @@ bool DiffuseShader::init() {
 	mvpMatrixHandle    = getUniformLocation("modelViewProjectionMatrix");
 	normalMatrixHandle = getUniformLocation("normalMatrix");
 	invLightDirHandle  = getUniformLocation("invLightDir");
+	lightColorHandle   = getUniformLocation("lightColor");
+	ambientColorHandle = getUniformLocation("ambientColor");
 
 	return true;
 }
@@ -76,6 +78,14 @@ void DiffuseShader::prepare(const RenderingContext& context) const {
 	
 	glUniform3fv( invLightDirHandle, 1,
 				  (const GLfloat*)invLightDir.getPointer() );
+
+	const Vector4f& lightColor = context.getLightColor();
+	const Vector4f& ambientColor = context.getAmbientColor();
+
+	glUniform4fv( lightColorHandle, 1,
+				  (const GLfloat*)lightColor.getPointer() );
+	glUniform4fv( ambientColorHandle, 1,
+				  (const GLfloat*)ambientColor.getPointer() );
 }
 
 /**

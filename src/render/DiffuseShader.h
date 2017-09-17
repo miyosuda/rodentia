@@ -9,6 +9,8 @@ private:
 	int mvpMatrixHandle;
 	int normalMatrixHandle;
 	int invLightDirHandle;
+	int lightColorHandle;
+	int ambientColorHandle;
 	
 public:
 	virtual bool init() override;

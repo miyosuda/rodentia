@@ -49,7 +49,7 @@ def main():
                           pos=[0,1.5,-5],
                           rot=rot)
 
-  env.set_light_dir(dir=[0.0, -1.0, -1.0])
+  env.set_light(dir=[0.0, -1.0, -1.0])
 
   action = [0, 0, 0]
   obs = env.step(action=action)

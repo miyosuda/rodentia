@@ -119,12 +119,22 @@ class Environment(object):
     self.env.locate_agent(pos=to_nd_float_array(pos),
                           rot=rot)
 
-  def set_light_dir(self, dir):
-    """Set direction of directional light.
+  def set_light(self,
+                dir=[-0.5, -1.0, -0.4],
+                color=[1.0, 1.0, 1.0],
+                ambient_color=[0.4, 0.4, 0.4],
+                shadow_rate=0.2):
+    """Set light parameters.
     Args:
       dir: (x,y,z) float values for light direction.
+      color: (r,g,b) float values for light color.
+      ambient_color: (r,g,b) float values for ambient color.
+      shadow_rate: a float, shadow color rate
     """
-    self.env.set_light_dir(dir=to_nd_float_array(dir))
+    self.env.set_light(dir=to_nd_float_array(dir),
+                       color=to_nd_float_array(color),
+                       ambient_color=to_nd_float_array(ambient_color),
+                       shadow_rate=shadow_rate)
 
   def step(self, action, num_steps=1):
     """Step environment process and returns result.

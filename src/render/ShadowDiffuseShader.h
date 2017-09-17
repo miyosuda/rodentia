@@ -10,6 +10,9 @@ private:
 	int depthBiasMvpMatrixHandle;
 	int normalMatrixHandle;
 	int invLightDirHandle;
+	int lightColorHandle;
+	int ambientColorHandle;
+	int shadowColorRateHandle;
 	int textureHandle;
 	int shadowMapHandle;
 	

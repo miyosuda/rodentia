@@ -119,9 +119,15 @@ static bool getAgentInfo(Environment* environment,
 	return environment->getAgentInfo(info);
 }
 
-static void setLightDir(Environment* environment,
-						float dirX, float dirY, float dirZ) {
-	environment->setLightDir(Vector3f(dirX, dirY, dirZ));
+static void setLight(Environment* environment,
+					 float dirX, float dirY, float dirZ,
+					 float colorX, float colorY, float colorZ,
+					 float ambientColorX, float ambientColorY, float ambientColorZ,
+					 float shadowColorRate) {
+	environment->setLight(Vector3f(dirX, dirY, dirZ),
+						  Vector3f(colorX, colorY, colorZ),
+						  Vector3f(ambientColorX, ambientColorY, ambientColorZ),
+						  shadowColorRate);
 }
 
 static int getActionSize(Environment* environment) {
@@ -705,14 +711,20 @@ static PyObject* Env_get_agent_info(EnvObject* self, PyObject* args, PyObject* k
 	return get_info_dic_obj(info);
 }
 
-static PyObject* Env_set_light_dir(EnvObject* self, PyObject* args, PyObject* kwds) {
+static PyObject* Env_set_light(EnvObject* self, PyObject* args, PyObject* kwds) {
 	PyObject* dirObj = nullptr;
+	PyObject* colorObj = nullptr;
+	PyObject* ambientColorObj = nullptr;
+	float shadowRate;
 
 	// Get argument
-	const char* kwlist[] = {"dir", nullptr};
+	const char* kwlist[] = {"dir", "color", "ambient_color", "shadow_rate", nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!", const_cast<char**>(kwlist),
-									 &PyArray_Type, &dirObj) ) {
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!O!O!f", const_cast<char**>(kwlist),
+									 &PyArray_Type, &dirObj,
+									 &PyArray_Type, &colorObj,
+									 &PyArray_Type, &ambientColorObj,
+									 &shadowRate) ) {
 		return nullptr;
 	}
 	
@@ -726,13 +738,20 @@ static PyObject* Env_set_light_dir(EnvObject* self, PyObject* args, PyObject* kw
 	if( dirArr == nullptr ) {
 		return nullptr;
 	}
+	const float* colorArr = getFloatArrayData(colorObj, 3, "color");
+	if( colorArr == nullptr ) {
+		return nullptr;
+	}
+	const float* ambientColorArr = getFloatArrayData(ambientColorObj, 3, "ambient_color");
+	if( ambientColorArr == nullptr ) {
+		return nullptr;
+	}
 	
-	float dirX = dirArr[0];
-	float dirY = dirArr[1];
-	float dirZ = dirArr[2];
-
-	setLightDir(self->environment,
-				dirX, dirY, dirZ);
+	setLight(self->environment,
+			 dirArr[0], dirArr[1], dirArr[2],
+			 colorArr[0], colorArr[1], colorArr[2],
+			 ambientColorArr[0], ambientColorArr[1], ambientColorArr[2],
+			 shadowRate);
 
 	Py_INCREF(Py_None);
 	return Py_None;
@@ -789,7 +808,7 @@ static PyObject* Env_replace_obj_texture(EnvObject* self, PyObject* args, PyObje
 // void locate_agent(pos, rot)
 // dic get_object_info(id)
 // dic get_agent_info()
-// void set_light_dir(dir)
+// void set_light(dir, color, ambient_color, shadow_rate)
 // void replace_obj_texture(id, string[])
 
 static PyMethodDef EnvObject_methods[] = {
@@ -810,9 +829,9 @@ static PyMethodDef EnvObject_methods[] = {
 	{"get_obj_info", (PyCFunction)Env_get_obj_info, METH_VARARGS | METH_KEYWORDS,
 	 "Get object information"},
 	{"get_agent_info", (PyCFunction)Env_get_agent_info, METH_VARARGS | METH_KEYWORDS,
-	 "Get agent information"},	
-	{"set_light_dir", (PyCFunction)Env_set_light_dir, METH_VARARGS | METH_KEYWORDS,
-	 "Set directional light direction"},
+	 "Get agent information"},
+	{"set_light", (PyCFunction)Env_set_light, METH_VARARGS | METH_KEYWORDS,
+	 "Set light parameters"},
 	{"replace_obj_texture", (PyCFunction)Env_replace_obj_texture, METH_VARARGS | METH_KEYWORDS,
 	 "Replace object textures"},
 	{nullptr}

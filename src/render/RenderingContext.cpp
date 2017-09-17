@@ -14,7 +14,10 @@ RenderingContext::RenderingContext()
 		0.5f, 0.5f, 0.5f, 1.0f)
 {
 	setPath(SHADOW);
-	setLightDir(Vector3f(-0.5, -1.0, -0.4));
+	setLight(Vector3f(-0.5f, -1.0f, -0.4f), // lightDir
+			 Vector3f(1.0f, 1.0f, 1.0f), // lightColor
+			 Vector3f(0.4f, 0.4f, 0.4f), // ambientColor
+			 0.2f); // shadowColorRate
 }
 
 /**
@@ -89,11 +92,18 @@ void RenderingContext::setCameraMat(const Matrix4f& mat) {
 }
 
 /**
- * <!--  setLightDir():  -->
+ * <!--  setLight():  -->
  */
-void RenderingContext::setLightDir(const Vector3f& lightDir_) {
+void RenderingContext::setLight(const Vector3f& lightDir_,
+								const Vector3f& lightColor_,
+								const Vector3f& ambientColor_,
+								float shadowColorRate_) {
 	lightDir.set(lightDir_);
 	lightDir.normalize();
+
+	lightColor.set(lightColor_.x, lightColor_.y, lightColor_.z, 1.0f);
+	ambientColor.set(ambientColor_.x, ambientColor_.y, ambientColor_.z, 1.0f);
+	shadowColorRate = shadowColorRate_;
 }
 
 /**

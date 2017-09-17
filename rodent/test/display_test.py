@@ -364,8 +364,8 @@ class Display(object):
     self.env.locate_agent(pos=[0,0,0],
                           rot=0.0)
 
-    # Set light direction
-    self.env.set_light_dir(dir=[-0.5, -1.0, -0.4])
+    # Set light params
+    self.env.set_light(dir=[-0.5, -1.0, -0.4])
 
     self.total_reward = 0
     self.step_num = 0
