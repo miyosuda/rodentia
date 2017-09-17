@@ -90,6 +90,12 @@ void EnvironmentObject::locate(const Vector3f& pos, float rot) {
 	rigidBodyComponent->locate(pos, rot);
 }
 
+void EnvironmentObject::replaceMaterials(const vector<Material*>& materials) {
+	if( drawComponent != nullptr ) {
+		drawComponent->replaceMaterials(materials);
+	}
+}
+
 //---------------------------
 //      [StageObject]
 //---------------------------
@@ -100,7 +106,7 @@ StageObject::StageObject(const Vector3f& pos,
 						 btCollisionShape* shape,
 						 btDynamicsWorld* world,
 						 int collisionId,
-						 const Mesh* mesh,
+						 Mesh* mesh,
 						 const Vector3f& scale)
 	:
 	EnvironmentObject() {

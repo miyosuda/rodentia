@@ -14,46 +14,46 @@
 
 
 /*
-    [y]
-     |
-     |
-     |
-     *------[x]
-    /
-   /
- [z]
+  [y]
+  |
+  |
+  |
+  *------[x]
+  /
+  /
+  [z]
 */
 
 static float boxVertices[] = {
 	// +z (正面)
 	-1.0f, -1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // left bottom
-	 1.0f, -1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, // right bottom
-	 1.0f,  1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // right top
+	1.0f, -1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, // right bottom
+	1.0f,  1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // right top
 	-1.0f,  1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, // left top
   
 	// -z (裏面)
 	-1.0f, -1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
 	-1.0f,  1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
-	 1.0f,  1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
-	 1.0f, -1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+	1.0f,  1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
+	1.0f, -1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
   
 	// +y (上面)
 	-1.0f,  1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 	-1.0f,  1.0f,  1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-	 1.0f,  1.0f,  1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-	 1.0f,  1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+	1.0f,  1.0f,  1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+	1.0f,  1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
   
 	// -y (下面)
 	-1.0f, -1.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-	 1.0f, -1.0f, -1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-	 1.0f, -1.0f,  1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+	1.0f, -1.0f, -1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+	1.0f, -1.0f,  1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
 	-1.0f, -1.0f,  1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
   
 	// +x (右面)
-	 1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-	 1.0f,  1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-	 1.0f,  1.0f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-	 1.0f, -1.0f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+	1.0f,  1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+	1.0f,  1.0f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+	1.0f, -1.0f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
   
 	// -x (左面)
 	-1.0f, -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -99,8 +99,8 @@ void MeshManager::release() {
  *
  * NOTE: Created box's size = (1,1,1).
  */
-const Mesh* MeshManager::getBoxMesh(Material* material,
-									const Vector3f& textureLoopSize) {
+Mesh* MeshManager::getBoxMesh(Material* material,
+							  const Vector3f& textureLoopSize) {
 	// Find cached MeshData with dummy key string.
 	char path[64];
 	int ix = (int)textureLoopSize.x * 100.0f;
@@ -178,7 +178,7 @@ const Mesh* MeshManager::getBoxMesh(Material* material,
 /**
  * <!--  getSphereMesh():  -->
  */
-const Mesh* MeshManager::getSphereMesh(Material* material) {
+Mesh* MeshManager::getSphereMesh(Material* material) {
 	// Find cached MeshData with dummy key string.
 	const char* path = "primitive:sphere";
 	
@@ -261,9 +261,9 @@ const Mesh* MeshManager::getSphereMesh(Material* material) {
 /**
  * <!--  getModelMesh():  -->
  */
-const Mesh* MeshManager::getModelMesh(const char* path,
-									  TextureManager& textureManager,
-									  ShaderManager& shaderManager) {
+Mesh* MeshManager::getModelMesh(const char* path,
+								TextureManager& textureManager,
+								ShaderManager& shaderManager) {
 	auto itr = modelMeshDataMap.find(path);
 	if( itr != modelMeshDataMap.end() ) {
 		MeshData* meshData = itr->second;

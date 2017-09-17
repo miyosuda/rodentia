@@ -166,3 +166,15 @@ class Environment(object):
         "euler_angles" numpy nd_array (float32)
     """
     return self.env.get_agent_info()
+
+  def replace_obj_texture(self, id, texture_path):
+    """Replace object texture(s).
+       If object is consist of multiple meshes, textures of these meshes can be replaced by applying list of texture pathes.
+    Args:
+      id: Int value for object's id
+      texture_path: A string or list of string. path of the texture(s)
+    """
+    if isinstance(texture_path, list):
+      self.env.replace_obj_texture(id, texture_path)
+    else:
+      self.env.replace_obj_texture(id, [texture_path])

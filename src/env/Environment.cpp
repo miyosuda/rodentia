@@ -265,7 +265,7 @@ int Environment::addBox(const char* texturePath,
 	Shader* shader = shaderManager.getDiffuseShader();
 	Shader* shadowDepthShader = shaderManager.getShadowDepthShader();
 	Material* material = new Material(texture, shader, shadowDepthShader);
-	const Mesh* mesh = meshManager.getBoxMesh(material, halfExtent);
+	Mesh* mesh = meshManager.getBoxMesh(material, halfExtent);
 	Vector3f scale(halfExtent.x, halfExtent.y, halfExtent.z);
 
 	return addObject(shape, pos, rot, mass, Vector3f(0.0f, 0.0f, 0.0f),
@@ -290,7 +290,7 @@ int Environment::addSphere(const char* texturePath,
 	Shader* shader = shaderManager.getDiffuseShader();
 	Shader* shadowDepthShader = shaderManager.getShadowDepthShader();
 	Material* material = new Material(texture, shader, shadowDepthShader);
-	const Mesh* mesh = meshManager.getSphereMesh(material);
+	Mesh* mesh = meshManager.getSphereMesh(material);
 	Vector3f scale(radius, radius, radius);
 	
 	return addObject(shape, pos, rot, mass, Vector3f(0.0f, 0.0f, 0.0f),
@@ -305,7 +305,7 @@ int Environment::addModel(const char* path,
 						  bool detectCollision) {
 
 	// Load mesh from .obj data file
-	const Mesh* mesh = meshManager.getModelMesh(path, textureManager, shaderManager);
+	Mesh* mesh = meshManager.getModelMesh(path, textureManager, shaderManager);
 	if( mesh == nullptr ) {
 		return -1;
 	}
@@ -340,7 +340,7 @@ int Environment::addObject(btCollisionShape* shape,
 						   float mass,
 						   const Vector3f& relativeCenter,
 						   bool detectCollision,
-						   const Mesh* mesh,
+						   Mesh* mesh,
 						   const Vector3f& scale) {
 	int id = nextObjId;
 	nextObjId += 1;
@@ -423,6 +423,32 @@ bool Environment::getAgentInfo(EnvironmentObjectInfo& info) const {
 	} else {
 		return false;
 	}
+}
+
+void Environment::replaceObjectTextures(int id, const vector<string>& texturePathes) {
+	auto itr = objectMap.find(id);
+	if( itr == objectMap.end() ) {
+		printf("Failed to find object: id=%d\n", id);
+		return;
+	}
+	
+	EnvironmentObject* object = objectMap[id];
+	
+	vector<Material*> materials;
+
+	for(unsigned int i=0; i<texturePathes.size(); ++i) {
+		Texture* texture = textureManager.loadTexture(texturePathes[i].c_str());
+		if( texture == nullptr ) {
+			texture = textureManager.getColorTexture(1.0f, 1.0f, 1.0f);
+
+			Shader* shader = shaderManager.getDiffuseShader();
+			Shader* shadowDepthShader = shaderManager.getShadowDepthShader();
+			Material* material = new Material(texture, shader, shadowDepthShader);
+			materials.push_back(material);
+		}
+	}
+
+	object->replaceMaterials(materials);
 }
 
 bool Environment::prepareDebugDrawer() {

@@ -294,12 +294,10 @@ class Display(object):
     collided = obs["collided"]
 
     reward = 0
-    """    
-    if len(collided) != 0:
-      for id in collided:
-        reward += 1
-        self.env.remove_obj(id)
-    """
+    #if len(collided) != 0:
+    #  for id in collided:
+    #    reward += 1
+    #    self.env.remove_obj(id)
 
     self.total_reward += reward
     terminal = self.total_reward >= 2 or self.step_num >= MAX_STEP_NUM

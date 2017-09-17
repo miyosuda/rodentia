@@ -1,5 +1,9 @@
 #include <Python.h>
 
+#include <vector>
+#include <string>
+using namespace std;
+
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <numpy/arrayobject.h>
 
@@ -8,7 +12,7 @@
 #include "Vector3f.h"
 #include "EnvironmentObject.h"
 
-#define RODENT_MODULE_VERSION "0.1.0"
+#define RODENT_MODULE_VERSION "0.1.1"
 
 #if PY_MAJOR_VERSION >= 3
 #define PyInt_FromLong PyLong_FromLong
@@ -122,6 +126,11 @@ static void setLightDir(Environment* environment,
 
 static int getActionSize(Environment* environment) {
 	return Action::getActionSize();
+}
+
+static void replaceObjectTextures(Environment* environment,
+								  int id, const vector<string>& texturePathes) {
+	environment->replaceObjectTextures(id, texturePathes);
 }
 
 //---------------------------------------------------------
@@ -318,6 +327,7 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 		int collidedId = *it;
 		PyObject* item = PyInt_FromLong(collidedId);
 		PyTuple_SetItem(collidedIdTuple, i, item);
+		// No need to decrease item's refcount.
 		i += 1;
 	}
 
@@ -603,7 +613,7 @@ static PyObject* Env_locate_agent(EnvObject* self, PyObject* args, PyObject* kwd
 /**
  * Common function to get result dict object for get_obj_info() and get_agent_info().
  */
-static PyObject* get_info_dif_obj(const EnvironmentObjectInfo& info) {
+static PyObject* get_info_dic_obj(const EnvironmentObjectInfo& info) {
 	// Create output dictionary
 	PyObject* resultDic = PyDict_New();
 	if (resultDic == nullptr) {
@@ -675,7 +685,7 @@ static PyObject* Env_get_obj_info(EnvObject* self, PyObject* args, PyObject* kwd
 		return Py_None;
 	}
 
-	return get_info_dif_obj(info);
+	return get_info_dic_obj(info);
 }
 
 static PyObject* Env_get_agent_info(EnvObject* self, PyObject* args, PyObject* kwds) {
@@ -692,7 +702,7 @@ static PyObject* Env_get_agent_info(EnvObject* self, PyObject* args, PyObject* k
 		return Py_None;
 	}
 
-	return get_info_dif_obj(info);
+	return get_info_dic_obj(info);
 }
 
 static PyObject* Env_set_light_dir(EnvObject* self, PyObject* args, PyObject* kwds) {
@@ -728,6 +738,48 @@ static PyObject* Env_set_light_dir(EnvObject* self, PyObject* args, PyObject* kw
 	return Py_None;
 }
 
+static PyObject* Env_replace_obj_texture(EnvObject* self, PyObject* args, PyObject* kwds) {
+	const char *kwlist[] = { "id",
+							 "texture_path",
+							 nullptr };
+	
+	// Get argument
+	int id;
+	PyObject* texturePathListObj = nullptr;
+	
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "iO!", const_cast<char**>(kwlist),
+									 &id,
+									 &PyList_Type, &texturePathListObj) ) {
+		return nullptr;
+	}
+
+	if (self->environment == nullptr) {
+		PyErr_SetString(PyExc_RuntimeError, "rodent environment not setup");
+		return nullptr;
+	}
+
+	vector<string> texturePathes;
+
+	int textureSize = (int)PyList_Size(texturePathListObj);
+	for(Py_ssize_t i=0; i<textureSize; ++i) {
+		PyObject* textuerPathObj = PyList_GetItem(texturePathListObj, i);
+		
+		if( !PyString_Check(textuerPathObj) ) {
+			PyErr_Format(PyExc_ValueError, "Replacing texture path was not string");
+			return nullptr;
+		}
+		
+		const char* textuePathStr = PyString_AsString(textuerPathObj);
+		texturePathes.push_back(textuePathStr);
+		// No need to decrease textuerPathObj's refcount.
+	}
+
+	replaceObjectTextures(self->environment, id, texturePathes);
+	
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
 // dic step(action)
 // int add_box(half_extent, pos, rot, detect_collision)
 // int add_sphere(radius, pos, rot, detect_collision)
@@ -738,6 +790,7 @@ static PyObject* Env_set_light_dir(EnvObject* self, PyObject* args, PyObject* kw
 // dic get_object_info(id)
 // dic get_agent_info()
 // void set_light_dir(dir)
+// void replace_obj_texture(id, string[])
 
 static PyMethodDef EnvObject_methods[] = {
 	{"step", (PyCFunction)Env_step, METH_VARARGS | METH_KEYWORDS,
@@ -760,6 +813,8 @@ static PyMethodDef EnvObject_methods[] = {
 	 "Get agent information"},	
 	{"set_light_dir", (PyCFunction)Env_set_light_dir, METH_VARARGS | METH_KEYWORDS,
 	 "Set directional light direction"},
+	{"replace_obj_texture", (PyCFunction)Env_replace_obj_texture, METH_VARARGS | METH_KEYWORDS,
+	 "Replace object textures"},
 	{nullptr}
 };
 

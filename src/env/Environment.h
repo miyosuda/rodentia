@@ -6,6 +6,8 @@
 #include <math.h>
 #include <map>
 #include <set>
+#include <vector>
+#include <string>
 using namespace std;
 
 #include "MeshManager.h"
@@ -74,7 +76,7 @@ private:
 				  float mass,
 				  const Vector3f& relativeCenter,
 				  bool detectCollision,
-				  const Mesh* mesh,
+				  Mesh* mesh,
 				  const Vector3f& scale);
 	EnvironmentObject* findObject(int id);
 
@@ -123,6 +125,7 @@ public:
 	void setLightDir(const Vector3f& dir);
 	bool getObjectInfo(int id, EnvironmentObjectInfo& info) const;
 	bool getAgentInfo(EnvironmentObjectInfo& info) const;
+	void replaceObjectTextures(int id, const vector<string>& texturePathes);
 
 	const void* getFrameBuffer() const;
 	int getFrameBufferWidth() const;

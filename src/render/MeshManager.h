@@ -25,11 +25,11 @@ public:
 	MeshManager() {}
 	~MeshManager();
 	void release();
-	const Mesh* getBoxMesh(Material* material,
-						   const Vector3f& textureLoopSize);
-	const Mesh* getSphereMesh(Material* material);
-	const Mesh* getModelMesh(const char* path,
-							 TextureManager& textureManager, ShaderManager& shaderManager);
+	Mesh* getBoxMesh(Material* material,
+					 const Vector3f& textureLoopSize);
+	Mesh* getSphereMesh(Material* material);
+	Mesh* getModelMesh(const char* path,
+					   TextureManager& textureManager, ShaderManager& shaderManager);
 };
 
 #endif

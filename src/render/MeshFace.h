@@ -21,6 +21,7 @@ public:
 	~MeshFace();
 	void draw(const RenderingContext& context);
 	const BoundingBox& getBoundingBox() const;
+	void replaceMaterial(Material* material_);
 };
 
 #endif

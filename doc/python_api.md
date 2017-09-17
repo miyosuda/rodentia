@@ -199,3 +199,17 @@ A dictionary which contains the agent's current state info.
 - `"velocity"`: numpy nd_array (float32)
 - `"euler_angles"`: numpy nd_array (float32)
 	
+
+
+## replace_obj_texture
+
+Replace object texture(s).
+
+If object is consist of multiple meshes, textures of these meshes can be replaced by applying list of texture pathes.
+
+    replace_obj_texture(id, texture_path)
+
+#### Argsuments:
+
+- `id`: Int, Object id
+- `texture_path`: A string or list of string. path of the texture(s)

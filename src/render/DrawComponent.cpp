@@ -6,7 +6,7 @@
 /**
  * <!--  DrawComponent():  -->
  */
-DrawComponent::DrawComponent(const Mesh* mesh_, const Vector3f& scale)
+DrawComponent::DrawComponent(Mesh* mesh_, const Vector3f& scale)
 	:
 	mesh(mesh_) {
 	scaleMat.setIdentity();
@@ -47,4 +47,11 @@ void DrawComponent::calcBoundingBox(const Matrix4f& rigidBodyMat,
 	meshBoundingBox.transform(scaleX, scaleY, scaleZ,
 							  rigidBodyMat,
 							  boundingBox);
+}
+
+/**
+ * <!--  replaceMaterials():  -->
+ */
+void DrawComponent::replaceMaterials(const vector<Material*>& materials) {
+	mesh->replaceMaterials(materials);
 }

@@ -34,3 +34,11 @@ void MeshFace::draw(const RenderingContext& context) {
 const BoundingBox& MeshFace::getBoundingBox() const {
 	return meshFaceData.getBoundingBox();
 }
+
+/**
+ * <!--  replaceMaterial():  -->
+ */
+void MeshFace::replaceMaterial(Material* material_) {
+	delete material;
+	material = material_;
+}

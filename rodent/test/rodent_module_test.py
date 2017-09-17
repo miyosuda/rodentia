@@ -19,7 +19,7 @@ def to_nd_float_array(list_obj):
 class RodentModuleTest(unittest.TestCase):
   def testVersion(self):
     version = rodent.rodent_module.version();
-    self.assertEqual(version, "0.1.0")
+    self.assertEqual(version, "0.1.1")
 
   def testEnv(self):
     width  = 84 * 4
@@ -91,6 +91,10 @@ class RodentModuleTest(unittest.TestCase):
     self.assertEqual( (3,), info["pos"].shape )
     self.assertEqual( (3,), info["velocity"].shape )
     self.assertEqual( (3,), info["euler_angles"].shape )
+
+    # Replace object texture
+    texture_path = [""]
+    env.replace_obj_texture(sphere_id, texture_path)
     
 
 if __name__ == '__main__':

@@ -2,6 +2,9 @@
 #ifndef ENVIRONMENTOBJECT_HEADER
 #define ENVIRONMENTOBJECT_HEADER
 
+#include <vector>
+using namespace std;
+
 #include "btBulletDynamicsCommon.h"
 
 #include "RigidBodyComponent.h"
@@ -14,6 +17,7 @@ class Vector3f;
 class Mesh;
 class RenderingContext;
 class BoundingBox;
+class Material;
 
 //---------------------------
 // [EnvironmentObjectInfo]
@@ -52,6 +56,7 @@ public:
 	bool calcBoundingBox(BoundingBox& boundingBox);
 	void getInfo(EnvironmentObjectInfo& info) const;
 	void locate(const Vector3f& pos, float rot);
+	void replaceMaterials(const vector<Material*>& materials);
 };
 
 
@@ -67,7 +72,7 @@ public:
 				btCollisionShape* shape,
 				btDynamicsWorld* world,
 				int collisionId,
-				const Mesh* mesh,
+				Mesh* mesh,
 				const Vector3f& scale);
 };
 

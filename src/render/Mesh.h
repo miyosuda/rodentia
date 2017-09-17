@@ -10,6 +10,7 @@ using namespace std;
 class MeshFace;
 class Matrix4f;
 class RenderingContext;
+class Material;
 
 
 class Mesh {
@@ -23,6 +24,8 @@ public:
 	void addMeshFace(MeshFace* meshFace);
 	void draw(const RenderingContext& context) const;
 	const BoundingBox& getBoundingBox() const { return boundingBox; }
+
+	void replaceMaterials(const vector<Material*>& materials);
 };
 
 #endif
