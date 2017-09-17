@@ -7,7 +7,13 @@ import numpy as np
 import os
 import scipy.misc
 import math
+##..
+#import sys
+#sys.path.insert(0, os.getcwd())
+##..
 import rodent
+
+
 
 IMAGE_SIZE = 84
 
@@ -17,6 +23,8 @@ def main():
 
   env = rodent.Environment(width=IMAGE_SIZE, height=IMAGE_SIZE,
                            bg_color=[0.66, 0.91, 0.98])
+
+
 
   floor_texture_path = data_path + "floor0.png"
 
@@ -39,17 +47,19 @@ def main():
                          pos=[-1.0, 1.0, -10.0])
 
   #model_path0 = data_path + "ice_lolly0.obj"
-  #model_path0 = data_path + "hat0.obj"
-  model_path0 = data_path + "suitcase0.obj"
-  #rot = math.pi * 0.5
-  rot = 0.0
+  model_path0 = data_path + "hat0.obj"
+  #model_path0 = data_path + "suitcase0.obj"
+  rot = math.pi * 0.5
   
   obj_id0 = env.add_model(path=model_path0,
                           scale=[0.8, 0.8, 0.8],
                           pos=[0,1.5,-5],
                           rot=rot)
 
-  env.set_light(dir=[0.0, -1.0, -1.0])
+  env.set_light(dir=[0.0, -1.0, -1.0],
+                color=[0.4, 0.4, 0.4],
+                ambient_color=[0.9, 0.9, 0.9],
+                shadow_rate=0.8)
 
   action = [0, 0, 0]
   obs = env.step(action=action)
