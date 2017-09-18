@@ -31,7 +31,7 @@ class BilliardEnvironment(object):
     
   def _prepare_stage(self):
     # Floor
-    floor_texture_path = self.data_path + "floor0.png"
+    floor_texture_path = self.data_path + "floor1.png"
 
     self.env.add_box(texture_path=floor_texture_path,
                      half_extent=[17, 1.0, 17],
@@ -61,7 +61,7 @@ class BilliardEnvironment(object):
 
     # Wall
     wall_distance = 20.0
-    wall_texture_path = self.data_path +  "wall0.png"
+    wall_texture_path = self.data_path +  "wall1.png"
     
     # -Z
     self.env.add_box(texture_path=wall_texture_path,

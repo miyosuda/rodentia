@@ -74,7 +74,7 @@ class NavMazeStaticEnvironment(object):
 
   def _prepare_stage(self):
     # Floor
-    floor_texture_path = self.data_path + "floor0.png"
+    floor_texture_path = self.data_path + "floor1.png"
 
     self.env.add_box(texture_path=floor_texture_path,
                      half_extent=[6.0, 1.0, 12.0],
@@ -91,7 +91,7 @@ class NavMazeStaticEnvironment(object):
                                            detect_collision=True)
 
     # Wall
-    wall_texture_path = self.data_path +  "wall0.png"
+    wall_texture_path = self.data_path +  "wall1.png"
     wall_thickness = 0.1
     
     # [Center room]
