@@ -437,16 +437,14 @@ void Environment::replaceObjectTextures(int id, const vector<string>& texturePat
 		printf("Failed to find object: id=%d\n", id);
 		return;
 	}
-	
+
 	EnvironmentObject* object = objectMap[id];
 	
 	vector<Material*> materials;
 
 	for(unsigned int i=0; i<texturePathes.size(); ++i) {
 		Texture* texture = textureManager.loadTexture(texturePathes[i].c_str());
-		if( texture == nullptr ) {
-			texture = textureManager.getColorTexture(1.0f, 1.0f, 1.0f);
-
+		if( texture != nullptr ) {
 			Shader* shader = shaderManager.getDiffuseShader();
 			Shader* shadowDepthShader = shaderManager.getShadowDepthShader();
 			Material* material = new Material(texture, shader, shadowDepthShader);
