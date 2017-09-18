@@ -135,4 +135,8 @@ void Renderer::prepareRendering() {
  */
 void Renderer::finishRendering() {
 	glReadPixels(0, 0, frameBufferWidth, frameBufferHeight, GL_RGB, GL_UNSIGNED_BYTE, buffer);
+
+	// TODO: WORKAROUND
+	// Resetting gl error here
+	/*int error = */glGetError();
 }

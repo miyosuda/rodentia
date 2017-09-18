@@ -30,6 +30,7 @@ bool MeshFaceData::init( const float* vertices,
 	
 	ret = indexBuffer.init(indices, indicesSize);
 	if(!ret) {
+		printf("Failed to init IndexBuffer\n");
 		return false;
 	}
 
@@ -41,6 +42,7 @@ bool MeshFaceData::init( const float* vertices,
 	// Rendering用のVAO設定
 	ret = vertexArray.init();
 	if(!ret) {
+		printf("Failed to init VertexArray\n");
 		return false;
 	}
 	vertexArray.bind();
@@ -66,6 +68,7 @@ bool MeshFaceData::init( const float* vertices,
 	// Shadow Depth用のVAO設定
 	ret = depthVertexArray.init();
 	if(!ret) {
+		printf("Failed to init VertexArray\n");
 		return false;
 	}
 	depthVertexArray.bind();
