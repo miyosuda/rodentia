@@ -15,7 +15,7 @@ You can easily design learning tasks with python script. All of the scene object
     $ cmake .
     $ make -j4
     $ python setup.py bdist_wheel
-    $ pip install dist/rodent-0.1.0-py2-none-any.whl
+    $ pip install dist/rodent-0.1.1-py2-none-any.whl
 
 And then run example
 
@@ -41,7 +41,7 @@ Then try this `-DUSE_HOMEBREW=ON` option.)
     $ cmake . -DBUILD_PYTHON3=ON
     $ make -j4
     $ python3 setup.py bdist_wheel
-    $ pip3 install dist/rodent-0.1.0-py3-none-any.whl
+    $ pip3 install dist/rodent-0.1.1-py3-none-any.whl
 
 And then run example
 
@@ -58,7 +58,7 @@ And then run example
     $ cmake .
     $ make -j4
     $ python setup.py bdist_wheel
-    $ sudo pip install dist/rodent-0.1.0-py2-none-any.whl
+    $ sudo pip install dist/rodent-0.1.1-py2-none-any.whl
 
 And then run example
 
@@ -72,7 +72,7 @@ And then run example
     $ cmake . -DBUILD_PYTHON3=ON
     $ make -j4
     $ python3 setup.py bdist_wheel
-    $ pip3 install dist/rodent-0.1.0-py3-none-any.whl
+    $ pip3 install dist/rodent-0.1.1-py3-none-any.whl
 
 And then run example
 
