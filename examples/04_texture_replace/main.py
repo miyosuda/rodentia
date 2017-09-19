@@ -11,6 +11,7 @@ import random
 import rodent
 
 
+# Width and height of the image
 IMAGE_SIZE = 84
 
 # Color patterns
@@ -64,19 +65,19 @@ def generate_model_images(model_base_name,
                           floor_id,
                           wall_ids,
                           index_offset):
+  """ Create dataset images with one .obj model data. """  
 
   if not os.path.exists(generate_data_path):
     os.mkdir(generate_data_path)
   
   model_path = data_path + model_base_name + "0.obj"
-  action = [0, 0, 0]
 
   obj_id = env.add_model(path=model_path,
                          scale=[0.8, 0.8, 0.8],
                          pos=[0, 1.5, -5],
                          rot=0.0)
 
-  obs = env.step(action=action)
+  obs = env.step(action=[0,0,0])
 
   color_size = len(colors)
 
@@ -113,7 +114,7 @@ def generate_model_images(model_base_name,
                           pos=[0, 1.2, distance],
                           rot=rot)
         
-        obs = env.step(action=action)
+        obs = env.step(action=[0,0,0])
         
         screen = obs["screen"]
         file_path = "{}/image{}.png".format(generate_data_path, index)
@@ -123,7 +124,10 @@ def generate_model_images(model_base_name,
 
 
 def main():
+  # Where original texture and model data are located
   data_path = os.path.dirname(os.path.abspath(__file__)) + "/../data/"
+
+  # Where converted textures are located
   output_data_path = os.path.dirname(os.path.abspath(__file__)) + "/colored_data"
 
   # Prepare color textures
@@ -163,6 +167,7 @@ def main():
                 ambient_color=[0.9, 0.9, 0.9],
                 shadow_rate=0.8)
 
+  # Where generated dataset images will be located
   generate_data_path = os.path.dirname(os.path.abspath(__file__)) + "/generated_data"
 
   wall_ids = [wall_id0, wall_id1, wall_id2]
