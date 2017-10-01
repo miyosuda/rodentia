@@ -12,7 +12,7 @@ import rodent
 
 
 # Width and height of the image
-IMAGE_SIZE = 84
+IMAGE_SIZE = 80
 
 # Color patterns
 colors = [

@@ -12,7 +12,7 @@ using namespace std;
 #include "Vector3f.h"
 #include "EnvironmentObject.h"
 
-#define RODENT_MODULE_VERSION "0.1.1"
+#define RODENT_MODULE_VERSION "0.1.2"
 
 #if PY_MAJOR_VERSION >= 3
 #define PyInt_FromLong PyLong_FromLong
@@ -782,7 +782,25 @@ static PyObject* Env_replace_obj_texture(EnvObject* self, PyObject* args, PyObje
 	int textureSize = (int)PyList_Size(texturePathListObj);
 	for(Py_ssize_t i=0; i<textureSize; ++i) {
 		PyObject* textuerPathObj = PyList_GetItem(texturePathListObj, i);
-		
+
+#if PY_MAJOR_VERSION >= 3		
+		if (PyUnicode_Check(textuerPathObj)) {
+			PyObject * tmpBytes = PyUnicode_AsEncodedString(textuerPathObj,
+															"ASCII",
+															"strict");
+			if (tmpBytes != NULL) {
+				const char* textuePathStr = PyBytes_AS_STRING(tmpBytes);
+				texturePathes.push_back(textuePathStr);
+				Py_DECREF(tmpBytes);
+			} else {
+				PyErr_Format(PyExc_ValueError, "Replacing texture path was not valid string");
+				return nullptr;
+			}
+		} else {
+			PyErr_Format(PyExc_ValueError, "Replacing texture path was not valid string");
+			return nullptr;
+		}
+#else
 		if( !PyString_Check(textuerPathObj) ) {
 			PyErr_Format(PyExc_ValueError, "Replacing texture path was not string");
 			return nullptr;
@@ -791,6 +809,7 @@ static PyObject* Env_replace_obj_texture(EnvObject* self, PyObject* args, PyObje
 		const char* textuePathStr = PyString_AsString(textuerPathObj);
 		texturePathes.push_back(textuePathStr);
 		// No need to decrease textuerPathObj's refcount.
+#endif
 	}
 
 	replaceObjectTextures(self->environment, id, texturePathes);

@@ -19,7 +19,7 @@ def to_nd_float_array(list_obj):
 class RodentModuleTest(unittest.TestCase):
   def testVersion(self):
     version = rodent.rodent_module.version();
-    self.assertEqual(version, "0.1.1")
+    self.assertEqual(version, "0.1.2")
 
   def testEnv(self):
     width  = 84 * 4
