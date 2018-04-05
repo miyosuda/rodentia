@@ -12,7 +12,7 @@ using namespace std;
 #include "Vector3f.h"
 #include "EnvironmentObject.h"
 
-#define RODENT_MODULE_VERSION "0.1.2"
+#define RODENT_MODULE_VERSION "0.1.3"
 
 #if PY_MAJOR_VERSION >= 3
 #define PyInt_FromLong PyLong_FromLong
@@ -50,13 +50,13 @@ static int addBox(Environment* environment,
 				  const char* texturePath,
 				  float halfExtentX, float halfExtentY, float halfExtentZ,
 				  float posX, float posY, float posZ,
-				  float rot,
+				  float rotX, float rotY, float rotZ,
 				  float mass,
 				  bool detectCollision) {
 	return environment->addBox(texturePath,
 							   Vector3f(halfExtentX, halfExtentY, halfExtentZ),
 							   Vector3f(posX, posY, posZ),
-							   rot,
+							   Vector3f(rotX, rotY, rotZ),
 							   mass,
 							   detectCollision);
 }
@@ -65,13 +65,13 @@ static int addSphere(Environment* environment,
 					 const char* texturePath,
 					 float radius,
 					 float posX, float posY, float posZ,
-					 float rot,
+                     float rotX, float rotY, float rotZ,
 					 float mass,
 					 bool detectCollision) {
 	return environment->addSphere(texturePath,
 								  radius,
 								  Vector3f(posX, posY, posZ),
-								  rot,
+                                  Vector3f(rotX, rotY, rotZ),
 								  mass,
 								  detectCollision);
 }
@@ -80,13 +80,13 @@ static int addModel(Environment* environment,
 					const char* path,
 					float scaleX, float scaleY, float scaleZ,
 					float posX, float posY, float posZ,
-					float rot,
+					float rotX, float rotY, float rotZ,
 					float mass,
 					bool detectCollision) {
 	return environment->addModel(path,
 								 Vector3f(scaleX, scaleY, scaleZ),
 								 Vector3f(posX, posY, posZ),
-								 rot,
+                                 Vector3f(rotX, rotY, rotZ),
 								 mass,
 								 detectCollision);
 }
@@ -99,8 +99,10 @@ static void removeObj(Environment* environment,
 static void locateObject(Environment* environment,
 						 int id,
 						 float posX, float posY, float posZ,
-						 float rot) {
-	environment->locateObject(id, Vector3f(posX, posY, posZ), rot);
+						 float rotX, float rotY, float rotZ) {
+	environment->locateObject(id,
+							  Vector3f(posX, posY, posZ),
+							  Vector3f(rotX, rotY, rotZ));
 }
 
 static void locateAgent(Environment* environment,
@@ -353,7 +355,7 @@ static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
 	const char* texturePath = "";
 	PyObject* halfExtentObj = nullptr;
 	PyObject* posObj = nullptr;
-	float rot;
+	PyObject* rotObj = nullptr;
 	float mass;
 	int detectCollision;
 
@@ -361,11 +363,11 @@ static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
 	const char* kwlist[] = {"texture_path", "half_extent", "pos", "rot", "mass", "detect_collision",
 							nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!ffi", const_cast<char**>(kwlist),
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!fi", const_cast<char**>(kwlist),
 									 &texturePath,
 									 &PyArray_Type, &halfExtentObj,
 									 &PyArray_Type, &posObj,
-									 &rot,
+									 &PyArray_Type, &rotObj,
 									 &mass,
 									 &detectCollision)) {
 		return nullptr;
@@ -396,11 +398,21 @@ static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
 	float posY = posArr[1];
 	float posZ = posArr[2];
 
+	// rot
+	const float* rotArr = getFloatArrayData(rotObj, 3, "rot");
+	if( rotArr == nullptr ) {
+		return nullptr;
+	}
+	
+	float rotX = rotArr[0];
+	float rotY = rotArr[1];
+	float rotZ = rotArr[2];
+    
 	int id = addBox(self->environment,
 					texturePath,
 					halfExtentX, halfExtentY, halfExtentZ,
 					posX, posY, posZ,
-					rot,
+					rotX, rotY, rotZ,
 					mass,
 					detectCollision != 0);
 	
@@ -414,7 +426,7 @@ static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds)
 	const char* texturePath = "";
 	float radius;
 	PyObject* posObj = nullptr;
-	float rot;
+	PyObject* rotObj = nullptr;
 	float mass;
 	int detectCollision;
 
@@ -422,11 +434,11 @@ static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds)
 	const char* kwlist[] = {"texture_path", "radius", "pos", "rot", "mass", "detect_collision",
 							nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sfO!ffi", const_cast<char**>(kwlist),
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sfO!O!fi", const_cast<char**>(kwlist),
 									 &texturePath,
 									 &radius,
 									 &PyArray_Type, &posObj,
-									 &rot,
+									 &PyArray_Type, &rotObj,
 									 &mass,
 									 &detectCollision)) {
 		return nullptr;
@@ -447,11 +459,21 @@ static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds)
 	float posY = posArr[1];
 	float posZ = posArr[2];
 
+	// rot
+	const float* rotArr = getFloatArrayData(rotObj, 3, "rot");
+	if( rotArr == nullptr ) {
+		return nullptr;
+	}
+	
+	float rotX = rotArr[0];
+	float rotY = rotArr[1];
+	float rotZ = rotArr[2];    
+
 	int id = addSphere(self->environment,
 					   texturePath,
 					   radius,
 					   posX, posY, posZ,
-					   rot,
+					   rotX, rotY, rotZ,
 					   mass,
 					   detectCollision != 0);
 
@@ -464,18 +486,18 @@ static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) 
 	const char* path = "";
 	PyObject* scaleObj = nullptr;
 	PyObject* posObj = nullptr;
-	float rot;
+	PyObject* rotObj = nullptr;
 	float mass;
 	int detectCollision;
 
 	// Get argument
 	const char* kwlist[] = {"path", "scale", "pos", "rot", "mass", "detect_collision", nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!ffi", const_cast<char**>(kwlist),
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!fi", const_cast<char**>(kwlist),
 									 &path,
 									 &PyArray_Type, &scaleObj,
 									 &PyArray_Type, &posObj,
-									 &rot,
+									 &PyArray_Type, &rotObj,
 									 &mass,
 									 &detectCollision)) {
 		return nullptr;
@@ -506,11 +528,21 @@ static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) 
 	float posY = posArr[1];
 	float posZ = posArr[2];
 
+	// rot
+	const float* rotArr = getFloatArrayData(rotObj, 3, "rot");
+	if( rotArr == nullptr ) {
+		return nullptr;
+	}
+	
+	float rotX = rotArr[0];
+	float rotY = rotArr[1];
+	float rotZ = rotArr[2];    
+
 	int id = addModel(self->environment,
 					  path,
 					  scaleX, scaleY, scaleZ,
 					  posX, posY, posZ,
-					  rot,
+					  rotX, rotY, rotZ,
 					  mass,
 					  detectCollision != 0);
 
@@ -544,15 +576,15 @@ static PyObject* Env_remove_obj(EnvObject* self, PyObject* args, PyObject* kwds)
 static PyObject* Env_locate_object(EnvObject* self, PyObject* args, PyObject* kwds) {
 	int id;
 	PyObject* posObj = nullptr;
-	float rot;
+	PyObject* rotObj = nullptr;
 
 	// Get argument
 	const char* kwlist[] = {"id", "pos", "rot", nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "iO!f", const_cast<char**>(kwlist),
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "iO!O!", const_cast<char**>(kwlist),
 									 &id,
 									 &PyArray_Type, &posObj,
-									 &rot)) {
+									 &PyArray_Type, &rotObj)) {
 		return nullptr;
 	}
 	
@@ -571,10 +603,20 @@ static PyObject* Env_locate_object(EnvObject* self, PyObject* args, PyObject* kw
 	float posY = posArr[1];
 	float posZ = posArr[2];
 
+	// rot
+	const float* rotArr = getFloatArrayData(rotObj, 3, "rot");
+	if( rotArr == nullptr ) {
+		return nullptr;
+	}
+	
+	float rotX = rotArr[0];
+	float rotY = rotArr[1];
+	float rotZ = rotArr[2];    
+
 	locateObject(self->environment,
 				 id,
 				 posX, posY, posZ,
-				 rot);
+				 rotX, rotY, rotZ);
 
 	Py_INCREF(Py_None);
 	return Py_None;

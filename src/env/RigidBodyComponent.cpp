@@ -31,7 +31,7 @@ static void convertRigidBodyTransformToDrawMatrix4f(const btTransform& transform
 
 RigidBodyComponent::RigidBodyComponent(float mass,
 									   const Vector3f& pos,
-									   float rot,
+									   const Vector3f& rot,
 									   const Vector3f& relativeCenter_,
 									   btCollisionShape* shape,
 									   btDynamicsWorld* world_,
@@ -43,7 +43,7 @@ RigidBodyComponent::RigidBodyComponent(float mass,
 	btTransform drawTransform;
 	drawTransform.setIdentity();
 	drawTransform.setOrigin(btVector3(pos.x, pos.y, pos.z));
-	drawTransform.getBasis().setEulerZYX(0.0f, rot, 0.0f);
+	drawTransform.getBasis().setEulerZYX(rot.x, rot.y, rot.z);
 
 	btTransform relativeCenterTransform;
 	relativeCenterTransform.setIdentity();
@@ -96,11 +96,11 @@ void RigidBodyComponent::getVeclocity(Vector3f& velocity) const {
 	velocity.set(v.x(), v.y(), v.z());
 }
 
-void RigidBodyComponent::locate(const Vector3f& pos, float rot) {
+void RigidBodyComponent::locate(const Vector3f& pos, const Vector3f& rot) {
 	btTransform drawTransform;
 	drawTransform.setIdentity();
 	drawTransform.setOrigin(btVector3(pos.x, pos.y, pos.z));
-	drawTransform.getBasis().setEulerZYX(0.0f, rot, 0.0f);
+	drawTransform.getBasis().setEulerZYX(rot.x, rot.y, rot.z);
 
 	btTransform relativeCenterTransform;
 	relativeCenterTransform.setIdentity();
@@ -127,7 +127,7 @@ AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
 	:
 	RigidBodyComponent(mass,
 					   pos,
-					   rot,
+					   Vector3f(0.0f, rot, 0.0f), // use rotY only
 					   Vector3f(0.0f, 0.0f, 0.0f),
 					   shape,
 					   world_,

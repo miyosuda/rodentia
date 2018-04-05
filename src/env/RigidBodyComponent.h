@@ -19,7 +19,7 @@ protected:
 public:
 	RigidBodyComponent(float mass,
 					   const Vector3f& pos,
-					   float rot,
+					   const Vector3f& rot,
 					   const Vector3f& relativeCenter_,
 					   btCollisionShape* shape,
 					   btDynamicsWorld* world,
@@ -29,7 +29,7 @@ public:
 	virtual void control(const Action& action);
 	void getMat(Matrix4f& mat) const;
 	void getVeclocity(Vector3f& velocity) const;
-	void locate(const Vector3f& pos, float rot);
+	void locate(const Vector3f& pos, const Vector3f& rot);
 	btRigidBody* getRigidBody() { return body; }
 
 };

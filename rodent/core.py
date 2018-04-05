@@ -8,6 +8,13 @@ def to_nd_float_array(list_obj):
   else:
     return np.array(list_obj, dtype=np.float32)
 
+def to_nd_float_array_for_rot(value):
+  """ Convert list or single float to numpy float ndarray for rotation"""
+  if isinstance(obj, float):
+    # if value is a single float, then it is treated as Y rotation value.
+    value = [0.0, value, 0.0]
+  return to_nd_float_array(value)
+
 def to_nd_int_array(list_obj):
   """ Convert list to numpy int ndarray """
   if isinstance(list_obj, np.ndarray):
@@ -39,7 +46,8 @@ class Environment(object):
       texture_path: Path for the texture (.png file)
       half_extent: (x,y,z) float values for half extent size of the box.
       pos: (x,y,z) float values for the center of the box.
-      rot: A float value for head angle of the object (in radian)
+      rot: A float value for head angle or list (rx,ry,rz) as the rotation angles of the object
+           (in radian)
       mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
             but if mass > 0, the object is physically simulated.
       detect_collision: A bool value for indicating whether the object is included for collision
@@ -51,7 +59,7 @@ class Environment(object):
     return self.env.add_box(texture_path=texture_path,
                             half_extent=to_nd_float_array(half_extent),
                             pos=to_nd_float_array(pos),
-                            rot=rot,
+                            rot=to_nd_float_array_for_rot(rot),
                             mass=mass,
                             detect_collision=detect_collision)
 
@@ -61,7 +69,8 @@ class Environment(object):
       texture_path: Path for the texture (.png file)
       radius: float values for the raius of the shpere.
       pos: (x,y,z) float values for the center of the sphere.
-      rot: A float value for head angle of the object (in radian)
+      rot: A float value for head angle or list (rx,ry,rz) as the rotation angles of the object
+           (in radian)
       mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
             but if mass > 0, the object is physically simulated.
       detect_collision: A bool value for indicating whether the object is included for collision
@@ -73,7 +82,7 @@ class Environment(object):
     return self.env.add_sphere(texture_path=texture_path,
                                radius=radius,
                                pos=to_nd_float_array(pos),
-                               rot=rot,
+                               rot=to_nd_float_array_for_rot(rot),
                                mass=mass,
                                detect_collision=detect_collision)
 
@@ -83,7 +92,8 @@ class Environment(object):
       path: Path for the .obj file.
       scale: (x,y,z) float values for the scaling of the object.
       pos: (x,y,z) float values for the origin of the object.
-      rot: A float value for head angle of the model (in radian)
+      rot: A float value for head angle or list (rx,ry,rz) as the rotation angles of the object
+           (in radian)
       mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
             but if mass > 0, the object is physically simulated.
       detect_collision: A bool value for indicating whether the object is included for collision
@@ -95,7 +105,7 @@ class Environment(object):
     return self.env.add_model(path=path,
                               scale=to_nd_float_array(scale),
                               pos=to_nd_float_array(pos),
-                              rot=rot,
+                              rot=to_nd_float_array_for_rot(rot),
                               mass=mass,
                               detect_collision=detect_collision)
 
@@ -104,11 +114,12 @@ class Environment(object):
     Args:
       id: Int value for object's id
       pos: (x,y,z) float values for agent's location.
-      rot: A float value for head angle of the model (in radian)
+      rot: A float value for head angle or list (rx,ry,rz) as the rotation angles of the object
+           (in radian)
     """
     self.env.locate_object(id=id,
-                          pos=to_nd_float_array(pos),
-                          rot=rot)  
+                           pos=to_nd_float_array(pos),
+                           rot=to_nd_float_array_for_rot(rot))
   
   def locate_agent(self, pos, rot=0.0):
     """Locate agenet to given position and orientataion.

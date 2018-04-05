@@ -55,7 +55,7 @@ public:
 	}
 	bool calcBoundingBox(BoundingBox& boundingBox);
 	void getInfo(EnvironmentObjectInfo& info) const;
-	void locate(const Vector3f& pos, float rot);
+	void locate(const Vector3f& pos, const Vector3f& rot);
 	void replaceMaterials(const vector<Material*>& materials);
 };
 
@@ -66,7 +66,7 @@ public:
 class StageObject : public EnvironmentObject {
 public:
 	StageObject(const Vector3f& pos,
-				float rot,
+				const Vector3f& rot,
 				float mass,
 				const Vector3f& relativeCenter,
 				btCollisionShape* shape,

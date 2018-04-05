@@ -72,7 +72,7 @@ private:
 	void prepareShadow();
 	int addObject(btCollisionShape* shape,
 				  const Vector3f& pos,
-				  float rot,
+				  const Vector3f& rot,
 				  float mass,
 				  const Vector3f& relativeCenter,
 				  bool detectCollision,
@@ -104,23 +104,23 @@ public:
 	int addBox(const char* texturePath,
 			   const Vector3f& halfExtent,
 			   const Vector3f& pos,
-			   float rot,
+			   const Vector3f& rot,
 			   float mass,
 			   bool detectCollision);
 	int addSphere(const char* texturePath,
 				  float radius,
 				  const Vector3f& pos,
-				  float rot,
+				  const Vector3f& rot,
 				  float mass,
 				  bool detectCollision);
 	int addModel(const char* path,
 				 const Vector3f& sale,
 				 const Vector3f& pos,
-				 float rot,
+				 const Vector3f& rot,
 				 float mass,
 				 bool detectCollision);
 	void removeObject(int id);
-	void locateObject(int id, const Vector3f& pos, float rot);
+	void locateObject(int id, const Vector3f& pos, const Vector3f& rot);
 	void locateAgent(const Vector3f& pos, float rot);
 	void setLight(const Vector3f& lightDir,
 				  const Vector3f& lightColor,

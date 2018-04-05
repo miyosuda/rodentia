@@ -86,7 +86,7 @@ void EnvironmentObject::getInfo(EnvironmentObjectInfo& info) const {
 	info.set(mat, velocity);
 }
 
-void EnvironmentObject::locate(const Vector3f& pos, float rot) {
+void EnvironmentObject::locate(const Vector3f& pos, const Vector3f& rot) {
 	rigidBodyComponent->locate(pos, rot);
 }
 
@@ -100,7 +100,7 @@ void EnvironmentObject::replaceMaterials(const vector<Material*>& materials) {
 //      [StageObject]
 //---------------------------
 StageObject::StageObject(const Vector3f& pos,
-						 float rot,
+						 const Vector3f& rot,
 						 float mass,
 						 const Vector3f& relativeCenter,
 						 btCollisionShape* shape,

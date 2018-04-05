@@ -247,7 +247,7 @@ void Environment::step(const Action& action, int stepNum, bool agentView) {
 int Environment::addBox(const char* texturePath,
 						const Vector3f& halfExtent,
 						const Vector3f& pos,
-						float rot,
+						const Vector3f& rot,
 						float mass,
 						bool detectCollision) {
 	btCollisionShape* shape = collisionShapeManager.getBoxShape(halfExtent.x,
@@ -275,7 +275,7 @@ int Environment::addBox(const char* texturePath,
 int Environment::addSphere(const char* texturePath,
 						   float radius,
 						   const Vector3f& pos,
-						   float rot,
+						   const Vector3f& rot,
 						   float mass,
 						   bool detectCollision) {
 	btCollisionShape* shape = collisionShapeManager.getSphereShape(radius);
@@ -300,7 +300,7 @@ int Environment::addSphere(const char* texturePath,
 int Environment::addModel(const char* path,
 						  const Vector3f& scale,
 						  const Vector3f& pos,
-						  float rot,
+						  const Vector3f& rot,
 						  float mass,
 						  bool detectCollision) {
 
@@ -336,7 +336,7 @@ int Environment::addModel(const char* path,
 
 int Environment::addObject(btCollisionShape* shape,
 						   const Vector3f& pos,
-						   float rot,
+						   const Vector3f& rot,
 						   float mass,
 						   const Vector3f& relativeCenter,
 						   bool detectCollision,
@@ -387,7 +387,7 @@ void Environment::removeObject(int id) {
 	}
 }
 
-void Environment::locateObject(int id, const Vector3f& pos, float rot) {
+void Environment::locateObject(int id, const Vector3f& pos, const Vector3f& rot) {
 	auto itr = objectMap.find(id);
 	if( itr != objectMap.end() ) {
 		EnvironmentObject* object = objectMap[id];
@@ -397,7 +397,7 @@ void Environment::locateObject(int id, const Vector3f& pos, float rot) {
 
 void Environment::locateAgent(const Vector3f& pos, float rot) {
 	if( agent != nullptr ) {
-		agent->locate(pos, rot);
+		agent->locate(pos, Vector3f(0.0f, rot, 0.0f));
 	}
 }
 
