@@ -32,7 +32,7 @@ Add box object.
 - `texture_path`: A String, the path for the texture (.png file)
 - `half_extent`: (x,y,z) Half extent size of the box.
 - `pos`: (x,y,z) Center of the box.
-- `rot`: Float, head angle of the object (in radian)
+- `rot`: (rx,ry,rz) for rotation of the box, or single float, head angle of the box (in radian)
 - `mass`: Float, mass of the object. if mass == 0, the object is treated as static object, and if mass > 0, the object is physically simulated.
 - `detect_collision`: Boolean, whether the object is included for collision check result. If this argument is `True`, object's id is included when the agenet collides with this object.
 
@@ -56,8 +56,8 @@ Add sphere object.
 
 - `texture_path`: A String, the path for the texture (.png file)
 - `radius`: Float, raius of the shpere.
-- `pos`: (x,y,z) Center of the box.
-- `rot`: Float, head angle of the object (in radian)
+- `pos`: (x,y,z) Center of the sphere.
+- `rot`: (rx,ry,rz) for rotation of the sphere, or single float, head angle of the sphere (in radian)
 - `mass`: Float, mass of the object. if mass == 0, the object is treated as static object, and if mass > 0, the object is physically simulated.
 - `detect_collision`: Boolean, whether the object is included for collision check result. If this argument is `True`, object's id is included when the agenet collides with this object.
 
@@ -85,7 +85,7 @@ Add model object with Wavefront `.obj` format.
 - `path`: A String, the path for .obj file.
 - `scale`: (x,y,z) Scaling of the object.
 - `pos`: (x,y,z) Center of the box.
-- `rot`: Float, head angle of the object (in radian)
+- `rot`: (rx,ry,rz) for rotation of the object, or single float, head angle of the object (in radian)
 - `mass`: Float, mass of the object. if mass == 0, the object is treated as static object, and if mass > 0, the object is physically simulated.
 - `detect_collision`: Boolean, whether the object is included for collision check result. If this argument is `True`, object's id is included when the agenet collides with this object.
 
@@ -107,7 +107,7 @@ Locate object to given position and orientataion.
 
 - `id`: Int, Object id
 - `pos`: (x,y,z) Object's location.
-- `rot`: Float, head angle of the object (in radian)
+- `rot`: (rx,ry,rz) for rotation of the object, or single float, head angle of the object (in radian)
 
 
 

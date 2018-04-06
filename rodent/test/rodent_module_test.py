@@ -32,7 +32,7 @@ class RodentModuleTest(unittest.TestCase):
     env.add_box(texture_path="",
                 half_extent=to_nd_float_array([30.0, 1.0, 30.0]),
                 pos=to_nd_float_array([0.0, -1.0, 0.0]),
-                rot=0.0,
+                rot=to_nd_float_array([0.0, 0.0, 0.0]),
                 mass=0.0,
                 detect_collision=False)
 
@@ -40,7 +40,7 @@ class RodentModuleTest(unittest.TestCase):
     sphere_id = env.add_sphere(texture_path="",
                                radius=1.0,
                                pos=to_nd_float_array([0.0, 2.0, -5.0]),
-                               rot=0.0,
+                               rot=to_nd_float_array([0.0, 0.0, 0.0]),
                                mass=1.0,
                                detect_collision=True)
     print("sphere_id={}".format(sphere_id))
@@ -52,13 +52,13 @@ class RodentModuleTest(unittest.TestCase):
     # Locate object
     env.locate_object(sphere_id,
                       pos=to_nd_float_array([0.0, 1.0, -1.0]),
-                      rot=0.0)
+                      rot=to_nd_float_array([0.0, 0.0, 0.0]))
 
     # Set light parameters
     env.set_light(dir=to_nd_float_array([-1.0, -1.0, 0.0]),
                   color=to_nd_float_array([1.0, 1.0, 1.0]),
                   ambient_color=to_nd_float_array([0.4, 0.4, 0.4]),
-                  shadow_rate=0.2);
+                  shadow_rate=0.2)
     
     # Check step with action
     action = np.array([10, 0, 0], dtype=np.int32)

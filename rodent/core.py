@@ -10,7 +10,7 @@ def to_nd_float_array(list_obj):
 
 def to_nd_float_array_for_rot(value):
   """ Convert list or single float to numpy float ndarray for rotation"""
-  if isinstance(obj, float):
+  if isinstance(value, float) or isinstance(value, int):
     # if value is a single float, then it is treated as Y rotation value.
     value = [0.0, value, 0.0]
   return to_nd_float_array(value)
