@@ -8,6 +8,19 @@ You can easily design learning tasks with python script. All of the scene object
 
 ## Getting started on MacOSX
 
+### For Python3
+
+    $ git clone https://github.com/miyosuda/rodent.git
+    $ cd rodent
+    $ cmake . -DBUILD_PYTHON3=ON
+    $ make -j4
+    $ python3 setup.py bdist_wheel
+    $ pip3 install dist/rodent-0.1.3-py3-none-any.whl
+
+And then run example
+
+    $ python3 examples/01_seekavoid_arena/main.py
+
 ### For Python2
 
     $ git clone https://github.com/miyosuda/rodent.git
@@ -19,7 +32,7 @@ You can easily design learning tasks with python script. All of the scene object
 
 And then run example
 
-    $ python example/01_seekavoid_arena/main.py
+    $ python examples/01_seekavoid_arena/main.py
 
 If you have trouble under Homebrew environment, use
 
@@ -34,35 +47,10 @@ instead of `$ cmake .`
 
 Then try this `-DUSE_HOMEBREW=ON` option.)
 
-### For Python3
-
-    $ git clone https://github.com/miyosuda/rodent.git
-    $ cd rodent
-    $ cmake . -DBUILD_PYTHON3=ON
-    $ make -j4
-    $ python3 setup.py bdist_wheel
-    $ pip3 install dist/rodent-0.1.3-py3-none-any.whl
-
-And then run example
-
-    $ python3 example/01_seekavoid_arena/main.py
 
 
 ## Getting started on Ubuntu
 
-### For Python2
-
-    $ sudo apt-get install -y python-dev
-    $ git clone https://github.com/miyosuda/rodent.git
-    $ cd rodent
-    $ cmake .
-    $ make -j4
-    $ python setup.py bdist_wheel
-    $ sudo pip install dist/rodent-0.1.3-py2-none-any.whl
-
-And then run example
-
-    $ python example/01_seekavoid_arena/main.py
 
 ### For Python3
 
@@ -76,7 +64,22 @@ And then run example
 
 And then run example
 
-    $ python3 example/01_seekavoid_arena/main.py
+    $ python3 examples/01_seekavoid_arena/main.py
+
+### For Python2
+
+    $ sudo apt-get install -y python-dev
+    $ git clone https://github.com/miyosuda/rodent.git
+    $ cd rodent
+    $ cmake .
+    $ make -j4
+    $ python setup.py bdist_wheel
+    $ sudo pip install dist/rodent-0.1.3-py2-none-any.whl
+
+And then run example
+
+    $ python examples/01_seekavoid_arena/main.py
+
 
 ## API
 
