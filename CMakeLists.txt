@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
 
-option(USE_HOMEBREW "Use homebrew setting for MacOSX" OFF)
-
 project(rodent)
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
