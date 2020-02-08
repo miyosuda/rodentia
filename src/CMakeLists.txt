@@ -61,31 +61,12 @@ include_directories(common geom play render env importer
 find_package(OpenGL REQUIRED)
 find_package(PNG REQUIRED)
 
-if (BUILD_PYTHON3)
-
-	find_package(PythonInterp 3 REQUIRED)
-	STRING(REGEX REPLACE "([0-9.]+)\\.[0-9]+" "\\1"
-		   PYTHON3_SHORT_VERSION ${PYTHON_VERSION_STRING})
-	find_package(PythonLibs ${PYTHON3_SHORT_VERSION} REQUIRED)
+find_package(PythonInterp 3 REQUIRED)
+STRING(REGEX REPLACE "([0-9.]+)\\.[0-9]+" "\\1"
+	   PYTHON3_SHORT_VERSION ${PYTHON_VERSION_STRING})
+find_package(PythonLibs ${PYTHON3_SHORT_VERSION} REQUIRED)
 	
-	find_package(NumPy REQUIRED)
-
-else ()
-	
-	find_package(PythonInterp 2 REQUIRED)
-	STRING( REGEX REPLACE "([0-9.]+)\\.[0-9]+" "\\1"
-			PYTHON_SHORT_VERSION ${PYTHON_VERSION_STRING} )
-	
-	if(USE_HOMEBREW)
-	    message(STATUS "Use homebrew setting for python lib")
-	    find_package(PythonLibsHomebrew ${PYTHON_SHORT_VERSION} REQUIRED)
-	else()
-		find_package(PythonLibs ${PYTHON_SHORT_VERSION} REQUIRED)
-	endif()
-
-	find_package(NumPy REQUIRED)
-	
-endif ()
+find_package(NumPy REQUIRED)
 
 include_directories( ${OPENGL_INCLUDE_DIRS}
 					 ${PNG_INCLUDE_DIRS}
@@ -108,7 +89,7 @@ set(BULLET_LIBRARIES
 target_link_libraries(rodent_module
 					rodent_code
 					${OPENGL_LIBRARIES}
-					${BULLET_LIBRARIES}					
+					${BULLET_LIBRARIES}
 					${PNG_LIBRARIES}
 					${PYTHON_LIBRARIES}
 					)

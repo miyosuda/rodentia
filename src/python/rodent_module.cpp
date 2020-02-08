@@ -14,10 +14,6 @@ using namespace std;
 
 #define RODENT_MODULE_VERSION "0.1.3"
 
-#if PY_MAJOR_VERSION >= 3
-#define PyInt_FromLong PyLong_FromLong
-#define PyString_FromString PyBytes_FromString
-#endif
 
 //---------------------------------------------------------
 //                    [Interface]
@@ -194,11 +190,7 @@ static void EnvObject_dealloc(EnvObject* self) {
 		releaseEnvironment(self->environment);
 	}
 
-#if PY_MAJOR_VERSION >= 3
 	(((PyObject*)(self))->ob_type)->tp_free((PyObject*)self);
-#else
-	self->ob_type->tp_free((PyObject*)self);
-#endif
 }
 
 static PyObject* EnvObject_new(PyTypeObject* type,
@@ -333,7 +325,7 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 	int i=0;
 	for(auto it=collidedIds.begin(); it!=collidedIds.end(); ++it) {
 		int collidedId = *it;
-		PyObject* item = PyInt_FromLong(collidedId);
+		PyObject* item = PyLong_FromLong(collidedId);
 		PyTuple_SetItem(collidedIdTuple, i, item);
 		// No need to decrease item's refcount.
 		i += 1;
@@ -417,7 +409,7 @@ static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
 					detectCollision != 0);
 	
 	// Returning object ID	
-	PyObject* idObj = PyInt_FromLong(id);
+	PyObject* idObj = PyLong_FromLong(id);
 
 	return idObj;
 }
@@ -478,7 +470,7 @@ static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds)
 					   detectCollision != 0);
 
 	// Returning object ID
-	PyObject* idObj = PyInt_FromLong(id);
+	PyObject* idObj = PyLong_FromLong(id);
 	return idObj;
 }
 
@@ -547,7 +539,7 @@ static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) 
 					  detectCollision != 0);
 
 	// Returning object ID
-	PyObject* idObj = PyInt_FromLong(id);
+	PyObject* idObj = PyLong_FromLong(id);
 	return idObj;
 }
 
@@ -825,7 +817,6 @@ static PyObject* Env_replace_obj_texture(EnvObject* self, PyObject* args, PyObje
 	for(Py_ssize_t i=0; i<textureSize; ++i) {
 		PyObject* textuerPathObj = PyList_GetItem(texturePathListObj, i);
 
-#if PY_MAJOR_VERSION >= 3		
 		if (PyUnicode_Check(textuerPathObj)) {
 			PyObject * tmpBytes = PyUnicode_AsEncodedString(textuerPathObj,
 															"ASCII",
@@ -842,16 +833,6 @@ static PyObject* Env_replace_obj_texture(EnvObject* self, PyObject* args, PyObje
 			PyErr_Format(PyExc_ValueError, "Replacing texture path was not valid string");
 			return nullptr;
 		}
-#else
-		if( !PyString_Check(textuerPathObj) ) {
-			PyErr_Format(PyExc_ValueError, "Replacing texture path was not string");
-			return nullptr;
-		}
-		
-		const char* textuePathStr = PyString_AsString(textuerPathObj);
-		texturePathes.push_back(textuePathStr);
-		// No need to decrease textuerPathObj's refcount.
-#endif
 	}
 
 	replaceObjectTextures(self->environment, id, texturePathes);
@@ -900,11 +881,7 @@ static PyMethodDef EnvObject_methods[] = {
 
 
 static PyTypeObject rodent_EnvType = {
-#if PY_MAJOR_VERSION >= 3
 	PyVarObject_HEAD_INIT(nullptr, 0) // ob_size
-#else
-	PyObject_HEAD_INIT(nullptr) 0, // ob_size
-#endif
 	"rodent_module.Env",           // tp_name
 	sizeof(EnvObject),             // tp_basicsize
 	0,                             // tp_itemsize
@@ -956,7 +933,6 @@ static PyMethodDef moduleMethods[] = {
 	{nullptr, nullptr, 0, nullptr}
 };
 
-#if PY_MAJOR_VERSION >= 3
 static struct PyModuleDef moduleDef = {
 	PyModuleDef_HEAD_INIT, "rodent_module", // m_name
 	"3D reinforcement learning environment", // m_doc
@@ -967,42 +943,23 @@ static struct PyModuleDef moduleDef = {
 	NULL,          // m_clear
 	NULL,          // m_free
 };
-#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 PyMODINIT_FUNC
-#if PY_MAJOR_VERSION >= 3
 PyInit_rodent_module()
-#else
-initrodent_module()
-#endif
 {
 	PyObject* m;
-#if PY_MAJOR_VERSION >= 3
 	m = PyModule_Create(&moduleDef);
-#else
-	m = Py_InitModule3("rodent_module", moduleMethods, "Rodent API module");
-#endif
 
-#if PY_MAJOR_VERSION >= 3
 	if (m == NULL) {
 		return m;
 	}
-#else
-	if (m == NULL) {
-		return;
-	}
-#endif
 	
 	if (PyType_Ready(&rodent_EnvType) < 0) {
-#if PY_MAJOR_VERSION >= 3
 		return m;
-#else
-		return;
-#endif
 	}
 	
 	Py_INCREF(&rodent_EnvType);
@@ -1010,9 +967,7 @@ initrodent_module()
 
 	import_array();
 
-#if PY_MAJOR_VERSION >= 3
 	return m;
-#endif
 }
 
 #ifdef __cplusplus
