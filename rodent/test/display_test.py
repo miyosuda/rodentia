@@ -26,7 +26,7 @@ class Display(object):
     floor_texture_path = self.data_path + "floor3.png"
     self.env = rodent.Environment(width=self.width,
                                   height=self.height,
-                                  bg_color=[0.0,0.0,0.0])
+                                  bg_color=[0.1,0.1,0.1])
 
     self.prepare_stage()
     #self.prepare_maze_stage()

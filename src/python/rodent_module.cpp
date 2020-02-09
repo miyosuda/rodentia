@@ -12,7 +12,7 @@ using namespace std;
 #include "Vector3f.h"
 #include "EnvironmentObject.h"
 
-#define RODENT_MODULE_VERSION "0.1.3"
+#define RODENT_MODULE_VERSION "0.1.4"
 
 
 //---------------------------------------------------------

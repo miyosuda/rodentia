@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
   name='rodent',
 
-  version='0.1.3',
+  version='0.1.4',
 
   description='3D reinforcement learning platform',
   long_description="Rodent is a 3D reinforcement learning platform.",
