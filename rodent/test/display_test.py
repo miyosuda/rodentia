@@ -23,7 +23,6 @@ class Display(object):
 
     self.data_path = os.path.dirname(os.path.abspath(__file__)) + "/../../examples/data/"
 
-    floor_texture_path = self.data_path + "floor3.png"
     self.env = rodent.Environment(width=self.width,
                                   height=self.height,
                                   bg_color=[0.1,0.1,0.1])

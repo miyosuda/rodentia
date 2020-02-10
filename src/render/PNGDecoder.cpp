@@ -23,13 +23,14 @@ static void pngReadFunc( png_struct *pngobj,
 bool PNGDecoder::decode(void* buffer, int bufferSize, Image& image) {
 	unsigned char* buf = (unsigned char*)buffer;
 	
-	if( png_sig_cmp( buf, 0, 8) ) {
+	if( png_sig_cmp(buf, 0, 8) ) {
 		return false;
 	}
 
 	png_struct* pngobj = png_create_read_struct( PNG_LIBPNG_VER_STRING, NULL, NULL, NULL );
 
     if( pngobj == NULL ) {
+        printf("failed to setup libpng\n");
 		return false;
 	}
 
