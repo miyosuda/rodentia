@@ -53,7 +53,7 @@ endif()
 # COMMAND LINE OPTIONS
 option(PNG_SHARED "Build shared lib" ON)
 option(PNG_STATIC "Build static lib" ON)
-option(PNG_TESTS  "Build libpng tests" ON)
+option(PNG_TESTS  "Build libpng tests" OFF)
 
 # Many more configuration options could be added here
 option(PNG_FRAMEWORK "Build OS X framework" OFF)
@@ -748,13 +748,13 @@ if(PNG_TESTS AND PNG_SHARED)
 endif()
 
 if(PNG_SHARED)
-  add_executable(pngfix ${pngfix_sources})
-  target_link_libraries(pngfix png)
-  set(PNG_BIN_TARGETS pngfix)
+  #add_executable(pngfix ${pngfix_sources})
+  #target_link_libraries(pngfix png)
+  #set(PNG_BIN_TARGETS pngfix)
 
-  add_executable(png-fix-itxt ${png_fix_itxt_sources})
-  target_link_libraries(png-fix-itxt ${ZLIB_LIBRARY} ${M_LIBRARY})
-  list(APPEND PNG_BIN_TARGETS png-fix-itxt)
+  #add_executable(png-fix-itxt ${png_fix_itxt_sources})
+  #target_link_libraries(png-fix-itxt ${ZLIB_LIBRARY} ${M_LIBRARY})
+  #list(APPEND PNG_BIN_TARGETS png-fix-itxt)
 endif()
 
 # Set a variable with CMake code which:
