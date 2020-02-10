@@ -68,8 +68,6 @@ find_package(PythonLibs ${PYTHON3_SHORT_VERSION} REQUIRED)
 	
 find_package(NumPy REQUIRED)
 
-#..find_library(PNG png)
-
 include_directories( ${OPENGL_INCLUDE_DIRS}
 					 ${PYTHON_INCLUDE_DIRS}
 					 ${NUMPY_INCLUDES}
