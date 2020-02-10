@@ -55,11 +55,11 @@ set_target_properties(rodent_module PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_
 include_directories(common geom play render env importer
    ../third_party/glad/include
    ../third_party/bullet3-2.86.1/src/
+   ../third_party/libpng-1.6.37/
 )
 
 
 find_package(OpenGL REQUIRED)
-find_package(PNG REQUIRED)
 
 find_package(PythonInterp 3 REQUIRED)
 STRING(REGEX REPLACE "([0-9.]+)\\.[0-9]+" "\\1"
@@ -69,7 +69,6 @@ find_package(PythonLibs ${PYTHON3_SHORT_VERSION} REQUIRED)
 find_package(NumPy REQUIRED)
 
 include_directories( ${OPENGL_INCLUDE_DIRS}
-					 ${PNG_INCLUDE_DIRS}
 					 ${PYTHON_INCLUDE_DIRS}
 					 ${NUMPY_INCLUDES}
 					 )
@@ -86,10 +85,14 @@ set(BULLET_LIBRARIES
 	Bullet3Geometry
 )
 
+set(PNG_LIBRARIES
+    png
+)
+
 target_link_libraries(rodent_module
 					rodent_code
 					${OPENGL_LIBRARIES}
 					${BULLET_LIBRARIES}
-					${PNG_LIBRARIES}
+   					${PNG_LIBRARIES}
 					${PYTHON_LIBRARIES}
 					)

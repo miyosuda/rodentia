@@ -21,3 +21,7 @@ add_subdirectory( bullet3-2.86.1/src/BulletInverseDynamics )
 add_subdirectory( bullet3-2.86.1/src/BulletSoftBody )
 add_subdirectory( bullet3-2.86.1/src/LinearMath )
 
+
+### LIBPNG ###
+add_subdirectory(libpng-1.6.37)
+
