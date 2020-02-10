@@ -1,4 +1,17 @@
 libpng-config
 libpng16-config
 *.cmake
+*.sym
+*.vers
+pnglibconf.c
+pnglibconf.h
+pnglibconf.out
+pngprefix.h
+intprefix.out
+pnglibconf.c
+prefix.out
+sym.out
+symbols.chk
+symbols.out
+vers.out
 

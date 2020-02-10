@@ -68,6 +68,8 @@ find_package(PythonLibs ${PYTHON3_SHORT_VERSION} REQUIRED)
 	
 find_package(NumPy REQUIRED)
 
+#..find_library(PNG png)
+
 include_directories( ${OPENGL_INCLUDE_DIRS}
 					 ${PYTHON_INCLUDE_DIRS}
 					 ${NUMPY_INCLUDES}
@@ -86,13 +88,13 @@ set(BULLET_LIBRARIES
 )
 
 set(PNG_LIBRARIES
-    png
+    png_static
 )
 
 target_link_libraries(rodent_module
 					rodent_code
 					${OPENGL_LIBRARIES}
 					${BULLET_LIBRARIES}
-   					${PNG_LIBRARIES}
 					${PYTHON_LIBRARIES}
+                    ${PNG_LIBRARIES}
 					)
