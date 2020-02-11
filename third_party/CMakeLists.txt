@@ -8,6 +8,7 @@ include_directories(
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 endif()
 
 add_subdirectory( bullet3-2.86.1/src/Bullet3Collision )
