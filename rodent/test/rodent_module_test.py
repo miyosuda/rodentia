@@ -6,7 +6,7 @@ from __future__ import print_function
 import os
 import unittest
 import numpy as np
-import scipy.misc
+from PIL import Image
 import sys
 sys.path.insert(0, os.getcwd())
 import rodent
@@ -14,12 +14,17 @@ import rodent
 
 def to_nd_float_array(list_obj):
   return np.array(list_obj, dtype=np.float32)
+
+
+def imsave(path, image):
+  pimage = Image.fromarray(image)
+  pimage.save(path)
   
 
 class RodentModuleTest(unittest.TestCase):
   def testVersion(self):
     version = rodent.rodent_module.version();
-    self.assertEqual(version, "0.1.3")
+    self.assertEqual(version, "0.1.4")
 
   def testEnv(self):
     width  = 84 * 4
@@ -51,9 +56,9 @@ class RodentModuleTest(unittest.TestCase):
 
     # Locate object
     env.locate_object(sphere_id,
-                      pos=to_nd_float_array([0.0, 1.0, -1.0]),
+                      pos=to_nd_float_array([0.0, 2.0, -6.0]),
                       rot=to_nd_float_array([0.0, 0.0, 0.0]))
-
+    
     # Set light parameters
     env.set_light(dir=to_nd_float_array([-1.0, -1.0, 0.0]),
                   color=to_nd_float_array([1.0, 1.0, 1.0]),
@@ -67,7 +72,7 @@ class RodentModuleTest(unittest.TestCase):
       obs = env.step(action=action, num_steps=1)
     
     screen = obs["screen"]
-    scipy.misc.imsave("debug.png", screen)
+    imsave("debug.png", screen)
 
     # Check shape
     self.assertEqual( (width,height,3), screen.shape )

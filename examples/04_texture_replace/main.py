@@ -5,7 +5,7 @@ from __future__ import print_function
 
 import numpy as np
 import os
-import scipy.misc
+from PIL import Image
 import math
 import random
 import rodent
@@ -34,6 +34,14 @@ colors = [
   [237.0/255.0, 233.0/255.0, 133.0/255.0]
 ]
 
+def imsave(path, image):
+  pimage = Image.fromarray(image)
+  pimage.save(path)
+  
+  
+def imread(path):
+  return np.array(Image.open(path))
+
 
 def create_colored_image(color, image):
   """ Convert grayscale image to colored image. """
@@ -49,12 +57,12 @@ def create_colored_images(data_path,
   if not os.path.exists(output_data_path):
     os.mkdir(output_data_path)
   
-  base_image = scipy.misc.imread(data_path + base_name + "0.png")
+  base_image = imread(data_path + base_name + "0.png")
   for i in range(len(colors)):
     color = colors[i]
     colored_image = create_colored_image(color, base_image)
     output_file_path = "{}/{}{}.png".format(output_data_path, base_name, i)
-    scipy.misc.imsave(output_file_path, colored_image)
+    imsave(output_file_path, colored_image)
 
     
 def generate_model_images(model_base_name,
@@ -118,7 +126,7 @@ def generate_model_images(model_base_name,
         
         screen = obs["screen"]
         file_path = "{}/image{}.png".format(generate_data_path, index)
-        scipy.misc.imsave(file_path, screen)
+        imsave(file_path, screen)
 
   env.remove_obj(obj_id)
 
