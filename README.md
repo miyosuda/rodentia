@@ -9,7 +9,7 @@ You can easily design learning tasks with python script. All of the scene object
 ## Getting started on MacOSX
 
     $ git clone https://github.com/miyosuda/rodenta.git
-    $ cd rodent
+    $ cd rodenta
     $ cmake .
     $ make -j4
     $ python3 setup.py bdist_wheel
@@ -23,8 +23,8 @@ And then run example
 ## Getting started on Ubuntu
 
     $ sudo apt-get install -y python3-dev
-    $ git clone https://github.com/miyosuda/rodent.git
-    $ cd rodent
+    $ git clone https://github.com/miyosuda/rodenta.git
+    $ cd rodenta
     $ cmake .
     $ make -j4
     $ python3 setup.py bdist_wheel
