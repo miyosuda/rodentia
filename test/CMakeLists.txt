@@ -19,7 +19,7 @@ include_directories( ../src/common
 					 ../third_party/bullet3-2.86.1/src/
 )
 
-add_executable(rodent_test
+add_executable(rodenta_test
 	${CMAKE_CURRENT_SOURCE_DIR}/matrix_test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/bounding_box_test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/camera_test.cpp
@@ -39,8 +39,8 @@ set(BULLET_LIBRARIES
 	Bullet3Geometry
 )
 
-target_link_libraries( rodent_test
-	rodent_code
+target_link_libraries( rodenta_test
+	rodenta_code
 	gtest
 	gtest_main
 	pthread

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------
-License for the main part of "rodent"
+License for the main part of "rodenta"
 -----------------------------------------------------------------------------
 
    Copyright Copyright (c) 2017, Narrative Nights Inc. All rights reserved.

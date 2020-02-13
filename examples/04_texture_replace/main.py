@@ -8,7 +8,7 @@ import os
 from PIL import Image
 import math
 import random
-import rodent
+import rodenta
 
 
 # Width and height of the image
@@ -148,8 +148,8 @@ def main():
   create_colored_images(data_path, output_data_path, "floor")
 
   # Create environment
-  env = rodent.Environment(width=IMAGE_SIZE, height=IMAGE_SIZE,
-                           bg_color=[0.66, 0.91, 0.98])
+  env = rodenta.Environment(width=IMAGE_SIZE, height=IMAGE_SIZE,
+                            bg_color=[0.66, 0.91, 0.98])
 
   # Prepare wall and floor objects
   floor_texture_path = data_path + "floor1.png"

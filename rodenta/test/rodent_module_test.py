@@ -9,7 +9,7 @@ import numpy as np
 from PIL import Image
 import sys
 sys.path.insert(0, os.getcwd())
-import rodent
+import rodenta
 
 
 def to_nd_float_array(list_obj):
@@ -21,16 +21,16 @@ def imsave(path, image):
   pimage.save(path)
   
 
-class RodentModuleTest(unittest.TestCase):
+class RodentaModuleTest(unittest.TestCase):
   def testVersion(self):
-    version = rodent.rodent_module.version();
+    version = rodenta.rodenta_module.version();
     self.assertEqual(version, "0.1.4")
 
   def testEnv(self):
     width  = 84 * 4
     height = 84 * 4
-    env = rodent.rodent_module.Env(width=width, height=height,
-                                   bg_color=to_nd_float_array([1.0, 1.0, 1.0]))
+    env = rodenta.rodenta_module.Env(width=width, height=height,
+                                     bg_color=to_nd_float_array([1.0, 1.0, 1.0]))
 
     # Check setup interfaces
     # Add box

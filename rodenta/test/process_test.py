@@ -8,15 +8,15 @@ import numpy as np
 from multiprocessing import Process, Pipe
 import os, sys
 sys.path.insert(0, os.getcwd())
-import rodent
+import rodenta
 
 
 COMMAND_ACTION    = 0
 COMMAND_TERMINATE = 1
 
 def worker(conn):
-  env = rodent.Environment(width=84, height=84,
-                           bg_color=[0.0, 0.0, 0.0])
+  env = rodenta.Environment(width=84, height=84,
+                            bg_color=[0.0, 0.0, 0.0])
 
   # Add floor
   env.add_box(texture_path="",
@@ -49,7 +49,7 @@ def worker(conn):
   conn.send(0)
   conn.close()
 
-class RodentProcessTest(unittest.TestCase):
+class RodentaProcessTest(unittest.TestCase):
   def testProcess(self):
     conn, child_conn = Pipe()
     proc = Process(target=worker, args=(child_conn,))

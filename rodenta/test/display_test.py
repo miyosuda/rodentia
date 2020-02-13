@@ -9,7 +9,7 @@ import pygame, sys
 from pygame.locals import *
 import sys
 sys.path.insert(0, os.getcwd())
-import rodent
+import rodenta
 
 
 BLACK = (0, 0, 0)
@@ -23,7 +23,7 @@ class Display(object):
 
     self.data_path = os.path.dirname(os.path.abspath(__file__)) + "/../../examples/data/"
 
-    self.env = rodent.Environment(width=self.width,
+    self.env = rodenta.Environment(width=self.width,
                                   height=self.height,
                                   bg_color=[0.1,0.1,0.1])
 
@@ -37,7 +37,7 @@ class Display(object):
     pygame.init()
     
     self.surface = pygame.display.set_mode(display_size, 0, 24)
-    pygame.display.set_caption('rodent')
+    pygame.display.set_caption('rodenta')
 
   def prepare_stage(self):
     floor_texture_path = self.data_path + "floor3.png"

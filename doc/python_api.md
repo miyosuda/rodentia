@@ -1,4 +1,4 @@
-# rodent.Environment class API
+# rodenta.Environment class API
 
 ## Environment
 

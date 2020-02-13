@@ -9,7 +9,7 @@ if(APPLE)
   set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
 endif()
 
-add_library(rodent_code STATIC
+add_library(rodenta_code STATIC
 	env/Environment.cpp
 	env/RigidBodyComponent.cpp
 	env/EnvironmentObject.cpp
@@ -43,13 +43,13 @@ add_library(rodent_code STATIC
 	geom/BoundingBox.cpp
 )
 
-add_library(rodent_module SHARED
-	python/rodent_module.cpp
+add_library(rodenta_module SHARED
+	python/rodenta_module.cpp
 	../third_party/glad/src/glad.c
 )
 
-set_target_properties(rodent_module PROPERTIES PREFIX "")
-set_target_properties(rodent_module PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/rodent)
+set_target_properties(rodenta_module PROPERTIES PREFIX "")
+set_target_properties(rodenta_module PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/rodenta)
 
 
 include_directories(common geom play render env importer
@@ -89,8 +89,8 @@ set(PNG_LIBRARIES
     png_static
 )
 
-target_link_libraries(rodent_module
-					rodent_code
+target_link_libraries(rodenta_module
+					rodenta_code
 					${OPENGL_LIBRARIES}
 					${BULLET_LIBRARIES}
 					${PYTHON_LIBRARIES}

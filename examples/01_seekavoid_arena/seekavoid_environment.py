@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import rodent
+import rodenta
 import os
 import math
 import random
@@ -27,8 +27,8 @@ class SeekAvoidEnvironment(object):
     self.data_path = os.path.dirname(os.path.abspath(__file__)) + "/../data/"
 
     # Create environment
-    self.env = rodent.Environment(width=width, height=height,
-                                  bg_color=[0.66, 0.91, 0.98])
+    self.env = rodenta.Environment(width=width, height=height,
+                                   bg_color=[0.66, 0.91, 0.98])
 
     # Prepare stage objects
     self._prepare_stage()

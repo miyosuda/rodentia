@@ -1,6 +1,6 @@
-![rodent_logo](./doc/image/rodent_logo.png)
+![rodenta_logo](./doc/image/rodenta_logo.png)
 
-*Rodent* is a 3D learning environment for MacOSX and Linux.
+*Rodenta* is a 3D learning environment for MacOSX and Linux.
 
 You can easily design learning tasks with python script. All of the scene objects can be updated with regid body simulation.
 
@@ -8,12 +8,12 @@ You can easily design learning tasks with python script. All of the scene object
 
 ## Getting started on MacOSX
 
-    $ git clone https://github.com/miyosuda/rodent.git
+    $ git clone https://github.com/miyosuda/rodenta.git
     $ cd rodent
     $ cmake .
     $ make -j4
     $ python3 setup.py bdist_wheel
-    $ pip3 install dist/rodent-0.1.3-py3-none-any.whl
+    $ pip3 install dist/rodenta-0.1.4-py3-none-any.whl
 
 And then run example
 
@@ -28,7 +28,7 @@ And then run example
     $ cmake .
     $ make -j4
     $ python3 setup.py bdist_wheel
-    $ pip3 install dist/rodent-0.1.3-py3-none-any.whl
+    $ pip3 install dist/rodent-0.1.4-py3-none-any.whl
 
 And then run example
 

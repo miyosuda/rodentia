@@ -1,21 +1,21 @@
 from setuptools import setup
 
 setup(
-  name='rodent',
+  name='rodenta',
 
   version='0.1.4',
 
   description='3D reinforcement learning platform',
-  long_description="Rodent is a 3D reinforcement learning platform.",
+  long_description="Rodenta is a 3D reinforcement learning platform.",
 
-  url='https://github.com/miyosuda/rodent',
+  url='https://github.com/miyosuda/rodenta',
 
   author='Kosuke Miyoshi',
   author_email='miyosuda@gmail.com',
 
   install_requires=['numpy(>=1.11.0)'],
-  packages=['rodent'],
-  package_data={'rodent': ['rodent_module.so']},
+  packages=['rodenta'],
+  package_data={'rodenta': ['rodenta_module.so']},
 
   license='Apache 2.0',
 
@@ -34,5 +34,5 @@ setup(
   ],
 
   # What does your project relate to?
-  keywords=['rodent', 'ai', 'deep learning', 'reinforcement learning', 'research'],
+  keywords=['rodenta', 'ai', 'deep learning', 'reinforcement learning', 'research'],
 )
