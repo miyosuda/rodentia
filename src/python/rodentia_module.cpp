@@ -12,7 +12,7 @@ using namespace std;
 #include "Vector3f.h"
 #include "EnvironmentObject.h"
 
-#define RODENTA_MODULE_VERSION "0.1.4"
+#define RODENTIA_MODULE_VERSION "0.1.4"
 
 
 //---------------------------------------------------------
@@ -203,7 +203,7 @@ static PyObject* EnvObject_new(PyTypeObject* type,
 	if (self != nullptr) {
 		Environment* environment = createEnvironment();
 		if (environment == nullptr) {
-			PyErr_SetString(PyExc_RuntimeError, "Failed to create rodenta environment");
+			PyErr_SetString(PyExc_RuntimeError, "Failed to create rodentia environment");
 			Py_DECREF(self);
 			return nullptr;
 		}
@@ -234,7 +234,7 @@ static int Env_init(EnvObject* self, PyObject* args, PyObject* kwds) {
 	}
 
 	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodenta environment not setup");
+		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
 		return -1;
 	}
 
@@ -272,7 +272,7 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 	}
 	
 	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodenta environment not setup");
+		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
 		return nullptr;
 	}
 
@@ -366,7 +366,7 @@ static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
 	}
 	
 	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodenta environment not setup");
+		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
 		return nullptr;
 	}
 
@@ -437,7 +437,7 @@ static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds)
 	}
 	
 	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodenta environment not setup");
+		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
 		return nullptr;
 	}
 
@@ -496,7 +496,7 @@ static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) 
 	}
 	
 	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodenta environment not setup");
+		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
 		return nullptr;
 	}
 
@@ -555,7 +555,7 @@ static PyObject* Env_remove_obj(EnvObject* self, PyObject* args, PyObject* kwds)
 	}
 	
 	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodenta environment not setup");
+		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
 		return nullptr;
 	}
 
@@ -581,7 +581,7 @@ static PyObject* Env_locate_object(EnvObject* self, PyObject* args, PyObject* kw
 	}
 	
 	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodenta environment not setup");
+		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
 		return nullptr;
 	}
 
@@ -628,7 +628,7 @@ static PyObject* Env_locate_agent(EnvObject* self, PyObject* args, PyObject* kwd
 	}
 	
 	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodenta environment not setup");
+		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
 		return nullptr;
 	}
 
@@ -713,7 +713,7 @@ static PyObject* Env_get_obj_info(EnvObject* self, PyObject* args, PyObject* kwd
 	}
 	
 	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodenta environment not setup");
+		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
 		return nullptr;
 	}
 
@@ -730,7 +730,7 @@ static PyObject* Env_get_obj_info(EnvObject* self, PyObject* args, PyObject* kwd
 
 static PyObject* Env_get_agent_info(EnvObject* self, PyObject* args, PyObject* kwds) {
 	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodenta environment not setup");
+		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
 		return nullptr;
 	}
 
@@ -763,7 +763,7 @@ static PyObject* Env_set_light(EnvObject* self, PyObject* args, PyObject* kwds) 
 	}
 	
 	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodenta environment not setup");
+		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
 		return nullptr;
 	}
 
@@ -807,7 +807,7 @@ static PyObject* Env_replace_obj_texture(EnvObject* self, PyObject* args, PyObje
 	}
 
 	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodenta environment not setup");
+		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
 		return nullptr;
 	}
 
@@ -880,9 +880,9 @@ static PyMethodDef EnvObject_methods[] = {
 };
 
 
-static PyTypeObject rodenta_EnvType = {
+static PyTypeObject rodentia_EnvType = {
 	PyVarObject_HEAD_INIT(nullptr, 0) // ob_size
-	"rodenta_module.Env",           // tp_name
+	"rodentia_module.Env",           // tp_name
 	sizeof(EnvObject),             // tp_basicsize
 	0,                             // tp_itemsize
 	(destructor)EnvObject_dealloc, // tp_dealloc
@@ -924,7 +924,7 @@ static PyTypeObject rodenta_EnvType = {
 
 
 static PyObject* moduleVersion(PyObject* self) {
-	return Py_BuildValue("s", RODENTA_MODULE_VERSION);
+	return Py_BuildValue("s", RODENTIA_MODULE_VERSION);
 }
 
 static PyMethodDef moduleMethods[] = {
@@ -934,7 +934,7 @@ static PyMethodDef moduleMethods[] = {
 };
 
 static struct PyModuleDef moduleDef = {
-	PyModuleDef_HEAD_INIT, "rodenta_module", // m_name
+	PyModuleDef_HEAD_INIT, "rodentia_module", // m_name
 	"3D reinforcement learning environment", // m_doc
 	-1,            // m_size
 	moduleMethods, // m_methods
@@ -949,7 +949,7 @@ extern "C" {
 #endif
 
 PyMODINIT_FUNC
-PyInit_rodenta_module()
+PyInit_rodentia_module()
 {
 	PyObject* m;
 	m = PyModule_Create(&moduleDef);
@@ -958,12 +958,12 @@ PyInit_rodenta_module()
 		return m;
 	}
 	
-	if (PyType_Ready(&rodenta_EnvType) < 0) {
+	if (PyType_Ready(&rodentia_EnvType) < 0) {
 		return m;
 	}
 	
-	Py_INCREF(&rodenta_EnvType);
-	PyModule_AddObject(m, "Env", (PyObject*)&rodenta_EnvType);
+	Py_INCREF(&rodentia_EnvType);
+	PyModule_AddObject(m, "Env", (PyObject*)&rodentia_EnvType);
 
 	import_array();
 

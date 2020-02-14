@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import rodenta
+import rodentia
 import os
 import math
 import random
@@ -18,7 +18,7 @@ class BilliardEnvironment(object):
             os.path.abspath(__file__)) + "/../data/"
 
         # Create environment
-        self.env = rodenta.Environment(
+        self.env = rodentia.Environment(
             width=width, height=height, bg_color=[0, 0, 0])
 
         # Prepare stage objects

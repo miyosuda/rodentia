@@ -1,6 +1,6 @@
-![rodenta_logo](./doc/image/rodenta_logo.png)
+![rodentia_logo](./doc/image/rodentia_logo.png)
 
-*Rodenta* is a 3D learning environment for MacOSX and Linux.
+*Rodentia* is a 3D learning environment for MacOSX and Linux.
 
 You can easily design learning tasks with python script. All of the scene objects can be updated with regid body simulation.
 
@@ -8,12 +8,12 @@ You can easily design learning tasks with python script. All of the scene object
 
 ## Getting started on MacOSX
 
-    $ git clone https://github.com/miyosuda/rodenta.git
-    $ cd rodenta
+    $ git clone https://github.com/miyosuda/rodentia.git
+    $ cd rodentia
     $ cmake .
     $ make -j4
     $ python3 setup.py bdist_wheel
-    $ pip3 install dist/rodenta-0.1.4-py3-none-any.whl
+    $ pip3 install dist/rodentia-0.1.4-py3-none-any.whl
 
 And then run example
 
@@ -23,8 +23,8 @@ And then run example
 ## Getting started on Ubuntu
 
     $ sudo apt-get install -y python3-dev
-    $ git clone https://github.com/miyosuda/rodenta.git
-    $ cd rodenta
+    $ git clone https://github.com/miyosuda/rodentia.git
+    $ cd rodentia
     $ cmake .
     $ make -j4
     $ python3 setup.py bdist_wheel

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(rodenta)
+project(rodentia)
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 

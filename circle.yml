@@ -25,4 +25,4 @@ dependencies:
 
 test:
   override:
-    - ./bin/rodent_test
+    - ./bin/rodentia_test

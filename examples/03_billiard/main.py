@@ -22,7 +22,7 @@ class Display(object):
         pygame.init()
 
         self.surface = pygame.display.set_mode(display_size, 0, 24)
-        pygame.display.set_caption('rodenta')
+        pygame.display.set_caption('rodentia')
 
         self.last_state = self.env.reset()
 

@@ -1,4 +1,4 @@
-from . import rodenta_module
+from . import rodentia_module
 import numpy as np
 
 
@@ -28,8 +28,8 @@ def to_nd_int_array(list_obj):
 
 class Environment(object):
     """
-    Environment class that wraps rodenta_module.Env class.
-    rodenta_module.Env class requires numpy nd array for array objet, so this 
+    Environment class that wraps rodentia_module.Env class.
+    rodentia_module.Env class requires numpy nd array for array objet, so this 
     Environment class converts list object as a wrapper.
     """
 
@@ -40,7 +40,7 @@ class Environment(object):
           height: Screen height
           bg_color: Background color (RGB value with 0.0 ~ 1.0)
         """
-        self.env = rodenta_module.Env(
+        self.env = rodentia_module.Env(
             width=width, height=height, bg_color=to_nd_float_array(bg_color))
 
     def add_box(self,

@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import rodenta
+import rodentia
 import os
 import math
 import random
@@ -25,7 +25,7 @@ class NavMazeStaticEnvironment(object):
         self.data_path = os.path.dirname(
             os.path.abspath(__file__)) + "/../data/"
 
-        self.env = rodenta.Environment(
+        self.env = rodentia.Environment(
             width=width, height=height, bg_color=[0.66, 0.91, 0.98])
         # Start pos
         self.start_pos_list = []
