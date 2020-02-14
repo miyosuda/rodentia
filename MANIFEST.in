@@ -1,0 +1,8 @@
+CMakeLists.txt
+recursive-include src *.cpp *.h CMakeLists.txt
+recursive-include third_party *
+
+prune third_party/*/*/CMakeFiles
+prune third_party/*/CMakeFiles
+prune third_party/CMakeFiles
+

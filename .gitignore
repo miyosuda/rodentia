@@ -19,3 +19,4 @@ check.py
 **/CTestTestfile.cmake
 
 debug_install.sh
+rodentia.egg-info
