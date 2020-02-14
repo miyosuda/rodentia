@@ -28,7 +28,7 @@ And then run example
     $ cmake .
     $ make -j4
     $ python3 setup.py bdist_wheel
-    $ pip3 install dist/rodent-0.1.4-py3-none-any.whl
+    $ pip3 install dist/rodentia-0.1.4-py3-none-any.whl
 
 And then run example
 
