@@ -1,8 +1,9 @@
-CMakeLists.txt
+include CMakeLists.txt
+recursive-include cmake_modules *
 recursive-include src *.cpp *.h CMakeLists.txt
 recursive-include third_party *
+recursive-include test *
 
 prune third_party/*/*/CMakeFiles
 prune third_party/*/CMakeFiles
 prune third_party/CMakeFiles
-
