@@ -56,8 +56,8 @@ include_directories(common geom play render env importer
    ../third_party/glad/include
    ../third_party/bullet3-2.86.1/src/
    ../third_party/libpng-1.6.37/
+   ${CMAKE_BINARY_DIR}/third_party/libpng-1.6.37/
 )
-
 
 find_package(OpenGL REQUIRED)
 

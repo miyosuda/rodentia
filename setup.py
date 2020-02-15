@@ -55,19 +55,18 @@ class CMakeBuild(build_ext):
         for ext in self.extensions:
             self.copy_ext(ext.name)
             
-    def copy_ext(self, ext_name):
+    def copy_ext(self, ext_base_path):
         # Move from build temp to final position
+        ext_base_name = os.path.basename(ext_base_path)
         build_temp = Path(self.build_temp).resolve()
-        ext_local_path = ext_name + ".so"
-        ext_dir = os.path.abspath(os.path.dirname(
-            self.get_ext_fullpath(ext_name)))
-        dest_path = Path(ext_dir).resolve() / ext_local_path
-        source_path = build_temp / ext_local_path
-        dest_directory = dest_path.parents[0]
-        dest_directory.mkdir(parents=True, exist_ok=True)
-
-        self.copy_file(source_path, dest_path)
-
+        ext_local_path = ext_base_path + ".so"
+        dst_dir = os.path.abspath(os.path.dirname(
+            self.get_ext_fullpath(ext_base_path)))
+        dst_path = Path(dst_dir).resolve() / (ext_base_name + ".so")
+        src_path = build_temp / ext_local_path
+        dst_dir_path = dst_path.parents[0]
+        dst_dir_path.mkdir(parents=True, exist_ok=True)
+        self.copy_file(src_path, dst_path)
         
 setup(
     name='rodentia',
