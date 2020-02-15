@@ -66,7 +66,7 @@ class CMakeBuild(build_ext):
         src_path = build_temp / ext_local_path
         dst_dir_path = dst_path.parents[0]
         dst_dir_path.mkdir(parents=True, exist_ok=True)
-        self.copy_file(src_path, dst_path)
+        self.copy_file(str(src_path.absolute()), str(dst_path.absolute()))
         
 setup(
     name='rodentia',
