@@ -24,7 +24,7 @@ def imsave(path, image):
 class RodentiaModuleTest(unittest.TestCase):
   def testVersion(self):
     version = rodentia.rodentia_module.version();
-    self.assertEqual(version, "0.1.4")
+    self.assertEqual(version, "0.0.1")
 
   def testEnv(self):
     width  = 84 * 4

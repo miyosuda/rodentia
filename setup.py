@@ -71,7 +71,7 @@ class CMakeBuild(build_ext):
 setup(
     name='rodentia',
 
-    version='0.1.4',
+    version='0.0.1',
 
     description='3D reinforcement learning platform',
     long_description="Rodentia is a 3D reinforcement learning platform.",
