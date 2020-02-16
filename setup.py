@@ -5,6 +5,18 @@ from pathlib import Path
 import subprocess
 from setuptools.command.build_ext import build_ext
 
+NAME = 'rodentia'
+VERSION = None
+
+about = {}
+
+if not VERSION:
+    here = os.path.abspath(os.path.dirname(__file__))
+    with open(os.path.join(here, NAME, '__version__.py')) as f:
+        exec(f.read(), about)
+else:
+    about['__version__'] = VERSION
+
 
 class CMakeExtension(Extension):
     def __init__(self, name):
@@ -69,9 +81,8 @@ class CMakeBuild(build_ext):
         self.copy_file(str(src_path.absolute()), str(dst_path.absolute()))
         
 setup(
-    name='rodentia',
-
-    version='0.0.1',
+    name=NAME,
+    version=about['__version__'],
 
     description='3D reinforcement learning platform',
     long_description="Rodentia is a 3D reinforcement learning platform.",

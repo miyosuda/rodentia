@@ -12,7 +12,7 @@ using namespace std;
 #include "Vector3f.h"
 #include "EnvironmentObject.h"
 
-#define RODENTIA_MODULE_VERSION "0.0.1"
+#define RODENTIA_MODULE_VERSION "0.0.2"
 
 
 //---------------------------------------------------------

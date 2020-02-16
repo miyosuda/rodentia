@@ -13,97 +13,97 @@ import rodentia
 
 
 def to_nd_float_array(list_obj):
-  return np.array(list_obj, dtype=np.float32)
+    return np.array(list_obj, dtype=np.float32)
 
 
 def imsave(path, image):
-  pimage = Image.fromarray(image)
-  pimage.save(path)
+    pimage = Image.fromarray(image)
+    pimage.save(path)
   
 
 class RodentiaModuleTest(unittest.TestCase):
   def testVersion(self):
-    version = rodentia.rodentia_module.version();
-    self.assertEqual(version, "0.0.1")
+      version = rodentia.rodentia_module.version();
+      self.assertEqual(version, rodentia.__version__)
 
   def testEnv(self):
-    width  = 84 * 4
-    height = 84 * 4
-    env = rodentia.rodentia_module.Env(width=width, height=height,
-                                       bg_color=to_nd_float_array([1.0, 1.0, 1.0]))
+      width  = 84 * 4
+      height = 84 * 4
+      env = rodentia.rodentia_module.Env(width=width, height=height,
+                                         bg_color=to_nd_float_array([1.0, 1.0, 1.0]))
 
-    # Check setup interfaces
-    # Add box
-    env.add_box(texture_path="",
-                half_extent=to_nd_float_array([30.0, 1.0, 30.0]),
-                pos=to_nd_float_array([0.0, -1.0, 0.0]),
-                rot=to_nd_float_array([0.0, 0.0, 0.0]),
-                mass=0.0,
-                detect_collision=False)
+      # Check setup interfaces
+      # Add box
+      env.add_box(texture_path="",
+                  half_extent=to_nd_float_array([30.0, 1.0, 30.0]),
+                  pos=to_nd_float_array([0.0, -1.0, 0.0]),
+                  rot=to_nd_float_array([0.0, 0.0, 0.0]),
+                  mass=0.0,
+                  detect_collision=False)
 
-    # Add Sphere
-    sphere_id = env.add_sphere(texture_path="",
-                               radius=1.0,
-                               pos=to_nd_float_array([0.0, 2.0, -5.0]),
-                               rot=to_nd_float_array([0.0, 0.0, 0.0]),
-                               mass=1.0,
-                               detect_collision=True)
-    print("sphere_id={}".format(sphere_id))
+      # Add Sphere
+      sphere_id = env.add_sphere(texture_path="",
+                                 radius=1.0,
+                                 pos=to_nd_float_array([0.0, 2.0, -5.0]),
+                                 rot=to_nd_float_array([0.0, 0.0, 0.0]),
+                                 mass=1.0,
+                                 detect_collision=True)
+      print("sphere_id={}".format(sphere_id))
 
-    # Locate agent
-    env.locate_agent(pos=to_nd_float_array([0.0, 1.0, 0.0]),
-                     rot=0.0)
+      # Locate agent
+      env.locate_agent(pos=to_nd_float_array([0.0, 1.0, 0.0]),
+                       rot=0.0)
 
-    # Locate object
-    env.locate_object(sphere_id,
-                      pos=to_nd_float_array([0.0, 2.0, -6.0]),
-                      rot=to_nd_float_array([0.0, 0.0, 0.0]))
+      # Locate object
+      env.locate_object(sphere_id,
+                        pos=to_nd_float_array([0.0, 2.0, -6.0]),
+                        rot=to_nd_float_array([0.0, 0.0, 0.0]))
     
-    # Set light parameters
-    env.set_light(dir=to_nd_float_array([-1.0, -1.0, 0.0]),
-                  color=to_nd_float_array([1.0, 1.0, 1.0]),
-                  ambient_color=to_nd_float_array([0.4, 0.4, 0.4]),
-                  shadow_rate=0.2)
+      # Set light parameters
+      env.set_light(dir=to_nd_float_array([-1.0, -1.0, 0.0]),
+                    color=to_nd_float_array([1.0, 1.0, 1.0]),
+                    ambient_color=to_nd_float_array([0.4, 0.4, 0.4]),
+                    shadow_rate=0.2)
     
-    # Check step with action
-    action = np.array([10, 0, 0], dtype=np.int32)
+      # Check step with action
+      action = np.array([10, 0, 0], dtype=np.int32)
 
-    for i in range(3):
-      obs = env.step(action=action, num_steps=1)
+      for i in range(3):
+          obs = env.step(action=action, num_steps=1)
     
-    screen = obs["screen"]
-    imsave("debug.png", screen)
+      screen = obs["screen"]
+      imsave("debug.png", screen)
 
-    # Check shape
-    self.assertEqual( (width,height,3), screen.shape )
+      # Check shape
+      self.assertEqual( (width,height,3), screen.shape )
 
-    # dtype should be uint8
-    self.assertEqual(np.uint8, screen.dtype)
+      # dtype should be uint8
+      self.assertEqual(np.uint8, screen.dtype)
 
-    collided = obs["collided"]
+      collided = obs["collided"]
 
-    print("collided size={}".format(len(collided)))
+      print("collided size={}".format(len(collided)))
 
-    # Get object info
-    info = env.get_obj_info(sphere_id)
+      # Get object info
+      info = env.get_obj_info(sphere_id)
 
-    # Check shape
-    self.assertEqual( (3,), info["pos"].shape )
-    self.assertEqual( (3,), info["velocity"].shape )
-    self.assertEqual( (3,), info["euler_angles"].shape )
+      # Check shape
+      self.assertEqual( (3,), info["pos"].shape )
+      self.assertEqual( (3,), info["velocity"].shape )
+      self.assertEqual( (3,), info["euler_angles"].shape )
 
-    # Get agent info
-    info = env.get_agent_info()
+      # Get agent info
+      info = env.get_agent_info()
 
-    # Check shape
-    self.assertEqual( (3,), info["pos"].shape )
-    self.assertEqual( (3,), info["velocity"].shape )
-    self.assertEqual( (3,), info["euler_angles"].shape )
-
-    # Replace object texture
-    texture_path = [""]
-    env.replace_obj_texture(sphere_id, texture_path)
+      # Check shape
+      self.assertEqual( (3,), info["pos"].shape )
+      self.assertEqual( (3,), info["velocity"].shape )
+      self.assertEqual( (3,), info["euler_angles"].shape )
+      
+      # Replace object texture
+      texture_path = [""]
+      env.replace_obj_texture(sphere_id, texture_path)
     
 
 if __name__ == '__main__':
-  unittest.main()
+    unittest.main()
