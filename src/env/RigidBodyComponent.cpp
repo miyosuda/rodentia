@@ -179,8 +179,8 @@ void AgentRigidBodyComponent::control(const Action& action) {
 		impulse *= (impulseLengthLimit / impulseLen);
 	}
 
-	// Apply impulse at the botom of cylinder.
-	body->applyImpulse(impulse, btVector3(0.0f, -1.0f, 0.0f));
+	// Apply impulse at the center of sphere.
+	body->applyImpulse(impulse, btVector3(0.0f, 0.0f, 0.0f));
 
 	// Calc angular impulse
 	btVector3 targetLocalAngularVelocity = btVector3(0.0f, 0.0f, 0.0f);

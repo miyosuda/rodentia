@@ -4,48 +4,31 @@
 
 #include "glinc.h"
 #include "GLContext.h"
-#include "OffscreenFrameBuffer.h"
-#include "DepthFrameBuffer.h"
-#include "Vector3f.h"
+#include "RenderTarget.h"
 
 
 class Renderer {
 private:
-	int frameBufferWidth;
-	int frameBufferHeight;
-	Vector3f bgColor;
-
-	GLContext context;
-	void* buffer;
-	OffscreenFrameBuffer frameBuffer;
-	DepthFrameBuffer depthFrameBuffer;
-
-	int calcDepthFrameBufferSize(int width, int height);
+    RenderTarget renderTarget;
+    GLContext context;
 
 public:
-	Renderer()
-		:
-		frameBufferWidth(0),
-		frameBufferHeight(0),
-		bgColor(0.0f, 0.0f, 0.0f),
-		buffer(nullptr) {
-	}
+    Renderer();
+    bool init(int width, int height, const Vector3f& bgColor_);
+    void prepareShadowDepthRendering();
+    void prepareRendering();
+    void finishRendering();
+    void release();
 
-	bool init(int width, int height, const Vector3f& bgColor_);
-	void prepareShadowDepthRendering();
-	void prepareRendering();
-	void finishRendering();
-	void release();
+    int getFrameBufferWidth()  const { return renderTarget.getFrameBufferWidth();  }
+    int getFrameBufferHeight() const { return renderTarget.getFrameBufferHeight(); }
 
-	int getFrameBufferWidth()  const { return frameBufferWidth;  }
-	int getFrameBufferHeight() const { return frameBufferHeight; }
-
-	const void* getBuffer() const {
-		return buffer;
-	}	
-	int getFrameBufferSize() const {
-		return frameBufferWidth * frameBufferHeight * 3;
-	}
+    const void* getBuffer() const {
+        return renderTarget.getBuffer();
+    }
+    int getFrameBufferSize() const {
+        return renderTarget.getFrameBufferSize();
+    }
 };
 
 #endif

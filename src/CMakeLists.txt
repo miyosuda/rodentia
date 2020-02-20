@@ -39,6 +39,7 @@ add_library(rodentia_code STATIC
 	render/ShadowDepthShader.cpp
 	render/ShadowDiffuseShader.cpp
 	render/LSPSM.cpp
+    render/RenderTarget.cpp
 	importer/ObjImporter.cpp
 	geom/BoundingBox.cpp
 )

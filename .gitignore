@@ -20,3 +20,4 @@ check.py
 
 debug_install.sh
 rodentia.egg-info
+cbuild/

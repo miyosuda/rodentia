@@ -95,7 +95,7 @@ bool Environment::init(int width, int height, const Vector3f& bgColor) {
 }
 
 void Environment::prepareAgent() {
-	btCollisionShape* shape = collisionShapeManager.getCylinderShape(0.25f, 1.0f, 0.25f);
+	btCollisionShape* shape = collisionShapeManager.getSphereShape(1.0f);
 	agent = new AgentObject(shape, world, ID_AGENT);
 }
 
@@ -201,33 +201,47 @@ void Environment::step(const Action& action, int stepNum, bool agentView) {
 		}
 
 		// Update agent view camera
+        // TODO: 下に持っていけるか.
 		if( agentView ) {
 			updateCameraToAgentView();
 		}
 
+        // Set stage bounding box to rendering context. (currently not used)
 		prepareShadow();
 		
-		// Set light direction to shader
+		// Set light direction, ambient color and shadow color rate to the shader
+        // TODO: Light情報をRendering Contextから分離して、ここはlightオブジェクトに対して
+        //       prepareするようにする？
 		Shader* shader = shaderManager.getDiffuseShader();
 		shader->prepare(renderingContext);
 
+        // ここまでは繰り返す必要なし
+
+        // ここからカメラ単位で繰り返し
+
+        // TODO: ここに renderingContext.setCameraMat(mat) を持ってくる?
+
 		// Start shadow rendering path
+        // Make depth frame buffer as current
 		renderer.prepareShadowDepthRendering();
 		renderingContext.setPath(RenderingContext::SHADOW);
 
 		// Draw objects
 		for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
 			EnvironmentObject* object = itr->second;
+            // Draw with shadow depth shader
 			object->draw(renderingContext);
 		}
 
 		// Start normal rendering path
+        // Make normal frame buffer as current
 		renderer.prepareRendering();
 		renderingContext.setPath(RenderingContext::NORMAL);
 		
 		// Draw objects
 		for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
 			EnvironmentObject* object = itr->second;
+            // Draw with normal shader
 			object->draw(renderingContext);
 		}
 
@@ -240,6 +254,7 @@ void Environment::step(const Action& action, int stepNum, bool agentView) {
 			glEnable(GL_DEPTH_TEST);
 		}
 
+        // Read pixels to framebuffer
 		renderer.finishRendering();
 	}
 }
@@ -508,9 +523,12 @@ int Environment::getFrameBufferHeight() const {
 
 int Environment::getFrameBufferSize() const {
 	return renderer.getFrameBufferSize();
+
 }
 
 void Environment::setRenderCamera(const Matrix4f& mat) {
+    // Set camera mat to rendering context and and calculate shadow matrix
+    // with camera and light direction in LSPSM.
 	renderingContext.setCameraMat(mat);
 }
 

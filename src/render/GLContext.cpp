@@ -1,6 +1,8 @@
 #include "GLContext.h"
 #include <stdio.h>
 
+#include "glad/glad.h" // for glad
+
 #if defined(__APPLE__)
 
 /**
@@ -48,6 +50,13 @@ bool GLContext::init(int /*width*/, int /*height*/) {
 	}
 
 	contextInitialized = true;
+
+    // Load glad
+	bool ret = gladLoadGL();
+	if( !ret ) {
+		printf("Failed to init glad.\n");
+		return false;
+	}
 
 	return true;
 }
@@ -124,6 +133,13 @@ bool GLContext::init(int width, int height) {
 	}
 	
 	contextInitialized = true;
+
+    // Load glad
+	bool ret = gladLoadGL();
+	if( !ret ) {
+		printf("Failed to init glad.\n");
+		return false;
+	}
 	
 	return true;
 }

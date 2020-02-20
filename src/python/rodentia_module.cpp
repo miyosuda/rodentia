@@ -299,7 +299,7 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 	int frameBufferHeight = self->environment->getFrameBufferHeight();
 	const void* frameBuffer = self->environment->getFrameBuffer();
 
-	// Create screen outpu array
+	// Create screen output array
 	long* screenDims = new long[3];
 	screenDims[0] = frameBufferWidth;
 	screenDims[1] = frameBufferHeight;
