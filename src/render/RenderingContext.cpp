@@ -63,7 +63,7 @@ void RenderingContext::setModelMat(Matrix4f modelMat_) {
  * <!--  updateLSPSM():  -->
  */
 void RenderingContext::updateLSPSM() {
-	// TODO: 整理する
+	// TODO: 複数の関数呼び出し整理できる
 	
 	const Matrix4f& mat = camera.getMat();
 	const Vector4f& pos = mat.getColumnRef(3);
@@ -89,6 +89,8 @@ void RenderingContext::setCameraMat(const Matrix4f& mat) {
 	camera.setMat(mat);
 	
 	updateLSPSM();
+
+    // viewMat, projectionMat をcameraから取得して保存するようにする.
 }
 
 /**
@@ -110,5 +112,5 @@ void RenderingContext::setLight(const Vector3f& lightDir_,
  * <!--  setBoundingBoxForShadow():  -->
  */
 void RenderingContext::setBoundingBoxForShadow(const BoundingBox& boundingBox) {
-	// TODO: リネームして、LiSPSMのBvolumeのclippingに使う.
+    // TODO: リネームして、LiSPSMのBvolumeのclippingに使う.
 }

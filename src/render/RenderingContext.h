@@ -20,6 +20,7 @@ public:
 	
 private:
 	Path path;
+    // TODO: Cameraをここで持たない設計に変える.
 	Camera camera;
 	
 	// Directional light direction.

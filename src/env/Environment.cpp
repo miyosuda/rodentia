@@ -210,8 +210,6 @@ void Environment::step(const Action& action, int stepNum, bool agentView) {
 		prepareShadow();
 		
 		// Set light direction, ambient color and shadow color rate to the shader
-        // TODO: Light情報をRendering Contextから分離して、ここはlightオブジェクトに対して
-        //       prepareするようにする？
 		Shader* shader = shaderManager.getDiffuseShader();
 		shader->prepare(renderingContext);
 
@@ -490,11 +488,13 @@ bool Environment::prepareDebugDrawer() {
 }
 
 bool Environment::initRenderer(int width, int height, const Vector3f& bgColor) {
+    // TODO: RenderTargetの設定
 	bool ret = renderer.init(width, height, bgColor);
 	if(!ret) {
 		return false;
 	}
 
+    // TODO: カメラの設定
 	float ratio = width / (float) height;
 	renderingContext.initCamera(ratio);
 
