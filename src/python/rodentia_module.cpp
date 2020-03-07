@@ -10,6 +10,7 @@ using namespace std;
 #include "Environment.h"
 #include "Action.h"
 #include "Vector3f.h"
+#include "Matrix4f.h"
 #include "EnvironmentObject.h"
 
 #define RODENTIA_MODULE_VERSION "0.0.2"
@@ -24,13 +25,18 @@ static Environment* createEnvironment() {
 	return environment;
 }
 
-static bool initEnvironment(Environment* environment, int width, int height,
-							float bgColorR, float bgColorG, float bgColorB) {
-	if( !environment->init(width, height, Vector3f(bgColorR, bgColorG, bgColorB)) ) {
+static bool initEnvironment(Environment* environment, int width, int height) {
+	if( !environment->init(width, height) ) {
 		return false;
 	}
 	
 	return true;
+}
+
+static int addCameraView(Environment* environment, int width, int height,
+                         const Vector3f& bgColor) {
+    int cameraId = environment->addCameraView(width, height, bgColor);
+    return cameraId;
 }
 
 static void releaseEnvironment(Environment* environment) {
@@ -39,20 +45,24 @@ static void releaseEnvironment(Environment* environment) {
 }
 
 static void stepEnvironment(Environment* environment, const Action& action, int stepNum) {
-	environment->step(action, stepNum, true);
+	environment->step(action, stepNum);
+}
+
+static void render(Environment* environment, int cameraId,
+                   const Vector3f& pos,
+                   const Quat4f& rot) {
+	environment->render(cameraId, pos, rot);
 }
 
 static int addBox(Environment* environment,
 				  const char* texturePath,
-				  float halfExtentX, float halfExtentY, float halfExtentZ,
-				  float posX, float posY, float posZ,
-				  float rotX, float rotY, float rotZ,
+                  const Vector3f& halfExtent,
+                  const Vector3f& pos,
+                  const Quat4f& rot,
 				  float mass,
 				  bool detectCollision) {
 	return environment->addBox(texturePath,
-							   Vector3f(halfExtentX, halfExtentY, halfExtentZ),
-							   Vector3f(posX, posY, posZ),
-							   Vector3f(rotX, rotY, rotZ),
+                               halfExtent, pos, rot,
 							   mass,
 							   detectCollision);
 }
@@ -60,29 +70,26 @@ static int addBox(Environment* environment,
 static int addSphere(Environment* environment,
 					 const char* texturePath,
 					 float radius,
-					 float posX, float posY, float posZ,
-                     float rotX, float rotY, float rotZ,
+                     const Vector3f& pos,
+                     const Quat4f& rot,
 					 float mass,
 					 bool detectCollision) {
 	return environment->addSphere(texturePath,
 								  radius,
-								  Vector3f(posX, posY, posZ),
-                                  Vector3f(rotX, rotY, rotZ),
+                                  pos, rot,
 								  mass,
 								  detectCollision);
 }
 
 static int addModel(Environment* environment,
 					const char* path,
-					float scaleX, float scaleY, float scaleZ,
-					float posX, float posY, float posZ,
-					float rotX, float rotY, float rotZ,
+                    const Vector3f& scale,
+                    const Vector3f& pos,
+                    const Quat4f& rot,
 					float mass,
 					bool detectCollision) {
 	return environment->addModel(path,
-								 Vector3f(scaleX, scaleY, scaleZ),
-								 Vector3f(posX, posY, posZ),
-                                 Vector3f(rotX, rotY, rotZ),
+                                 scale, pos, rot, 
 								 mass,
 								 detectCollision);
 }
@@ -94,17 +101,15 @@ static void removeObj(Environment* environment,
 
 static void locateObject(Environment* environment,
 						 int id,
-						 float posX, float posY, float posZ,
-						 float rotX, float rotY, float rotZ) {
-	environment->locateObject(id,
-							  Vector3f(posX, posY, posZ),
-							  Vector3f(rotX, rotY, rotZ));
+                         const Vector3f& pos,
+                         const Quat4f& rot) {
+	environment->locateObject(id, pos, rot);
 }
 
 static void locateAgent(Environment* environment,
-						float posX, float posY, float posZ,
-						float rot) {
-	environment->locateAgent(Vector3f(posX, posY, posZ), rot);
+                        const Vector3f& pos,
+                        float angle) {
+	environment->locateAgent(pos, angle);
 }
 
 static bool getObjectInfo(Environment* environment,
@@ -118,14 +123,11 @@ static bool getAgentInfo(Environment* environment,
 }
 
 static void setLight(Environment* environment,
-					 float dirX, float dirY, float dirZ,
-					 float colorX, float colorY, float colorZ,
-					 float ambientColorX, float ambientColorY, float ambientColorZ,
+                     const Vector3f& dir,
+                     const Vector3f& color,
+                     const Vector3f& ambinetColor,
 					 float shadowColorRate) {
-	environment->setLight(Vector3f(dirX, dirY, dirZ),
-						  Vector3f(colorX, colorY, colorZ),
-						  Vector3f(ambientColorX, ambientColorY, ambientColorZ),
-						  shadowColorRate);
+	environment->setLight(dir, color, ambinetColor, shadowColorRate);
 }
 
 static int getActionSize(Environment* environment) {
@@ -217,6 +219,37 @@ static PyObject* EnvObject_new(PyTypeObject* type,
 static int Env_init(EnvObject* self, PyObject* args, PyObject* kwds) {	
 	const char *kwlist[] = { "width",
 							 "height",
+							 nullptr };
+
+	// Get argument
+	int width;
+	int height;
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "ii", const_cast<char**>(kwlist),
+									 &width,
+									 &height)) {
+		PyErr_SetString(PyExc_RuntimeError, "init argument shortage");
+		return -1;
+	}
+
+	if (self->environment == nullptr) {
+		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+		return -1;
+	}
+
+	// Initialize environment
+	if ( !initEnvironment(self->environment, width, height) ) {
+		PyErr_Format(PyExc_RuntimeError, "Failed to init environment.");
+		return -1;
+	}
+
+	return 0;
+}
+
+
+static PyObject* Env_add_camera_view(EnvObject* self, PyObject* args, PyObject* kwds) {	
+	const char *kwlist[] = { "width",
+							 "height",
 							 "bg_color",
 							 nullptr };
 
@@ -230,32 +263,33 @@ static int Env_init(EnvObject* self, PyObject* args, PyObject* kwds) {
 									 &height,
 									 &PyArray_Type, &bgColorObj)) {
 		PyErr_SetString(PyExc_RuntimeError, "init argument shortage");
-		return -1;
+		return nullptr;
 	}
 
 	if (self->environment == nullptr) {
 		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
-		return -1;
+		return nullptr;
 	}
 
 	const float* bgColorArr = getFloatArrayData(bgColorObj, 3, "bg_color");
 	if( bgColorArr == nullptr ) {
-		return -1;
+		return nullptr;
 	}
 
-	float bgColorR = bgColorArr[0];
-	float bgColorG = bgColorArr[1];
-	float bgColorB = bgColorArr[2];
+    Vector3f bgColor = Vector3f(bgColorArr[0], bgColorArr[1], bgColorArr[2]);
 
 	// Initialize environment
-	if ( !initEnvironment(self->environment, width, height,
-						  bgColorR, bgColorG, bgColorB) ) {
+    int cameraId = addCameraView(self->environment, width, height, bgColor);
+	if (cameraId < 0) {
 		PyErr_Format(PyExc_RuntimeError, "Failed to init environment.");
-		return -1;
+		return nullptr;
 	}
 
-	return 0;
+	// Returning object ID
+	PyObject* idObj = PyLong_FromLong(cameraId);
+	return idObj;
 }
+
 
 static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 	PyObject* actionObj = nullptr;
@@ -295,9 +329,76 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 		return nullptr;
 	}
 
-	int frameBufferWidth  = self->environment->getFrameBufferWidth();
-	int frameBufferHeight = self->environment->getFrameBufferHeight();
-	const void* frameBuffer = self->environment->getFrameBuffer();
+	const set<int>& collidedIds = self->environment->getCollidedIds();
+
+	size_t collidedIdSize = collidedIds.size();
+	PyObject* collidedIdTuple = PyTuple_New(collidedIdSize);
+	
+	int i=0;
+	for(auto it=collidedIds.begin(); it!=collidedIds.end(); ++it) {
+		int collidedId = *it;
+		PyObject* item = PyLong_FromLong(collidedId);
+		PyTuple_SetItem(collidedIdTuple, i, item);
+		// No need to decrease item's refcount.
+		i += 1;
+	}
+
+	// Put tuple to dictionary
+	PyDict_SetItemString(resultDic, "collided", collidedIdTuple);
+
+	// Decrease ref count of tuple
+    Py_DECREF(collidedIdTuple);
+	
+	return resultDic;
+}
+
+static PyObject* Env_render(EnvObject* self, PyObject* args, PyObject* kwds) {
+	int cameraId;
+	PyObject* posObj = nullptr;
+	PyObject* rotObj = nullptr;
+
+	// Get argument
+	const char* kwlist[] = {"camera_id", "pos", "rot", nullptr};
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "iO!O!", const_cast<char**>(kwlist),
+									 &cameraId,
+									 &PyArray_Type, &posObj,
+									 &PyArray_Type, &rotObj)) {
+		return nullptr;
+	}
+
+	if (self->environment == nullptr) {
+		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+		return nullptr;
+	}
+	
+	// pos
+	const float* posArr = getFloatArrayData(posObj, 3, "pos");
+	if( posArr == nullptr ) {
+		return nullptr;
+	}
+	
+    Vector3f pos(posArr[0], posArr[1], posArr[2]);
+
+	// rot
+	const float* rotArr = getFloatArrayData(rotObj, 4, "rot");
+	if( rotArr == nullptr ) {
+		return nullptr;
+	}
+
+    Quat4f rot(rotArr[0], rotArr[1], rotArr[2], rotArr[3]);
+    
+	// Create output dictionary
+	PyObject* resultDic = PyDict_New();
+	if (resultDic == nullptr) {
+		PyErr_NoMemory();
+		return nullptr;
+	}
+    
+    render(self->environment, cameraId, pos, rot);
+	int frameBufferWidth  = self->environment->getFrameBufferWidth(cameraId);
+	int frameBufferHeight = self->environment->getFrameBufferHeight(cameraId);
+	const void* frameBuffer = self->environment->getFrameBuffer(cameraId);
 
 	// Create screen output array
 	long* screenDims = new long[3];
@@ -317,29 +418,9 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
 	// Put list to dictionary
 	PyDict_SetItemString(resultDic, "screen", (PyObject*)screenArray);
 
-	const set<int>& collidedIds = self->environment->getCollidedIds();
-
-	size_t collidedIdSize = collidedIds.size();
-	PyObject* collidedIdTuple = PyTuple_New(collidedIdSize);
-	
-	int i=0;
-	for(auto it=collidedIds.begin(); it!=collidedIds.end(); ++it) {
-		int collidedId = *it;
-		PyObject* item = PyLong_FromLong(collidedId);
-		PyTuple_SetItem(collidedIdTuple, i, item);
-		// No need to decrease item's refcount.
-		i += 1;
-	}
-
-	// Put tuple to dictionary
-	PyDict_SetItemString(resultDic, "collided", collidedIdTuple);
-
 	// Decrease ref count of array
 	Py_DECREF((PyObject*)screenArray);
 
-	// Decrease ref count of tuple
-    Py_DECREF(collidedIdTuple);
-	
 	return resultDic;
 }
 
@@ -375,40 +456,32 @@ static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
 	if( halfExtentArr == nullptr ) {
 		return nullptr;
 	}
-	
-	float halfExtentX = halfExtentArr[0];
-	float halfExtentY = halfExtentArr[1];
-	float halfExtentZ = halfExtentArr[2];
+
+    Vector3f halfExtent(halfExtentArr[0], halfExtentArr[1], halfExtentArr[2]);
 
 	// pos
 	const float* posArr = getFloatArrayData(posObj, 3, "pos");
 	if( posArr == nullptr ) {
 		return nullptr;
 	}
-	
-	float posX = posArr[0];
-	float posY = posArr[1];
-	float posZ = posArr[2];
+
+    Vector3f pos(posArr[0], posArr[1], posArr[2]);
 
 	// rot
-	const float* rotArr = getFloatArrayData(rotObj, 3, "rot");
+	const float* rotArr = getFloatArrayData(rotObj, 4, "rot");
 	if( rotArr == nullptr ) {
 		return nullptr;
 	}
-	
-	float rotX = rotArr[0];
-	float rotY = rotArr[1];
-	float rotZ = rotArr[2];
     
+    Quat4f rot(rotArr[0], rotArr[1], rotArr[2], rotArr[3]);
+	
 	int id = addBox(self->environment,
 					texturePath,
-					halfExtentX, halfExtentY, halfExtentZ,
-					posX, posY, posZ,
-					rotX, rotY, rotZ,
+                    halfExtent, pos, rot,
 					mass,
 					detectCollision != 0);
 	
-	// Returning object ID	
+	// Returning object ID
 	PyObject* idObj = PyLong_FromLong(id);
 
 	return idObj;
@@ -446,26 +519,21 @@ static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds)
 	if( posArr == nullptr ) {
 		return nullptr;
 	}
-	
-	float posX = posArr[0];
-	float posY = posArr[1];
-	float posZ = posArr[2];
 
+    Vector3f pos(posArr[0], posArr[1], posArr[2]);    
+	
 	// rot
-	const float* rotArr = getFloatArrayData(rotObj, 3, "rot");
+	const float* rotArr = getFloatArrayData(rotObj, 4, "rot");
 	if( rotArr == nullptr ) {
 		return nullptr;
 	}
-	
-	float rotX = rotArr[0];
-	float rotY = rotArr[1];
-	float rotZ = rotArr[2];    
 
+    Quat4f rot(rotArr[0], rotArr[1], rotArr[2], rotArr[3]);    
+	
 	int id = addSphere(self->environment,
 					   texturePath,
 					   radius,
-					   posX, posY, posZ,
-					   rotX, rotY, rotZ,
+                       pos, rot,
 					   mass,
 					   detectCollision != 0);
 
@@ -505,36 +573,28 @@ static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) 
 	if( scaleArr == nullptr ) {
 		return nullptr;
 	}
+    
+    Vector3f scale(scaleArr[0], scaleArr[1], scaleArr[2]);
 	
-	float scaleX = scaleArr[0];
-	float scaleY = scaleArr[1];
-	float scaleZ = scaleArr[2];	
-
 	// pos
 	const float* posArr = getFloatArrayData(posObj, 3, "pos");
 	if( posArr == nullptr ) {
 		return nullptr;
 	}
-	
-	float posX = posArr[0];
-	float posY = posArr[1];
-	float posZ = posArr[2];
 
+    Vector3f pos(posArr[0], posArr[1], posArr[2]);
+	
 	// rot
-	const float* rotArr = getFloatArrayData(rotObj, 3, "rot");
+	const float* rotArr = getFloatArrayData(rotObj, 4, "rot");
 	if( rotArr == nullptr ) {
 		return nullptr;
 	}
-	
-	float rotX = rotArr[0];
-	float rotY = rotArr[1];
-	float rotZ = rotArr[2];    
 
+    Quat4f rot(rotArr[0], rotArr[1], rotArr[2], rotArr[3]);
+    
 	int id = addModel(self->environment,
 					  path,
-					  scaleX, scaleY, scaleZ,
-					  posX, posY, posZ,
-					  rotX, rotY, rotZ,
+                      scale, pos, rot,
 					  mass,
 					  detectCollision != 0);
 
@@ -590,25 +650,20 @@ static PyObject* Env_locate_object(EnvObject* self, PyObject* args, PyObject* kw
 	if( posArr == nullptr ) {
 		return nullptr;
 	}
+    
+    Vector3f pos(posArr[0], posArr[1], posArr[2]);
 	
-	float posX = posArr[0];
-	float posY = posArr[1];
-	float posZ = posArr[2];
-
 	// rot
-	const float* rotArr = getFloatArrayData(rotObj, 3, "rot");
+	const float* rotArr = getFloatArrayData(rotObj, 4, "rot");
 	if( rotArr == nullptr ) {
 		return nullptr;
 	}
-	
-	float rotX = rotArr[0];
-	float rotY = rotArr[1];
-	float rotZ = rotArr[2];    
 
+    Quat4f rot(rotArr[0], rotArr[1], rotArr[2], rotArr[3]);
+	
 	locateObject(self->environment,
 				 id,
-				 posX, posY, posZ,
-				 rotX, rotY, rotZ);
+                 pos, rot);
 
 	Py_INCREF(Py_None);
 	return Py_None;
@@ -616,14 +671,14 @@ static PyObject* Env_locate_object(EnvObject* self, PyObject* args, PyObject* kw
 
 static PyObject* Env_locate_agent(EnvObject* self, PyObject* args, PyObject* kwds) {
 	PyObject* posObj = nullptr;
-	float rot;
+	float angle;
 
 	// Get argument
-	const char* kwlist[] = {"pos", "rot", nullptr};
+	const char* kwlist[] = {"pos", "angle", nullptr};
 
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!f", const_cast<char**>(kwlist),
 									 &PyArray_Type, &posObj,
-									 &rot)) {
+									 &angle)) {
 		return nullptr;
 	}
 	
@@ -637,14 +692,11 @@ static PyObject* Env_locate_agent(EnvObject* self, PyObject* args, PyObject* kwd
 	if( posArr == nullptr ) {
 		return nullptr;
 	}
-	
-	float posX = posArr[0];
-	float posY = posArr[1];
-	float posZ = posArr[2];
 
+    Vector3f pos(posArr[0], posArr[1], posArr[2]);
+	
 	locateAgent(self->environment,
-				posX, posY, posZ,
-				rot);
+                pos, angle);
 
 	Py_INCREF(Py_None);
 	return Py_None;
@@ -664,39 +716,43 @@ static PyObject* get_info_dic_obj(const EnvironmentObjectInfo& info) {
 	long* vecDims = new long[1];
 	vecDims[0] = 3;
 
+	long* rotDims = new long[1];
+	rotDims[0] = 4;
+
 	PyArrayObject* posArray = (PyArrayObject*)PyArray_SimpleNew(
 		1, // int nd
-		vecDims, // vecims
+		vecDims, // vecDims
 		NPY_FLOAT32); // float typenum
 
 	PyArrayObject* velocityArray = (PyArrayObject*)PyArray_SimpleNew(
 		1, // int nd
-		vecDims, // vecims
+		vecDims, // vecDims
 		NPY_FLOAT32); // float typenum
 
-	PyArrayObject* eulerAnglesArray = (PyArrayObject*)PyArray_SimpleNew(
+	PyArrayObject* rotArray = (PyArrayObject*)PyArray_SimpleNew(
 		1, // int nd
-		vecDims, // vecims
+		rotDims, // rotDims
 		NPY_FLOAT32); // float typenum
 
 	delete [] vecDims;
+    delete [] rotDims;
 
 	memcpy(PyArray_BYTES(posArray), info.pos.getPointer(),
 		   PyArray_NBYTES(posArray));
 	memcpy(PyArray_BYTES(velocityArray), info.velocity.getPointer(),
 		   PyArray_NBYTES(velocityArray));
-	memcpy(PyArray_BYTES(eulerAnglesArray), info.eulerAngles.getPointer(),
-		   PyArray_NBYTES(eulerAnglesArray));
+	memcpy(PyArray_BYTES(rotArray), info.rot.getPointer(),
+		   PyArray_NBYTES(rotArray));
 
 	// Put list to dictionary
 	PyDict_SetItemString(resultDic, "pos", (PyObject*)posArray);
 	PyDict_SetItemString(resultDic, "velocity", (PyObject*)velocityArray);
-	PyDict_SetItemString(resultDic, "euler_angles", (PyObject*)eulerAnglesArray);
+	PyDict_SetItemString(resultDic, "rot", (PyObject*)rotArray);
 
 	// Decrease ref count of array
 	Py_DECREF((PyObject*)posArray);
 	Py_DECREF((PyObject*)velocityArray);
-	Py_DECREF((PyObject*)eulerAnglesArray);
+	Py_DECREF((PyObject*)rotArray);
 
 	return resultDic;
 }
@@ -780,11 +836,13 @@ static PyObject* Env_set_light(EnvObject* self, PyObject* args, PyObject* kwds) 
 	if( ambientColorArr == nullptr ) {
 		return nullptr;
 	}
+
+    Vector3f dir(dirArr[0], dirArr[1], dirArr[2]);
+    Vector3f color(colorArr[0], colorArr[1], colorArr[2]);
+    Vector3f ambientColor(ambientColorArr[0], ambientColorArr[1], ambientColorArr[2]);        
 	
 	setLight(self->environment,
-			 dirArr[0], dirArr[1], dirArr[2],
-			 colorArr[0], colorArr[1], colorArr[2],
-			 ambientColorArr[0], ambientColorArr[1], ambientColorArr[2],
+             dir, color, ambientColor,
 			 shadowRate);
 
 	Py_INCREF(Py_None);
@@ -841,7 +899,9 @@ static PyObject* Env_replace_obj_texture(EnvObject* self, PyObject* args, PyObje
 	return Py_None;
 }
 
+// int add_camera_view(width, height, bg_color)
 // dic step(action)
+// dic render(camera_id, pos, rot)
 // int add_box(half_extent, pos, rot, detect_collision)
 // int add_sphere(radius, pos, rot, detect_collision)
 // int add_model(path, scale, pos, rot, detect_collision)
@@ -854,8 +914,12 @@ static PyObject* Env_replace_obj_texture(EnvObject* self, PyObject* args, PyObje
 // void replace_obj_texture(id, string[])
 
 static PyMethodDef EnvObject_methods[] = {
+	{"add_camera_vie", (PyCFunction)Env_add_camera_view, METH_VARARGS | METH_KEYWORDS,
+	 "Add camera view"},
 	{"step", (PyCFunction)Env_step, METH_VARARGS | METH_KEYWORDS,
 	 "Advance the environment"},
+	{"render", (PyCFunction)Env_render, METH_VARARGS | METH_KEYWORDS,
+	 "render screen"},
 	{"add_box", (PyCFunction)Env_add_box, METH_VARARGS | METH_KEYWORDS,
 	 "Add box object"},
 	{"add_sphere", (PyCFunction)Env_add_sphere, METH_VARARGS | METH_KEYWORDS,

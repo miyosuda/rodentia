@@ -16,6 +16,7 @@ private:
 public:
     CameraView();
     bool init(int width, int height, const Vector3f& bgColor_);
+    void release();
 
     void setCameraMat(const Matrix4f& mat) {
         camera.setMat(mat);
@@ -43,6 +44,10 @@ public:
     int getFrameBufferSize() const {
         return renderTarget.getFrameBufferSize();
     }
+    
+    void prepareShadowDepthRendering();
+    void prepareRendering();
+    void finishRendering();
 };
 
 #endif

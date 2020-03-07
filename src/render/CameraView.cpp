@@ -23,3 +23,31 @@ bool CameraView::init(int width, int height, const Vector3f& bgColor_) {
     bool ret = renderTarget.init(width, height, bgColor_);
     return ret;
 }
+
+/**
+ * <!--  release():  -->
+ */
+void CameraView::release() {
+    renderTarget.release();
+}
+
+/**
+ * <!--  prepareShadowDepthRendering():  -->
+ */
+void CameraView::prepareShadowDepthRendering() {
+    renderTarget.prepareShadowDepthRendering();
+}
+
+/**
+ * <!--  prepareRendering():  -->
+ */
+void CameraView::prepareRendering() {
+    renderTarget.prepareRendering();
+}
+
+/**
+ * <!--  finishRendering():  -->
+ */
+void CameraView::finishRendering() {
+    renderTarget.finishRendering();
+}

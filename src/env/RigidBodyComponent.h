@@ -5,8 +5,8 @@
 #include "btBulletDynamicsCommon.h"
 
 #include "Vector3f.h"
+#include "Matrix4f.h"
 
-class Matrix4f;
 class Action;
 
 
@@ -19,7 +19,7 @@ protected:
 public:
 	RigidBodyComponent(float mass,
 					   const Vector3f& pos,
-					   const Vector3f& rot,
+					   const Quat4f& rot,
 					   const Vector3f& relativeCenter_,
 					   btCollisionShape* shape,
 					   btDynamicsWorld* world,
@@ -29,7 +29,7 @@ public:
 	virtual void control(const Action& action);
 	void getMat(Matrix4f& mat) const;
 	void getVeclocity(Vector3f& velocity) const;
-	void locate(const Vector3f& pos, const Vector3f& rot);
+	void locate(const Vector3f& pos, const Quat4f& rot);
 	btRigidBody* getRigidBody() { return body; }
 
 };
@@ -38,7 +38,7 @@ class AgentRigidBodyComponent : public RigidBodyComponent {
 public:
 	AgentRigidBodyComponent(float mass,
 							const Vector3f& pos,
-							float rot,
+							float angle,
 							btCollisionShape* shape,
 							btDynamicsWorld* world,
 							int collisionId);

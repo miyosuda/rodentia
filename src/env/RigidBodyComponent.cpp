@@ -1,6 +1,5 @@
 #include "RigidBodyComponent.h"
 #include "Action.h"
-#include "Matrix4f.h"
 
 static void convertRigidBodyTransformToDrawMatrix4f(const btTransform& transform,
 													const Vector3f& relativeCenter,
@@ -31,7 +30,7 @@ static void convertRigidBodyTransformToDrawMatrix4f(const btTransform& transform
 
 RigidBodyComponent::RigidBodyComponent(float mass,
 									   const Vector3f& pos,
-									   const Vector3f& rot,
+									   const Quat4f& rot,
 									   const Vector3f& relativeCenter_,
 									   btCollisionShape* shape,
 									   btDynamicsWorld* world_,
@@ -43,7 +42,7 @@ RigidBodyComponent::RigidBodyComponent(float mass,
 	btTransform drawTransform;
 	drawTransform.setIdentity();
 	drawTransform.setOrigin(btVector3(pos.x, pos.y, pos.z));
-	drawTransform.getBasis().setEulerZYX(rot.x, rot.y, rot.z);
+    drawTransform.getBasis().setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
 
 	btTransform relativeCenterTransform;
 	relativeCenterTransform.setIdentity();
@@ -96,11 +95,11 @@ void RigidBodyComponent::getVeclocity(Vector3f& velocity) const {
 	velocity.set(v.x(), v.y(), v.z());
 }
 
-void RigidBodyComponent::locate(const Vector3f& pos, const Vector3f& rot) {
+void RigidBodyComponent::locate(const Vector3f& pos, const Quat4f& rot) {
 	btTransform drawTransform;
 	drawTransform.setIdentity();
 	drawTransform.setOrigin(btVector3(pos.x, pos.y, pos.z));
-	drawTransform.getBasis().setEulerZYX(rot.x, rot.y, rot.z);
+    drawTransform.getBasis().setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
 
 	btTransform relativeCenterTransform;
 	relativeCenterTransform.setIdentity();
@@ -120,19 +119,20 @@ void RigidBodyComponent::locate(const Vector3f& pos, const Vector3f& rot) {
 //---------------------------
 AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
 												 const Vector3f& pos,
-												 float rot,
+												 float angle,
 												 btCollisionShape* shape,
 												 btDynamicsWorld* world_,
 												 int collisionId)
 	:
 	RigidBodyComponent(mass,
 					   pos,
-					   Vector3f(0.0f, rot, 0.0f), // use rotY only
+                       // TODO: 要確認
+					   Quat4f(0.0f, sin(angle*0.5f), 0.0f, cos(angle*0.5f)), // use rotY only
 					   Vector3f(0.0f, 0.0f, 0.0f),
 					   shape,
 					   world_,
 					   collisionId) {
-
+    
 	// Disable deactivation
 	body->setActivationState(DISABLE_DEACTIVATION);
 	

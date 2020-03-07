@@ -1,7 +1,6 @@
 #include "Environment.h"
 #include <stdio.h>
 
-#include "DebugDrawer.h"
 #include "DrawComponent.h"
 #include "Mesh.h"
 #include "Vector3f.h"
@@ -12,6 +11,8 @@
 #include "Shader.h"
 #include "EnvironmentObject.h"
 #include "BoundingBox.h"
+#include "CameraView.h"
+
 
 static const int ID_IGNORE_COLLISION = -1;
 static const int ID_AGENT = -2;
@@ -62,7 +63,7 @@ btCollisionShape* CollisionShapeManager::getCylinderShape(float halfExtentX,
 //      [Environment]
 //---------------------------
 
-bool Environment::init(int width, int height, const Vector3f& bgColor) {
+bool Environment::init(int width, int height) {
 	// Setup the basic world
 	configuration = new btDefaultCollisionConfiguration();
 
@@ -81,17 +82,33 @@ bool Environment::init(int width, int height, const Vector3f& bgColor) {
 
 	nextObjId = 0;
 
-	bool ret = initRenderer(width, height, bgColor);
-	if( !ret ) {
-		return false;
-	}
-
 	world->setGravity(btVector3(0, -10, 0));
 
 	// Add agent object
 	prepareAgent();
 
-	return true;
+    // TODO: ここのwidth, height引数消せるかどうか調査
+    bool ret = glContext.init(width, height);
+    return ret;
+}
+
+int Environment::addCameraView(int width, int height, const Vector3f& bgColor) {
+    /*
+	bool ret = initRenderer(width, height, bgColor);
+	if( !ret ) {
+		return -1;
+	}
+    */
+
+    CameraView* cameraView = new CameraView();
+    bool ret = cameraView->init(width, height, bgColor);
+    if( !ret ) {
+        delete cameraView;
+        return -1;
+    }
+
+    cameraViews.push_back(cameraView);
+    return (int)(cameraViews.size()) - 1;
 }
 
 void Environment::prepareAgent() {
@@ -111,12 +128,6 @@ void Environment::release() {
 	}
 	objectMap.clear();
 	
-	// Delete debug drawer
-	if( debugDrawer != nullptr ) {
-		delete debugDrawer;
-		debugDrawer = nullptr;
-	}
-
 	meshManager.release();
 	textureManager.release();
 	shaderManager.release();
@@ -127,7 +138,14 @@ void Environment::release() {
 	delete dispatcher;
 	delete configuration;
 
-	renderer.release();
+	for (auto itr=cameraViews.begin(); itr!=cameraViews.end(); ++itr) {
+		CameraView* cameraView = *itr;
+        cameraView->release();
+		delete cameraView;
+	}
+    cameraViews.clear();
+    glContext.release();
+    
 	nextObjId = 0;
 }
 
@@ -182,85 +200,131 @@ void Environment::prepareShadow() {
 	}
 }
 
-void Environment::step(const Action& action, int stepNum, bool agentView) {
+void Environment::step(const Action& action, int stepNum) {
+    if(!world) {
+        return;
+    }
+    
 	const float deltaTime = 1.0f/60.0f;
 	
-	if(world) {
-		// Process rigid body simulation
-		collidedIds.clear();
+    // Process rigid body simulation
+    collidedIds.clear();
 
-		for(int i=0; i<stepNum; ++i) {
-			if( agent != nullptr ) {
-				agent->control(action);
-			}
+    for(int i=0; i<stepNum; ++i) {
+        if( agent != nullptr ) {
+            agent->control(action);
+        }
 
-			world->stepSimulation(deltaTime);
+        world->stepSimulation(deltaTime);
 
-			// Collision check
-			checkCollision();
-		}
+        // Collision check
+        // (collidedIdsに値をセットする)
+        checkCollision();
+    }
 
-		// Update agent view camera
-        // TODO: 下に持っていけるか.
-		if( agentView ) {
-			updateCameraToAgentView();
-		}
+    // Update agent view camera
+    // TODO: 下に持っていけるか.
+    // Agentからmatを取ってきて、RenderingContextにmatを設定する.
+    // -> cameraにmatをセット
+    // -> cameraのmatを利用して LSPSMのshadow matrixを更新する.
+    //updateCameraToAgentView();
 
-        // Set stage bounding box to rendering context. (currently not used)
-		prepareShadow();
+    // Set stage bounding box to rendering context. (currently not used)
+    // (LSPSMにbounding boxを設定する予定だが未使用)
+    prepareShadow();
 		
-		// Set light direction, ambient color and shadow color rate to the shader
-		Shader* shader = shaderManager.getDiffuseShader();
-		shader->prepare(renderingContext);
+    // Set light direction, ambient color and shadow color rate to the shader
+    Shader* shader = shaderManager.getDiffuseShader();
+    shader->prepare(renderingContext);
 
-        // ここまでは繰り返す必要なし
+    // ここまでは繰り返す必要なし
 
-        // ここからカメラ単位で繰り返し
+    // ここからカメラ単位で繰り返し
 
-        // TODO: ここに renderingContext.setCameraMat(mat) を持ってくる?
+    // TODO: ここに renderingContext.setCameraMat(mat) を持ってくる?
 
-		// Start shadow rendering path
-        // Make depth frame buffer as current
-		renderer.prepareShadowDepthRendering();
-		renderingContext.setPath(RenderingContext::SHADOW);
+    /*
+    // Start shadow rendering path
+    // Make depth frame buffer as current
+    renderer.prepareShadowDepthRendering();
+    renderingContext.setPath(RenderingContext::SHADOW);
 
-		// Draw objects
-		for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
-			EnvironmentObject* object = itr->second;
-            // Draw with shadow depth shader
-			object->draw(renderingContext);
-		}
+    // Draw objects
+    for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
+        EnvironmentObject* object = itr->second;
+        // Draw with shadow depth shader
+        object->draw(renderingContext);
+    }
 
-		// Start normal rendering path
-        // Make normal frame buffer as current
-		renderer.prepareRendering();
-		renderingContext.setPath(RenderingContext::NORMAL);
+    // Start normal rendering path
+    // Make normal frame buffer as current
+    renderer.prepareRendering();
+    renderingContext.setPath(RenderingContext::NORMAL);
 		
-		// Draw objects
-		for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
-			EnvironmentObject* object = itr->second;
-            // Draw with normal shader
-			object->draw(renderingContext);
-		}
+    // Draw objects
+    for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
+        EnvironmentObject* object = itr->second;
+        // Draw with normal shader
+        object->draw(renderingContext);
+    }
 
-		// Debug drawing
-		if( debugDrawer != nullptr) {
-			// TODO: not drawn when drawing object mesh.
-			glDisable(GL_DEPTH_TEST);
-			debugDrawer->prepare(renderingContext);
-			world->debugDrawWorld();
-			glEnable(GL_DEPTH_TEST);
-		}
+    // Read pixels to framebuffer
+    renderer.finishRendering();
 
-        // Read pixels to framebuffer
-		renderer.finishRendering();
-	}
+    */
+}
+
+void Environment::render(int cameraId,
+                         const Vector3f& pos,
+                         const Quat4f& rot) {
+
+    // Matの計算
+    Matrix4f mat;
+    mat.set(rot);
+    Vector4f pos_(pos.x, pos.y, pos.z, 1.0f);
+    mat.setColumn(4, pos_);
+    
+    setRenderCamera(mat);
+    
+    // Start shadow rendering path
+    // Make depth frame buffer as current
+    if( cameraId < 0 || cameraId >= cameraViews.size() ) {
+        // TODO: レンダリング失敗の時の対応
+        return;
+    }
+    
+    CameraView* cameraView = cameraViews[cameraId];
+    
+    cameraView->prepareShadowDepthRendering();
+    renderingContext.setPath(RenderingContext::SHADOW);
+
+    // Draw objects
+    for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
+        EnvironmentObject* object = itr->second;
+        // Draw with shadow depth shader
+        object->draw(renderingContext);
+    }
+
+    // Start normal rendering path
+    // Make normal frame buffer as current
+    cameraView->prepareRendering();
+    renderingContext.setPath(RenderingContext::NORMAL);
+    
+    // Draw objects
+    for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
+        EnvironmentObject* object = itr->second;
+        // Draw with normal shader
+        object->draw(renderingContext);
+    }
+
+    // Read pixels to framebuffer
+    cameraView->finishRendering();
 }
 
 int Environment::addBox(const char* texturePath,
 						const Vector3f& halfExtent,
 						const Vector3f& pos,
-						const Vector3f& rot,
+                        const Quat4f& rot,
 						float mass,
 						bool detectCollision) {
 	btCollisionShape* shape = collisionShapeManager.getBoxShape(halfExtent.x,
@@ -288,7 +352,7 @@ int Environment::addBox(const char* texturePath,
 int Environment::addSphere(const char* texturePath,
 						   float radius,
 						   const Vector3f& pos,
-						   const Vector3f& rot,
+                           const Quat4f& rot,
 						   float mass,
 						   bool detectCollision) {
 	btCollisionShape* shape = collisionShapeManager.getSphereShape(radius);
@@ -313,7 +377,7 @@ int Environment::addSphere(const char* texturePath,
 int Environment::addModel(const char* path,
 						  const Vector3f& scale,
 						  const Vector3f& pos,
-						  const Vector3f& rot,
+                          const Quat4f& rot,
 						  float mass,
 						  bool detectCollision) {
 
@@ -349,7 +413,7 @@ int Environment::addModel(const char* path,
 
 int Environment::addObject(btCollisionShape* shape,
 						   const Vector3f& pos,
-						   const Vector3f& rot,
+                           const Quat4f& rot,
 						   float mass,
 						   const Vector3f& relativeCenter,
 						   bool detectCollision,
@@ -400,7 +464,7 @@ void Environment::removeObject(int id) {
 	}
 }
 
-void Environment::locateObject(int id, const Vector3f& pos, const Vector3f& rot) {
+void Environment::locateObject(int id, const Vector3f& pos, const Quat4f& rot) {
 	auto itr = objectMap.find(id);
 	if( itr != objectMap.end() ) {
 		EnvironmentObject* object = objectMap[id];
@@ -408,9 +472,10 @@ void Environment::locateObject(int id, const Vector3f& pos, const Vector3f& rot)
 	}
 }
 
-void Environment::locateAgent(const Vector3f& pos, float rot) {
+void Environment::locateAgent(const Vector3f& pos, float angle) {
 	if( agent != nullptr ) {
-		agent->locate(pos, Vector3f(0.0f, rot, 0.0f));
+        // TODO: 要確認
+		agent->locate(pos, Quat4f(0.0f, sin(angle * 0.5f), 0.0f, cos(angle * 0.5f)));
 	}
 }
 
@@ -468,25 +533,7 @@ void Environment::replaceObjectTextures(int id, const vector<string>& texturePat
 	object->replaceMaterials(materials);
 }
 
-bool Environment::prepareDebugDrawer() {
-	Shader* lineShader = shaderManager.getLineShader();
-	// Set debug drawer
-	debugDrawer = new DebugDrawer(lineShader);
-	bool ret = debugDrawer->init();
-	if(!ret) {
-		return false;
-	}
-	
-	world->setDebugDrawer(debugDrawer);
-	int debugMode =
-		btIDebugDraw::DBG_DrawWireframe |
-		btIDebugDraw::DBG_DrawConstraints |
-		btIDebugDraw::DBG_DrawConstraintLimits;
-	debugDrawer->setDebugMode(debugMode);
-
-	return true;
-}
-
+/*
 bool Environment::initRenderer(int width, int height, const Vector3f& bgColor) {
     // TODO: RenderTargetの設定
 	bool ret = renderer.init(width, height, bgColor);
@@ -498,40 +545,58 @@ bool Environment::initRenderer(int width, int height, const Vector3f& bgColor) {
 	float ratio = width / (float) height;
 	renderingContext.initCamera(ratio);
 
-	// Set debug drawer
-	/*
-	ret = prepareDebugDrawer();
-	if(!ret) {
-		return false;
-	}
-	*/
-
 	return true;
 }
+*/
 
-const void* Environment::getFrameBuffer() const {
-	return renderer.getBuffer();
+const void* Environment::getFrameBuffer(int cameraId) const {
+    if( cameraId < 0 || cameraId >= cameraViews.size() ) {
+        // TODO: 取得失敗の時の対応
+        return nullptr;
+    }
+    
+    const CameraView* cameraView = cameraViews[cameraId];
+    return cameraView->getBuffer();
 }
 
-int Environment::getFrameBufferWidth() const {
-	return renderer.getFrameBufferWidth();
+int Environment::getFrameBufferWidth(int cameraId) const {
+    if( cameraId < 0 || cameraId >= cameraViews.size() ) {
+        // TODO: 取得失敗の時の対応
+        return -1;
+    }
+    
+    const CameraView* cameraView = cameraViews[cameraId];
+    return cameraView->getFrameBufferWidth();
 }
 
-int Environment::getFrameBufferHeight() const {
-	return renderer.getFrameBufferHeight();
+int Environment::getFrameBufferHeight(int cameraId) const {
+    if( cameraId < 0 || cameraId >= cameraViews.size() ) {
+        // TODO: 取得失敗の時の対応
+        return -1;
+    }
+    
+    const CameraView* cameraView = cameraViews[cameraId];
+    return cameraView->getFrameBufferHeight();
 }
 
-int Environment::getFrameBufferSize() const {
-	return renderer.getFrameBufferSize();
-
+int Environment::getFrameBufferSize(int cameraId) const {
+    if( cameraId < 0 || cameraId >= cameraViews.size() ) {
+        // TODO: 取得失敗の時の対応
+        return -1;
+    }
+    
+    const CameraView* cameraView = cameraViews[cameraId];
+    return cameraView->getFrameBufferSize();
 }
+
 
 void Environment::setRenderCamera(const Matrix4f& mat) {
     // Set camera mat to rendering context and and calculate shadow matrix
     // with camera and light direction in LSPSM.
-	renderingContext.setCameraMat(mat);
+    renderingContext.setCameraMat(mat);
 }
 
+/*
 void Environment::updateCameraToAgentView() {
 	if( agent != nullptr ) {
 		Matrix4f mat;
@@ -539,3 +604,4 @@ void Environment::updateCameraToAgentView() {
 		setRenderCamera(mat);
 	}
 }
+*/

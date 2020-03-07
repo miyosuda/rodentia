@@ -6,14 +6,12 @@
 using namespace std;
 
 #include "btBulletDynamicsCommon.h"
-
+#include "Matrix4f.h"
 #include "RigidBodyComponent.h"
 
 class RigidBodyComponent;
 class DrawComponent;
 class Action;
-class Matrix4f;
-class Vector3f;
 class Mesh;
 class RenderingContext;
 class BoundingBox;
@@ -26,10 +24,7 @@ class EnvironmentObjectInfo {
 public:
 	Vector3f pos;
 	Vector3f velocity;
-	Vector3f eulerAngles;	
-	
-private:
-	void calcEulerAngles(const Matrix4f& mat, Vector3f& eulerAngles);
+	Quat4f rot;
 	
 public:	
 	void set(const Matrix4f& mat, const Vector3f& velocity_);
@@ -55,7 +50,7 @@ public:
 	}
 	bool calcBoundingBox(BoundingBox& boundingBox);
 	void getInfo(EnvironmentObjectInfo& info) const;
-	void locate(const Vector3f& pos, const Vector3f& rot);
+	void locate(const Vector3f& pos, const Quat4f& rot);
 	void replaceMaterials(const vector<Material*>& materials);
 };
 
@@ -66,7 +61,7 @@ public:
 class StageObject : public EnvironmentObject {
 public:
 	StageObject(const Vector3f& pos,
-				const Vector3f& rot,
+				const Quat4f& rot,
 				float mass,
 				const Vector3f& relativeCenter,
 				btCollisionShape* shape,
