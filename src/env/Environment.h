@@ -20,7 +20,6 @@ using namespace std;
 class Action;
 class Matrix4f;
 class Vector3f;
-//class Renderer;
 class Camera;
 class EnvironmentObject;
 class EnvironmentObjectInfo;
@@ -134,10 +133,8 @@ public:
 	int getFrameBufferWidth(int cameraId) const;
 	int getFrameBufferHeight(int cameraId) const;
 	int getFrameBufferSize(int cameraId) const;
-	void setRenderCamera(const Matrix4f& mat);
 
 	const set<int>& getCollidedIds() const { return collidedIds; }
-	//void updateCameraToAgentView();
 };
 
 #endif

@@ -20,9 +20,10 @@ public:
 	
 private:
 	Path path;
-    // TODO: Cameraをここで持たない設計に変える.
-	Camera camera;
-	
+
+    Matrix4f cameraInvMat;
+    Matrix4f cameraProjectionMat;
+    
 	// Directional light direction.
 	Vector3f lightDir;
 	// Light color
@@ -51,10 +52,10 @@ private:
 
 public:
 	RenderingContext();
-	
-	void initCamera(float ratio, bool flipping=true);
+    void setCamera(const Matrix4f& cameraMat,
+                   const Matrix4f& cameraInvMat_,
+                   const Matrix4f& cameraProjectionMat_);
 	void setModelMat(Matrix4f modelMat_);
-	void setCameraMat(const Matrix4f& mat);
 	void setLight(const Vector3f& lightDir_,
 				  const Vector3f& lightColor_,
 				  const Vector3f& ambientColor_,

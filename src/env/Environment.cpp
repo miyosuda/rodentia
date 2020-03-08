@@ -93,13 +93,6 @@ bool Environment::init(int width, int height) {
 }
 
 int Environment::addCameraView(int width, int height, const Vector3f& bgColor) {
-    /*
-	bool ret = initRenderer(width, height, bgColor);
-	if( !ret ) {
-		return -1;
-	}
-    */
-
     CameraView* cameraView = new CameraView();
     bool ret = cameraView->init(width, height, bgColor);
     if( !ret ) {
@@ -205,7 +198,7 @@ void Environment::step(const Action& action, int stepNum) {
         return;
     }
     
-	const float deltaTime = 1.0f/60.0f;
+	const float deltaTime = 1.0f / 60.0f;
 	
     // Process rigid body simulation
     collidedIds.clear();
@@ -222,55 +215,14 @@ void Environment::step(const Action& action, int stepNum) {
         checkCollision();
     }
 
-    // Update agent view camera
-    // TODO: 下に持っていけるか.
-    // Agentからmatを取ってきて、RenderingContextにmatを設定する.
-    // -> cameraにmatをセット
-    // -> cameraのmatを利用して LSPSMのshadow matrixを更新する.
-    //updateCameraToAgentView();
-
     // Set stage bounding box to rendering context. (currently not used)
     // (LSPSMにbounding boxを設定する予定だが未使用)
     prepareShadow();
 		
     // Set light direction, ambient color and shadow color rate to the shader
+    /*
     Shader* shader = shaderManager.getDiffuseShader();
     shader->prepare(renderingContext);
-
-    // ここまでは繰り返す必要なし
-
-    // ここからカメラ単位で繰り返し
-
-    // TODO: ここに renderingContext.setCameraMat(mat) を持ってくる?
-
-    /*
-    // Start shadow rendering path
-    // Make depth frame buffer as current
-    renderer.prepareShadowDepthRendering();
-    renderingContext.setPath(RenderingContext::SHADOW);
-
-    // Draw objects
-    for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
-        EnvironmentObject* object = itr->second;
-        // Draw with shadow depth shader
-        object->draw(renderingContext);
-    }
-
-    // Start normal rendering path
-    // Make normal frame buffer as current
-    renderer.prepareRendering();
-    renderingContext.setPath(RenderingContext::NORMAL);
-		
-    // Draw objects
-    for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
-        EnvironmentObject* object = itr->second;
-        // Draw with normal shader
-        object->draw(renderingContext);
-    }
-
-    // Read pixels to framebuffer
-    renderer.finishRendering();
-
     */
 }
 
@@ -278,23 +230,35 @@ void Environment::render(int cameraId,
                          const Vector3f& pos,
                          const Quat4f& rot) {
 
+    // Set light direction, ambient color and shadow color rate to the shader
+    // TODO: 本来はrender()毎ではなく、step()時に1回だけで良いはず.
+    Shader* shader = shaderManager.getDiffuseShader();
+    shader->use();
+    shader->prepare(renderingContext);
+
     // Matの計算
     Matrix4f mat;
     mat.set(rot);
     Vector4f pos_(pos.x, pos.y, pos.z, 1.0f);
-    mat.setColumn(4, pos_);
-    
-    setRenderCamera(mat);
+    mat.setColumn(3, pos_);
     
     // Start shadow rendering path
     // Make depth frame buffer as current
     if( cameraId < 0 || cameraId >= cameraViews.size() ) {
         // TODO: レンダリング失敗の時の対応
+        printf("Invaid camera id: %d\n", cameraId);
         return;
     }
-    
+
     CameraView* cameraView = cameraViews[cameraId];
-    
+    cameraView->setCameraMat(mat);
+
+    // Set camera mat to rendering context and and calculate shadow matrix
+    // with camera and light direction in LSPSM.
+    renderingContext.setCamera(cameraView->getCameraMat(),
+                               cameraView->getCameraInvMat(),
+                               cameraView->getCameraProjectionMat());
+
     cameraView->prepareShadowDepthRendering();
     renderingContext.setPath(RenderingContext::SHADOW);
 
@@ -308,6 +272,7 @@ void Environment::render(int cameraId,
     // Start normal rendering path
     // Make normal frame buffer as current
     cameraView->prepareRendering();
+
     renderingContext.setPath(RenderingContext::NORMAL);
     
     // Draw objects
@@ -533,22 +498,6 @@ void Environment::replaceObjectTextures(int id, const vector<string>& texturePat
 	object->replaceMaterials(materials);
 }
 
-/*
-bool Environment::initRenderer(int width, int height, const Vector3f& bgColor) {
-    // TODO: RenderTargetの設定
-	bool ret = renderer.init(width, height, bgColor);
-	if(!ret) {
-		return false;
-	}
-
-    // TODO: カメラの設定
-	float ratio = width / (float) height;
-	renderingContext.initCamera(ratio);
-
-	return true;
-}
-*/
-
 const void* Environment::getFrameBuffer(int cameraId) const {
     if( cameraId < 0 || cameraId >= cameraViews.size() ) {
         // TODO: 取得失敗の時の対応
@@ -589,19 +538,3 @@ int Environment::getFrameBufferSize(int cameraId) const {
     return cameraView->getFrameBufferSize();
 }
 
-
-void Environment::setRenderCamera(const Matrix4f& mat) {
-    // Set camera mat to rendering context and and calculate shadow matrix
-    // with camera and light direction in LSPSM.
-    renderingContext.setCameraMat(mat);
-}
-
-/*
-void Environment::updateCameraToAgentView() {
-	if( agent != nullptr ) {
-		Matrix4f mat;
-		agent->getMat(mat);
-		setRenderCamera(mat);
-	}
-}
-*/

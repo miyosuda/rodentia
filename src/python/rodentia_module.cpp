@@ -396,6 +396,7 @@ static PyObject* Env_render(EnvObject* self, PyObject* args, PyObject* kwds) {
 	}
     
     render(self->environment, cameraId, pos, rot);
+    
 	int frameBufferWidth  = self->environment->getFrameBufferWidth(cameraId);
 	int frameBufferHeight = self->environment->getFrameBufferHeight(cameraId);
 	const void* frameBuffer = self->environment->getFrameBuffer(cameraId);
@@ -914,7 +915,7 @@ static PyObject* Env_replace_obj_texture(EnvObject* self, PyObject* args, PyObje
 // void replace_obj_texture(id, string[])
 
 static PyMethodDef EnvObject_methods[] = {
-	{"add_camera_vie", (PyCFunction)Env_add_camera_view, METH_VARARGS | METH_KEYWORDS,
+	{"add_camera_view", (PyCFunction)Env_add_camera_view, METH_VARARGS | METH_KEYWORDS,
 	 "Add camera view"},
 	{"step", (PyCFunction)Env_step, METH_VARARGS | METH_KEYWORDS,
 	 "Advance the environment"},

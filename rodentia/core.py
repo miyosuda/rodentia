@@ -14,7 +14,8 @@ def to_nd_float_array_for_rot(value):
     """ Convert list or single float to numpy float ndarray for rotation"""
     if isinstance(value, float) or isinstance(value, int):
         # if value is a single float, then it is treated as Y rotation value.
-        value = [0.0, value, 0.0]
+        value = [0.0, np.sin(value * 0.5), 0.0, np.cos(value * 0.5)]
+        # Otherwise treat it as a quaternion
     return to_nd_float_array(value)
 
 
@@ -33,21 +34,30 @@ class Environment(object):
     Environment class converts list object as a wrapper.
     """
 
-    def __init__(self, width, height, bg_color=[0.0, 0.0, 0.0]):
+    def __init__(self, width, height):
         """Create environment.
         Args:
           width: Screen width
           height: Screen height
-          bg_color: Background color (RGB value with 0.0 ~ 1.0)
         """
-        self.env = rodentia_module.Env(
-            width=width, height=height, bg_color=to_nd_float_array(bg_color))
+        self.env = rodentia_module.Env(width=width, height=height)
+
+    def add_camera_view(self, width, height, bg_color=[0.0, 0.0, 0.0]):
+        """Add camera view.
+        Args:
+          width: Screen width
+          height: Screen height
+          bg_color: Background color (RGB value with 0.0 ~ 1.0)
+        Returns:
+          Int value for the camera id.
+        """
+        return self.env.add_camera_view(width=width, height=height, bg_color=bg_color)
 
     def add_box(self,
                 texture_path,
                 half_extent,
-                pos,
-                rot=0.0,
+                rot,
+                angle=0.0,
                 mass=0.0,
                 detect_collision=False):
         """Add box object.
@@ -146,13 +156,13 @@ class Environment(object):
             pos=to_nd_float_array(pos),
             rot=to_nd_float_array_for_rot(rot))
 
-    def locate_agent(self, pos, rot=0.0):
+    def locate_agent(self, pos, angle=0.0):
         """Locate agenet to given position and orientataion.
         Args:
           pos: (x,y,z) float values for agent's location.
           rot: A float value for head angle of the model (in radian)
         """
-        self.env.locate_agent(pos=to_nd_float_array(pos), rot=rot)
+        self.env.locate_agent(pos=to_nd_float_array(pos), angle=angle)
 
     def set_light(self,
                   dir=[-0.5, -1.0, -0.4],
@@ -179,11 +189,24 @@ class Environment(object):
           num_steps: Int value for iteration count.
         Returns:
           Dictionary which contains the result of this step calculation.
-            "screen": numpy nd_array of width * height * 3 (uint8)
             "collided" Int list of object ids that collided with the agent.
         """
         return self.env.step(
             action=to_nd_int_array(action), num_steps=num_steps)
+
+    def render(self, camera_id, pos, rot):
+        """Step environment process and returns result.
+        Args:
+          camera_id: Int array with 3 elements.
+          
+        Returns:
+          Dictionary which contains the result of this step calculation.
+            "screen": numpy nd_array of width * height * 3 (uint8)
+        """
+        return self.env.render(
+            camera_id=camera_id,
+            pos=to_nd_float_array(pos),
+            rot=to_nd_float_array_for_rot(rot))
 
     def remove_obj(self, id):
         """Remove object from environment.
@@ -200,7 +223,7 @@ class Environment(object):
           Dictionary which contains the object's current state info.
             "pos": numpy nd_array (float32)
             "velocity" numpy nd_array (float32)
-            "euler_angles" numpy nd_array (float32)
+            "rot" numpy nd_array (float32)
         """
         return self.env.get_obj_info(id=id)
 
@@ -210,7 +233,7 @@ class Environment(object):
           Dictionary which contains the agent's current state info.
             "pos": numpy nd_array (float32)
             "velocity" numpy nd_array (float32)
-            "euler_angles" numpy nd_array (float32)
+            "rot" numpy nd_array (float32)
         """
         return self.env.get_agent_info()
 

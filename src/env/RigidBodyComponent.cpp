@@ -42,7 +42,7 @@ RigidBodyComponent::RigidBodyComponent(float mass,
 	btTransform drawTransform;
 	drawTransform.setIdentity();
 	drawTransform.setOrigin(btVector3(pos.x, pos.y, pos.z));
-    drawTransform.getBasis().setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
+    drawTransform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
 
 	btTransform relativeCenterTransform;
 	relativeCenterTransform.setIdentity();
