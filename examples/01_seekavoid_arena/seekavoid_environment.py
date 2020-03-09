@@ -144,9 +144,9 @@ class SeekAvoidEnvironment(object):
         self._locate_minus_reward_obj(x=-248, z=216, rot=0.375)
 
         # Locate agent to default position with randomized orientation
-        rot = 2.0 * math.pi * random.random()
+        rot_y = 2.0 * math.pi * random.random()
 
-        self.env.locate_agent(pos=[0, 0, 0], rot=rot)
+        self.env.locate_agent(pos=[0, 0, 0], rot_y=rot_y)
 
         # Reset environment and get screen
         obs = self.env.step(action=[0, 0, 0], num_steps=1)

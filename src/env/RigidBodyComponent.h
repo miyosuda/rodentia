@@ -38,7 +38,7 @@ class AgentRigidBodyComponent : public RigidBodyComponent {
 public:
 	AgentRigidBodyComponent(float mass,
 							const Vector3f& pos,
-							float angle,
+							float rotY,
 							btCollisionShape* shape,
 							btDynamicsWorld* world,
 							int collisionId);

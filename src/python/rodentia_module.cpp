@@ -108,8 +108,8 @@ static void locateObject(Environment* environment,
 
 static void locateAgent(Environment* environment,
                         const Vector3f& pos,
-                        float angle) {
-	environment->locateAgent(pos, angle);
+                        float rotY) {
+	environment->locateAgent(pos, rotY);
 }
 
 static bool getObjectInfo(Environment* environment,
@@ -672,14 +672,14 @@ static PyObject* Env_locate_object(EnvObject* self, PyObject* args, PyObject* kw
 
 static PyObject* Env_locate_agent(EnvObject* self, PyObject* args, PyObject* kwds) {
 	PyObject* posObj = nullptr;
-	float angle;
+	float rotY;
 
 	// Get argument
-	const char* kwlist[] = {"pos", "angle", nullptr};
+	const char* kwlist[] = {"pos", "rot_y", nullptr};
 
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!f", const_cast<char**>(kwlist),
 									 &PyArray_Type, &posObj,
-									 &angle)) {
+									 &rotY)) {
 		return nullptr;
 	}
 	
@@ -697,7 +697,7 @@ static PyObject* Env_locate_agent(EnvObject* self, PyObject* args, PyObject* kwd
     Vector3f pos(posArr[0], posArr[1], posArr[2]);
 	
 	locateAgent(self->environment,
-                pos, angle);
+                pos, rotY);
 
 	Py_INCREF(Py_None);
 	return Py_None;

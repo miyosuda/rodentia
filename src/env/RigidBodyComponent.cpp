@@ -119,15 +119,14 @@ void RigidBodyComponent::locate(const Vector3f& pos, const Quat4f& rot) {
 //---------------------------
 AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
 												 const Vector3f& pos,
-												 float angle,
+												 float rotY,
 												 btCollisionShape* shape,
 												 btDynamicsWorld* world_,
 												 int collisionId)
 	:
 	RigidBodyComponent(mass,
 					   pos,
-                       // TODO: 要確認
-					   Quat4f(0.0f, sin(angle*0.5f), 0.0f, cos(angle*0.5f)), // use rotY only
+					   Quat4f(0.0f, sin(rotY*0.5f), 0.0f, cos(rotY*0.5f)), // use rotY only
 					   Vector3f(0.0f, 0.0f, 0.0f),
 					   shape,
 					   world_,

@@ -218,12 +218,6 @@ void Environment::step(const Action& action, int stepNum) {
     // Set stage bounding box to rendering context. (currently not used)
     // (LSPSMにbounding boxを設定する予定だが未使用)
     prepareShadow();
-		
-    // Set light direction, ambient color and shadow color rate to the shader
-    /*
-    Shader* shader = shaderManager.getDiffuseShader();
-    shader->prepare(renderingContext);
-    */
 }
 
 void Environment::render(int cameraId,
@@ -437,10 +431,9 @@ void Environment::locateObject(int id, const Vector3f& pos, const Quat4f& rot) {
 	}
 }
 
-void Environment::locateAgent(const Vector3f& pos, float angle) {
+void Environment::locateAgent(const Vector3f& pos, float rotY) {
 	if( agent != nullptr ) {
-        // TODO: 要確認
-		agent->locate(pos, Quat4f(0.0f, sin(angle * 0.5f), 0.0f, cos(angle * 0.5f)));
+		agent->locate(pos, Quat4f(0.0f, sin(rotY * 0.5f), 0.0f, cos(rotY * 0.5f)));
 	}
 }
 
@@ -500,7 +493,7 @@ void Environment::replaceObjectTextures(int id, const vector<string>& texturePat
 
 const void* Environment::getFrameBuffer(int cameraId) const {
     if( cameraId < 0 || cameraId >= cameraViews.size() ) {
-        // TODO: 取得失敗の時の対応
+        printf("Invalid camera id: camera_id=%d\n", cameraId);
         return nullptr;
     }
     
@@ -510,7 +503,7 @@ const void* Environment::getFrameBuffer(int cameraId) const {
 
 int Environment::getFrameBufferWidth(int cameraId) const {
     if( cameraId < 0 || cameraId >= cameraViews.size() ) {
-        // TODO: 取得失敗の時の対応
+        printf("Invalid camera id: camera_id=%d\n", cameraId);
         return -1;
     }
     
@@ -520,7 +513,7 @@ int Environment::getFrameBufferWidth(int cameraId) const {
 
 int Environment::getFrameBufferHeight(int cameraId) const {
     if( cameraId < 0 || cameraId >= cameraViews.size() ) {
-        // TODO: 取得失敗の時の対応
+        printf("Invalid camera id: camera_id=%d\n", cameraId);
         return -1;
     }
     
@@ -530,11 +523,10 @@ int Environment::getFrameBufferHeight(int cameraId) const {
 
 int Environment::getFrameBufferSize(int cameraId) const {
     if( cameraId < 0 || cameraId >= cameraViews.size() ) {
-        // TODO: 取得失敗の時の対応
+        printf("Invalid camera id: camera_id=%d\n", cameraId);
         return -1;
     }
     
     const CameraView* cameraView = cameraViews[cameraId];
     return cameraView->getFrameBufferSize();
 }
-

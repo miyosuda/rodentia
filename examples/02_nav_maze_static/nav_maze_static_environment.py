@@ -312,8 +312,8 @@ class NavMazeStaticEnvironment(object):
         # Choose random position and orientation for the agent.
         start_pos_index = random.randint(0, len(self.start_pos_list) - 1)
         start_pos = self.start_pos_list[start_pos_index]
-        rot = 2.0 * math.pi * random.random()
-        self.env.locate_agent(pos=start_pos, rot=rot)
+        rot_y = 2.0 * math.pi * random.random()
+        self.env.locate_agent(pos=start_pos, rot_y=rot_y)
 
     def _reset_sub(self):
         # Locate reward objects

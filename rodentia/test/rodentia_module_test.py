@@ -57,7 +57,7 @@ class RodentiaModuleTest(unittest.TestCase):
 
       # Locate agent
       env.locate_agent(pos=to_nd_float_array([0.0, 1.0, 0.0]),
-                       angle=0.0)
+                       rot_y=0.0)
 
       # Locate object
       env.locate_object(sphere_id,
@@ -83,8 +83,6 @@ class RodentiaModuleTest(unittest.TestCase):
       self.assertEqual( (3,), info["pos"].shape )
       self.assertEqual( (3,), info["velocity"].shape )
       self.assertEqual( (4,), info["rot"].shape )
-
-      print("agent pos={}, rot={}".format(info["pos"], info["rot"]))
 
       obs_render = env.render(camera_id, info["pos"], info["rot"])
 

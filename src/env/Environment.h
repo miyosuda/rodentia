@@ -119,7 +119,7 @@ public:
 				 bool detectCollision);
 	void removeObject(int id);
 	void locateObject(int id, const Vector3f& pos, const Quat4f& rot);
-	void locateAgent(const Vector3f& pos, float angle);
+	void locateAgent(const Vector3f& pos, float rotY);
 	void setLight(const Vector3f& lightDir,
 				  const Vector3f& lightColor,
 				  const Vector3f& ambientColor,

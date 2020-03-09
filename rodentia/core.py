@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from . import rodentia_module
 import numpy as np
 
@@ -34,13 +35,15 @@ class Environment(object):
     Environment class converts list object as a wrapper.
     """
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, bg_color=[0.0, 0.0, 0.0]):
         """Create environment.
         Args:
           width: Screen width
           height: Screen height
         """
+        # TODO: linux上にてwidth, heightが(1,1)対応で消せるかどうか調査
         self.env = rodentia_module.Env(width=width, height=height)
+        self.main_camera_id = self.add_camera_view(width, height, bg_color)
 
     def add_camera_view(self, width, height, bg_color=[0.0, 0.0, 0.0]):
         """Add camera view.
@@ -51,12 +54,14 @@ class Environment(object):
         Returns:
           Int value for the camera id.
         """
-        return self.env.add_camera_view(width=width, height=height, bg_color=bg_color)
+        return self.env.add_camera_view(width=width, height=height,
+                                        bg_color=to_nd_float_array(bg_color))
 
     def add_box(self,
                 texture_path,
                 half_extent,
-                rot,
+                pos,
+                rot=0.0,
                 angle=0.0,
                 mass=0.0,
                 detect_collision=False):
@@ -65,7 +70,7 @@ class Environment(object):
           texture_path: Path for the texture (.png file)
           half_extent: (x,y,z) float values for half extent size of the box.
           pos: (x,y,z) float values for the center of the box.
-          rot: A float value for head angle or list (rx,ry,rz) as the rotation angles of the object
+          rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object
                (in radian)
           mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
                 but if mass > 0, the object is physically simulated.
@@ -95,7 +100,7 @@ class Environment(object):
           texture_path: Path for the texture (.png file)
           radius: float values for the raius of the shpere.
           pos: (x,y,z) float values for the center of the sphere.
-          rot: A float value for head angle or list (rx,ry,rz) as the rotation angles of the object
+          rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object
                (in radian)
           mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
                 but if mass > 0, the object is physically simulated.
@@ -125,7 +130,7 @@ class Environment(object):
           path: Path for the .obj file.
           scale: (x,y,z) float values for the scaling of the object.
           pos: (x,y,z) float values for the origin of the object.
-          rot: A float value for head angle or list (rx,ry,rz) as the rotation angles of the object
+          rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object
                (in radian)
           mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
                 but if mass > 0, the object is physically simulated.
@@ -148,7 +153,7 @@ class Environment(object):
         Args:
           id: Int value for object's id
           pos: (x,y,z) float values for agent's location.
-          rot: A float value for head angle or list (rx,ry,rz) as the rotation angles of the object
+          rot: A float value for head (rot_y) angle or list (rx,ry,rz,rw) as the rotation quaternion of the object
                (in radian)
         """
         self.env.locate_object(
@@ -156,13 +161,13 @@ class Environment(object):
             pos=to_nd_float_array(pos),
             rot=to_nd_float_array_for_rot(rot))
 
-    def locate_agent(self, pos, angle=0.0):
+    def locate_agent(self, pos, rot_y=0.0):
         """Locate agenet to given position and orientataion.
         Args:
           pos: (x,y,z) float values for agent's location.
-          rot: A float value for head angle of the model (in radian)
+          rot_y: A float value for head angle of the model (in radian)
         """
-        self.env.locate_agent(pos=to_nd_float_array(pos), angle=angle)
+        self.env.locate_agent(pos=to_nd_float_array(pos), rot_y=rot_y)
 
     def set_light(self,
                   dir=[-0.5, -1.0, -0.4],
@@ -175,7 +180,7 @@ class Environment(object):
           color: (r,g,b) float values for light color.
           ambient_color: (r,g,b) float values for ambient color.
           shadow_rate: a float, shadow color rate
-        """
+        """        
         self.env.set_light(
             dir=to_nd_float_array(dir),
             color=to_nd_float_array(color),
@@ -190,9 +195,17 @@ class Environment(object):
         Returns:
           Dictionary which contains the result of this step calculation.
             "collided" Int list of object ids that collided with the agent.
+            "screen": numpy nd_array of width * height * 3 (uint8)
         """
-        return self.env.step(
-            action=to_nd_int_array(action), num_steps=num_steps)
+        # TODO: step()とrender()分けるかどうか検討
+        obs_step = self.env.step(action=to_nd_int_array(action),
+                                 num_steps=num_steps)
+        agent_info = self.get_agent_info()
+        obs_render = self.render(self.main_camera_id,
+                                 pos=agent_info["pos"],
+                                 rot=agent_info["rot"])
+        obs_step["screen"] = obs_render["screen"]
+        return obs_step
 
     def render(self, camera_id, pos, rot):
         """Step environment process and returns result.
@@ -234,8 +247,14 @@ class Environment(object):
             "pos": numpy nd_array (float32)
             "velocity" numpy nd_array (float32)
             "rot" numpy nd_array (float32)
+            "rot_y" float
         """
-        return self.env.get_agent_info()
+        ret = self.env.get_agent_info()
+        rot = ret["rot"]
+        # Calculate rotation around Y-axis
+        rot_y = np.arctan2(rot[1], rot[3]) * 2.0
+        ret["rot_y"] = rot_y
+        return ret
 
     def replace_obj_texture(self, id, texture_path):
         """Replace object texture(s).
