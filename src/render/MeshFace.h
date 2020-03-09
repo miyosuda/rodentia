@@ -12,16 +12,16 @@ class BoundingBox;
 
 class MeshFace {
 private:
-	Material* material;
-	const MeshFaceData& meshFaceData;
+    Material* material;
+    const MeshFaceData& meshFaceData;
 
 public:
-	MeshFace( Material* material_,
-			  const MeshFaceData& meshFaceData );
-	~MeshFace();
-	void draw(const RenderingContext& context);
-	const BoundingBox& getBoundingBox() const;
-	void replaceMaterial(Material* material_);
+    MeshFace( Material* material_,
+              const MeshFaceData& meshFaceData );
+    ~MeshFace();
+    void draw(const RenderingContext& context);
+    const BoundingBox& getBoundingBox() const;
+    void replaceMaterial(Material* material_);
 };
 
 #endif

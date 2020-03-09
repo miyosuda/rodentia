@@ -15,15 +15,15 @@ class ShaderManager;
 
 class MeshData {
 private:
-	vector<MeshFaceData*> meshFaceDatas;
-	vector<string> texturePathes;
+    vector<MeshFaceData*> meshFaceDatas;
+    vector<string> texturePathes;
 
 public:
-	~MeshData();
-	void addMeshFace(MeshFaceData* meshFaceData, const string& texturePath);
+    ~MeshData();
+    void addMeshFace(MeshFaceData* meshFaceData, const string& texturePath);
 
-	Mesh* toMesh(Material* material);
-	Mesh* toMesh(TextureManager& textureManager, ShaderManager& shaderManager);
+    Mesh* toMesh(Material* material);
+    Mesh* toMesh(TextureManager& textureManager, ShaderManager& shaderManager);
 };
 
 #endif

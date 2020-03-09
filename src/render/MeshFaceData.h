@@ -9,28 +9,28 @@
 
 class MeshFaceData {
 private:
-	int verticesSize;
-	int indicesSize;
+    int verticesSize;
+    int indicesSize;
 
-	BoundingBox boundingBox;
+    BoundingBox boundingBox;
 
-	VertexArray vertexArray;
-	VertexBuffer vertexBuffer;
-	IndexBuffer indexBuffer;
+    VertexArray vertexArray;
+    VertexBuffer vertexBuffer;
+    IndexBuffer indexBuffer;
 
-	VertexArray depthVertexArray;
+    VertexArray depthVertexArray;
 
-	void release();
+    void release();
 
 public:
-	MeshFaceData();
-	bool init(const float* vertices,
-			  int verticesSize_,
-			  const unsigned short* indices,
-			  int indicesSize_ );
-	~MeshFaceData();
-	void draw(bool forShadow) const;
-	const BoundingBox& getBoundingBox() const { return boundingBox; }
+    MeshFaceData();
+    bool init(const float* vertices,
+              int verticesSize_,
+              const unsigned short* indices,
+              int indicesSize_ );
+    ~MeshFaceData();
+    void draw(bool forShadow) const;
+    const BoundingBox& getBoundingBox() const { return boundingBox; }
 };
 
 #endif

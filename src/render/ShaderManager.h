@@ -11,27 +11,27 @@ class Shader;
 
 class ShaderManager {
 private:
-	enum ShaderType {
-		DIFFUSE,
-		LINE,
-		SHADOW_DIFFUSE,
-		SHADOW_DEPTH,
-	};
-	
-	Shader* diffuseShader;	
-	Shader* lineShader;
-	Shader* shadowDiffuseShader;
-	Shader* shadowDepthShader;
+    enum ShaderType {
+        DIFFUSE,
+        LINE,
+        SHADOW_DIFFUSE,
+        SHADOW_DEPTH,
+    };
+    
+    Shader* diffuseShader;  
+    Shader* lineShader;
+    Shader* shadowDiffuseShader;
+    Shader* shadowDepthShader;
 
-	Shader* createShader(ShaderType shaderType);
+    Shader* createShader(ShaderType shaderType);
 
 public:
-	ShaderManager();
-	~ShaderManager();
-	void release();
-	Shader* getDiffuseShader(bool useShadow=true);
-	Shader* getLineShader();
-	Shader* getShadowDepthShader(bool useShadow=true);
+    ShaderManager();
+    ~ShaderManager();
+    void release();
+    Shader* getDiffuseShader(bool useShadow=true);
+    Shader* getLineShader();
+    Shader* getShadowDepthShader(bool useShadow=true);
 };
 
 #endif

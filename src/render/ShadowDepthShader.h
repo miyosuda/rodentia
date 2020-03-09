@@ -7,12 +7,12 @@
 
 class ShadowDepthShader : public Shader {
 private:
-	int mvpMatrixHandle;
-	
+    int mvpMatrixHandle;
+    
 public:
-	virtual bool init() override;
-	virtual void prepare(const RenderingContext& context) const override;
-	virtual void setup(const RenderingContext& context) const override;
+    virtual bool init() override;
+    virtual void prepare(const RenderingContext& context) const override;
+    virtual void setup(const RenderingContext& context) const override;
 };
 
 #endif

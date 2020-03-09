@@ -15,17 +15,17 @@ class Material;
 
 class Mesh {
 private:
-	vector<MeshFace*> meshFaces;
-	BoundingBox boundingBox;
+    vector<MeshFace*> meshFaces;
+    BoundingBox boundingBox;
 
 public:
-	Mesh() {}
-	~Mesh();
-	void addMeshFace(MeshFace* meshFace);
-	void draw(const RenderingContext& context) const;
-	const BoundingBox& getBoundingBox() const { return boundingBox; }
+    Mesh() {}
+    ~Mesh();
+    void addMeshFace(MeshFace* meshFace);
+    void draw(const RenderingContext& context) const;
+    const BoundingBox& getBoundingBox() const { return boundingBox; }
 
-	void replaceMaterials(const vector<Material*>& materials);
+    void replaceMaterials(const vector<Material*>& materials);
 };
 
 #endif

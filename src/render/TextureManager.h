@@ -11,16 +11,16 @@ class Texture;
 
 class TextureManager {
 private:
-	map<string, Texture*> textureMap;
-	void* readFile(const char* path, int& readSize);
+    map<string, Texture*> textureMap;
+    void* readFile(const char* path, int& readSize);
 
-	Texture* findTexture(const char* path);
+    Texture* findTexture(const char* path);
 
 public:
-	~TextureManager();
-	void release();
-	Texture* loadTexture(const char* path);
-	Texture* getColorTexture(float r, float g, float b);
+    ~TextureManager();
+    void release();
+    Texture* loadTexture(const char* path);
+    Texture* getColorTexture(float r, float g, float b);
 };
 
 #endif

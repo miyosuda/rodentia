@@ -12,13 +12,13 @@
 
 class GLContext {
 private:
-	CGLContextObj context;
-	bool contextInitialized;
+    CGLContextObj context;
+    bool contextInitialized;
 
-public:	
-	GLContext();
-	bool init(int width, int height);
-	void release();
+public: 
+    GLContext();
+    bool init(int width, int height);
+    void release();
 };
 
 #else // defined(__APPLE__)
@@ -27,15 +27,15 @@ public:
 
 class GLContext {
 private:
-	Display* display;
-	GLXContext context;
-	GLXPbuffer pbuffer;
-	bool contextInitialized;
+    Display* display;
+    GLXContext context;
+    GLXPbuffer pbuffer;
+    bool contextInitialized;
 
-public:	
-	GLContext();
-	bool init(int width, int height);
-	void release();
+public: 
+    GLContext();
+    bool init(int width, int height);
+    void release();
 };
 
 

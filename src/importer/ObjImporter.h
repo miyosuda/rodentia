@@ -6,7 +6,7 @@ class MeshData;
 
 class ObjImporter {
 public:
-	static MeshData* import(const char* path);
+    static MeshData* import(const char* path);
 };
 
 #endif

@@ -8,37 +8,37 @@
  * <!--  MeshFace():  -->
  */
 MeshFace::MeshFace( Material* material_,
-					const MeshFaceData& meshFaceData_ )
-	:
-	material(material_),
-	meshFaceData(meshFaceData_) {
+                    const MeshFaceData& meshFaceData_ )
+    :
+    material(material_),
+    meshFaceData(meshFaceData_) {
 }
 
 /**
  * <!--  ~MeshFace():  -->
  */
 MeshFace::~MeshFace() {
-	delete material;
+    delete material;
 }
 
 /**
  * <!--  draw():  -->
  */
 void MeshFace::draw(const RenderingContext& context) {
-	material->draw(meshFaceData, context);
+    material->draw(meshFaceData, context);
 }
 
 /**
  * <!--  getBoundingBox():  -->
  */
 const BoundingBox& MeshFace::getBoundingBox() const {
-	return meshFaceData.getBoundingBox();
+    return meshFaceData.getBoundingBox();
 }
 
 /**
  * <!--  replaceMaterial():  -->
  */
 void MeshFace::replaceMaterial(Material* material_) {
-	delete material;
-	material = material_;
+    delete material;
+    material = material_;
 }
