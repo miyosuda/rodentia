@@ -30,8 +30,7 @@ class RodentiaModuleTest(unittest.TestCase):
       width  = 84 * 4
       height = 84 * 4
 
-      # TODO
-      env = rodentia.rodentia_module.Env(width=width, height=height)
+      env = rodentia.rodentia_module.Env()
 
       camera_id = env.add_camera_view(width, height,
                                       bg_color=to_nd_float_array([1.0, 0.0, 0.0]))

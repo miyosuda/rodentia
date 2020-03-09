@@ -95,7 +95,7 @@ public:
 	~Environment() {
 	}
 
-	bool init(int width, int height);
+	bool init();
     int addCameraView(int width, int height, const Vector3f& bgColor);
 	void release();
 	void step(const Action& action, int stepNum);

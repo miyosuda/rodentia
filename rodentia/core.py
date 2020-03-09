@@ -41,8 +41,7 @@ class Environment(object):
           width: Screen width
           height: Screen height
         """
-        # TODO: linux上にてwidth, heightが(1,1)対応で消せるかどうか調査
-        self.env = rodentia_module.Env(width=width, height=height)
+        self.env = rodentia_module.Env()
         self.main_camera_id = self.add_camera_view(width, height, bg_color)
 
     def add_camera_view(self, width, height, bg_color=[0.0, 0.0, 0.0]):

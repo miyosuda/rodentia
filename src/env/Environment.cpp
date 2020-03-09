@@ -63,7 +63,7 @@ btCollisionShape* CollisionShapeManager::getCylinderShape(float halfExtentX,
 //      [Environment]
 //---------------------------
 
-bool Environment::init(int width, int height) {
+bool Environment::init() {
 	// Setup the basic world
 	configuration = new btDefaultCollisionConfiguration();
 
@@ -87,8 +87,8 @@ bool Environment::init(int width, int height) {
 	// Add agent object
 	prepareAgent();
 
-    // TODO: ここのwidth, height引数消せるかどうか調査
-    bool ret = glContext.init(width, height);
+    // Linux environment requres GLContext with at least width=1, height=1 size pbuffer.
+    bool ret = glContext.init(1, 1);
     return ret;
 }
 

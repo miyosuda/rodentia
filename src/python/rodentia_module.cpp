@@ -25,8 +25,8 @@ static Environment* createEnvironment() {
 	return environment;
 }
 
-static bool initEnvironment(Environment* environment, int width, int height) {
-	if( !environment->init(width, height) ) {
+static bool initEnvironment(Environment* environment) {
+	if( !environment->init() ) {
 		return false;
 	}
 	
@@ -216,29 +216,14 @@ static PyObject* EnvObject_new(PyTypeObject* type,
 	return (PyObject*)self;
 }
 
-static int Env_init(EnvObject* self, PyObject* args, PyObject* kwds) {	
-	const char *kwlist[] = { "width",
-							 "height",
-							 nullptr };
-
-	// Get argument
-	int width;
-	int height;
-
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "ii", const_cast<char**>(kwlist),
-									 &width,
-									 &height)) {
-		PyErr_SetString(PyExc_RuntimeError, "init argument shortage");
-		return -1;
-	}
-
+static int Env_init(EnvObject* self, PyObject* args, PyObject* kwds) {
 	if (self->environment == nullptr) {
 		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
 		return -1;
 	}
 
 	// Initialize environment
-	if ( !initEnvironment(self->environment, width, height) ) {
+	if ( !initEnvironment(self->environment) ) {
 		PyErr_Format(PyExc_RuntimeError, "Failed to init environment.");
 		return -1;
 	}
