@@ -22,12 +22,12 @@ class Material;
 //---------------------------
 class EnvironmentObjectInfo {
 public:
-	Vector3f pos;
-	Vector3f velocity;
-	Quat4f rot;
-	
-public:	
-	void set(const Matrix4f& mat, const Vector3f& velocity_);
+    Vector3f pos;
+    Vector3f velocity;
+    Quat4f rot;
+    
+public: 
+    void set(const Matrix4f& mat, const Vector3f& velocity_);
 };
 
 
@@ -36,22 +36,22 @@ public:
 //---------------------------
 class EnvironmentObject {
 protected:
-	RigidBodyComponent* rigidBodyComponent;
-	DrawComponent* drawComponent;
+    RigidBodyComponent* rigidBodyComponent;
+    DrawComponent* drawComponent;
 
 public:
-	EnvironmentObject();
-	virtual ~EnvironmentObject();
-	int getCollisionId() const;
-	void getMat(Matrix4f& mat) const;
-	void draw(RenderingContext& context) const;
-	btRigidBody* getRigidBody() {
-		return rigidBodyComponent->getRigidBody();
-	}
-	bool calcBoundingBox(BoundingBox& boundingBox);
-	void getInfo(EnvironmentObjectInfo& info) const;
-	void locate(const Vector3f& pos, const Quat4f& rot);
-	void replaceMaterials(const vector<Material*>& materials);
+    EnvironmentObject();
+    virtual ~EnvironmentObject();
+    int getCollisionId() const;
+    void getMat(Matrix4f& mat) const;
+    void draw(RenderingContext& context) const;
+    btRigidBody* getRigidBody() {
+        return rigidBodyComponent->getRigidBody();
+    }
+    bool calcBoundingBox(BoundingBox& boundingBox);
+    void getInfo(EnvironmentObjectInfo& info) const;
+    void locate(const Vector3f& pos, const Quat4f& rot);
+    void replaceMaterials(const vector<Material*>& materials);
 };
 
 
@@ -60,26 +60,26 @@ public:
 //---------------------------
 class StageObject : public EnvironmentObject {
 public:
-	StageObject(const Vector3f& pos,
-				const Quat4f& rot,
-				float mass,
-				const Vector3f& relativeCenter,
-				btCollisionShape* shape,
-				btDynamicsWorld* world,
-				int collisionId,
-				Mesh* mesh,
-				const Vector3f& scale);
+    StageObject(const Vector3f& pos,
+                const Quat4f& rot,
+                float mass,
+                const Vector3f& relativeCenter,
+                btCollisionShape* shape,
+                btDynamicsWorld* world,
+                int collisionId,
+                Mesh* mesh,
+                const Vector3f& scale);
 };
 
 //---------------------------
 //      [AgentObject]
 //---------------------------
 class AgentObject : public EnvironmentObject {
-public:	
-	AgentObject(btCollisionShape* shape,
-				btDynamicsWorld* world,
-				int collisionId);
-	void control(const Action& action);
+public: 
+    AgentObject(btCollisionShape* shape,
+                btDynamicsWorld* world,
+                int collisionId);
+    void control(const Action& action);
 };
 
 #endif
