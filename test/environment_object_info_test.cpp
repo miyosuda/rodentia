@@ -1,4 +1,5 @@
 #include "EnvironmentObject.h"
+#include <math.h>
 #include "Matrix4f.h"
 #include "Vector3f.h"
 
@@ -33,35 +34,33 @@ namespace {
 		EXPECT_NEAR(info.velocity.y, velocity.y, EPSILON);
 		EXPECT_NEAR(info.velocity.z, velocity.z, EPSILON);
 
-        // TODO:
-
-        /*
-		// Check euler angles
-
+		// Check rotation
+        
 		// Rotation X
 		mat.setRotationX(1.0f);
 		info.set(mat, velocity);
 
-		EXPECT_NEAR(info.rot.x, 1.0f, EPSILON);
-		EXPECT_NEAR(info.rot.y, 0.0f, EPSILON);
-		EXPECT_NEAR(info.rot.z, 0.0f, EPSILON);
-        EXPECT_NEAR(info.rot.w, 0.0f, EPSILON);
+		EXPECT_NEAR(info.rot.x, sin(0.5), EPSILON);
+		EXPECT_NEAR(info.rot.y, 0.0f,     EPSILON);
+		EXPECT_NEAR(info.rot.z, 0.0f,     EPSILON);
+        EXPECT_NEAR(info.rot.w, cos(0.5), EPSILON);
 
 		// Rotation Y
 		mat.setRotationY(1.0f);
 		info.set(mat, velocity);
-		
-		EXPECT_NEAR(info.eulerAngles.x, 0.0f, EPSILON);
-		EXPECT_NEAR(info.eulerAngles.y, 1.0f, EPSILON);
-		EXPECT_NEAR(info.eulerAngles.z, 0.0f, EPSILON);
+
+		EXPECT_NEAR(info.rot.x, 0.0f,     EPSILON);
+		EXPECT_NEAR(info.rot.y, sin(0.5), EPSILON);
+		EXPECT_NEAR(info.rot.z, 0.0f,     EPSILON);
+        EXPECT_NEAR(info.rot.w, cos(0.5), EPSILON);        
 
 		// Rotation Z
 		mat.setRotationZ(1.0f);
 		info.set(mat, velocity);
-		
-		EXPECT_NEAR(info.eulerAngles.x, 0.0f, EPSILON);
-		EXPECT_NEAR(info.eulerAngles.y, 0.0f, EPSILON);
-		EXPECT_NEAR(info.eulerAngles.z, 1.0f, EPSILON);
-        */
+
+		EXPECT_NEAR(info.rot.x, 0.0f,     EPSILON);
+		EXPECT_NEAR(info.rot.y, 0.0f,     EPSILON);
+		EXPECT_NEAR(info.rot.z, sin(0.5), EPSILON);
+        EXPECT_NEAR(info.rot.w, cos(0.5), EPSILON);        
 	}
 }
