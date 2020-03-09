@@ -1,8 +1,14 @@
-![rodentia_logo](./doc/image/rodentia_logo.png)
+# Rodentia: Customizable 3D learning environment for MacOSX and Linux.
 
-*Rodentia* is a 3D learning environment for MacOSX and Linux.
+## Features
 
-You can easily design learning tasks with python script. All of the scene objects can be updated with regid body simulation.
+- Cross platform (MacOSX, Ubuntu)
+- Easy install with pip
+- You can design tasks only with python. (No C# or lua required)
+- Multi camera rendering
+- Rigidbody simulation
+- Shadow mapping
+
 
 [![preview](./doc/image/preview.png)](https://youtu.be/6thMDZlAzkk)
 
