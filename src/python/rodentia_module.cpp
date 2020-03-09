@@ -21,16 +21,16 @@ using namespace std;
 //---------------------------------------------------------
 
 static Environment* createEnvironment() {
-	Environment* environment = new Environment();
-	return environment;
+    Environment* environment = new Environment();
+    return environment;
 }
 
 static bool initEnvironment(Environment* environment) {
-	if( !environment->init() ) {
-		return false;
-	}
-	
-	return true;
+    if( !environment->init() ) {
+        return false;
+    }
+    
+    return true;
 }
 
 static int addCameraView(Environment* environment, int width, int height,
@@ -44,103 +44,103 @@ static int addCameraView(Environment* environment, int width, int height,
 }
 
 static void releaseEnvironment(Environment* environment) {
-	environment->release();
-	delete environment;
+    environment->release();
+    delete environment;
 }
 
 static void stepEnvironment(Environment* environment, const Action& action, int stepNum) {
-	environment->step(action, stepNum);
+    environment->step(action, stepNum);
 }
 
 static void render(Environment* environment, int cameraId,
                    const Vector3f& pos,
                    const Quat4f& rot) {
-	environment->render(cameraId, pos, rot);
+    environment->render(cameraId, pos, rot);
 }
 
 static int addBox(Environment* environment,
-				  const char* texturePath,
+                  const char* texturePath,
                   const Vector3f& halfExtent,
                   const Vector3f& pos,
                   const Quat4f& rot,
-				  float mass,
-				  bool detectCollision) {
-	return environment->addBox(texturePath,
+                  float mass,
+                  bool detectCollision) {
+    return environment->addBox(texturePath,
                                halfExtent, pos, rot,
-							   mass,
-							   detectCollision);
+                               mass,
+                               detectCollision);
 }
 
 static int addSphere(Environment* environment,
-					 const char* texturePath,
-					 float radius,
+                     const char* texturePath,
+                     float radius,
                      const Vector3f& pos,
                      const Quat4f& rot,
-					 float mass,
-					 bool detectCollision) {
-	return environment->addSphere(texturePath,
-								  radius,
+                     float mass,
+                     bool detectCollision) {
+    return environment->addSphere(texturePath,
+                                  radius,
                                   pos, rot,
-								  mass,
-								  detectCollision);
+                                  mass,
+                                  detectCollision);
 }
 
 static int addModel(Environment* environment,
-					const char* path,
+                    const char* path,
                     const Vector3f& scale,
                     const Vector3f& pos,
                     const Quat4f& rot,
-					float mass,
-					bool detectCollision) {
-	return environment->addModel(path,
+                    float mass,
+                    bool detectCollision) {
+    return environment->addModel(path,
                                  scale, pos, rot, 
-								 mass,
-								 detectCollision);
+                                 mass,
+                                 detectCollision);
 }
 
 static void removeObj(Environment* environment, 
-					  int id) {
-	environment->removeObject(id);
+                      int id) {
+    environment->removeObject(id);
 }
 
 static void locateObject(Environment* environment,
-						 int id,
+                         int id,
                          const Vector3f& pos,
                          const Quat4f& rot) {
-	environment->locateObject(id, pos, rot);
+    environment->locateObject(id, pos, rot);
 }
 
 static void locateAgent(Environment* environment,
                         const Vector3f& pos,
                         float rotY) {
-	environment->locateAgent(pos, rotY);
+    environment->locateAgent(pos, rotY);
 }
 
 static bool getObjectInfo(Environment* environment,
-						  int id, EnvironmentObjectInfo& info) {
-	return environment->getObjectInfo(id, info);
+                          int id, EnvironmentObjectInfo& info) {
+    return environment->getObjectInfo(id, info);
 }
 
 static bool getAgentInfo(Environment* environment,
-						 EnvironmentObjectInfo& info) {
-	return environment->getAgentInfo(info);
+                         EnvironmentObjectInfo& info) {
+    return environment->getAgentInfo(info);
 }
 
 static void setLight(Environment* environment,
                      const Vector3f& dir,
                      const Vector3f& color,
                      const Vector3f& ambinetColor,
-					 float shadowColorRate) {
-	environment->setLight(dir, color, ambinetColor, shadowColorRate);
+                     float shadowColorRate) {
+    environment->setLight(dir, color, ambinetColor, shadowColorRate);
 }
 
 static int getActionSize(Environment* environment) {
-	return Action::getActionSize();
+    return Action::getActionSize();
 }
 
 static void replaceObjectTextures(Environment* environment,
-								  int id, const vector<string>& texturePathes) {
-	environment->replaceObjectTextures(id, texturePathes);
+                                  int id, const vector<string>& texturePathes) {
+    environment->replaceObjectTextures(id, texturePathes);
 }
 
 //---------------------------------------------------------
@@ -148,759 +148,759 @@ static void replaceObjectTextures(Environment* environment,
 //---------------------------------------------------------
 
 static bool checkArrayDim(PyArrayObject* array, int dim, const char* name) {
-	if (PyArray_NDIM(array) != 1 ||
-		PyArray_DIM(array, 0) != dim) {
-		PyErr_Format(PyExc_ValueError, "%s must have shape (%d)", name, dim);
-		return false;
-	}
-	return true;
+    if (PyArray_NDIM(array) != 1 ||
+        PyArray_DIM(array, 0) != dim) {
+        PyErr_Format(PyExc_ValueError, "%s must have shape (%d)", name, dim);
+        return false;
+    }
+    return true;
 }
 
 static const float* getFloatArrayData(PyObject* obj, int dim, const char* name) {
-	PyArrayObject* array = (PyArrayObject*)obj;
+    PyArrayObject* array = (PyArrayObject*)obj;
 
-	if( !checkArrayDim(array, dim, name) ) {
-		return nullptr;
-	}
+    if( !checkArrayDim(array, dim, name) ) {
+        return nullptr;
+    }
 
-	if (PyArray_TYPE(array) != NPY_FLOAT) {
-		PyErr_Format(PyExc_ValueError, "%s must have dtype np.float32", name);
-		return nullptr;
-	}
+    if (PyArray_TYPE(array) != NPY_FLOAT) {
+        PyErr_Format(PyExc_ValueError, "%s must have dtype np.float32", name);
+        return nullptr;
+    }
 
-	return (const float*)PyArray_DATA(array);
+    return (const float*)PyArray_DATA(array);
 }
 
 static const int* getIntArrayData(PyObject* obj, int dim, const char* name) {
-	PyArrayObject* array = (PyArrayObject*)obj;
+    PyArrayObject* array = (PyArrayObject*)obj;
 
-	if( !checkArrayDim(array, dim, name) ) {
-		return nullptr;
-	}
+    if( !checkArrayDim(array, dim, name) ) {
+        return nullptr;
+    }
 
-	if (PyArray_TYPE(array) != NPY_INT) {
-		PyErr_Format(PyExc_ValueError, "%s must have dtype np.int32", name);
-		return nullptr;
-	}
-	
-	return (const int*)PyArray_DATA(array);
+    if (PyArray_TYPE(array) != NPY_INT) {
+        PyErr_Format(PyExc_ValueError, "%s must have dtype np.int32", name);
+        return nullptr;
+    }
+    
+    return (const int*)PyArray_DATA(array);
 }
 
 typedef struct {
-	PyObject_HEAD
-	Environment* environment;
+    PyObject_HEAD
+    Environment* environment;
 } EnvObject;
 
 static void EnvObject_dealloc(EnvObject* self) {
-	if( self->environment != nullptr ) {
-		releaseEnvironment(self->environment);
-	}
+    if( self->environment != nullptr ) {
+        releaseEnvironment(self->environment);
+    }
 
-	(((PyObject*)(self))->ob_type)->tp_free((PyObject*)self);
+    (((PyObject*)(self))->ob_type)->tp_free((PyObject*)self);
 }
 
 static PyObject* EnvObject_new(PyTypeObject* type,
-							   PyObject* args,
-							   PyObject* kwds) {
-	EnvObject* self;
-	
-	self = (EnvObject*)type->tp_alloc(type, 0);
-	
-	if (self != nullptr) {
-		Environment* environment = createEnvironment();
-		if (environment == nullptr) {
-			PyErr_SetString(PyExc_RuntimeError, "Failed to create rodentia environment");
-			Py_DECREF(self);
-			return nullptr;
-		}
-		
-		self->environment = environment;
-	}
-	
-	return (PyObject*)self;
+                               PyObject* args,
+                               PyObject* kwds) {
+    EnvObject* self;
+    
+    self = (EnvObject*)type->tp_alloc(type, 0);
+    
+    if (self != nullptr) {
+        Environment* environment = createEnvironment();
+        if (environment == nullptr) {
+            PyErr_SetString(PyExc_RuntimeError, "Failed to create rodentia environment");
+            Py_DECREF(self);
+            return nullptr;
+        }
+        
+        self->environment = environment;
+    }
+    
+    return (PyObject*)self;
 }
 
 static int Env_init(EnvObject* self, PyObject* args, PyObject* kwds) {
-	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
-		return -1;
-	}
+    if (self->environment == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+        return -1;
+    }
 
-	// Initialize environment
-	if ( !initEnvironment(self->environment) ) {
-		PyErr_Format(PyExc_RuntimeError, "Failed to init environment.");
-		return -1;
-	}
+    // Initialize environment
+    if ( !initEnvironment(self->environment) ) {
+        PyErr_Format(PyExc_RuntimeError, "Failed to init environment.");
+        return -1;
+    }
 
-	return 0;
+    return 0;
 }
 
 
-static PyObject* Env_add_camera_view(EnvObject* self, PyObject* args, PyObject* kwds) {	
-	const char *kwlist[] = { "width",
-							 "height",
-							 "bg_color",
+static PyObject* Env_add_camera_view(EnvObject* self, PyObject* args, PyObject* kwds) { 
+    const char *kwlist[] = { "width",
+                             "height",
+                             "bg_color",
                              "near",
                              "far",
                              "focal_length",
                              "shadow_buffer_width",
-							 nullptr };
+                             nullptr };
 
-	// Get argument
-	int width;
-	int height;
-	PyObject* bgColorObj = nullptr;
+    // Get argument
+    int width;
+    int height;
+    PyObject* bgColorObj = nullptr;
     float nearClip;
     float farClip;
     float focalLength;
     int shadowBufferWidth;
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "iiO!fffi", const_cast<char**>(kwlist),
-									 &width,
-									 &height,
-									 &PyArray_Type, &bgColorObj,
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "iiO!fffi", const_cast<char**>(kwlist),
+                                     &width,
+                                     &height,
+                                     &PyArray_Type, &bgColorObj,
                                      &nearClip,
                                      &farClip,
                                      &focalLength,
                                      &shadowBufferWidth)) {
-		PyErr_SetString(PyExc_RuntimeError, "init argument shortage");
-		return nullptr;
-	}
+        PyErr_SetString(PyExc_RuntimeError, "init argument shortage");
+        return nullptr;
+    }
 
-	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
-		return nullptr;
-	}
+    if (self->environment == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+        return nullptr;
+    }
 
-	const float* bgColorArr = getFloatArrayData(bgColorObj, 3, "bg_color");
-	if( bgColorArr == nullptr ) {
-		return nullptr;
-	}
+    const float* bgColorArr = getFloatArrayData(bgColorObj, 3, "bg_color");
+    if( bgColorArr == nullptr ) {
+        return nullptr;
+    }
 
     Vector3f bgColor = Vector3f(bgColorArr[0], bgColorArr[1], bgColorArr[2]);
 
-	// Initialize environment
+    // Initialize environment
     int cameraId = addCameraView(self->environment, width, height, bgColor,
                                  nearClip, farClip, focalLength,
                                  shadowBufferWidth);
-	if (cameraId < 0) {
-		PyErr_Format(PyExc_RuntimeError, "Failed to init environment.");
-		return nullptr;
-	}
+    if (cameraId < 0) {
+        PyErr_Format(PyExc_RuntimeError, "Failed to init environment.");
+        return nullptr;
+    }
 
-	// Returning object ID
-	PyObject* idObj = PyLong_FromLong(cameraId);
-	return idObj;
+    // Returning object ID
+    PyObject* idObj = PyLong_FromLong(cameraId);
+    return idObj;
 }
 
 
 static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
-	PyObject* actionObj = nullptr;
+    PyObject* actionObj = nullptr;
 
-	// Get argument
-	const char* kwlist[] = {"action", "num_steps", nullptr};
+    // Get argument
+    const char* kwlist[] = {"action", "num_steps", nullptr};
 
-	int stepNum = 1;
+    int stepNum = 1;
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!i", const_cast<char**>(kwlist),
-									 &PyArray_Type, &actionObj,
-									 &stepNum)) {
-		return nullptr;
-	}
-	
-	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
-		return nullptr;
-	}
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!i", const_cast<char**>(kwlist),
+                                     &PyArray_Type, &actionObj,
+                                     &stepNum)) {
+        return nullptr;
+    }
+    
+    if (self->environment == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+        return nullptr;
+    }
 
-	// action
-	int actionSize = getActionSize(self->environment);
-	const int* actionArr = getIntArrayData(actionObj, actionSize, "action");
-	if( actionArr == nullptr ) {
-		return nullptr;
-	}
-	
-	Action action(actionArr[0], actionArr[1], actionArr[2]);
+    // action
+    int actionSize = getActionSize(self->environment);
+    const int* actionArr = getIntArrayData(actionObj, actionSize, "action");
+    if( actionArr == nullptr ) {
+        return nullptr;
+    }
+    
+    Action action(actionArr[0], actionArr[1], actionArr[2]);
 
-	// Process step
-	stepEnvironment(self->environment, action, stepNum);
+    // Process step
+    stepEnvironment(self->environment, action, stepNum);
 
-	// Create output dictionary
-	PyObject* resultDic = PyDict_New();
-	if (resultDic == nullptr) {
-		PyErr_NoMemory();
-		return nullptr;
-	}
+    // Create output dictionary
+    PyObject* resultDic = PyDict_New();
+    if (resultDic == nullptr) {
+        PyErr_NoMemory();
+        return nullptr;
+    }
 
-	const set<int>& collidedIds = self->environment->getCollidedIds();
+    const set<int>& collidedIds = self->environment->getCollidedIds();
 
-	size_t collidedIdSize = collidedIds.size();
-	PyObject* collidedIdTuple = PyTuple_New(collidedIdSize);
-	
-	int i=0;
-	for(auto it=collidedIds.begin(); it!=collidedIds.end(); ++it) {
-		int collidedId = *it;
-		PyObject* item = PyLong_FromLong(collidedId);
-		PyTuple_SetItem(collidedIdTuple, i, item);
-		// No need to decrease item's refcount.
-		i += 1;
-	}
+    size_t collidedIdSize = collidedIds.size();
+    PyObject* collidedIdTuple = PyTuple_New(collidedIdSize);
+    
+    int i=0;
+    for(auto it=collidedIds.begin(); it!=collidedIds.end(); ++it) {
+        int collidedId = *it;
+        PyObject* item = PyLong_FromLong(collidedId);
+        PyTuple_SetItem(collidedIdTuple, i, item);
+        // No need to decrease item's refcount.
+        i += 1;
+    }
 
-	// Put tuple to dictionary
-	PyDict_SetItemString(resultDic, "collided", collidedIdTuple);
+    // Put tuple to dictionary
+    PyDict_SetItemString(resultDic, "collided", collidedIdTuple);
 
-	// Decrease ref count of tuple
+    // Decrease ref count of tuple
     Py_DECREF(collidedIdTuple);
-	
-	return resultDic;
+    
+    return resultDic;
 }
 
 static PyObject* Env_render(EnvObject* self, PyObject* args, PyObject* kwds) {
-	int cameraId;
-	PyObject* posObj = nullptr;
-	PyObject* rotObj = nullptr;
+    int cameraId;
+    PyObject* posObj = nullptr;
+    PyObject* rotObj = nullptr;
 
-	// Get argument
-	const char* kwlist[] = {"camera_id", "pos", "rot", nullptr};
+    // Get argument
+    const char* kwlist[] = {"camera_id", "pos", "rot", nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "iO!O!", const_cast<char**>(kwlist),
-									 &cameraId,
-									 &PyArray_Type, &posObj,
-									 &PyArray_Type, &rotObj)) {
-		return nullptr;
-	}
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "iO!O!", const_cast<char**>(kwlist),
+                                     &cameraId,
+                                     &PyArray_Type, &posObj,
+                                     &PyArray_Type, &rotObj)) {
+        return nullptr;
+    }
 
-	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
-		return nullptr;
-	}
-	
-	// pos
-	const float* posArr = getFloatArrayData(posObj, 3, "pos");
-	if( posArr == nullptr ) {
-		return nullptr;
-	}
-	
+    if (self->environment == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+        return nullptr;
+    }
+    
+    // pos
+    const float* posArr = getFloatArrayData(posObj, 3, "pos");
+    if( posArr == nullptr ) {
+        return nullptr;
+    }
+    
     Vector3f pos(posArr[0], posArr[1], posArr[2]);
 
-	// rot
-	const float* rotArr = getFloatArrayData(rotObj, 4, "rot");
-	if( rotArr == nullptr ) {
-		return nullptr;
-	}
+    // rot
+    const float* rotArr = getFloatArrayData(rotObj, 4, "rot");
+    if( rotArr == nullptr ) {
+        return nullptr;
+    }
 
     Quat4f rot(rotArr[0], rotArr[1], rotArr[2], rotArr[3]);
     
-	// Create output dictionary
-	PyObject* resultDic = PyDict_New();
-	if (resultDic == nullptr) {
-		PyErr_NoMemory();
-		return nullptr;
-	}
+    // Create output dictionary
+    PyObject* resultDic = PyDict_New();
+    if (resultDic == nullptr) {
+        PyErr_NoMemory();
+        return nullptr;
+    }
     
     render(self->environment, cameraId, pos, rot);
     
-	int frameBufferWidth  = self->environment->getFrameBufferWidth(cameraId);
-	int frameBufferHeight = self->environment->getFrameBufferHeight(cameraId);
-	const void* frameBuffer = self->environment->getFrameBuffer(cameraId);
+    int frameBufferWidth  = self->environment->getFrameBufferWidth(cameraId);
+    int frameBufferHeight = self->environment->getFrameBufferHeight(cameraId);
+    const void* frameBuffer = self->environment->getFrameBuffer(cameraId);
 
-	// Create screen output array
-	long* screenDims = new long[3];
-	screenDims[0] = frameBufferWidth;
-	screenDims[1] = frameBufferHeight;
-	screenDims[2] = 3;
+    // Create screen output array
+    long* screenDims = new long[3];
+    screenDims[0] = frameBufferWidth;
+    screenDims[1] = frameBufferHeight;
+    screenDims[2] = 3;
 
-	PyArrayObject* screenArray = (PyArrayObject*)PyArray_SimpleNew(
-		3, // int nd
-		screenDims, // screenDims
-		NPY_UINT8); // int typenum
-	delete [] screenDims;
+    PyArrayObject* screenArray = (PyArrayObject*)PyArray_SimpleNew(
+        3, // int nd
+        screenDims, // screenDims
+        NPY_UINT8); // int typenum
+    delete [] screenDims;
 
-	// Set buffer memory to array
-	memcpy(PyArray_BYTES(screenArray), frameBuffer, PyArray_NBYTES(screenArray));
+    // Set buffer memory to array
+    memcpy(PyArray_BYTES(screenArray), frameBuffer, PyArray_NBYTES(screenArray));
 
-	// Put list to dictionary
-	PyDict_SetItemString(resultDic, "screen", (PyObject*)screenArray);
+    // Put list to dictionary
+    PyDict_SetItemString(resultDic, "screen", (PyObject*)screenArray);
 
-	// Decrease ref count of array
-	Py_DECREF((PyObject*)screenArray);
+    // Decrease ref count of array
+    Py_DECREF((PyObject*)screenArray);
 
-	return resultDic;
+    return resultDic;
 }
 
 static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
-	const char* texturePath = "";
-	PyObject* halfExtentObj = nullptr;
-	PyObject* posObj = nullptr;
-	PyObject* rotObj = nullptr;
-	float mass;
-	int detectCollision;
+    const char* texturePath = "";
+    PyObject* halfExtentObj = nullptr;
+    PyObject* posObj = nullptr;
+    PyObject* rotObj = nullptr;
+    float mass;
+    int detectCollision;
 
-	// Get argument
-	const char* kwlist[] = {"texture_path", "half_extent", "pos", "rot", "mass", "detect_collision",
-							nullptr};
+    // Get argument
+    const char* kwlist[] = {"texture_path", "half_extent", "pos", "rot", "mass", "detect_collision",
+                            nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!fi", const_cast<char**>(kwlist),
-									 &texturePath,
-									 &PyArray_Type, &halfExtentObj,
-									 &PyArray_Type, &posObj,
-									 &PyArray_Type, &rotObj,
-									 &mass,
-									 &detectCollision)) {
-		return nullptr;
-	}
-	
-	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
-		return nullptr;
-	}
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!fi", const_cast<char**>(kwlist),
+                                     &texturePath,
+                                     &PyArray_Type, &halfExtentObj,
+                                     &PyArray_Type, &posObj,
+                                     &PyArray_Type, &rotObj,
+                                     &mass,
+                                     &detectCollision)) {
+        return nullptr;
+    }
+    
+    if (self->environment == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+        return nullptr;
+    }
 
-	// half_extent
-	const float* halfExtentArr = getFloatArrayData(halfExtentObj, 3, "half_extent");
-	if( halfExtentArr == nullptr ) {
-		return nullptr;
-	}
+    // half_extent
+    const float* halfExtentArr = getFloatArrayData(halfExtentObj, 3, "half_extent");
+    if( halfExtentArr == nullptr ) {
+        return nullptr;
+    }
 
     Vector3f halfExtent(halfExtentArr[0], halfExtentArr[1], halfExtentArr[2]);
 
-	// pos
-	const float* posArr = getFloatArrayData(posObj, 3, "pos");
-	if( posArr == nullptr ) {
-		return nullptr;
-	}
+    // pos
+    const float* posArr = getFloatArrayData(posObj, 3, "pos");
+    if( posArr == nullptr ) {
+        return nullptr;
+    }
 
     Vector3f pos(posArr[0], posArr[1], posArr[2]);
 
-	// rot
-	const float* rotArr = getFloatArrayData(rotObj, 4, "rot");
-	if( rotArr == nullptr ) {
-		return nullptr;
-	}
+    // rot
+    const float* rotArr = getFloatArrayData(rotObj, 4, "rot");
+    if( rotArr == nullptr ) {
+        return nullptr;
+    }
     
     Quat4f rot(rotArr[0], rotArr[1], rotArr[2], rotArr[3]);
-	
-	int id = addBox(self->environment,
-					texturePath,
+    
+    int id = addBox(self->environment,
+                    texturePath,
                     halfExtent, pos, rot,
-					mass,
-					detectCollision != 0);
-	
-	// Returning object ID
-	PyObject* idObj = PyLong_FromLong(id);
+                    mass,
+                    detectCollision != 0);
+    
+    // Returning object ID
+    PyObject* idObj = PyLong_FromLong(id);
 
-	return idObj;
+    return idObj;
 }
 
 static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds) {
-	const char* texturePath = "";
-	float radius;
-	PyObject* posObj = nullptr;
-	PyObject* rotObj = nullptr;
-	float mass;
-	int detectCollision;
+    const char* texturePath = "";
+    float radius;
+    PyObject* posObj = nullptr;
+    PyObject* rotObj = nullptr;
+    float mass;
+    int detectCollision;
 
-	// Get argument
-	const char* kwlist[] = {"texture_path", "radius", "pos", "rot", "mass", "detect_collision",
-							nullptr};
+    // Get argument
+    const char* kwlist[] = {"texture_path", "radius", "pos", "rot", "mass", "detect_collision",
+                            nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sfO!O!fi", const_cast<char**>(kwlist),
-									 &texturePath,
-									 &radius,
-									 &PyArray_Type, &posObj,
-									 &PyArray_Type, &rotObj,
-									 &mass,
-									 &detectCollision)) {
-		return nullptr;
-	}
-	
-	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
-		return nullptr;
-	}
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sfO!O!fi", const_cast<char**>(kwlist),
+                                     &texturePath,
+                                     &radius,
+                                     &PyArray_Type, &posObj,
+                                     &PyArray_Type, &rotObj,
+                                     &mass,
+                                     &detectCollision)) {
+        return nullptr;
+    }
+    
+    if (self->environment == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+        return nullptr;
+    }
 
-	// pos
-	const float* posArr = getFloatArrayData(posObj, 3, "pos");
-	if( posArr == nullptr ) {
-		return nullptr;
-	}
+    // pos
+    const float* posArr = getFloatArrayData(posObj, 3, "pos");
+    if( posArr == nullptr ) {
+        return nullptr;
+    }
 
     Vector3f pos(posArr[0], posArr[1], posArr[2]);    
-	
-	// rot
-	const float* rotArr = getFloatArrayData(rotObj, 4, "rot");
-	if( rotArr == nullptr ) {
-		return nullptr;
-	}
+    
+    // rot
+    const float* rotArr = getFloatArrayData(rotObj, 4, "rot");
+    if( rotArr == nullptr ) {
+        return nullptr;
+    }
 
     Quat4f rot(rotArr[0], rotArr[1], rotArr[2], rotArr[3]);    
-	
-	int id = addSphere(self->environment,
-					   texturePath,
-					   radius,
+    
+    int id = addSphere(self->environment,
+                       texturePath,
+                       radius,
                        pos, rot,
-					   mass,
-					   detectCollision != 0);
+                       mass,
+                       detectCollision != 0);
 
-	// Returning object ID
-	PyObject* idObj = PyLong_FromLong(id);
-	return idObj;
+    // Returning object ID
+    PyObject* idObj = PyLong_FromLong(id);
+    return idObj;
 }
 
 static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) {
-	const char* path = "";
-	PyObject* scaleObj = nullptr;
-	PyObject* posObj = nullptr;
-	PyObject* rotObj = nullptr;
-	float mass;
-	int detectCollision;
+    const char* path = "";
+    PyObject* scaleObj = nullptr;
+    PyObject* posObj = nullptr;
+    PyObject* rotObj = nullptr;
+    float mass;
+    int detectCollision;
 
-	// Get argument
-	const char* kwlist[] = {"path", "scale", "pos", "rot", "mass", "detect_collision", nullptr};
+    // Get argument
+    const char* kwlist[] = {"path", "scale", "pos", "rot", "mass", "detect_collision", nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!fi", const_cast<char**>(kwlist),
-									 &path,
-									 &PyArray_Type, &scaleObj,
-									 &PyArray_Type, &posObj,
-									 &PyArray_Type, &rotObj,
-									 &mass,
-									 &detectCollision)) {
-		return nullptr;
-	}
-	
-	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
-		return nullptr;
-	}
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!fi", const_cast<char**>(kwlist),
+                                     &path,
+                                     &PyArray_Type, &scaleObj,
+                                     &PyArray_Type, &posObj,
+                                     &PyArray_Type, &rotObj,
+                                     &mass,
+                                     &detectCollision)) {
+        return nullptr;
+    }
+    
+    if (self->environment == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+        return nullptr;
+    }
 
-	// scale
-	const float* scaleArr = getFloatArrayData(scaleObj, 3, "scale");
-	if( scaleArr == nullptr ) {
-		return nullptr;
-	}
+    // scale
+    const float* scaleArr = getFloatArrayData(scaleObj, 3, "scale");
+    if( scaleArr == nullptr ) {
+        return nullptr;
+    }
     
     Vector3f scale(scaleArr[0], scaleArr[1], scaleArr[2]);
-	
-	// pos
-	const float* posArr = getFloatArrayData(posObj, 3, "pos");
-	if( posArr == nullptr ) {
-		return nullptr;
-	}
+    
+    // pos
+    const float* posArr = getFloatArrayData(posObj, 3, "pos");
+    if( posArr == nullptr ) {
+        return nullptr;
+    }
 
     Vector3f pos(posArr[0], posArr[1], posArr[2]);
-	
-	// rot
-	const float* rotArr = getFloatArrayData(rotObj, 4, "rot");
-	if( rotArr == nullptr ) {
-		return nullptr;
-	}
+    
+    // rot
+    const float* rotArr = getFloatArrayData(rotObj, 4, "rot");
+    if( rotArr == nullptr ) {
+        return nullptr;
+    }
 
     Quat4f rot(rotArr[0], rotArr[1], rotArr[2], rotArr[3]);
     
-	int id = addModel(self->environment,
-					  path,
+    int id = addModel(self->environment,
+                      path,
                       scale, pos, rot,
-					  mass,
-					  detectCollision != 0);
+                      mass,
+                      detectCollision != 0);
 
-	// Returning object ID
-	PyObject* idObj = PyLong_FromLong(id);
-	return idObj;
+    // Returning object ID
+    PyObject* idObj = PyLong_FromLong(id);
+    return idObj;
 }
 
 static PyObject* Env_remove_obj(EnvObject* self, PyObject* args, PyObject* kwds) {
-	int id;
+    int id;
 
-	// Get argument
-	const char* kwlist[] = {"id", nullptr};
+    // Get argument
+    const char* kwlist[] = {"id", nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", const_cast<char**>(kwlist),
-									 &id)) {
-		return nullptr;
-	}
-	
-	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
-		return nullptr;
-	}
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", const_cast<char**>(kwlist),
+                                     &id)) {
+        return nullptr;
+    }
+    
+    if (self->environment == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+        return nullptr;
+    }
 
-	removeObj(self->environment, id);
+    removeObj(self->environment, id);
 
-	Py_INCREF(Py_None);
-	return Py_None;
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 static PyObject* Env_locate_object(EnvObject* self, PyObject* args, PyObject* kwds) {
-	int id;
-	PyObject* posObj = nullptr;
-	PyObject* rotObj = nullptr;
+    int id;
+    PyObject* posObj = nullptr;
+    PyObject* rotObj = nullptr;
 
-	// Get argument
-	const char* kwlist[] = {"id", "pos", "rot", nullptr};
+    // Get argument
+    const char* kwlist[] = {"id", "pos", "rot", nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "iO!O!", const_cast<char**>(kwlist),
-									 &id,
-									 &PyArray_Type, &posObj,
-									 &PyArray_Type, &rotObj)) {
-		return nullptr;
-	}
-	
-	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
-		return nullptr;
-	}
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "iO!O!", const_cast<char**>(kwlist),
+                                     &id,
+                                     &PyArray_Type, &posObj,
+                                     &PyArray_Type, &rotObj)) {
+        return nullptr;
+    }
+    
+    if (self->environment == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+        return nullptr;
+    }
 
-	// pos
-	const float* posArr = getFloatArrayData(posObj, 3, "pos");
-	if( posArr == nullptr ) {
-		return nullptr;
-	}
+    // pos
+    const float* posArr = getFloatArrayData(posObj, 3, "pos");
+    if( posArr == nullptr ) {
+        return nullptr;
+    }
     
     Vector3f pos(posArr[0], posArr[1], posArr[2]);
-	
-	// rot
-	const float* rotArr = getFloatArrayData(rotObj, 4, "rot");
-	if( rotArr == nullptr ) {
-		return nullptr;
-	}
+    
+    // rot
+    const float* rotArr = getFloatArrayData(rotObj, 4, "rot");
+    if( rotArr == nullptr ) {
+        return nullptr;
+    }
 
     Quat4f rot(rotArr[0], rotArr[1], rotArr[2], rotArr[3]);
-	
-	locateObject(self->environment,
-				 id,
+    
+    locateObject(self->environment,
+                 id,
                  pos, rot);
 
-	Py_INCREF(Py_None);
-	return Py_None;
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 static PyObject* Env_locate_agent(EnvObject* self, PyObject* args, PyObject* kwds) {
-	PyObject* posObj = nullptr;
-	float rotY;
+    PyObject* posObj = nullptr;
+    float rotY;
 
-	// Get argument
-	const char* kwlist[] = {"pos", "rot_y", nullptr};
+    // Get argument
+    const char* kwlist[] = {"pos", "rot_y", nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!f", const_cast<char**>(kwlist),
-									 &PyArray_Type, &posObj,
-									 &rotY)) {
-		return nullptr;
-	}
-	
-	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
-		return nullptr;
-	}
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!f", const_cast<char**>(kwlist),
+                                     &PyArray_Type, &posObj,
+                                     &rotY)) {
+        return nullptr;
+    }
+    
+    if (self->environment == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+        return nullptr;
+    }
 
-	// pos
-	const float* posArr = getFloatArrayData(posObj, 3, "pos");
-	if( posArr == nullptr ) {
-		return nullptr;
-	}
+    // pos
+    const float* posArr = getFloatArrayData(posObj, 3, "pos");
+    if( posArr == nullptr ) {
+        return nullptr;
+    }
 
     Vector3f pos(posArr[0], posArr[1], posArr[2]);
-	
-	locateAgent(self->environment,
+    
+    locateAgent(self->environment,
                 pos, rotY);
 
-	Py_INCREF(Py_None);
-	return Py_None;
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 /**
  * Common function to get result dict object for get_obj_info() and get_agent_info().
  */
 static PyObject* get_info_dic_obj(const EnvironmentObjectInfo& info) {
-	// Create output dictionary
-	PyObject* resultDic = PyDict_New();
-	if (resultDic == nullptr) {
-		PyErr_NoMemory();
-		return nullptr;
-	}
+    // Create output dictionary
+    PyObject* resultDic = PyDict_New();
+    if (resultDic == nullptr) {
+        PyErr_NoMemory();
+        return nullptr;
+    }
 
-	long* vecDims = new long[1];
-	vecDims[0] = 3;
+    long* vecDims = new long[1];
+    vecDims[0] = 3;
 
-	long* rotDims = new long[1];
-	rotDims[0] = 4;
+    long* rotDims = new long[1];
+    rotDims[0] = 4;
 
-	PyArrayObject* posArray = (PyArrayObject*)PyArray_SimpleNew(
-		1, // int nd
-		vecDims, // vecDims
-		NPY_FLOAT32); // float typenum
+    PyArrayObject* posArray = (PyArrayObject*)PyArray_SimpleNew(
+        1, // int nd
+        vecDims, // vecDims
+        NPY_FLOAT32); // float typenum
 
-	PyArrayObject* velocityArray = (PyArrayObject*)PyArray_SimpleNew(
-		1, // int nd
-		vecDims, // vecDims
-		NPY_FLOAT32); // float typenum
+    PyArrayObject* velocityArray = (PyArrayObject*)PyArray_SimpleNew(
+        1, // int nd
+        vecDims, // vecDims
+        NPY_FLOAT32); // float typenum
 
-	PyArrayObject* rotArray = (PyArrayObject*)PyArray_SimpleNew(
-		1, // int nd
-		rotDims, // rotDims
-		NPY_FLOAT32); // float typenum
+    PyArrayObject* rotArray = (PyArrayObject*)PyArray_SimpleNew(
+        1, // int nd
+        rotDims, // rotDims
+        NPY_FLOAT32); // float typenum
 
-	delete [] vecDims;
+    delete [] vecDims;
     delete [] rotDims;
 
-	memcpy(PyArray_BYTES(posArray), info.pos.getPointer(),
-		   PyArray_NBYTES(posArray));
-	memcpy(PyArray_BYTES(velocityArray), info.velocity.getPointer(),
-		   PyArray_NBYTES(velocityArray));
-	memcpy(PyArray_BYTES(rotArray), info.rot.getPointer(),
-		   PyArray_NBYTES(rotArray));
+    memcpy(PyArray_BYTES(posArray), info.pos.getPointer(),
+           PyArray_NBYTES(posArray));
+    memcpy(PyArray_BYTES(velocityArray), info.velocity.getPointer(),
+           PyArray_NBYTES(velocityArray));
+    memcpy(PyArray_BYTES(rotArray), info.rot.getPointer(),
+           PyArray_NBYTES(rotArray));
 
-	// Put list to dictionary
-	PyDict_SetItemString(resultDic, "pos", (PyObject*)posArray);
-	PyDict_SetItemString(resultDic, "velocity", (PyObject*)velocityArray);
-	PyDict_SetItemString(resultDic, "rot", (PyObject*)rotArray);
+    // Put list to dictionary
+    PyDict_SetItemString(resultDic, "pos", (PyObject*)posArray);
+    PyDict_SetItemString(resultDic, "velocity", (PyObject*)velocityArray);
+    PyDict_SetItemString(resultDic, "rot", (PyObject*)rotArray);
 
-	// Decrease ref count of array
-	Py_DECREF((PyObject*)posArray);
-	Py_DECREF((PyObject*)velocityArray);
-	Py_DECREF((PyObject*)rotArray);
+    // Decrease ref count of array
+    Py_DECREF((PyObject*)posArray);
+    Py_DECREF((PyObject*)velocityArray);
+    Py_DECREF((PyObject*)rotArray);
 
-	return resultDic;
+    return resultDic;
 }
 
 static PyObject* Env_get_obj_info(EnvObject* self, PyObject* args, PyObject* kwds) {
-	int id;
+    int id;
 
-	// Get argument
-	const char* kwlist[] = {"id", nullptr};
+    // Get argument
+    const char* kwlist[] = {"id", nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", const_cast<char**>(kwlist),
-									 &id)) {
-		return nullptr;
-	}
-	
-	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
-		return nullptr;
-	}
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", const_cast<char**>(kwlist),
+                                     &id)) {
+        return nullptr;
+    }
+    
+    if (self->environment == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+        return nullptr;
+    }
 
-	EnvironmentObjectInfo info;
-	bool ret = getObjectInfo(self->environment, id, info);
+    EnvironmentObjectInfo info;
+    bool ret = getObjectInfo(self->environment, id, info);
 
-	if(!ret) {
-		Py_INCREF(Py_None);
-		return Py_None;
-	}
+    if(!ret) {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
 
-	return get_info_dic_obj(info);
+    return get_info_dic_obj(info);
 }
 
 static PyObject* Env_get_agent_info(EnvObject* self, PyObject* args, PyObject* kwds) {
-	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
-		return nullptr;
-	}
+    if (self->environment == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+        return nullptr;
+    }
 
-	EnvironmentObjectInfo info;
-	bool ret = getAgentInfo(self->environment, info);
+    EnvironmentObjectInfo info;
+    bool ret = getAgentInfo(self->environment, info);
 
-	if(!ret) {
-		Py_INCREF(Py_None);
-		return Py_None;
-	}
+    if(!ret) {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
 
-	return get_info_dic_obj(info);
+    return get_info_dic_obj(info);
 }
 
 static PyObject* Env_set_light(EnvObject* self, PyObject* args, PyObject* kwds) {
-	PyObject* dirObj = nullptr;
-	PyObject* colorObj = nullptr;
-	PyObject* ambientColorObj = nullptr;
-	float shadowRate;
+    PyObject* dirObj = nullptr;
+    PyObject* colorObj = nullptr;
+    PyObject* ambientColorObj = nullptr;
+    float shadowRate;
 
-	// Get argument
-	const char* kwlist[] = {"dir", "color", "ambient_color", "shadow_rate", nullptr};
+    // Get argument
+    const char* kwlist[] = {"dir", "color", "ambient_color", "shadow_rate", nullptr};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!O!O!f", const_cast<char**>(kwlist),
-									 &PyArray_Type, &dirObj,
-									 &PyArray_Type, &colorObj,
-									 &PyArray_Type, &ambientColorObj,
-									 &shadowRate) ) {
-		return nullptr;
-	}
-	
-	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
-		return nullptr;
-	}
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!O!O!f", const_cast<char**>(kwlist),
+                                     &PyArray_Type, &dirObj,
+                                     &PyArray_Type, &colorObj,
+                                     &PyArray_Type, &ambientColorObj,
+                                     &shadowRate) ) {
+        return nullptr;
+    }
+    
+    if (self->environment == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+        return nullptr;
+    }
 
-	// dir
-	const float* dirArr = getFloatArrayData(dirObj, 3, "dir");
-	if( dirArr == nullptr ) {
-		return nullptr;
-	}
-	const float* colorArr = getFloatArrayData(colorObj, 3, "color");
-	if( colorArr == nullptr ) {
-		return nullptr;
-	}
-	const float* ambientColorArr = getFloatArrayData(ambientColorObj, 3, "ambient_color");
-	if( ambientColorArr == nullptr ) {
-		return nullptr;
-	}
+    // dir
+    const float* dirArr = getFloatArrayData(dirObj, 3, "dir");
+    if( dirArr == nullptr ) {
+        return nullptr;
+    }
+    const float* colorArr = getFloatArrayData(colorObj, 3, "color");
+    if( colorArr == nullptr ) {
+        return nullptr;
+    }
+    const float* ambientColorArr = getFloatArrayData(ambientColorObj, 3, "ambient_color");
+    if( ambientColorArr == nullptr ) {
+        return nullptr;
+    }
 
     Vector3f dir(dirArr[0], dirArr[1], dirArr[2]);
     Vector3f color(colorArr[0], colorArr[1], colorArr[2]);
     Vector3f ambientColor(ambientColorArr[0], ambientColorArr[1], ambientColorArr[2]);        
-	
-	setLight(self->environment,
+    
+    setLight(self->environment,
              dir, color, ambientColor,
-			 shadowRate);
+             shadowRate);
 
-	Py_INCREF(Py_None);
-	return Py_None;
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 static PyObject* Env_replace_obj_texture(EnvObject* self, PyObject* args, PyObject* kwds) {
-	const char *kwlist[] = { "id",
-							 "texture_path",
-							 nullptr };
-	
-	// Get argument
-	int id;
-	PyObject* texturePathListObj = nullptr;
-	
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "iO!", const_cast<char**>(kwlist),
-									 &id,
-									 &PyList_Type, &texturePathListObj) ) {
-		return nullptr;
-	}
+    const char *kwlist[] = { "id",
+                             "texture_path",
+                             nullptr };
+    
+    // Get argument
+    int id;
+    PyObject* texturePathListObj = nullptr;
+    
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "iO!", const_cast<char**>(kwlist),
+                                     &id,
+                                     &PyList_Type, &texturePathListObj) ) {
+        return nullptr;
+    }
 
-	if (self->environment == nullptr) {
-		PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
-		return nullptr;
-	}
+    if (self->environment == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+        return nullptr;
+    }
 
-	vector<string> texturePathes;
+    vector<string> texturePathes;
 
-	int textureSize = (int)PyList_Size(texturePathListObj);
-	for(Py_ssize_t i=0; i<textureSize; ++i) {
-		PyObject* textuerPathObj = PyList_GetItem(texturePathListObj, i);
+    int textureSize = (int)PyList_Size(texturePathListObj);
+    for(Py_ssize_t i=0; i<textureSize; ++i) {
+        PyObject* textuerPathObj = PyList_GetItem(texturePathListObj, i);
 
-		if (PyUnicode_Check(textuerPathObj)) {
-			PyObject * tmpBytes = PyUnicode_AsEncodedString(textuerPathObj,
-															"ASCII",
-															"strict");
-			if (tmpBytes != NULL) {
-				const char* textuePathStr = PyBytes_AS_STRING(tmpBytes);
-				texturePathes.push_back(textuePathStr);
-				Py_DECREF(tmpBytes);
-			} else {
-				PyErr_Format(PyExc_ValueError, "Replacing texture path was not valid string");
-				return nullptr;
-			}
-		} else {
-			PyErr_Format(PyExc_ValueError, "Replacing texture path was not valid string");
-			return nullptr;
-		}
-	}
+        if (PyUnicode_Check(textuerPathObj)) {
+            PyObject * tmpBytes = PyUnicode_AsEncodedString(textuerPathObj,
+                                                            "ASCII",
+                                                            "strict");
+            if (tmpBytes != NULL) {
+                const char* textuePathStr = PyBytes_AS_STRING(tmpBytes);
+                texturePathes.push_back(textuePathStr);
+                Py_DECREF(tmpBytes);
+            } else {
+                PyErr_Format(PyExc_ValueError, "Replacing texture path was not valid string");
+                return nullptr;
+            }
+        } else {
+            PyErr_Format(PyExc_ValueError, "Replacing texture path was not valid string");
+            return nullptr;
+        }
+    }
 
-	replaceObjectTextures(self->environment, id, texturePathes);
-	
-	Py_INCREF(Py_None);
-	return Py_None;
+    replaceObjectTextures(self->environment, id, texturePathes);
+    
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 // int add_camera_view(width, height, bg_color)
@@ -918,124 +918,122 @@ static PyObject* Env_replace_obj_texture(EnvObject* self, PyObject* args, PyObje
 // void replace_obj_texture(id, string[])
 
 static PyMethodDef EnvObject_methods[] = {
-	{"add_camera_view", (PyCFunction)Env_add_camera_view, METH_VARARGS | METH_KEYWORDS,
-	 "Add camera view"},
-	{"step", (PyCFunction)Env_step, METH_VARARGS | METH_KEYWORDS,
-	 "Advance the environment"},
-	{"render", (PyCFunction)Env_render, METH_VARARGS | METH_KEYWORDS,
-	 "render screen"},
-	{"add_box", (PyCFunction)Env_add_box, METH_VARARGS | METH_KEYWORDS,
-	 "Add box object"},
-	{"add_sphere", (PyCFunction)Env_add_sphere, METH_VARARGS | METH_KEYWORDS,
-	 "Add sphere object"},
-	{"add_model", (PyCFunction)Env_add_model, METH_VARARGS | METH_KEYWORDS,
-	 "Add model object"},
-	{"remove_obj", (PyCFunction)Env_remove_obj, METH_VARARGS | METH_KEYWORDS,
-	 "Remove object"},
-	{"locate_object", (PyCFunction)Env_locate_object, METH_VARARGS | METH_KEYWORDS,
-	 "Locate object"},
-	{"locate_agent", (PyCFunction)Env_locate_agent, METH_VARARGS | METH_KEYWORDS,
-	 "Locate agent"},
-	{"get_obj_info", (PyCFunction)Env_get_obj_info, METH_VARARGS | METH_KEYWORDS,
-	 "Get object information"},
-	{"get_agent_info", (PyCFunction)Env_get_agent_info, METH_VARARGS | METH_KEYWORDS,
-	 "Get agent information"},
-	{"set_light", (PyCFunction)Env_set_light, METH_VARARGS | METH_KEYWORDS,
-	 "Set light parameters"},
-	{"replace_obj_texture", (PyCFunction)Env_replace_obj_texture, METH_VARARGS | METH_KEYWORDS,
-	 "Replace object textures"},
-	{nullptr}
+    {"add_camera_view", (PyCFunction)Env_add_camera_view, METH_VARARGS | METH_KEYWORDS,
+     "Add camera view"},
+    {"step", (PyCFunction)Env_step, METH_VARARGS | METH_KEYWORDS,
+     "Advance the environment"},
+    {"render", (PyCFunction)Env_render, METH_VARARGS | METH_KEYWORDS,
+     "render screen"},
+    {"add_box", (PyCFunction)Env_add_box, METH_VARARGS | METH_KEYWORDS,
+     "Add box object"},
+    {"add_sphere", (PyCFunction)Env_add_sphere, METH_VARARGS | METH_KEYWORDS,
+     "Add sphere object"},
+    {"add_model", (PyCFunction)Env_add_model, METH_VARARGS | METH_KEYWORDS,
+     "Add model object"},
+    {"remove_obj", (PyCFunction)Env_remove_obj, METH_VARARGS | METH_KEYWORDS,
+     "Remove object"},
+    {"locate_object", (PyCFunction)Env_locate_object, METH_VARARGS | METH_KEYWORDS,
+     "Locate object"},
+    {"locate_agent", (PyCFunction)Env_locate_agent, METH_VARARGS | METH_KEYWORDS,
+     "Locate agent"},
+    {"get_obj_info", (PyCFunction)Env_get_obj_info, METH_VARARGS | METH_KEYWORDS,
+     "Get object information"},
+    {"get_agent_info", (PyCFunction)Env_get_agent_info, METH_VARARGS | METH_KEYWORDS,
+     "Get agent information"},
+    {"set_light", (PyCFunction)Env_set_light, METH_VARARGS | METH_KEYWORDS,
+     "Set light parameters"},
+    {"replace_obj_texture", (PyCFunction)Env_replace_obj_texture, METH_VARARGS | METH_KEYWORDS,
+     "Replace object textures"},
+    {nullptr}
 };
 
 
 static PyTypeObject rodentia_EnvType = {
-	PyVarObject_HEAD_INIT(nullptr, 0) // ob_size
-	"rodentia_module.Env",           // tp_name
-	sizeof(EnvObject),             // tp_basicsize
-	0,                             // tp_itemsize
-	(destructor)EnvObject_dealloc, // tp_dealloc
-	0,                             // tp_print
-	0,                             // tp_getattr
-	0,                             // tp_setattr
-	0,                             // tp_compare
-	0,                             // tp_repr
-	0,                             // tp_as_number
-	0,                             // tp_as_sequence
-	0,                             // tp_as_mapping
-	0,                             // tp_hash
-	0,                             // tp_call
-	0,                             // tp_str
-	0,                             // tp_getattro
-	0,                             // tp_setattro
-	0,                             // tp_as_buffer
-	Py_TPFLAGS_DEFAULT,            // tp_flags
-	"Env object",                  // tp_doc
-	0,                             // tp_traverse
-	0,                             // tp_clear
-	0,                             // tp_richcompare
-	0,                             // tp_weaklistoffset
-	0,                             // tp_iter
-	0,                             // tp_iternext
-	EnvObject_methods,             // tp_methods
-	0,                             // tp_members
-	0,                             // tp_getset
-	0,                             // tp_base
-	0,                             // tp_dict
-	0,                             // tp_descr_get
-	0,                             // tp_descr_set
-	0,                             // tp_dictoffset
-	(initproc)Env_init,            // tp_init
-	0,                             // tp_alloc
-	EnvObject_new,                 // tp_new
+    PyVarObject_HEAD_INIT(nullptr, 0) // ob_size
+    "rodentia_module.Env",            // tp_name
+    sizeof(EnvObject),             // tp_basicsize
+    0,                             // tp_itemsize
+    (destructor)EnvObject_dealloc, // tp_dealloc
+    0,                             // tp_print
+    0,                             // tp_getattr
+    0,                             // tp_setattr
+    0,                             // tp_compare
+    0,                             // tp_repr
+    0,                             // tp_as_number
+    0,                             // tp_as_sequence
+    0,                             // tp_as_mapping
+    0,                             // tp_hash
+    0,                             // tp_call
+    0,                             // tp_str
+    0,                             // tp_getattro
+    0,                             // tp_setattro
+    0,                             // tp_as_buffer
+    Py_TPFLAGS_DEFAULT,            // tp_flags
+    "Env object",                  // tp_doc
+    0,                             // tp_traverse
+    0,                             // tp_clear
+    0,                             // tp_richcompare
+    0,                             // tp_weaklistoffset
+    0,                             // tp_iter
+    0,                             // tp_iternext
+    EnvObject_methods,             // tp_methods
+    0,                             // tp_members
+    0,                             // tp_getset
+    0,                             // tp_base
+    0,                             // tp_dict
+    0,                             // tp_descr_get
+    0,                             // tp_descr_set
+    0,                             // tp_dictoffset
+    (initproc)Env_init,            // tp_init
+    0,                             // tp_alloc
+    EnvObject_new,                 // tp_new
 };
 
 
 
 static PyObject* moduleVersion(PyObject* self) {
-	return Py_BuildValue("s", RODENTIA_MODULE_VERSION);
+    return Py_BuildValue("s", RODENTIA_MODULE_VERSION);
 }
 
 static PyMethodDef moduleMethods[] = {
-	{"version", (PyCFunction)moduleVersion, METH_NOARGS,
-	 "Module version number."},
-	{nullptr, nullptr, 0, nullptr}
+    {"version", (PyCFunction)moduleVersion, METH_NOARGS,
+     "Module version number."},
+    {nullptr, nullptr, 0, nullptr}
 };
 
 static struct PyModuleDef moduleDef = {
-	PyModuleDef_HEAD_INIT, "rodentia_module", // m_name
-	"3D reinforcement learning environment", // m_doc
-	-1,            // m_size
-	moduleMethods, // m_methods
-	NULL,          // m_reload
-	NULL,          // m_traverse
-	NULL,          // m_clear
-	NULL,          // m_free
+    PyModuleDef_HEAD_INIT, "rodentia_module", // m_name
+    "3D reinforcement learning environment", // m_doc
+    -1,            // m_size
+    moduleMethods, // m_methods
+    NULL,          // m_reload
+    NULL,          // m_traverse
+    NULL,          // m_clear
+    NULL,          // m_free
 };
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-PyMODINIT_FUNC
-PyInit_rodentia_module()
-{
-	PyObject* m;
-	m = PyModule_Create(&moduleDef);
+PyMODINIT_FUNC PyInit_rodentia_module() {
+    PyObject* m;
+    m = PyModule_Create(&moduleDef);
 
-	if (m == NULL) {
-		return m;
-	}
-	
-	if (PyType_Ready(&rodentia_EnvType) < 0) {
-		return m;
-	}
-	
-	Py_INCREF(&rodentia_EnvType);
-	PyModule_AddObject(m, "Env", (PyObject*)&rodentia_EnvType);
+    if (m == NULL) {
+        return m;
+    }
+    
+    if (PyType_Ready(&rodentia_EnvType) < 0) {
+        return m;
+    }
+    
+    Py_INCREF(&rodentia_EnvType);
+    PyModule_AddObject(m, "Env", (PyObject*)&rodentia_EnvType);
 
-	import_array();
+    import_array();
 
-	return m;
+    return m;
 }
 
 #ifdef __cplusplus
