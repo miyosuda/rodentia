@@ -238,7 +238,7 @@ void Environment::render(int cameraId,
     
     // Start shadow rendering path
     // Make depth frame buffer as current
-    if( cameraId < 0 || cameraId >= cameraViews.size() ) {
+    if( cameraId < 0 || cameraId >= (int)cameraViews.size() ) {
         // TODO: レンダリング失敗の時の対応
         printf("Invaid camera id: %d\n", cameraId);
         return;
@@ -492,7 +492,7 @@ void Environment::replaceObjectTextures(int id, const vector<string>& texturePat
 }
 
 const void* Environment::getFrameBuffer(int cameraId) const {
-    if( cameraId < 0 || cameraId >= cameraViews.size() ) {
+    if( cameraId < 0 || cameraId >= (int)cameraViews.size() ) {
         printf("Invalid camera id: camera_id=%d\n", cameraId);
         return nullptr;
     }
@@ -502,7 +502,7 @@ const void* Environment::getFrameBuffer(int cameraId) const {
 }
 
 int Environment::getFrameBufferWidth(int cameraId) const {
-    if( cameraId < 0 || cameraId >= cameraViews.size() ) {
+    if( cameraId < 0 || cameraId >= (int)cameraViews.size() ) {
         printf("Invalid camera id: camera_id=%d\n", cameraId);
         return -1;
     }
@@ -512,7 +512,7 @@ int Environment::getFrameBufferWidth(int cameraId) const {
 }
 
 int Environment::getFrameBufferHeight(int cameraId) const {
-    if( cameraId < 0 || cameraId >= cameraViews.size() ) {
+    if( cameraId < 0 || cameraId >= (int)cameraViews.size() ) {
         printf("Invalid camera id: camera_id=%d\n", cameraId);
         return -1;
     }
@@ -522,7 +522,7 @@ int Environment::getFrameBufferHeight(int cameraId) const {
 }
 
 int Environment::getFrameBufferSize(int cameraId) const {
-    if( cameraId < 0 || cameraId >= cameraViews.size() ) {
+    if( cameraId < 0 || cameraId >= (int)cameraViews.size() ) {
         printf("Invalid camera id: camera_id=%d\n", cameraId);
         return -1;
     }

@@ -15,6 +15,7 @@ using namespace std;
 #include "ShaderManager.h"
 #include "RigidBodyComponent.h"
 #include "RenderingContext.h"
+#include "glinc.h"
 #include "GLContext.h"
 
 class Action;
@@ -54,7 +55,6 @@ private:
 	btDiscreteDynamicsWorld* world;
 
 	AgentObject* agent;
-	//Renderer renderer;
 	int nextObjId;
 	set<int> collidedIds;
 	map<int, EnvironmentObject*> objectMap; // <obj-id, EnvironmentObject>

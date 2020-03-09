@@ -1,8 +1,6 @@
 #include "GLContext.h"
 #include <stdio.h>
 
-#include "glad/glad.h" // for glad
-
 #if defined(__APPLE__)
 
 /**

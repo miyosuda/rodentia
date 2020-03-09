@@ -2,6 +2,8 @@
 #ifndef GLCONTEXT_HEADER
 #define GLCONTEXT_HEADER
 
+#include "glad/glad.h" // for glad
+
 #if defined(__APPLE__)
 
 #include <OpenGL/OpenGL.h>
