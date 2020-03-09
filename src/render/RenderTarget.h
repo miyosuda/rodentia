@@ -27,7 +27,8 @@ public:
         buffer(nullptr) {
     }
 
-    bool init(int width, int height, const Vector3f& bgColor_);
+    bool init(int width, int height, const Vector3f& bgColor_,
+              int shadowBufferWidth);
 
     void release();
 

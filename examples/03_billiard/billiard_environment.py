@@ -7,6 +7,7 @@ import rodentia
 import os
 import math
 import random
+import numpy as np
 
 MAX_STEP_NUM = 60 * 60  # 60 seconds * 60 frames
 
@@ -26,6 +27,13 @@ class BilliardEnvironment(object):
 
         # Object id for collision checking
         self.ball_obj_id_list = []
+
+        # Add additional camera for top view rendering
+        self.additional_camera_id = self.env.add_camera_view(256, 256,
+                                                             bg_color=[1, 1, 1],
+                                                             far=50.0,
+                                                             focal_length=30.0,
+                                                             shadow_buffer_width=1024)
 
         # Reset stage
         self.reset()
@@ -186,3 +194,12 @@ class BilliardEnvironment(object):
             screen = self._reset_sub()
 
         return screen, reward, terminal
+
+    def get_top_view(self):
+        # Capture stage image from the top view
+        pos = [0, 40, 0]
+        rot_x = -np.pi * 0.5
+        rot = [np.sin(rot_x * 0.5), 0, 0, np.cos(rot_x * 0.5)]
+
+        ret = self.env.render(self.additional_camera_id, pos, rot)
+        return ret["screen"]

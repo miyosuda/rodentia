@@ -15,7 +15,9 @@ private:
 
 public:
     CameraView();
-    bool init(int width, int height, const Vector3f& bgColor_);
+    bool init(int width, int height, const Vector3f& bgColor,
+              float nearClip, float farClip, float focalLength,
+              int shadowBufferWidth);
     void release();
 
     void setCameraMat(const Matrix4f& mat) {

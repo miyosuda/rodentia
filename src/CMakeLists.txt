@@ -14,7 +14,6 @@ add_library(rodentia_code STATIC
 	env/RigidBodyComponent.cpp
 	env/EnvironmentObject.cpp
 	render/DebugDrawer.cpp
-	render/Renderer.cpp
 	render/DiffuseShader.cpp
 	render/Image.cpp
 	render/Camera.cpp
@@ -26,7 +25,6 @@ add_library(rodentia_code STATIC
 	render/MeshData.cpp		
 	render/MeshManager.cpp
 	render/PNGDecoder.cpp
-	render/Renderer.cpp
 	render/Shader.cpp
 	render/ShaderManager.cpp
 	render/Texture.cpp

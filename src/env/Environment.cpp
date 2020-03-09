@@ -92,9 +92,12 @@ bool Environment::init() {
     return ret;
 }
 
-int Environment::addCameraView(int width, int height, const Vector3f& bgColor) {
+int Environment::addCameraView(int width, int height, const Vector3f& bgColor,
+                               float nearClip, float farClip, float focalLength,
+                               int shadowBufferWidth) {
     CameraView* cameraView = new CameraView();
-    bool ret = cameraView->init(width, height, bgColor);
+    bool ret = cameraView->init(width, height, bgColor, nearClip, farClip, focalLength,
+                                shadowBufferWidth);
     if( !ret ) {
         delete cameraView;
         return -1;

@@ -9,18 +9,17 @@ CameraView::CameraView() {
 /**
  * <!--  init():  -->
  */
-bool CameraView::init(int width, int height, const Vector3f& bgColor_) {
+bool CameraView::init(int width, int height, const Vector3f& bgColor,
+                      float nearClip, float farClip, float focalLength,
+                      int shadowBufferWidth) {
     // Setup caemra
     float ratio = width / (float) height;
 
-    const float nearClip = 0.05f;
-    const float farClip = 80.0f;
-    const float focalLength = 50.0f;
     const bool flipping = true;
     camera.initPerspective(nearClip, farClip, focalLength, ratio, flipping);
 
     // Setup render target
-    bool ret = renderTarget.init(width, height, bgColor_);
+    bool ret = renderTarget.init(width, height, bgColor, shadowBufferWidth);
     return ret;
 }
 

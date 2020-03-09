@@ -34,8 +34,12 @@ static bool initEnvironment(Environment* environment) {
 }
 
 static int addCameraView(Environment* environment, int width, int height,
-                         const Vector3f& bgColor) {
-    int cameraId = environment->addCameraView(width, height, bgColor);
+                         const Vector3f& bgColor,
+                         float nearClip, float farClip, float focalLength,
+                         int shadowBufferWidth) {
+    int cameraId = environment->addCameraView(width, height, bgColor,
+                                              nearClip, farClip, focalLength,
+                                              shadowBufferWidth);
     return cameraId;
 }
 
@@ -236,17 +240,29 @@ static PyObject* Env_add_camera_view(EnvObject* self, PyObject* args, PyObject* 
 	const char *kwlist[] = { "width",
 							 "height",
 							 "bg_color",
+                             "near",
+                             "far",
+                             "focal_length",
+                             "shadow_buffer_width",
 							 nullptr };
 
 	// Get argument
 	int width;
 	int height;
 	PyObject* bgColorObj = nullptr;
+    float nearClip;
+    float farClip;
+    float focalLength;
+    int shadowBufferWidth;
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "iiO!", const_cast<char**>(kwlist),
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "iiO!fffi", const_cast<char**>(kwlist),
 									 &width,
 									 &height,
-									 &PyArray_Type, &bgColorObj)) {
+									 &PyArray_Type, &bgColorObj,
+                                     &nearClip,
+                                     &farClip,
+                                     &focalLength,
+                                     &shadowBufferWidth)) {
 		PyErr_SetString(PyExc_RuntimeError, "init argument shortage");
 		return nullptr;
 	}
@@ -264,7 +280,9 @@ static PyObject* Env_add_camera_view(EnvObject* self, PyObject* args, PyObject* 
     Vector3f bgColor = Vector3f(bgColorArr[0], bgColorArr[1], bgColorArr[2]);
 
 	// Initialize environment
-    int cameraId = addCameraView(self->environment, width, height, bgColor);
+    int cameraId = addCameraView(self->environment, width, height, bgColor,
+                                 nearClip, farClip, focalLength,
+                                 shadowBufferWidth);
 	if (cameraId < 0) {
 		PyErr_Format(PyExc_RuntimeError, "Failed to init environment.");
 		return nullptr;

@@ -44,17 +44,26 @@ class Environment(object):
         self.env = rodentia_module.Env()
         self.main_camera_id = self.add_camera_view(width, height, bg_color)
 
-    def add_camera_view(self, width, height, bg_color=[0.0, 0.0, 0.0]):
+    def add_camera_view(self, width, height, bg_color=[0.0, 0.0, 0.0],
+                        near=0.05, far=80.0, focal_length=50.0,
+                        shadow_buffer_width=0):
         """Add camera view.
         Args:
           width: Screen width
           height: Screen height
           bg_color: Background color (RGB value with 0.0 ~ 1.0)
+          near: Near clip distane (default 0.05)
+          far: Far clip distane (default 80.0)
+          focal_length: Focal length (default 50.0)
+          shadow_buffer_width: Shadow depth buffer width. (If 0 calculated automatically )
+                               (default 0)
         Returns:
           Int value for the camera id.
         """
         return self.env.add_camera_view(width=width, height=height,
-                                        bg_color=to_nd_float_array(bg_color))
+                                        bg_color=to_nd_float_array(bg_color),
+                                        near=near, far=far, focal_length=focal_length,
+                                        shadow_buffer_width=shadow_buffer_width)
 
     def add_box(self,
                 texture_path,

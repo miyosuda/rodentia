@@ -96,7 +96,9 @@ public:
 	}
 
 	bool init();
-    int addCameraView(int width, int height, const Vector3f& bgColor);
+    int addCameraView(int width, int height, const Vector3f& bgColor,
+                      float nearClip, float farClip, float focalLength,
+                      int shadowBufferWidth);
 	void release();
 	void step(const Action& action, int stepNum);
 	int addBox(const char* texturePath,

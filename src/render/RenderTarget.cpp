@@ -24,7 +24,7 @@ int RenderTarget::calcDepthFrameBufferSize(int width, int height) {
         result *= 2;
     }
     if( result > 1024 ) {
-        // Max shadow mapp depth buffer size is 1024x1024 
+        // Max shadow map depth buffer size is 1024x1024 
         result = 1024;
     }
 
@@ -35,7 +35,8 @@ int RenderTarget::calcDepthFrameBufferSize(int width, int height) {
 /**
  * <!--  init():  -->
  */
-bool RenderTarget::init(int width, int height, const Vector3f& bgColor_) {
+bool RenderTarget::init(int width, int height, const Vector3f& bgColor_,
+                        int shadowBufferWidth) {
     bgColor.set(bgColor_);
     
     frameBufferWidth = width;
@@ -50,7 +51,14 @@ bool RenderTarget::init(int width, int height, const Vector3f& bgColor_) {
     }
 
     // Setup shadow depth frame buffer
-    int depthFrameBufferSize = calcDepthFrameBufferSize(width, height);
+    int depthFrameBufferSize;
+    if( shadowBufferWidth <= 0 ) {
+        // Calculate depth frame buffer size automatically.
+        depthFrameBufferSize = calcDepthFrameBufferSize(width, height);
+    } else {
+        depthFrameBufferSize = shadowBufferWidth;
+    }
+    
     ret = depthFrameBuffer.init(depthFrameBufferSize, depthFrameBufferSize);
     if( !ret ) {
         printf("Failed to init shadow depth buffer.\n");

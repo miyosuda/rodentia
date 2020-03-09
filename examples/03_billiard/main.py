@@ -17,7 +17,7 @@ class Display(object):
         self.width = display_size[0]
         self.height = display_size[1]
 
-        self.env = BilliardEnvironment(width=self.width, height=self.height)
+        self.env = BilliardEnvironment(256, 256)
 
         pygame.init()
 
@@ -61,13 +61,16 @@ class Display(object):
 
         state, reward, terminal = self.env.step(real_action=real_action)
 
+        top_image = self.env.get_top_view()
+
         if reward != 0:
             print("reward={}".format(reward))
 
-        image = pygame.image.frombuffer(state,
-                                        (self.width, self.height),
-                                        'RGB')
+        image = pygame.image.frombuffer(state, (256, 256), 'RGB')
+        top_image = pygame.image.frombuffer(top_image, (256, 256), 'RGB')
+        
         self.surface.blit(image, (0, 0))
+        self.surface.blit(top_image, (256, 0))
 
         self.last_state = state
 
@@ -76,7 +79,7 @@ class Display(object):
 
 
 def main():
-    display_size = (640, 480)
+    display_size = (512, 256)
     display = Display(display_size)
     clock = pygame.time.Clock()
 
