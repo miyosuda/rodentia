@@ -45,9 +45,6 @@ public:
     int getCollisionId() const;
     void getMat(Matrix4f& mat) const;
     void draw(RenderingContext& context) const;
-    btRigidBody* getRigidBody() {
-        return rigidBodyComponent->getRigidBody();
-    }
     bool calcBoundingBox(BoundingBox& boundingBox);
     void getInfo(EnvironmentObjectInfo& info) const;
     void locate(const Vector3f& pos, const Quat4f& rot);

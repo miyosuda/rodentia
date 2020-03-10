@@ -43,9 +43,9 @@ class Display(object):
         pressed = pygame.key.get_pressed()
 
         if pressed[K_q]:
-            lookAction += 10
+            lookAction += 6
         if pressed[K_e]:
-            lookAction -= 10
+            lookAction -= 6
         if pressed[K_a]:
             strafeAction += 1
         if pressed[K_d]:

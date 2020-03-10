@@ -1,28 +1,7 @@
 #include "RigidBodyComponent.h"
 #include "Action.h"
+#include <math.h>
 
-static void convertRigidBodyTransformToDrawMatrix4f(const btTransform& transform,
-                                                    const Vector3f& relativeCenter,
-                                                    Matrix4f& drawMat) {
-
-    Matrix4f rigidBodyMat;
-    const btVector3& origin = transform.getOrigin();
-    const btMatrix3x3& basis = transform.getBasis();
-    for(int i=0; i<3; ++i) {
-        btVector3 column = basis.getColumn(i);
-        rigidBodyMat.setColumn(i, Vector4f(column.x(), column.y(), column.z(), 0.0f));
-    }
-    rigidBodyMat.setColumn(3, Vector4f(origin.x(), origin.y(), origin.z(), 1.0f));
-
-    Matrix4f invRelativeCenterMat;
-    invRelativeCenterMat.setIdentity();
-    invRelativeCenterMat.setColumn(3, Vector4f(-relativeCenter.x,
-                                               -relativeCenter.y,
-                                               -relativeCenter.z,
-                                               1.0f));
-
-    drawMat.mul(rigidBodyMat, invRelativeCenterMat);
-}
 
 //---------------------------
 //   [RigidBodyComponent]
@@ -87,7 +66,26 @@ void RigidBodyComponent::control(const Action& action) {
 }
 
 void RigidBodyComponent::getMat(Matrix4f& mat) const {
-    convertRigidBodyTransformToDrawMatrix4f(body->getWorldTransform(), relativeCenter, mat);
+    const btTransform& transform = body->getWorldTransform();
+    
+    Matrix4f rigidBodyMat;
+    
+    const btVector3& origin = transform.getOrigin();
+    const btMatrix3x3& basis = transform.getBasis();
+    for(int i=0; i<3; ++i) {
+        btVector3 column = basis.getColumn(i);
+        rigidBodyMat.setColumn(i, Vector4f(column.x(), column.y(), column.z(), 0.0f));
+    }
+    rigidBodyMat.setColumn(3, Vector4f(origin.x(), origin.y(), origin.z(), 1.0f));
+
+    Matrix4f invRelativeCenterMat;
+    invRelativeCenterMat.setIdentity();
+    invRelativeCenterMat.setColumn(3, Vector4f(-relativeCenter.x,
+                                               -relativeCenter.y,
+                                               -relativeCenter.z,
+                                               1.0f));
+
+    mat.mul(rigidBodyMat, invRelativeCenterMat);
 }
 
 void RigidBodyComponent::getVeclocity(Vector3f& velocity) const {
@@ -108,7 +106,7 @@ void RigidBodyComponent::locate(const Vector3f& pos, const Quat4f& rot) {
                                                 relativeCenter.z));
 
     btTransform rigidBodyTransform;
-    rigidBodyTransform = drawTransform * relativeCenterTransform;   
+    rigidBodyTransform = drawTransform * relativeCenterTransform;
     
     body->setWorldTransform(rigidBodyTransform);
 }
@@ -119,18 +117,19 @@ void RigidBodyComponent::locate(const Vector3f& pos, const Quat4f& rot) {
 //---------------------------
 AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
                                                  const Vector3f& pos,
-                                                 float rotY,
+                                                 float rotY_,
                                                  btCollisionShape* shape,
                                                  btDynamicsWorld* world_,
                                                  int collisionId)
     :
     RigidBodyComponent(mass,
                        pos,
-                       Quat4f(0.0f, sin(rotY*0.5f), 0.0f, cos(rotY*0.5f)), // use rotY only
+                       Quat4f(0.0f, 0.0f, 0.0f, 1.0f), // Don't use rigidbody's rotation
                        Vector3f(0.0f, 0.0f, 0.0f),
                        shape,
                        world_,
                        collisionId) {
+    rotY = rotY_;
     
     // Disable deactivation
     body->setActivationState(DISABLE_DEACTIVATION);
@@ -144,7 +143,6 @@ AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
 
 void AgentRigidBodyComponent::control(const Action& action) {
     const float linearVelocityRate = 15.0f;
-    const float angularVelocityRate = 0.5f;
     const float impulseLengthLimit = 1.0f;
     
     // Calc linear impulse
@@ -163,9 +161,10 @@ void AgentRigidBodyComponent::control(const Action& action) {
                                          0.0f,
                                          -linearVelocityRate * action.move);
     }
-
-    btTransform transform(body->getWorldTransform());
-    transform.setOrigin(btVector3(0,0,0));
+    
+    btTransform transform;
+    transform.setIdentity();
+    transform.setRotation(btQuaternion(0.0f, sin(rotY * 0.5f), 0.0f, cos(rotY * 0.5f)));
 
     btVector3 targetVelocity = transform * targetLocalVelocity;
     btVector3 velocityDiff = targetVelocity - body->getLinearVelocity();
@@ -181,19 +180,47 @@ void AgentRigidBodyComponent::control(const Action& action) {
     // Apply impulse at the center of sphere.
     body->applyImpulse(impulse, btVector3(0.0f, 0.0f, 0.0f));
 
-    // Calc angular impulse
-    btVector3 targetLocalAngularVelocity = btVector3(0.0f, 0.0f, 0.0f);
-    
-    if( action.look != 0 ) {
-        targetLocalAngularVelocity = btVector3(0.0f,
-                                               action.look * angularVelocityRate,
-                                               0.0f);
-    }
+    // Apply rotation
+    float deltaRotY = (action.look / 180.0) * M_PI;
+    rotY += deltaRotY;
+}
 
-    btVector3 targetAngularVelocity = transform * targetLocalAngularVelocity;
-    btVector3 angularVelocityDiff = targetAngularVelocity - body->getAngularVelocity();
-    btMatrix3x3 inertiaTensorWorld = body->getInvInertiaTensorWorld().inverse();
-    btVector3 torqueImpulse = inertiaTensorWorld * angularVelocityDiff;
+void AgentRigidBodyComponent::locate(const Vector3f& pos, const Quat4f& rot) {
+    // rot is applied only to rotY, and not applied to rigidBody's transform
+    rotY = atan2(rot.y, rot.w) * 2.0f;
+
+    btTransform drawTransform;
+    drawTransform.setIdentity();
+    drawTransform.setOrigin(btVector3(pos.x, pos.y, pos.z));
+
+    btTransform relativeCenterTransform;
+    relativeCenterTransform.setIdentity();
+    relativeCenterTransform.setOrigin(btVector3(relativeCenter.x,
+                                                relativeCenter.y,
+                                                relativeCenter.z));
+
+    btTransform rigidBodyTransform;
+    rigidBodyTransform = drawTransform * relativeCenterTransform;
     
-    body->applyTorqueImpulse(torqueImpulse);
+    body->setWorldTransform(rigidBodyTransform);
+}
+
+void AgentRigidBodyComponent::getMat(Matrix4f& mat) const {
+    const btTransform& transform = body->getWorldTransform();
+    
+    Matrix4f rigidBodyMat;
+    
+    const btVector3& origin = transform.getOrigin();
+    // rotation is calculated with rotY and not with rididbody's rotation.
+    rigidBodyMat.setRotationY(rotY);
+    rigidBodyMat.setColumn(3, Vector4f(origin.x(), origin.y(), origin.z(), 1.0f));
+
+    Matrix4f invRelativeCenterMat;
+    invRelativeCenterMat.setIdentity();
+    invRelativeCenterMat.setColumn(3, Vector4f(-relativeCenter.x,
+                                               -relativeCenter.y,
+                                               -relativeCenter.z,
+                                               1.0f));
+    
+    mat.mul(rigidBodyMat, invRelativeCenterMat);
 }

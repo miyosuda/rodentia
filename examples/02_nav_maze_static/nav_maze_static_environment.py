@@ -13,13 +13,13 @@ MAX_STEP_NUM = 60 * 60  # 60 seconds * 60 frames
 
 class NavMazeStaticEnvironment(object):
     ACTION_LIST = [
-        [10, 0, 0],  # look_left
-        [-10, 0, 0],  # look_right
-        [0, 1, 0],  # strafe_left
-        [0, -1, 0],  # strafe_right
-        [0, 0, 1],  # forward
-        [0, 0, -1],  # backward
-    ]
+        [  6,  0,  0], # look_left
+        [ -6,  0,  0], # look_right
+        [  0,  1,  0], # strafe_left
+        [  0, -1,  0], # strafe_right
+        [  0,  0,  1], # forward
+        [  0,  0, -1], # backward
+    ]    
 
     def __init__(self, width, height):
         self.data_path = os.path.dirname(

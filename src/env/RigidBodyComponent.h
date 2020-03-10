@@ -27,23 +27,25 @@ public:
     virtual ~RigidBodyComponent();
     int getCollisionId() const;
     virtual void control(const Action& action);
-    void getMat(Matrix4f& mat) const;
+    virtual void getMat(Matrix4f& mat) const;
     void getVeclocity(Vector3f& velocity) const;
-    void locate(const Vector3f& pos, const Quat4f& rot);
-    btRigidBody* getRigidBody() { return body; }
-
+    virtual void locate(const Vector3f& pos, const Quat4f& rot);
 };
 
 class AgentRigidBodyComponent : public RigidBodyComponent {
+private:
+    float rotY;
+    
 public:
     AgentRigidBodyComponent(float mass,
                             const Vector3f& pos,
-                            float rotY,
+                            float rotY_,
                             btCollisionShape* shape,
                             btDynamicsWorld* world,
                             int collisionId);
     virtual void control(const Action& action) override;
-    void getMat(Matrix4f& mat) const;
+    void locate(const Vector3f& pos, const Quat4f& rot) override;
+    void getMat(Matrix4f& mat) const override;
 };
 
 #endif
