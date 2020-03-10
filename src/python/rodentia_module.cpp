@@ -91,11 +91,13 @@ static int addModel(Environment* environment,
                     const Vector3f& pos,
                     const Quat4f& rot,
                     float mass,
-                    bool detectCollision) {
+                    bool detectCollision,
+                    bool useMeshCollision) {
     return environment->addModel(path,
                                  scale, pos, rot, 
                                  mass,
-                                 detectCollision);
+                                 detectCollision,
+                                 useMeshCollision);
 }
 
 static void removeObj(Environment* environment, 
@@ -553,17 +555,21 @@ static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) 
     PyObject* rotObj = nullptr;
     float mass;
     int detectCollision;
+    int useMeshCollision;
 
     // Get argument
-    const char* kwlist[] = {"path", "scale", "pos", "rot", "mass", "detect_collision", nullptr};
+    const char* kwlist[] = {"path", "scale", "pos", "rot", "mass", 
+                            "detect_collision", "use_mesh_collision",
+                            nullptr};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!fi", const_cast<char**>(kwlist),
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!fii", const_cast<char**>(kwlist),
                                      &path,
                                      &PyArray_Type, &scaleObj,
                                      &PyArray_Type, &posObj,
                                      &PyArray_Type, &rotObj,
                                      &mass,
-                                     &detectCollision)) {
+                                     &detectCollision,
+                                     &useMeshCollision)) {
         return nullptr;
     }
     
@@ -600,7 +606,8 @@ static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) 
                       path,
                       scale, pos, rot,
                       mass,
-                      detectCollision != 0);
+                      detectCollision != 0,
+                      useMeshCollision != 0);
 
     // Returning object ID
     PyObject* idObj = PyLong_FromLong(id);

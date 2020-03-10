@@ -279,3 +279,16 @@ Mesh* MeshManager::getModelMesh(const char* path,
     
     return meshData->toMesh(textureManager, shaderManager);
 }
+
+/**
+ * <!--  getCollisionMeshData():  -->
+ */
+const CollisionMeshData* MeshManager::getCollisionMeshData(const char* path) const {
+    auto itr = modelMeshDataMap.find(path);
+    if( itr == modelMeshDataMap.end() ) {
+        return nullptr;
+    } else {
+        const MeshData* meshData = itr->second;
+        return &(meshData->getCollisionMeshData());
+    }
+}

@@ -15,6 +15,7 @@ class Material;
 class TextureManager;
 class ShaderManager;
 class Vector3f;
+class CollisionMeshData;
 
 
 class MeshManager {
@@ -30,6 +31,7 @@ public:
     Mesh* getSphereMesh(Material* material);
     Mesh* getModelMesh(const char* path,
                        TextureManager& textureManager, ShaderManager& shaderManager);
+    const CollisionMeshData* getCollisionMeshData(const char* path) const;
 };
 
 #endif

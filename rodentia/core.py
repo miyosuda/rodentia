@@ -132,7 +132,8 @@ class Environment(object):
                   pos,
                   rot=0.0,
                   mass=0.0,
-                  detect_collision=False):
+                  detect_collision=False,
+                  use_mesh_collision=False):
         """Add model object with .obj format.
         Args:
           path: Path for the .obj file.
@@ -142,9 +143,11 @@ class Environment(object):
                (in radian)
           mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
                 but if mass > 0, the object is physically simulated.
-          detect_collision: A bool value for indicating whether the object is included for collision
-                            check result. If this argument is True, object's id is included when 
+          detect_collision: Whether the object is included for collision check result.
+                            If this argument is True, object's id is included when 
                             the agenet collides with this object.
+          use_mesh_collision: Whether to use mesh data for the collision.
+                            If false, box collision shape is cauculated based on the bounding box.
         Returns:
           Int value for the object id.
         """
@@ -154,7 +157,8 @@ class Environment(object):
             pos=to_nd_float_array(pos),
             rot=to_nd_float_array_for_rot(rot),
             mass=mass,
-            detect_collision=detect_collision)
+            detect_collision=detect_collision,
+            use_mesh_collision=use_mesh_collision)
 
     def locate_object(self, id, pos, rot=0.0):
         """Locate object to given position and orientataion.

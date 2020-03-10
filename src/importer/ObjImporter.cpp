@@ -156,6 +156,8 @@ static MeshData* loadObjMeshData(const tinyobj::attrib_t& attrib,
         }
     }
 
+    MeshData* meshData = new MeshData();    
+
     // For each shape
     for (size_t i = 0; i < shapes.size(); i++) {
         size_t index_offset = 0;
@@ -204,12 +206,34 @@ static MeshData* loadObjMeshData(const tinyobj::attrib_t& attrib,
                                                    u,
                                                    v);
             }
+            
+            if(fnum == 3) {
+                const std::vector<tinyobj::index_t>& indices = shapes[i].mesh.indices;
+                tinyobj::index_t idx0 = indices[index_offset];
+                float x0 = attrib.vertices[3 * idx0.vertex_index + 0];
+                float y0 = attrib.vertices[3 * idx0.vertex_index + 1];
+                float z0 = attrib.vertices[3 * idx0.vertex_index + 2];
+
+                tinyobj::index_t idx1 = indices[index_offset+1];
+                float x1 = attrib.vertices[3 * idx1.vertex_index + 0];
+                float y1 = attrib.vertices[3 * idx1.vertex_index + 1];
+                float z1 = attrib.vertices[3 * idx1.vertex_index + 2];
+
+                tinyobj::index_t idx2 = indices[index_offset+2];
+                float x2 = attrib.vertices[3 * idx2.vertex_index + 0];
+                float y2 = attrib.vertices[3 * idx2.vertex_index + 1];
+                float z2 = attrib.vertices[3 * idx2.vertex_index + 2];
+                
+                meshData->addCollisionTriangle(x0, y0, z0,
+                                               x1, y1, z1,
+                                               x2, y2, z2);
+            } else {
+                printf("Mesh was not triangulated\n");
+            }
 
             index_offset += fnum;
         }
     }
-
-    MeshData* meshData = new MeshData();
     
     for(int i=0; i<meshFaces.size(); ++i) {
         const string& texturePath = meshFaces[i].getTexturePath();

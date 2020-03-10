@@ -271,9 +271,9 @@ class Display(object):
     pressed = pygame.key.get_pressed()
 
     if pressed[K_q]:
-      lookAction += 10
+      lookAction += 6
     if pressed[K_e]:
-      lookAction -= 10
+      lookAction -= 6
     if pressed[K_a]:
       strafeAction += 1
     if pressed[K_d]:
@@ -342,7 +342,6 @@ class Display(object):
 
     # add test model
     model_path0 = self.data_path + "apple0.obj"
-    
     self.env.add_model(path=model_path0,
                        scale=[1.0, 1.0, 1.0],
                        pos=[0.0, 0.0, 10.0], # +z pos
@@ -357,6 +356,15 @@ class Display(object):
                        rot=0.0,
                        mass=1.0,
                        detect_collision=True)
+
+    model_path2 = self.data_path + "ramp0.obj"
+    self.env.add_model(path=model_path2,
+                       scale=[2.0, 1.0, 2.0],
+                       pos=[10.0, 0.0, 5.0],
+                       rot=np.pi * 0.25,
+                       mass=0.0,
+                       detect_collision=True,
+                       use_mesh_collision=True)
 
     
     # Locate agent to default position

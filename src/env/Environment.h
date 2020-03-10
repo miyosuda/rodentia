@@ -117,7 +117,8 @@ public:
                  const Vector3f& pos,
                  const Quat4f& rot,
                  float mass,
-                 bool detectCollision);
+                 bool detectCollision,
+                 bool useMeshCollision);
     void removeObject(int id);
     void locateObject(int id, const Vector3f& pos, const Quat4f& rot);
     void locateAgent(const Vector3f& pos, float rotY);
