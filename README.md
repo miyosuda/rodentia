@@ -86,7 +86,7 @@ And install with `rodentia` with pip
 
 ## How to run example
 
-    $ pip3 install pygame==2.0.0.dev6 Pillow>=5.1.0
+    $ pip3 install pygame==2.0.0.dev6 Pillow
     $ python3 examples/01_seekavoid_arena/main.py
 
 
