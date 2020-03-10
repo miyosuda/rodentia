@@ -33,7 +33,9 @@ class RodentiaModuleTest(unittest.TestCase):
       env = rodentia.rodentia_module.Env()
 
       camera_id = env.add_camera_view(width, height,
-                                      bg_color=to_nd_float_array([1.0, 0.0, 0.0]))
+                                      bg_color=to_nd_float_array([1.0, 0.0, 0.0]),
+                                      near=0.05, far=80.0, focal_length=50.0,
+                                      shadow_buffer_width=0)
       self.assertEqual(camera_id, 0)
 
       # Check setup interfaces
@@ -70,7 +72,7 @@ class RodentiaModuleTest(unittest.TestCase):
                     shadow_rate=0.2)
     
       # Check step with action
-      action = np.array([10, 0, 0], dtype=np.int32)
+      action = np.array([1, 0, 0], dtype=np.int32)
       
       for i in range(3):
           obs_step = env.step(action=action, num_steps=1)

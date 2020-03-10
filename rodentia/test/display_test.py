@@ -361,7 +361,7 @@ class Display(object):
     
     # Locate agent to default position
     self.env.locate_agent(pos=[0,0,0],
-                          rot=0.0)
+                          rot_y=0.0)
 
     # Set light params
     self.env.set_light(dir=[-0.5, -1.0, -0.4])
