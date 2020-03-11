@@ -363,8 +363,17 @@ class Display(object):
                        pos=[10.0, 0.0, 5.0],
                        rot=np.pi * 0.25,
                        mass=0.0,
-                       detect_collision=True,
+                       detect_collision=False,
                        use_mesh_collision=True)
+
+    model_path3 = self.data_path + "cylinder0.obj"
+    self.env.add_model(path=model_path3,
+                       scale=[3.0, 3.0, 3.0],
+                       pos=[-5.0, 0.0, 8.0],
+                       rot=0.0,
+                       mass=0.0,
+                       detect_collision=False,
+                       use_mesh_collision=True)    
 
     
     # Locate agent to default position
