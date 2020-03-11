@@ -54,7 +54,8 @@ Add box object.
             pos,
             rot=0.0,
             mass=0.0,
-            detect_collision=False)
+            detect_collision=False,
+            visible=True)
 
 | Argument         | Description                                    |
 |------------------|------------------------------------------------|
@@ -64,6 +65,7 @@ Add box object.
 | rot              | A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object (in radian)                       |
 | mass             | Float, mass of the object. if mass == 0, the object is treated as static object, and if mass > 0, the object is physically simulated. |
 | detect_collision | Boolean, whether the object is included for collision check result.  If this argument is `True`, object's id is included when the agenet collides with this object. |
+| visible          | Boolean, visibility of the object. If false, only collision will take effect. |
 
 | Return value type | Return value description                       |
 |-------------------|------------------------------------------------|
@@ -80,7 +82,8 @@ Add sphere object.
                pos,
                rot=0.0,
                mass=0.0,
-               detect_collision=False)
+               detect_collision=False,
+               visible=True)
 
 | Argument         | Description                                    |
 |------------------|------------------------------------------------|
@@ -90,6 +93,7 @@ Add sphere object.
 | rot              | A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object (in radian)                       |
 | mass             | Float, mass of the object. if mass == 0, the object is treated as static object, and if mass > 0, the object is physically simulated. |
 | detect_collision | Boolean, whether the object is included for collision check result. If this argument is `True`, object's id is included when the agenet collides with this object. |
+| visible          | Boolean, visibility of the object. If false, only collision will take effect. |
 
 | Return value type | Return value description                       |
 |-------------------|------------------------------------------------|
@@ -108,7 +112,8 @@ Add model object with Wavefront `.obj` format.
               pos,
               rot=0.0,
               mass=0.0,
-              detect_collision=False)
+              detect_collision=False,
+              visible=True)
 
 | Argument         | Description                                    |
 |------------------|------------------------------------------------|
@@ -118,6 +123,7 @@ Add model object with Wavefront `.obj` format.
 | rot              | A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object (in radian) |
 | mass             | Float, mass of the object. if mass == 0, the object is treated as static object, and if mass > 0, the object is physically simulated. |
 | detect_collision | Boolean, whether the object is included for collision check result. If this argument is `True`, object's id is included when the agenet collides with this object. |
+| visible          | Boolean, visibility of the object. If false, only collision will take effect. |
 
 | Return value type | Return value description                       |
 |-------------------|------------------------------------------------|

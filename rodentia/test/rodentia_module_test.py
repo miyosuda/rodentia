@@ -41,7 +41,8 @@ class RodentiaModuleTest(unittest.TestCase):
                   pos=to_nd_float_array([0.0, -1.0, 0.0]),
                   rot=to_nd_float_array([0.0, 0.0, 0.0, 1.0]),
                   mass=0.0,
-                  detect_collision=False)
+                  detect_collision=False,
+                  visible=True)
 
       # Add Sphere
       sphere_id = env.add_sphere(texture_path="",
@@ -49,7 +50,8 @@ class RodentiaModuleTest(unittest.TestCase):
                                  pos=to_nd_float_array([0.0, 2.0, -5.0]),
                                  rot=to_nd_float_array([0.0, 0.0, 0.0, 1.0]),
                                  mass=1.0,
-                                 detect_collision=True)
+                                 detect_collision=True,
+                                 visible=True)
       print("sphere_id={}".format(sphere_id))
 
       # Locate agent

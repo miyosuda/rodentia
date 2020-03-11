@@ -97,7 +97,9 @@ StageObject::StageObject(const Vector3f& pos,
                                                 shape,
                                                 world,
                                                 collisionId);
-    drawComponent = new DrawComponent(mesh, scale);
+    if(mesh != nullptr ) {
+        drawComponent = new DrawComponent(mesh, scale);
+    }
 }
 
 //---------------------------

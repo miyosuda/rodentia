@@ -64,11 +64,13 @@ static int addBox(Environment* environment,
                   const Vector3f& pos,
                   const Quat4f& rot,
                   float mass,
-                  bool detectCollision) {
+                  bool detectCollision,
+                  bool visible) {
     return environment->addBox(texturePath,
                                halfExtent, pos, rot,
                                mass,
-                               detectCollision);
+                               detectCollision,
+                               visible);
 }
 
 static int addSphere(Environment* environment,
@@ -77,12 +79,14 @@ static int addSphere(Environment* environment,
                      const Vector3f& pos,
                      const Quat4f& rot,
                      float mass,
-                     bool detectCollision) {
+                     bool detectCollision,
+                     bool visible) {
     return environment->addSphere(texturePath,
                                   radius,
                                   pos, rot,
                                   mass,
-                                  detectCollision);
+                                  detectCollision,
+                                  visible);
 }
 
 static int addModel(Environment* environment,
@@ -92,12 +96,14 @@ static int addModel(Environment* environment,
                     const Quat4f& rot,
                     float mass,
                     bool detectCollision,
-                    bool useMeshCollision) {
+                    bool useMeshCollision,
+                    bool visible) {
     return environment->addModel(path,
                                  scale, pos, rot, 
                                  mass,
                                  detectCollision,
-                                 useMeshCollision);
+                                 useMeshCollision,
+                                 visible);
 }
 
 static void removeObj(Environment* environment, 
@@ -437,18 +443,21 @@ static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
     PyObject* rotObj = nullptr;
     float mass;
     int detectCollision;
+    int visible;
 
     // Get argument
-    const char* kwlist[] = {"texture_path", "half_extent", "pos", "rot", "mass", "detect_collision",
+    const char* kwlist[] = {"texture_path", "half_extent", "pos", "rot", "mass", 
+                            "detect_collision", "visible",
                             nullptr};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!fi", const_cast<char**>(kwlist),
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!fii", const_cast<char**>(kwlist),
                                      &texturePath,
                                      &PyArray_Type, &halfExtentObj,
                                      &PyArray_Type, &posObj,
                                      &PyArray_Type, &rotObj,
                                      &mass,
-                                     &detectCollision)) {
+                                     &detectCollision,
+                                     &visible)) {
         return nullptr;
     }
     
@@ -485,7 +494,8 @@ static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
                     texturePath,
                     halfExtent, pos, rot,
                     mass,
-                    detectCollision != 0);
+                    detectCollision != 0,
+                    visible != 0);
     
     // Returning object ID
     PyObject* idObj = PyLong_FromLong(id);
@@ -500,18 +510,21 @@ static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds)
     PyObject* rotObj = nullptr;
     float mass;
     int detectCollision;
+    int visible;
 
     // Get argument
-    const char* kwlist[] = {"texture_path", "radius", "pos", "rot", "mass", "detect_collision",
+    const char* kwlist[] = {"texture_path", "radius", "pos", "rot", "mass",
+                            "detect_collision", "visible",
                             nullptr};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sfO!O!fi", const_cast<char**>(kwlist),
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sfO!O!fii", const_cast<char**>(kwlist),
                                      &texturePath,
                                      &radius,
                                      &PyArray_Type, &posObj,
                                      &PyArray_Type, &rotObj,
                                      &mass,
-                                     &detectCollision)) {
+                                     &detectCollision,
+                                     &visible)) {
         return nullptr;
     }
     
@@ -541,7 +554,8 @@ static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds)
                        radius,
                        pos, rot,
                        mass,
-                       detectCollision != 0);
+                       detectCollision != 0,
+                       visible != 0);
 
     // Returning object ID
     PyObject* idObj = PyLong_FromLong(id);
@@ -556,20 +570,22 @@ static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) 
     float mass;
     int detectCollision;
     int useMeshCollision;
+    int visible;
 
     // Get argument
     const char* kwlist[] = {"path", "scale", "pos", "rot", "mass", 
-                            "detect_collision", "use_mesh_collision",
+                            "detect_collision", "use_mesh_collision", "visible",
                             nullptr};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!fii", const_cast<char**>(kwlist),
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!fiii", const_cast<char**>(kwlist),
                                      &path,
                                      &PyArray_Type, &scaleObj,
                                      &PyArray_Type, &posObj,
                                      &PyArray_Type, &rotObj,
                                      &mass,
                                      &detectCollision,
-                                     &useMeshCollision)) {
+                                     &useMeshCollision,
+                                     &visible)) {
         return nullptr;
     }
     
@@ -607,7 +623,8 @@ static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) 
                       scale, pos, rot,
                       mass,
                       detectCollision != 0,
-                      useMeshCollision != 0);
+                      useMeshCollision != 0,
+                      visible != 0);
 
     // Returning object ID
     PyObject* idObj = PyLong_FromLong(id);

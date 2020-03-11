@@ -108,20 +108,23 @@ public:
                const Vector3f& pos,
                const Quat4f& rot,
                float mass,
-               bool detectCollision);
+               bool detectCollision,
+               bool visible);
     int addSphere(const char* texturePath,
                   float radius,
                   const Vector3f& pos,
                   const Quat4f& rot,
                   float mass,
-                  bool detectCollision);
+                  bool detectCollision,
+                  bool visible);
     int addModel(const char* path,
                  const Vector3f& sale,
                  const Vector3f& pos,
                  const Quat4f& rot,
                  float mass,
                  bool detectCollision,
-                 bool useMeshCollision);
+                 bool useMeshCollision,
+                 bool visible);
     void removeObject(int id);
     void locateObject(int id, const Vector3f& pos, const Quat4f& rot);
     void locateAgent(const Vector3f& pos, float rotY);

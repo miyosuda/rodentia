@@ -326,23 +326,29 @@ int Environment::addBox(const char* texturePath,
                         const Vector3f& pos,
                         const Quat4f& rot,
                         float mass,
-                        bool detectCollision) {
+                        bool detectCollision,
+                        bool visible) {
     btCollisionShape* shape = collisionShapeManager.getBoxShape(halfExtent.x,
                                                                 halfExtent.y,
                                                                 halfExtent.z);
-    Texture* texture = nullptr;
-
-    const string texturePathStr(texturePath);
-    if( texturePathStr != "" ) {
-        texture = textureManager.loadTexture(texturePath);
+    Mesh* mesh = nullptr;
+    
+    if( visible ) {
+        Texture* texture = nullptr;
+        const string texturePathStr(texturePath);
+        if( texturePathStr != "" ) {
+            texture = textureManager.loadTexture(texturePath);
+        }
+        if( texture == nullptr ) {
+            texture = textureManager.getColorTexture(1.0f, 1.0f, 1.0f);
+        }
+        
+        Shader* shader = shaderManager.getDiffuseShader();
+        Shader* shadowDepthShader = shaderManager.getShadowDepthShader();
+        Material* material = new Material(texture, shader, shadowDepthShader);
+        mesh = meshManager.getBoxMesh(material, halfExtent);
     }
-    if( texture == nullptr ) {
-        texture = textureManager.getColorTexture(1.0f, 1.0f, 1.0f);
-    }
-    Shader* shader = shaderManager.getDiffuseShader();
-    Shader* shadowDepthShader = shaderManager.getShadowDepthShader();
-    Material* material = new Material(texture, shader, shadowDepthShader);
-    Mesh* mesh = meshManager.getBoxMesh(material, halfExtent);
+    
     Vector3f scale(halfExtent.x, halfExtent.y, halfExtent.z);
 
     return addObject(shape, pos, rot, mass, Vector3f(0.0f, 0.0f, 0.0f),
@@ -354,20 +360,26 @@ int Environment::addSphere(const char* texturePath,
                            const Vector3f& pos,
                            const Quat4f& rot,
                            float mass,
-                           bool detectCollision) {
+                           bool detectCollision,
+                           bool visible) {
     btCollisionShape* shape = collisionShapeManager.getSphereShape(radius);
+    Mesh* mesh = nullptr;
     
-    Texture* texture = nullptr;
-    if( texturePath != nullptr) {
-        texture = textureManager.loadTexture(texturePath);
+    if( visible ) {
+        Texture* texture = nullptr;
+        if( texturePath != nullptr ) {
+            texture = textureManager.loadTexture(texturePath);
+        }
+        if( texture == nullptr ) {
+            texture = textureManager.getColorTexture(1.0f, 1.0f, 1.0f);
+        }
+        
+        Shader* shader = shaderManager.getDiffuseShader();
+        Shader* shadowDepthShader = shaderManager.getShadowDepthShader();
+        Material* material = new Material(texture, shader, shadowDepthShader);
+        mesh = meshManager.getSphereMesh(material);
     }
-    if( texture == nullptr ) {
-        texture = textureManager.getColorTexture(1.0f, 1.0f, 1.0f);
-    }
-    Shader* shader = shaderManager.getDiffuseShader();
-    Shader* shadowDepthShader = shaderManager.getShadowDepthShader();
-    Material* material = new Material(texture, shader, shadowDepthShader);
-    Mesh* mesh = meshManager.getSphereMesh(material);
+    
     Vector3f scale(radius, radius, radius);
     
     return addObject(shape, pos, rot, mass, Vector3f(0.0f, 0.0f, 0.0f),
@@ -380,8 +392,9 @@ int Environment::addModel(const char* path,
                           const Quat4f& rot,
                           float mass,
                           bool detectCollision,
-                          bool useMeshCollision) {
-
+                          bool useMeshCollision,
+                          bool visible) {
+    
     // Load mesh from .obj data file
     Mesh* mesh = meshManager.getModelMesh(path, textureManager, shaderManager);
     if( mesh == nullptr ) {
@@ -391,6 +404,14 @@ int Environment::addModel(const char* path,
     const CollisionMeshData* collisionMeshData = meshManager.getCollisionMeshData(path);
     if( collisionMeshData == nullptr ) {
         return -1;
+    }
+    
+    if(!visible) {
+        // TDOO: invisibleの場合でもmeshをロードしているので、無駄があるので、collisionを
+        // meshとは別にロードして管理するようにする.
+        // (現在先にmeshをロードしないとmeshManager.getCollisionMeshData()で取れない様に
+        //  なっているので変更する必要がある)
+        mesh = nullptr;
     }
 
     const BoundingBox& boundingBox = collisionMeshData->getBoundingBox();

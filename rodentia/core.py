@@ -72,7 +72,8 @@ class Environment(object):
                 rot=0.0,
                 angle=0.0,
                 mass=0.0,
-                detect_collision=False):
+                detect_collision=False,
+                visible=True):
         """Add box object.
         Args:
           texture_path: Path for the texture (.png file)
@@ -82,9 +83,10 @@ class Environment(object):
                (in radian)
           mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
                 but if mass > 0, the object is physically simulated.
-          detect_collision: A bool value for indicating whether the object is included for collision
-                            check result. If this argument is True, object's id is included when 
+          detect_collision: Whether the object is included for collision check result.
+                            If this argument is True, object's id is included when 
                             the agenet collides with this object.
+          visible: Visibility of the object. If false, only collision will take effect.
         Returns:
           Int value for the object id.
         """
@@ -94,7 +96,8 @@ class Environment(object):
             pos=to_nd_float_array(pos),
             rot=to_nd_float_array_for_rot(rot),
             mass=mass,
-            detect_collision=detect_collision)
+            detect_collision=detect_collision,
+            visible=visible)
 
     def add_sphere(self,
                    texture_path,
@@ -102,7 +105,8 @@ class Environment(object):
                    pos,
                    rot=0.0,
                    mass=0.0,
-                   detect_collision=False):
+                   detect_collision=False,
+                   visible=True):
         """Add sphere object.
         Args:
           texture_path: Path for the texture (.png file)
@@ -115,6 +119,7 @@ class Environment(object):
           detect_collision: A bool value for indicating whether the object is included for collision
                             check result. If this argument is True, object's id is included when 
                             the agenet collides with this object.
+          visible: Visibility of the object. If false, only collision will take effect.
         Returns:
           Int value for the object id.
         """
@@ -124,7 +129,8 @@ class Environment(object):
             pos=to_nd_float_array(pos),
             rot=to_nd_float_array_for_rot(rot),
             mass=mass,
-            detect_collision=detect_collision)
+            detect_collision=detect_collision,
+            visible=visible)
 
     def add_model(self,
                   path,
@@ -133,21 +139,25 @@ class Environment(object):
                   rot=0.0,
                   mass=0.0,
                   detect_collision=False,
-                  use_mesh_collision=False):
+                  use_mesh_collision=False,
+                  visible=True):
         """Add model object with .obj format.
         Args:
           path: Path for the .obj file.
           scale: (x,y,z) float values for the scaling of the object.
           pos: (x,y,z) float values for the origin of the object.
-          rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object
-               (in radian)
-          mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
-                but if mass > 0, the object is physically simulated.
+          rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the 
+               rotation quaternion of the object (in radian)
+               
+          mass: A float value for mass of the object. if mass == 0, the object is 
+                treated as static object, but if mass > 0, the object is physically simulated.
           detect_collision: Whether the object is included for collision check result.
                             If this argument is True, object's id is included when 
                             the agenet collides with this object.
           use_mesh_collision: Whether to use mesh data for the collision.
-                            If false, box collision shape is cauculated based on the bounding box.
+                              If false, box collision shape is cauculated based on the 
+                              bounding box.
+          visible: Visibility of the object. If false, only collision will take effect.
         Returns:
           Int value for the object id.
         """
@@ -158,15 +168,16 @@ class Environment(object):
             rot=to_nd_float_array_for_rot(rot),
             mass=mass,
             detect_collision=detect_collision,
-            use_mesh_collision=use_mesh_collision)
+            use_mesh_collision=use_mesh_collision,
+            visible=visible)
 
     def locate_object(self, id, pos, rot=0.0):
         """Locate object to given position and orientataion.
         Args:
           id: Int value for object's id
           pos: (x,y,z) float values for agent's location.
-          rot: A float value for head (rot_y) angle or list (rx,ry,rz,rw) as the rotation quaternion of the object
-               (in radian)
+          rot: A float value for head (rot_y) angle or list (rx,ry,rz,rw) as the rotation 
+               quaternion of the object (in radian)
         """
         self.env.locate_object(
             id=id,
@@ -270,7 +281,8 @@ class Environment(object):
 
     def replace_obj_texture(self, id, texture_path):
         """Replace object texture(s).
-           If object is consist of multiple meshes, textures of these meshes can be replaced by applying list of texture pathes.
+           If object is consist of multiple meshes, textures of these meshes can be replaced 
+           by applying list of texture pathes.
         Args:
           id: Int value for object's id
           texture_path: A string or list of string. path of the texture(s)
