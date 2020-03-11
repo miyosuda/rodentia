@@ -134,10 +134,6 @@ AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
     // Disable deactivation
     body->setActivationState(DISABLE_DEACTIVATION);
     
-    // Set damping
-    //body->setDamping(btScalar(0.05), btScalar(0.85));
-    body->setDamping(btScalar(0.0), btScalar(0.0));
-
     // Disable rotaion around x,z axis 
     body->setAngularFactor(btVector3(0.0f, 1.0f, 0.0f));
 }

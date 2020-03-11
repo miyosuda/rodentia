@@ -26,6 +26,7 @@ class EnvironmentObject;
 class EnvironmentObjectInfo;
 class AgentObject;
 class CameraView;
+class CollisionMeshData;
 
 
 // TODO: collision shapes sould be cached
@@ -43,6 +44,8 @@ public:
     btCollisionShape* getCylinderShape(float halfExtentX,
                                        float halfExtentY,
                                        float halfExtentZ);
+    btCollisionShape* getModelShape(const CollisionMeshData& collisionMeshData,
+                                    const Vector3f& scale);
 };
 
 class Environment {

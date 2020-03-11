@@ -12,7 +12,7 @@
 #include "EnvironmentObject.h"
 #include "BoundingBox.h"
 #include "CameraView.h"
-#include "MeshData.h" //.. for CollisionMeshData
+#include "CollisionMeshData.h"
 
 
 static const int ID_IGNORE_COLLISION = -1;
@@ -56,6 +56,43 @@ btCollisionShape* CollisionShapeManager::getCylinderShape(float halfExtentX,
     btCollisionShape* shape = new btCylinderShape(btVector3(halfExtentX,
                                                             halfExtentY,
                                                             halfExtentZ));
+    collisionShapes.push_back(shape);
+    return shape;
+}
+
+btCollisionShape* CollisionShapeManager::getModelShape(
+    const CollisionMeshData& collisionMeshData,
+    const Vector3f& scale) {
+    
+    // TODO: same shape should be cached and reused
+    const BoundingBox& boundingBox = collisionMeshData.getBoundingBox();
+    
+    Vector3f center;
+    boundingBox.getCenter(center);
+
+    // This  center offset is used for rigidbody
+    center.x *= scale.x;
+    center.y *= scale.y;
+    center.z *= scale.z;
+
+    btTriangleMesh* trimesh = new btTriangleMesh();
+        
+    auto triangles = collisionMeshData.getTriangles();
+    for(auto itr=triangles.begin(); itr!=triangles.end(); ++itr) {
+        trimesh->addTriangle(btVector3(itr->x0 * scale.x - center.x,
+                                       itr->y0 * scale.y - center.y,
+                                       itr->z0 * scale.z - center.z),
+                             btVector3(itr->x1 * scale.x - center.x,
+                                       itr->y1 * scale.y - center.y,
+                                       itr->z1 * scale.z - center.z),
+                             btVector3(itr->x2 * scale.x - center.x,
+                                       itr->y2 * scale.y - center.y,
+                                       itr->z2 * scale.z - center.z));
+    }
+
+    // TODO: use convex collision if possible.
+    bool useQuantizedBvhTree = true;
+    btCollisionShape* shape = new btBvhTriangleMeshShape(trimesh, useQuantizedBvhTree);
     collisionShapes.push_back(shape);
     return shape;
 }
@@ -351,49 +388,35 @@ int Environment::addModel(const char* path,
         return -1;
     }
 
-    const BoundingBox& boundingBox = mesh->getBoundingBox();
+    const CollisionMeshData* collisionMeshData = meshManager.getCollisionMeshData(path);
+    if( collisionMeshData == nullptr ) {
+        return -1;
+    }
+
+    const BoundingBox& boundingBox = collisionMeshData->getBoundingBox();
     
     Vector3f relativeCenter;
-    Vector3f halfExtent;
     boundingBox.getCenter(relativeCenter);
-    boundingBox.getHalfExtent(halfExtent);
-
-    // We need to apply scale to collision shape in advance.
-    halfExtent.x *= scale.x;
-    halfExtent.y *= scale.y;
-    halfExtent.z *= scale.z;
 
     // This relative center offset is used for rigidbody
     relativeCenter.x *= scale.x;
     relativeCenter.y *= scale.y;
-    relativeCenter.z *= scale.z;
+    relativeCenter.z *= scale.z;    
 
-    btCollisionShape* shape = nullptr;
+    btCollisionShape* shape;
 
     if(useMeshCollision) {
-        const CollisionMeshData* collisionMeshData = meshManager.getCollisionMeshData(path);    
-        if( collisionMeshData != nullptr ) {
-            // TODO: collisionShapeManagerに任せる.
-            btTriangleMesh* trimesh = new btTriangleMesh();
+        // Get collision with mesh shape
+        shape = collisionShapeManager.getModelShape(*collisionMeshData, scale);
+    } else {
+        // Get box collision with the bounding box
+        Vector3f halfExtent;
+        boundingBox.getHalfExtent(halfExtent);
         
-            auto triangles = collisionMeshData->getTriangles();
-            for(auto itr=triangles.begin(); itr!=triangles.end(); ++itr) {
-                trimesh->addTriangle(btVector3(itr->x0 * scale.x - relativeCenter.x,
-                                               itr->y0 * scale.y - relativeCenter.y,
-                                               itr->z0 * scale.z - relativeCenter.z),
-                                     btVector3(itr->x1 * scale.x - relativeCenter.x,
-                                               itr->y1 * scale.y - relativeCenter.y,
-                                               itr->z1 * scale.z - relativeCenter.z),
-                                     btVector3(itr->x2 * scale.x - relativeCenter.x,
-                                               itr->y2 * scale.y - relativeCenter.y,
-                                               itr->z2 * scale.z - relativeCenter.z));
-            }
-            bool useQuantizedBvhTree = false;
-            shape = new btBvhTriangleMeshShape(trimesh, useQuantizedBvhTree);
-        }
-    }
-    
-    if(shape == nullptr) {
+        // We need to apply scale to collision shape in advance.
+        halfExtent.x *= scale.x;
+        halfExtent.y *= scale.y;
+        halfExtent.z *= scale.z;
         shape = collisionShapeManager.getBoxShape(halfExtent.x,
                                                   halfExtent.y,
                                                   halfExtent.z);
@@ -421,16 +444,15 @@ int Environment::addObject(btCollisionShape* shape,
         collisionId = ID_IGNORE_COLLISION;
     }
 
-    EnvironmentObject* object = new StageObject(
-        pos,
-        rot,
-        mass,
-        relativeCenter,
-        shape,
-        world,
-        collisionId,
-        mesh,
-        scale);
+    EnvironmentObject* object = new StageObject(pos,
+                                                rot,
+                                                mass,
+                                                relativeCenter,
+                                                shape,
+                                                world,
+                                                collisionId,
+                                                mesh,
+                                                scale);
 
     objectMap[id] = object;
     return id;

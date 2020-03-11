@@ -156,7 +156,9 @@ static MeshData* loadObjMeshData(const tinyobj::attrib_t& attrib,
         }
     }
 
-    MeshData* meshData = new MeshData();    
+    MeshData* meshData = new MeshData();
+
+    bool nonTriMeshFound = false;
 
     // For each shape
     for (size_t i = 0; i < shapes.size(); i++) {
@@ -228,11 +230,15 @@ static MeshData* loadObjMeshData(const tinyobj::attrib_t& attrib,
                                                x1, y1, z1,
                                                x2, y2, z2);
             } else {
-                printf("Mesh was not triangulated\n");
+                nonTriMeshFound = true;
             }
 
             index_offset += fnum;
         }
+    }
+    
+    if(nonTriMeshFound) {
+        printf("Mesh was not triangulated\n");
     }
     
     for(int i=0; i<meshFaces.size(); ++i) {
