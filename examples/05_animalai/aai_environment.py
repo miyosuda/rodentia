@@ -16,7 +16,7 @@ class AAIEnvironment(object):
 
         # Create environment
         self.env = rodentia.Environment(
-            width=width, height=height, bg_color=[0, 0, 0])
+            width=width, height=height, bg_color=[0.19, 0.3, 0.47])
 
         # Prepare stage objects
         self._prepare_stage()
@@ -26,9 +26,8 @@ class AAIEnvironment(object):
         self.minus_obj_ids_set = set()
 
         # Add additional camera for top view rendering
-        # TODO: Adjust far clip distance
         self.additional_camera_id = self.env.add_camera_view(256, 256,
-                                                             bg_color=[1, 1, 1],
+                                                             bg_color=[0.19, 0.3, 0.47],
                                                              far=50.0,
                                                              focal_length=30.0,
                                                              shadow_buffer_width=1024)
@@ -38,45 +37,45 @@ class AAIEnvironment(object):
 
     def _prepare_stage(self):
         # Floor
-        floor_texture_path = self.data_path + "floor1.png"
+        floor_texture_path = self.data_path + "floor5.png"
 
         self.env.add_box(
             texture_path=floor_texture_path,
-            half_extent=[30.0, 1.0, 30.0],
+            half_extent=[20.0, 1.0, 20.0],
             pos=[0.0, -1.0, 0.0],
             rot=0.0,
             detect_collision=False)
 
         # Wall
-        wall_distance = 30.0
+        wall_distance = 20.0
 
-        wall_texture_path = self.data_path + "wall1.png"
+        wall_texture_path = self.data_path + "wall4.png"
 
         # -Z
         self.env.add_box(
             texture_path=wall_texture_path,
-            half_extent=[wall_distance, 1.0, 1.0],
+            half_extent=[wall_distance+1, 1.0, 1.0],
             pos=[0.0, 1.0, -wall_distance],
             rot=0.0,
             detect_collision=False)
         # +Z
         self.env.add_box(
             texture_path=wall_texture_path,
-            half_extent=[wall_distance, 1.0, 1.0],
+            half_extent=[wall_distance+1, 1.0, 1.0],
             pos=[0.0, 1.0, wall_distance],
             rot=0.0,
             detect_collision=False)
         # -X
         self.env.add_box(
             texture_path=wall_texture_path,
-            half_extent=[1.0, 1.0, wall_distance],
+            half_extent=[1.0, 1.0, wall_distance+1],
             pos=[-wall_distance, 1.0, 0.0],
             rot=0.0,
             detect_collision=False)
         # +X
         self.env.add_box(
             texture_path=wall_texture_path,
-            half_extent=[1.0, 1.0, wall_distance],
+            half_extent=[1.0, 1.0, wall_distance+1],
             pos=[wall_distance, 1.0, 0.0],
             rot=0.0,
             detect_collision=False)
@@ -85,7 +84,7 @@ class AAIEnvironment(object):
         # -Z (invisible)
         self.env.add_box(
             texture_path=wall_texture_path,
-            half_extent=[wall_distance, invisible_wall_half_height, 1.0],
+            half_extent=[wall_distance+1, invisible_wall_half_height, 1.0],
             pos=[0.0, invisible_wall_half_height, -wall_distance],
             rot=0.0,
             detect_collision=False,
@@ -93,7 +92,7 @@ class AAIEnvironment(object):
         # +Z (invisible)
         self.env.add_box(
             texture_path=wall_texture_path,
-            half_extent=[wall_distance, invisible_wall_half_height, 1.0],
+            half_extent=[wall_distance+1, invisible_wall_half_height, 1.0],
             pos=[0.0, invisible_wall_half_height, wall_distance],
             rot=0.0,
             detect_collision=False,
@@ -101,7 +100,7 @@ class AAIEnvironment(object):
         # -X (invisible)
         self.env.add_box(
             texture_path=wall_texture_path,
-            half_extent=[1.0, invisible_wall_half_height, wall_distance],
+            half_extent=[1.0, invisible_wall_half_height, wall_distance+1],
             pos=[-wall_distance, invisible_wall_half_height, 0.0],
             rot=0.0,
             detect_collision=False,
@@ -109,7 +108,7 @@ class AAIEnvironment(object):
         # +X (invisible)
         self.env.add_box(
             texture_path=wall_texture_path,
-            half_extent=[1.0, invisible_wall_half_height, wall_distance],
+            half_extent=[1.0, invisible_wall_half_height, wall_distance+1],
             pos=[wall_distance, invisible_wall_half_height, 0.0],
             rot=0.0,
             detect_collision=False,
@@ -119,25 +118,25 @@ class AAIEnvironment(object):
         ramp_model_path = self.data_path + "ramp0.obj"
         self.env.add_model(path=ramp_model_path,
                            scale=[2.0, 1.0, 2.0],
-                           pos=[10.0, 0.0, 5.0],
-                           rot=np.pi * -0.25,
+                           pos=[15.0, 0.0, -2.0],
+                           rot=0.0,
                            mass=0.0,
                            detect_collision=False,
                            use_mesh_collision=True)
 
         cylinder_model_path = self.data_path + "cylinder0.obj"
         self.env.add_model(path=cylinder_model_path,
-                           scale=[3.0, 3.0, 3.0],
-                           pos=[-5.0, 0.0, 8.0],
+                           scale=[3.0, 3.0, 7.0],
+                           pos=[15.0, 0.0, 12.0],
                            rot=0.0,
                            mass=0.0,
                            detect_collision=False,
                            use_mesh_collision=True)
 
-    def _locate_plus_reward_obj(self, x, z):
+    def _locate_plus_reward_obj(self, x, y, z):
         """ Locate positive reward object """
         texture_path = self.data_path + "green.png"
-        pos = [x, 1.0, z]
+        pos = [x, y, z]
         # If the object's mass is not 0, the it is simulated as a rigid body object.
         ball_mass = 0.5
         obj_id = self.env.add_sphere(
@@ -149,10 +148,10 @@ class AAIEnvironment(object):
             detect_collision=True)
         self.plus_obj_ids_set.add(obj_id)
         
-    def _locate_minus_reward_obj(self, x, z):
+    def _locate_minus_reward_obj(self, x, y, z):
         """ Locate negative reward object """
         texture_path = self.data_path + "red.png"
-        pos = [x, 1.0, z]
+        pos = [x, y, z]
         # If the object's mass is not 0, the it is simulated as a rigid body object.
         ball_mass = 0.5
         obj_id = self.env.add_sphere(
@@ -169,12 +168,11 @@ class AAIEnvironment(object):
         self._clear_objects()
 
         # Add reward objects
-        # TODO:
-        self._locate_plus_reward_obj(x=5, z=0)
-        self._locate_minus_reward_obj(x=-5, z=-10)
+        self._locate_plus_reward_obj(x=15, y=5, z=-2)
+        self._locate_minus_reward_obj(x=-5, y=1, z=-10)
 
         # Locate agent to default position with randomized orientation
-        rot_y = 2.0 * math.pi * random.random()
+        rot_y = 2.0 * math.pi * -0.25
 
         self.env.locate_agent(pos=[0, 1, 0], rot_y=rot_y)
 

@@ -17,7 +17,8 @@ class Display(object):
 
         pygame.init()
 
-        self.surface = pygame.display.set_mode(display_size, 0, 24)
+        #self.surface = pygame.display.set_mode(display_size, 0, 24)
+        self.surface = pygame.display.set_mode(display_size, 0, 32)
         pygame.display.set_caption('rodentia')
 
         self.last_state = self.env.reset()
@@ -73,6 +74,10 @@ class Display(object):
         if terminal:
             self.last_state = self.env.reset()
 
+    def get_frame(self):
+        data = self.surface.get_buffer().raw
+        return data
+
 
 def main():
     display_size = (512, 256)
@@ -81,6 +86,14 @@ def main():
 
     running = True
     FPS = 60
+
+    recording = False
+    
+    if recording:
+        from movie_writer import MovieWriter
+        writer = MovieWriter("out.mov", display_size, FPS)
+    else:
+        writer = None
 
     while running:
         for event in pygame.event.get():
@@ -92,6 +105,16 @@ def main():
 
         display.update()
         clock.tick(FPS)
+
+        if writer is not None:
+            frame_str = display.get_frame()
+            d = np.fromstring(frame_str, dtype=np.uint8)
+            d = d.reshape((display_size[1], display_size[0], 4))
+            d = d[:,:,:3]
+            writer.add_frame(d)
+
+    if writer is not None:
+        writer.close()
 
 
 if __name__ == '__main__':
