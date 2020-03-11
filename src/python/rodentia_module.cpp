@@ -13,7 +13,7 @@ using namespace std;
 #include "Matrix4f.h"
 #include "EnvironmentObject.h"
 
-#define RODENTIA_MODULE_VERSION "0.0.3"
+#define RODENTIA_MODULE_VERSION "0.0.4"
 
 
 //---------------------------------------------------------
