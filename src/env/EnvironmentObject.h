@@ -36,19 +36,24 @@ public:
 //---------------------------
 class EnvironmentObject {
 protected:
+    int objectId;
+    bool ignoreCollision;
     RigidBodyComponent* rigidBodyComponent;
     DrawComponent* drawComponent;
 
 public:
-    EnvironmentObject();
+    EnvironmentObject(int objectId_, bool ignoreCollision_);
     virtual ~EnvironmentObject();
-    int getCollisionId() const;
     void getMat(Matrix4f& mat) const;
     void draw(RenderingContext& context) const;
     bool calcBoundingBox(BoundingBox& boundingBox);
     void getInfo(EnvironmentObjectInfo& info) const;
     void locate(const Vector3f& pos, const Quat4f& rot);
     void replaceMaterials(const vector<Material*>& materials);
+
+    int getObjectId()       const { return objectId;        }
+    bool ignoresCollision() const { return ignoreCollision; }
+    virtual bool isAgent() const = 0;    
 };
 
 
@@ -63,9 +68,14 @@ public:
                 const Vector3f& relativeCenter,
                 btCollisionShape* shape,
                 btDynamicsWorld* world,
-                int collisionId,
+                int objectId_,
+                bool ignoreCollision_e,
                 Mesh* mesh,
                 const Vector3f& scale);
+
+    virtual bool isAgent() const override {
+        return false;
+    }
 };
 
 //---------------------------
@@ -73,10 +83,18 @@ public:
 //---------------------------
 class AgentObject : public EnvironmentObject {
 public: 
-    AgentObject(btCollisionShape* shape,
+    AgentObject(float mass,
+                const Vector3f& pos,
+                float rotY,
+                btCollisionShape* shape,
                 btDynamicsWorld* world,
-                int collisionId);
+                int objectId_,
+                bool ignoreCollision_);
     void control(const Action& action);
+
+    virtual bool isAgent() const override {
+        return true;
+    }
 };
 
 #endif

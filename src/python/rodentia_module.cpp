@@ -43,13 +43,29 @@ static int addCameraView(Environment* environment, int width, int height,
     return cameraId;
 }
 
+static int addAgent(Environment* environment,
+                    float radius,
+                    const Vector3f& pos,
+                    float rotY,
+                    float mass,
+                    bool detectCollision) {
+    return environment->addAgent(radius,
+                                 pos, rotY,
+                                 mass,
+                                 detectCollision);
+}
+
 static void releaseEnvironment(Environment* environment) {
     environment->release();
     delete environment;
 }
 
-static void stepEnvironment(Environment* environment, const Action& action, int stepNum) {
-    environment->step(action, stepNum);
+static void control(Environment* environment, int id, const Action& action) {
+    environment->control(id, action);
+}
+
+static void step(Environment* environment) {
+    environment->step();
 }
 
 static void render(Environment* environment, int cameraId,
@@ -119,19 +135,15 @@ static void locateObject(Environment* environment,
 }
 
 static void locateAgent(Environment* environment,
+                        int id,
                         const Vector3f& pos,
                         float rotY) {
-    environment->locateAgent(pos, rotY);
+    environment->locateAgent(id, pos, rotY);
 }
 
 static bool getObjectInfo(Environment* environment,
                           int id, EnvironmentObjectInfo& info) {
     return environment->getObjectInfo(id, info);
-}
-
-static bool getAgentInfo(Environment* environment,
-                         EnvironmentObjectInfo& info) {
-    return environment->getAgentInfo(info);
 }
 
 static void setLight(Environment* environment,
@@ -302,17 +314,62 @@ static PyObject* Env_add_camera_view(EnvObject* self, PyObject* args, PyObject* 
 }
 
 
-static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
+static PyObject* Env_add_agent(EnvObject* self, PyObject* args, PyObject* kwds) {
+    float radius;
+    PyObject* posObj = nullptr;
+    float rotY;
+    float mass;
+    int detectCollision;
+
+    // Get argument
+    const char* kwlist[] = {"radius", "pos", "rot_y", "mass",
+                            "detect_collision",
+                            nullptr};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "fO!ffi", const_cast<char**>(kwlist),
+                                     &radius,
+                                     &PyArray_Type, &posObj,
+                                     &rotY,
+                                     &mass,
+                                     &detectCollision)) {
+        return nullptr;
+    }
+    
+    if (self->environment == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+        return nullptr;
+    }
+
+    // pos
+    const float* posArr = getFloatArrayData(posObj, 3, "pos");
+    if( posArr == nullptr ) {
+        return nullptr;
+    }
+
+    Vector3f pos(posArr[0], posArr[1], posArr[2]);    
+    
+    int id = addAgent(self->environment,
+                      radius,
+                      pos, rotY,
+                      mass,
+                      detectCollision != 0);
+
+    // Returning object ID
+    PyObject* idObj = PyLong_FromLong(id);
+    return idObj;
+}
+
+
+static PyObject* Env_control(EnvObject* self, PyObject* args, PyObject* kwds) {
+    int id;
     PyObject* actionObj = nullptr;
 
     // Get argument
-    const char* kwlist[] = {"action", "num_steps", nullptr};
+    const char* kwlist[] = {"id", "action", nullptr};
 
-    int stepNum = 1;
-
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!i", const_cast<char**>(kwlist),
-                                     &PyArray_Type, &actionObj,
-                                     &stepNum)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "iO!", const_cast<char**>(kwlist),
+                                     &id,
+                                     &PyArray_Type, &actionObj)) {
         return nullptr;
     }
     
@@ -330,8 +387,22 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
     
     Action action(actionArr[0], actionArr[1], actionArr[2]);
 
+    // Process control
+    control(self->environment, id, action);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
+    if (self->environment == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+        return nullptr;
+    }
+
     // Process step
-    stepEnvironment(self->environment, action, stepNum);
+    step(self->environment);
 
     // Create output dictionary
     PyObject* resultDic = PyDict_New();
@@ -339,6 +410,8 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
         PyErr_NoMemory();
         return nullptr;
     }
+
+    // TODO: agentのid毎にcollision idを管理するようにする.
 
     const set<int>& collidedIds = self->environment->getCollidedIds();
 
@@ -698,13 +771,15 @@ static PyObject* Env_locate_object(EnvObject* self, PyObject* args, PyObject* kw
 }
 
 static PyObject* Env_locate_agent(EnvObject* self, PyObject* args, PyObject* kwds) {
+    int id;
     PyObject* posObj = nullptr;
     float rotY;
 
     // Get argument
-    const char* kwlist[] = {"pos", "rot_y", nullptr};
+    const char* kwlist[] = {"id", "pos", "rot_y", nullptr};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!f", const_cast<char**>(kwlist),
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "iO!f", const_cast<char**>(kwlist),
+                                     &id,
                                      &PyArray_Type, &posObj,
                                      &rotY)) {
         return nullptr;
@@ -724,14 +799,14 @@ static PyObject* Env_locate_agent(EnvObject* self, PyObject* args, PyObject* kwd
     Vector3f pos(posArr[0], posArr[1], posArr[2]);
     
     locateAgent(self->environment,
-                pos, rotY);
-
+                id, pos, rotY);
+    
     Py_INCREF(Py_None);
     return Py_None;
 }
 
 /**
- * Common function to get result dict object for get_obj_info() and get_agent_info().
+ * Get result dict object for get_obj_info().
  */
 static PyObject* get_info_dic_obj(const EnvironmentObjectInfo& info) {
     // Create output dictionary
@@ -803,23 +878,6 @@ static PyObject* Env_get_obj_info(EnvObject* self, PyObject* args, PyObject* kwd
 
     EnvironmentObjectInfo info;
     bool ret = getObjectInfo(self->environment, id, info);
-
-    if(!ret) {
-        Py_INCREF(Py_None);
-        return Py_None;
-    }
-
-    return get_info_dic_obj(info);
-}
-
-static PyObject* Env_get_agent_info(EnvObject* self, PyObject* args, PyObject* kwds) {
-    if (self->environment == nullptr) {
-        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
-        return nullptr;
-    }
-
-    EnvironmentObjectInfo info;
-    bool ret = getAgentInfo(self->environment, info);
 
     if(!ret) {
         Py_INCREF(Py_None);
@@ -928,22 +986,26 @@ static PyObject* Env_replace_obj_texture(EnvObject* self, PyObject* args, PyObje
 }
 
 // int add_camera_view(width, height, bg_color)
-// dic step(action)
+// void control(id, action)
+// dic step()
 // dic render(camera_id, pos, rot)
 // int add_box(half_extent, pos, rot, detect_collision)
 // int add_sphere(radius, pos, rot, detect_collision)
 // int add_model(path, scale, pos, rot, detect_collision)
 // void remove_obj(id)
 // void locate_object(id, pos, rot)
-// void locate_agent(pos, rot)
+// void locate_agent(id, pos, rot_y)
 // dic get_object_info(id)
-// dic get_agent_info()
 // void set_light(dir, color, ambient_color, shadow_rate)
 // void replace_obj_texture(id, string[])
 
 static PyMethodDef EnvObject_methods[] = {
     {"add_camera_view", (PyCFunction)Env_add_camera_view, METH_VARARGS | METH_KEYWORDS,
      "Add camera view"},
+    {"add_agent", (PyCFunction)Env_add_agent, METH_VARARGS | METH_KEYWORDS,
+     "Add agent"},
+    {"control", (PyCFunction)Env_control, METH_VARARGS | METH_KEYWORDS,
+     "Control agent"},    
     {"step", (PyCFunction)Env_step, METH_VARARGS | METH_KEYWORDS,
      "Advance the environment"},
     {"render", (PyCFunction)Env_render, METH_VARARGS | METH_KEYWORDS,
@@ -962,8 +1024,6 @@ static PyMethodDef EnvObject_methods[] = {
      "Locate agent"},
     {"get_obj_info", (PyCFunction)Env_get_obj_info, METH_VARARGS | METH_KEYWORDS,
      "Get object information"},
-    {"get_agent_info", (PyCFunction)Env_get_agent_info, METH_VARARGS | METH_KEYWORDS,
-     "Get agent information"},
     {"set_light", (PyCFunction)Env_set_light, METH_VARARGS | METH_KEYWORDS,
      "Set light parameters"},
     {"replace_obj_texture", (PyCFunction)Env_replace_obj_texture, METH_VARARGS | METH_KEYWORDS,

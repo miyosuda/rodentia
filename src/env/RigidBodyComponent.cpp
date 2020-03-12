@@ -13,7 +13,7 @@ RigidBodyComponent::RigidBodyComponent(float mass,
                                        const Vector3f& relativeCenter_,
                                        btCollisionShape* shape,
                                        btDynamicsWorld* world_,
-                                       int collisionId)
+                                       EnvironmentObject* obj)
     :
     world(world_),
     relativeCenter(relativeCenter_) {
@@ -47,7 +47,7 @@ RigidBodyComponent::RigidBodyComponent(float mass,
     body = new btRigidBody(info);
     world->addRigidBody(body);
     
-    body->setUserIndex(collisionId);
+    body->setUserPointer(obj);
 }
 
 RigidBodyComponent::~RigidBodyComponent() {
@@ -56,10 +56,6 @@ RigidBodyComponent::~RigidBodyComponent() {
     }
     world->removeCollisionObject(body);
     delete body;
-}
-
-int RigidBodyComponent::getCollisionId() const {
-    return body->getUserIndex();
 }
 
 void RigidBodyComponent::control(const Action& action) {
@@ -120,7 +116,7 @@ AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
                                                  float rotY_,
                                                  btCollisionShape* shape,
                                                  btDynamicsWorld* world_,
-                                                 int collisionId)
+                                                 EnvironmentObject* obj)
     :
     RigidBodyComponent(mass,
                        pos,
@@ -128,7 +124,7 @@ AgentRigidBodyComponent::AgentRigidBodyComponent(float mass,
                        Vector3f(0.0f, 0.0f, 0.0f),
                        shape,
                        world_,
-                       collisionId) {
+                       obj) {
     rotY = rotY_;
     
     // Disable deactivation

@@ -8,6 +8,7 @@
 #include "Matrix4f.h"
 
 class Action;
+class EnvironmentObject;
 
 
 class RigidBodyComponent {
@@ -23,9 +24,8 @@ public:
                        const Vector3f& relativeCenter_,
                        btCollisionShape* shape,
                        btDynamicsWorld* world,
-                       int collisionId);
+                       EnvironmentObject* obj);
     virtual ~RigidBodyComponent();
-    int getCollisionId() const;
     virtual void control(const Action& action);
     virtual void getMat(Matrix4f& mat) const;
     void getVeclocity(Vector3f& velocity) const;
@@ -42,7 +42,7 @@ public:
                             float rotY_,
                             btCollisionShape* shape,
                             btDynamicsWorld* world,
-                            int collisionId);
+                            EnvironmentObject* obj);
     virtual void control(const Action& action) override;
     void locate(const Vector3f& pos, const Quat4f& rot) override;
     void getMat(Matrix4f& mat) const override;

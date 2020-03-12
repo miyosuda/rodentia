@@ -16,10 +16,6 @@
 #include "CollisionMeshData.h"
 
 
-static const int ID_IGNORE_COLLISION = -1;
-static const int ID_AGENT = -2;
-
-
 //---------------------------
 //  [CollisionShapeManager]
 //---------------------------
@@ -149,9 +145,6 @@ bool Environment::init() {
 
     world->setGravity(btVector3(0, -10, 0));
 
-    // Add agent object
-    prepareAgent();
-
     // Linux environment requres GLContext with at least width=1, height=1 size pbuffer.
     bool ret = glContext.init(1, 1);
     return ret;
@@ -172,17 +165,27 @@ int Environment::addCameraView(int width, int height, const Vector3f& bgColor,
     return (int)(cameraViews.size()) - 1;
 }
 
-void Environment::prepareAgent() {
-    btCollisionShape* shape = collisionShapeManager.getSphereShape(1.0f);
-    agent = new AgentObject(shape, world, ID_AGENT);
+int Environment::addAgent(float radius,
+                          const Vector3f& pos,
+                          float rotY,
+                          float mass,
+                          bool detectCollision) {
+    int objectId = nextObjId;
+    nextObjId += 1;
+    
+    btCollisionShape* shape = collisionShapeManager.getSphereShape(radius);
+    AgentObject* agentObj = new AgentObject(mass,
+                                            pos,
+                                            rotY,
+                                            shape,
+                                            world,
+                                            objectId, !
+                                            detectCollision);
+    objectMap[objectId] = agentObj;
+    return objectId;
 }
 
 void Environment::release() {
-    if( agent != nullptr ) {
-        delete agent;
-        agent = nullptr;
-    }
-
     for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
         auto object = itr->second;
         delete object;
@@ -230,15 +233,18 @@ void Environment::checkCollision() {
         }
 
         if( hasContact ) {
-            if( obj0->getUserIndex() == ID_AGENT ) {
-                int otherId = obj1->getUserIndex();
-                if( otherId != ID_AGENT && otherId != ID_IGNORE_COLLISION ) {
-                    collidedIds.insert(otherId);
+            const EnvironmentObject* envObj0 = (EnvironmentObject*)obj0->getUserPointer();
+            const EnvironmentObject* envObj1 = (EnvironmentObject*)obj1->getUserPointer();
+
+            if( envObj0->isAgent() ) {
+                const EnvironmentObject* otherObj = envObj1;
+                if( !otherObj->ignoresCollision() ) {
+                    collidedIds.insert(otherObj->getObjectId());
                 }
-            } else if( obj1->getUserIndex() == ID_AGENT ) {
-                int otherId = obj0->getUserIndex();
-                if( otherId != ID_AGENT && otherId != ID_IGNORE_COLLISION ) {
-                    collidedIds.insert(otherId);
+            } else if( envObj1->isAgent() ) {
+                const EnvironmentObject* otherObj = envObj0;
+                if( !otherObj->ignoresCollision() ) {
+                    collidedIds.insert(otherObj->getObjectId());
                 }
             }
         }
@@ -261,7 +267,20 @@ void Environment::prepareShadow() {
     }
 }
 
-void Environment::step(const Action& action, int stepNum) {
+void Environment::control(int id, const Action& action) {
+    if(!world) {
+        return;
+    }
+
+    EnvironmentObject* envObj = findObject(id);
+
+    if( envObj != nullptr && envObj->isAgent() ) {
+        AgentObject* agentObj = (AgentObject*)envObj;
+        agentObj->control(action);
+    }
+}
+
+void Environment::step() {
     if(!world) {
         return;
     }
@@ -269,19 +288,14 @@ void Environment::step(const Action& action, int stepNum) {
     const float deltaTime = 1.0f / 60.0f;
     
     // Process rigid body simulation
+    // TODO: agent毎にIDを管理するようにしないといけない
     collidedIds.clear();
 
-    for(int i=0; i<stepNum; ++i) {
-        if( agent != nullptr ) {
-            agent->control(action);
-        }
+    world->stepSimulation(deltaTime);
 
-        world->stepSimulation(deltaTime);
-
-        // Collision check
-        // (collidedIdsに値をセットする)
-        checkCollision();
-    }
+    // Collision check
+    // (collidedIdsに値をセットする)
+    checkCollision();
 
     // Set stage bounding box to rendering context. (currently not used)
     // (LSPSMにbounding boxを設定する予定だが未使用)
@@ -481,16 +495,8 @@ int Environment::addObject(btCollisionShape* shape,
                            bool detectCollision,
                            Mesh* mesh,
                            const Vector3f& scale) {
-    int id = nextObjId;
+    int objectId = nextObjId;
     nextObjId += 1;
-
-    int collisionId;
-
-    if( detectCollision ) {
-        collisionId = id;
-    } else {
-        collisionId = ID_IGNORE_COLLISION;
-    }
 
     EnvironmentObject* object = new StageObject(pos,
                                                 rot,
@@ -498,12 +504,13 @@ int Environment::addObject(btCollisionShape* shape,
                                                 relativeCenter,
                                                 shape,
                                                 world,
-                                                collisionId,
+                                                objectId,
+                                                !detectCollision,
                                                 mesh,
                                                 scale);
 
-    objectMap[id] = object;
-    return id;
+    objectMap[objectId] = object;
+    return objectId;
 }
 
 EnvironmentObject* Environment::findObject(int id) {
@@ -533,10 +540,8 @@ void Environment::locateObject(int id, const Vector3f& pos, const Quat4f& rot) {
     }
 }
 
-void Environment::locateAgent(const Vector3f& pos, float rotY) {
-    if( agent != nullptr ) {
-        agent->locate(pos, Quat4f(0.0f, sin(rotY * 0.5f), 0.0f, cos(rotY * 0.5f)));
-    }
+void Environment::locateAgent(int id, const Vector3f& pos, float rotY) {
+    locateObject(id, pos, Quat4f(0.0f, sin(rotY * 0.5f), 0.0f, cos(rotY * 0.5f)));
 }
 
 void Environment::setLight(const Vector3f& lightDir,
@@ -554,15 +559,6 @@ bool Environment::getObjectInfo(int id, EnvironmentObjectInfo& info) const {
     if( itr != objectMap.end() ) {
         const EnvironmentObject* object = itr->second;
         object->getInfo(info);
-        return true;
-    } else {
-        return false;
-    }
-}
-
-bool Environment::getAgentInfo(EnvironmentObjectInfo& info) const {
-    if( agent != nullptr ) {
-        agent->getInfo(info);
         return true;
     } else {
         return false;

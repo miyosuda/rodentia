@@ -319,7 +319,7 @@ class NavMazeStaticEnvironment(object):
         self._locate_agent()
 
         # Reset environmenet and return screen image
-        obs = self.env.step(action=[0, 0, 0], num_steps=1)
+        obs = self.env.step(action=[0, 0, 0])
         screen = obs["screen"]
         return screen
 
@@ -334,7 +334,7 @@ class NavMazeStaticEnvironment(object):
         #  real_action = NavMazeStaticEnvironment.ACTION_LIST[action]
         real_action = NavMazeStaticEnvironment.ACTION_LIST[action]
 
-        obs = self.env.step(action=real_action, num_steps=1)
+        obs = self.env.step(action=real_action)
         self.step_num += 1
 
         screen = obs["screen"]

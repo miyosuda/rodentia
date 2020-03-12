@@ -58,7 +58,6 @@ private:
     btDefaultCollisionConfiguration* configuration;
     btDiscreteDynamicsWorld* world;
 
-    AgentObject* agent;
     int nextObjId;
     set<int> collidedIds;
     map<int, EnvironmentObject*> objectMap; // <obj-id, EnvironmentObject>
@@ -70,7 +69,6 @@ private:
     RenderingContext renderingContext;
     vector<CameraView*> cameraViews;
 
-    void prepareAgent();
     void checkCollision();
     void prepareShadow();
     int addObject(btCollisionShape* shape,
@@ -91,7 +89,6 @@ public:
         solver(nullptr),
         configuration(nullptr),
         world(nullptr),
-        agent(nullptr),
         nextObjId(0) {
     }
 
@@ -102,8 +99,14 @@ public:
     int addCameraView(int width, int height, const Vector3f& bgColor,
                       float nearClip, float farClip, float focalLength,
                       int shadowBufferWidth);
+    int addAgent(float radius,
+                 const Vector3f& pos,
+                 float rotY,
+                 float mass,
+                 bool detectCollision);
     void release();
-    void step(const Action& action, int stepNum);
+    void control(int id, const Action& action);
+    void step();
     int addBox(const char* texturePath,
                const Vector3f& halfExtent,
                const Vector3f& pos,
@@ -128,13 +131,13 @@ public:
                  bool visible);
     void removeObject(int id);
     void locateObject(int id, const Vector3f& pos, const Quat4f& rot);
-    void locateAgent(const Vector3f& pos, float rotY);
+    void locateAgent(int id, const Vector3f& pos, float rotY);
     void setLight(const Vector3f& lightDir,
                   const Vector3f& lightColor,
                   const Vector3f& ambientColor,
                   float shadowColorRate);
     bool getObjectInfo(int id, EnvironmentObjectInfo& info) const;
-    bool getAgentInfo(EnvironmentObjectInfo& info) const;
+    //bool getAgentInfo(EnvironmentObjectInfo& info) const;
     void replaceObjectTextures(int id, const vector<string>& texturePathes);
 
     void render(int cameraId, const Vector3f& pos, const Quat4f& rot);

@@ -131,7 +131,7 @@ class BilliardEnvironment(object):
         self.env.locate_agent(pos=[0, 1, 0], rot_y=rot_y)
 
         # Reset environment and get screen
-        obs = self.env.step(action=[0, 0, 0], num_steps=1)
+        obs = self.env.step(action=[0, 0, 0])
         screen = obs["screen"]
         return screen
 
@@ -170,7 +170,7 @@ class BilliardEnvironment(object):
         return pos[1] < 0.0
 
     def step(self, real_action):
-        obs = self.env.step(action=real_action, num_steps=1)
+        obs = self.env.step(action=real_action)
         self.step_num += 1
 
         screen = obs["screen"]

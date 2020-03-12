@@ -20,8 +20,11 @@ void EnvironmentObjectInfo::set(const Matrix4f& mat, const Vector3f& velocity_) 
 //---------------------------
 //   [EnvironmentObject]
 //---------------------------
-EnvironmentObject::EnvironmentObject()
+EnvironmentObject::EnvironmentObject(int objectId_,
+                                     bool ignoreCollision_)
     :
+    objectId(objectId_),
+    ignoreCollision(ignoreCollision_),
     drawComponent(nullptr) {
 }
 
@@ -85,18 +88,19 @@ StageObject::StageObject(const Vector3f& pos,
                          const Vector3f& relativeCenter,
                          btCollisionShape* shape,
                          btDynamicsWorld* world,
-                         int collisionId,
+                         int objectId_,
+                         bool ignoreCollision_,
                          Mesh* mesh,
                          const Vector3f& scale)
     :
-    EnvironmentObject() {
+    EnvironmentObject(objectId_, ignoreCollision_) {
     rigidBodyComponent = new RigidBodyComponent(mass,
                                                 pos,
                                                 rot,
                                                 relativeCenter,
                                                 shape,
                                                 world,
-                                                collisionId);
+                                                this);
     if(mesh != nullptr ) {
         drawComponent = new DrawComponent(mesh, scale);
     }
@@ -105,17 +109,21 @@ StageObject::StageObject(const Vector3f& pos,
 //---------------------------
 //      [AgentObject]
 //---------------------------
-AgentObject::AgentObject(btCollisionShape* shape,
+AgentObject::AgentObject(float mass,
+                         const Vector3f& pos,
+                         float rotY,
+                         btCollisionShape* shape,
                          btDynamicsWorld* world,
-                         int collisionId)
+                         int objectId_,
+                         bool ignoreCollision_)
     :
-    EnvironmentObject() {
-    rigidBodyComponent = new AgentRigidBodyComponent(1.0f,
-                                                     Vector3f(0.0f, 1.0, 0.0f),
-                                                     0.0f,
+    EnvironmentObject(objectId_, ignoreCollision_) {
+    rigidBodyComponent = new AgentRigidBodyComponent(mass,
+                                                     pos,
+                                                     rotY,
                                                      shape,
                                                      world,
-                                                     collisionId);
+                                                     this);
 }
 
 void AgentObject::control(const Action& action) {

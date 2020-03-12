@@ -43,6 +43,11 @@ class Environment(object):
         """
         self.env = rodentia_module.Env()
         self.main_camera_id = self.add_camera_view(width, height, bg_color)
+        self.agent_id = self.env.add_agent(radius=1.0,
+                                           pos=to_nd_float_array([0,0,0]),
+                                           rot_y=0.0,
+                                           mass=1.0,
+                                           detect_collision=False)
 
     def add_camera_view(self, width, height, bg_color=[0.0, 0.0, 0.0],
                         near=0.05, far=80.0, focal_length=50.0,
@@ -190,7 +195,7 @@ class Environment(object):
           pos: (x,y,z) float values for agent's location.
           rot_y: A float value for head angle of the model (in radian)
         """
-        self.env.locate_agent(pos=to_nd_float_array(pos), rot_y=rot_y)
+        self.env.locate_agent(id=self.agent_id, pos=to_nd_float_array(pos), rot_y=rot_y)
 
     def set_light(self,
                   dir=[-0.5, -1.0, -0.4],
@@ -210,19 +215,17 @@ class Environment(object):
             ambient_color=to_nd_float_array(ambient_color),
             shadow_rate=shadow_rate)
 
-    def step(self, action, num_steps=1):
+    def step(self, action):
         """Step environment process and returns result.
         Args:
           action: Int array with 3 elements.
-          num_steps: Int value for iteration count.
         Returns:
           Dictionary which contains the result of this step calculation.
             "collided" Int list of object ids that collided with the agent.
             "screen": numpy nd_array of width * height * 3 (uint8)
         """
-        # TODO: step()とrender()分けるかどうか検討
-        obs_step = self.env.step(action=to_nd_int_array(action),
-                                 num_steps=num_steps)
+        self.env.control(id=self.agent_id, action=to_nd_int_array(action))
+        obs_step = self.env.step()
         agent_info = self.get_agent_info()
         obs_render = self.render(self.main_camera_id,
                                  pos=agent_info["pos"],
@@ -272,7 +275,7 @@ class Environment(object):
             "rot" numpy nd_array (float32)
             "rot_y" float
         """
-        ret = self.env.get_agent_info()
+        ret = self.env.get_obj_info(self.agent_id)
         rot = ret["rot"]
         # Calculate rotation around Y-axis
         rot_y = np.arctan2(rot[1], rot[3]) * 2.0
