@@ -49,6 +49,41 @@ public:
                                     const Vector3f& scale);
 };
 
+
+class CollisionResult {
+private:
+    map< int, set<int> > collisionIdMap; // <agentId, collisionids>
+
+public:
+    CollisionResult() {
+    }
+
+    void addCollisionId(int agentId, int targetId) {
+        collisionIdMap[agentId].insert(targetId);
+    }
+
+    void getAgentIds(vector<int>& agentIds) const {
+        for(auto itr=collisionIdMap.begin(); itr!=collisionIdMap.end(); ++itr) {
+            int id = itr->first;            
+            agentIds.push_back(id);
+        }
+    }
+
+    void getCollisionIds(int agentId, vector<int>& collisionIds) const {
+        auto itr = collisionIdMap.find(agentId);
+        if( itr == collisionIdMap.end() ) {
+            return;
+        }
+
+        const set<int>& collidedIds = itr->second;
+        for(auto it=collidedIds.begin(); it!=collidedIds.end(); ++it) {
+            int id = *it;
+            collisionIds.push_back(id);
+        }
+    }
+};
+
+
 class Environment {
 private:
     CollisionShapeManager collisionShapeManager;
@@ -59,7 +94,6 @@ private:
     btDiscreteDynamicsWorld* world;
 
     int nextObjId;
-    set<int> collidedIds;
     map<int, EnvironmentObject*> objectMap; // <obj-id, EnvironmentObject>
 
     MeshManager meshManager;
@@ -69,7 +103,7 @@ private:
     RenderingContext renderingContext;
     vector<CameraView*> cameraViews;
 
-    void checkCollision();
+    void checkCollision(CollisionResult& collisionResult);
     void prepareShadow();
     int addObject(btCollisionShape* shape,
                   const Vector3f& pos,
@@ -106,7 +140,7 @@ public:
                  bool detectCollision);
     void release();
     void control(int id, const Action& action);
-    void step();
+    void step(CollisionResult& collisionResult);
     int addBox(const char* texturePath,
                const Vector3f& halfExtent,
                const Vector3f& pos,
@@ -137,7 +171,6 @@ public:
                   const Vector3f& ambientColor,
                   float shadowColorRate);
     bool getObjectInfo(int id, EnvironmentObjectInfo& info) const;
-    //bool getAgentInfo(EnvironmentObjectInfo& info) const;
     void replaceObjectTextures(int id, const vector<string>& texturePathes);
 
     void render(int cameraId, const Vector3f& pos, const Quat4f& rot);
@@ -145,8 +178,6 @@ public:
     int getFrameBufferWidth(int cameraId) const;
     int getFrameBufferHeight(int cameraId) const;
     int getFrameBufferSize(int cameraId) const;
-
-    const set<int>& getCollidedIds() const { return collidedIds; }
 };
 
 #endif

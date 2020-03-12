@@ -225,13 +225,20 @@ class Environment(object):
             "screen": numpy nd_array of width * height * 3 (uint8)
         """
         self.env.control(id=self.agent_id, action=to_nd_int_array(action))
-        obs_step = self.env.step()
+        collision_ids = self.env.step()
+        
+        ret = {}
+        if self.agent_id in collision_ids:
+            ret["collided"] = collision_ids[self.agent_id]
+        else:
+            ret["collided"] = []
+            
         agent_info = self.get_agent_info()
-        obs_render = self.render(self.main_camera_id,
+        ret_render = self.render(self.main_camera_id,
                                  pos=agent_info["pos"],
                                  rot=agent_info["rot"])
-        obs_step["screen"] = obs_render["screen"]
-        return obs_step
+        ret["screen"] = ret_render["screen"]
+        return ret
 
     def render(self, camera_id, pos, rot):
         """Step environment process and returns result.

@@ -64,8 +64,8 @@ static void control(Environment* environment, int id, const Action& action) {
     environment->control(id, action);
 }
 
-static void step(Environment* environment) {
-    environment->step();
+static void step(Environment* environment, CollisionResult& collisionResult) {
+    environment->step(collisionResult);
 }
 
 static void render(Environment* environment, int cameraId,
@@ -255,7 +255,6 @@ static int Env_init(EnvObject* self, PyObject* args, PyObject* kwds) {
     return 0;
 }
 
-
 static PyObject* Env_add_camera_view(EnvObject* self, PyObject* args, PyObject* kwds) { 
     const char *kwlist[] = { "width",
                              "height",
@@ -313,7 +312,6 @@ static PyObject* Env_add_camera_view(EnvObject* self, PyObject* args, PyObject* 
     return idObj;
 }
 
-
 static PyObject* Env_add_agent(EnvObject* self, PyObject* args, PyObject* kwds) {
     float radius;
     PyObject* posObj = nullptr;
@@ -359,7 +357,6 @@ static PyObject* Env_add_agent(EnvObject* self, PyObject* args, PyObject* kwds) 
     return idObj;
 }
 
-
 static PyObject* Env_control(EnvObject* self, PyObject* args, PyObject* kwds) {
     int id;
     PyObject* actionObj = nullptr;
@@ -394,7 +391,6 @@ static PyObject* Env_control(EnvObject* self, PyObject* args, PyObject* kwds) {
     return Py_None;
 }
 
-
 static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
     if (self->environment == nullptr) {
         PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
@@ -402,37 +398,44 @@ static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
     }
 
     // Process step
-    step(self->environment);
-
+    CollisionResult collisionResult;
+    
+    step(self->environment, collisionResult);
+    
     // Create output dictionary
     PyObject* resultDic = PyDict_New();
     if (resultDic == nullptr) {
         PyErr_NoMemory();
         return nullptr;
     }
-
-    // TODO: agentのid毎にcollision idを管理するようにする.
-
-    const set<int>& collidedIds = self->environment->getCollidedIds();
-
-    size_t collidedIdSize = collidedIds.size();
-    PyObject* collidedIdTuple = PyTuple_New(collidedIdSize);
     
-    int i=0;
-    for(auto it=collidedIds.begin(); it!=collidedIds.end(); ++it) {
-        int collidedId = *it;
-        PyObject* item = PyLong_FromLong(collidedId);
-        PyTuple_SetItem(collidedIdTuple, i, item);
-        // No need to decrease item's refcount.
-        i += 1;
+    vector<int> agentIds;
+    collisionResult.getAgentIds(agentIds);
+
+    for(auto itra=agentIds.begin(); itra!=agentIds.end(); ++itra) {
+        int agentId = *itra;
+        
+        vector<int> collisionIds;
+        collisionResult.getCollisionIds(agentId, collisionIds);
+        
+        PyObject* collisionIdTuple = PyTuple_New(collisionIds.size());
+        
+        int i=0;
+        for(auto itrc=collisionIds.begin(); itrc!=collisionIds.end(); ++itrc) {
+            int collisionId = *itrc;
+            PyObject* item = PyLong_FromLong(collisionId);
+            PyTuple_SetItem(collisionIdTuple, i, item);
+            // No need to decrease item's refcount.
+            i += 1;
+        }
+        
+        PyObject* key = PyLong_FromLong(agentId);
+        PyDict_SetItem(resultDic, key, collisionIdTuple);
+        
+        Py_DECREF(key);
+        Py_DECREF(collisionIdTuple);
     }
 
-    // Put tuple to dictionary
-    PyDict_SetItemString(resultDic, "collided", collidedIdTuple);
-
-    // Decrease ref count of tuple
-    Py_DECREF(collidedIdTuple);
-    
     return resultDic;
 }
 

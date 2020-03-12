@@ -213,7 +213,7 @@ void Environment::release() {
     nextObjId = 0;
 }
 
-void Environment::checkCollision() {
+void Environment::checkCollision(CollisionResult& collisionResult) {
     int numManifolds = world->getDispatcher()->getNumManifolds();
     
     for(int i=0; i<numManifolds; ++i) {
@@ -236,15 +236,21 @@ void Environment::checkCollision() {
             const EnvironmentObject* envObj0 = (EnvironmentObject*)obj0->getUserPointer();
             const EnvironmentObject* envObj1 = (EnvironmentObject*)obj1->getUserPointer();
 
+            // TODO: Agent 対 Agentの場合の対応が必要か
+
             if( envObj0->isAgent() ) {
+                int agentId = envObj0->getObjectId();
+                
                 const EnvironmentObject* otherObj = envObj1;
                 if( !otherObj->ignoresCollision() ) {
-                    collidedIds.insert(otherObj->getObjectId());
+                    collisionResult.addCollisionId(agentId, otherObj->getObjectId());
                 }
             } else if( envObj1->isAgent() ) {
+                int agentId = envObj1->getObjectId();
+                
                 const EnvironmentObject* otherObj = envObj0;
                 if( !otherObj->ignoresCollision() ) {
-                    collidedIds.insert(otherObj->getObjectId());
+                    collisionResult.addCollisionId(agentId, otherObj->getObjectId());
                 }
             }
         }
@@ -280,22 +286,17 @@ void Environment::control(int id, const Action& action) {
     }
 }
 
-void Environment::step() {
+void Environment::step(CollisionResult& collisionResult) {
     if(!world) {
         return;
     }
     
     const float deltaTime = 1.0f / 60.0f;
     
-    // Process rigid body simulation
-    // TODO: agent毎にIDを管理するようにしないといけない
-    collidedIds.clear();
-
     world->stepSimulation(deltaTime);
 
     // Collision check
-    // (collidedIdsに値をセットする)
-    checkCollision();
+    checkCollision(collisionResult);
 
     // Set stage bounding box to rendering context. (currently not used)
     // (LSPSMにbounding boxを設定する予定だが未使用)
