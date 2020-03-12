@@ -29,10 +29,13 @@ class CameraView;
 class CollisionMeshData;
 
 
-// TODO: collision shapes sould be cached
 class CollisionShapeManager {
 private:
-    btAlignedObjectArray<btCollisionShape*> collisionShapes;
+    map<size_t, btCollisionShape*> collisionShapeMap; // <hash, btCollisionShape>
+    
+    size_t getHash(const string& str, float v0, float v1=0, float v2=0);
+    btCollisionShape* getShape(size_t hash);
+    void addShape(size_t hash, btCollisionShape* shape);
 
 public:
     ~CollisionShapeManager();
@@ -41,10 +44,8 @@ public:
     btCollisionShape* getBoxShape(float halfExtentX,
                                   float halfExtentY,
                                   float halfExtentZ);
-    btCollisionShape* getCylinderShape(float halfExtentX,
-                                       float halfExtentY,
-                                       float halfExtentZ);
-    btCollisionShape* getModelShape(const CollisionMeshData& collisionMeshData,
+    btCollisionShape* getModelShape(const string& path,
+                                    const CollisionMeshData& collisionMeshData,
                                     const Vector3f& scale);
 };
 
