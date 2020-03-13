@@ -169,18 +169,29 @@ int Environment::addAgent(float radius,
                           const Vector3f& pos,
                           float rotY,
                           float mass,
-                          bool detectCollision) {
+                          bool detectCollision,
+                          const Vector3f& color) {
     int objectId = nextObjId;
     nextObjId += 1;
+
+    Texture* texture = textureManager.getColorTexture(color.x, color.y, color.z);
+    Shader* shader = shaderManager.getDiffuseShader();
+    Shader* shadowDepthShader = shaderManager.getShadowDepthShader();
+    Material* material = new Material(texture, shader, shadowDepthShader);
+    Mesh* mesh = meshManager.getSphereMesh(material);
     
     btCollisionShape* shape = collisionShapeManager.getSphereShape(radius);
+
+    Vector3f scale(radius, radius, radius);
     AgentObject* agentObj = new AgentObject(mass,
                                             pos,
                                             rotY,
                                             shape,
                                             world,
-                                            objectId, !
-                                            detectCollision);
+                                            objectId,
+                                            !detectCollision,
+                                            mesh,
+                                            scale);
     objectMap[objectId] = agentObj;
     return objectId;
 }

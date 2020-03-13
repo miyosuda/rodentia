@@ -53,7 +53,7 @@ public:
 
     int getObjectId()       const { return objectId;        }
     bool ignoresCollision() const { return ignoreCollision; }
-    virtual bool isAgent() const = 0;    
+    virtual bool isAgent() const = 0;
 };
 
 
@@ -69,7 +69,7 @@ public:
                 btCollisionShape* shape,
                 btDynamicsWorld* world,
                 int objectId_,
-                bool ignoreCollision_e,
+                bool ignoreCollision_,
                 Mesh* mesh,
                 const Vector3f& scale);
 
@@ -89,7 +89,9 @@ public:
                 btCollisionShape* shape,
                 btDynamicsWorld* world,
                 int objectId_,
-                bool ignoreCollision_);
+                bool ignoreCollision_,
+                Mesh* mesh,
+                const Vector3f& scale);
     void control(const Action& action);
 
     virtual bool isAgent() const override {

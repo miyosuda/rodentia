@@ -115,15 +115,21 @@ AgentObject::AgentObject(float mass,
                          btCollisionShape* shape,
                          btDynamicsWorld* world,
                          int objectId_,
-                         bool ignoreCollision_)
+                         bool ignoreCollision_,
+                         Mesh* mesh,
+                         const Vector3f& scale)
     :
     EnvironmentObject(objectId_, ignoreCollision_) {
+    
     rigidBodyComponent = new AgentRigidBodyComponent(mass,
                                                      pos,
                                                      rotY,
                                                      shape,
                                                      world,
                                                      this);
+    if(mesh != nullptr ) {
+        drawComponent = new DrawComponent(mesh, scale);
+    }
 }
 
 void AgentObject::control(const Action& action) {

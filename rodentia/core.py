@@ -47,7 +47,8 @@ class Environment(object):
                                            pos=to_nd_float_array([0,0,0]),
                                            rot_y=0.0,
                                            mass=1.0,
-                                           detect_collision=False)
+                                           detect_collision=False,
+                                           color=to_nd_float_array([0,0,1]))
 
     def add_camera_view(self, width, height, bg_color=[0.0, 0.0, 0.0],
                         near=0.05, far=80.0, focal_length=50.0,

@@ -137,7 +137,8 @@ public:
                  const Vector3f& pos,
                  float rotY,
                  float mass,
-                 bool detectCollision);
+                 bool detectCollision,
+                 const Vector3f& color);
     void release();
     void control(int id, const Action& action);
     void step(CollisionResult& collisionResult);

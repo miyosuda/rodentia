@@ -48,11 +48,13 @@ static int addAgent(Environment* environment,
                     const Vector3f& pos,
                     float rotY,
                     float mass,
-                    bool detectCollision) {
+                    bool detectCollision,
+                    const Vector3f& color) {
     return environment->addAgent(radius,
                                  pos, rotY,
                                  mass,
-                                 detectCollision);
+                                 detectCollision,
+                                 color);
 }
 
 static void releaseEnvironment(Environment* environment) {
@@ -318,18 +320,20 @@ static PyObject* Env_add_agent(EnvObject* self, PyObject* args, PyObject* kwds) 
     float rotY;
     float mass;
     int detectCollision;
+    PyObject* colorObj = nullptr;    
 
     // Get argument
     const char* kwlist[] = {"radius", "pos", "rot_y", "mass",
-                            "detect_collision",
+                            "detect_collision", "color",
                             nullptr};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "fO!ffi", const_cast<char**>(kwlist),
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "fO!ffiO!", const_cast<char**>(kwlist),
                                      &radius,
                                      &PyArray_Type, &posObj,
                                      &rotY,
                                      &mass,
-                                     &detectCollision)) {
+                                     &detectCollision,
+                                     &PyArray_Type, &colorObj)) {
         return nullptr;
     }
     
@@ -344,13 +348,21 @@ static PyObject* Env_add_agent(EnvObject* self, PyObject* args, PyObject* kwds) 
         return nullptr;
     }
 
-    Vector3f pos(posArr[0], posArr[1], posArr[2]);    
+    Vector3f pos(posArr[0], posArr[1], posArr[2]);
+
+    // color
+    const float* colorArr = getFloatArrayData(colorObj, 3, "color");
+    if( colorArr == nullptr ) {
+        return nullptr;
+    }
+    Vector3f color(colorArr[0], colorArr[1], colorArr[2]);
     
     int id = addAgent(self->environment,
                       radius,
                       pos, rotY,
                       mass,
-                      detectCollision != 0);
+                      detectCollision != 0,
+                      color);
 
     // Returning object ID
     PyObject* idObj = PyLong_FromLong(id);
@@ -988,7 +1000,8 @@ static PyObject* Env_replace_obj_texture(EnvObject* self, PyObject* args, PyObje
     return Py_None;
 }
 
-// int add_camera_view(width, height, bg_color)
+// int add_camera_view(width, height, bg_color, near, far, focal_length, shadow_buffer_width)
+// int add_agent(radius, pos, rot_y, mass, detect_collision, color)
 // void control(id, action)
 // dic step()
 // dic render(camera_id, pos, rot)
