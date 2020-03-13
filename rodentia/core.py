@@ -40,6 +40,7 @@ class Environment(object):
         Args:
           width: Screen width
           height: Screen height
+          bg_color: Background color (RGB value with 0.0 ~ 1.0)
         """
         self.env = rodentia_module.Env()
         self.main_camera_id = self.add_camera_view(width, height, bg_color)
@@ -246,6 +247,9 @@ class Environment(object):
         """Step environment process and returns result.
         Args:
           camera_id: Int array with 3 elements.
+          pos: (x,y,z) Position of the camera
+          rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the camera
+          ignore_ids: Int list, oject id list to skip drawing
           
         Returns:
           Dictionary which contains the result of this step calculation.

@@ -208,13 +208,15 @@ Capture screen with the additional camera view.
 
     render(camera_id,
            pos,
-           rot)
+           rot,
+           ignore_ids=[])
 
-| Argument         | Description                          |
-|------------------|--------------------------------------|
-| camera_id        | Int. Camera id                       |
-| pos              | Camera position                      |
-| rot              | Quaternion of the camera orientation |
+| Argument         | Description                             |
+|------------------|-----------------------------------------|
+| camera_id        | Int. Camera id                          |
+| pos              | Camera position                         |
+| rot              | Quaternion of the camera orientation    |
+| ignore_ids       | Int list, oject id list to skip drawing |
 
 Return value is a dictionary which contains the result of this step calculation.
 
