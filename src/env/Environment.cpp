@@ -247,14 +247,17 @@ void Environment::checkCollision(CollisionResult& collisionResult) {
             const EnvironmentObject* envObj0 = (EnvironmentObject*)obj0->getUserPointer();
             const EnvironmentObject* envObj1 = (EnvironmentObject*)obj1->getUserPointer();
 
-            // TODO: Agent 対 Agentの場合の対応が必要か
-
             if( envObj0->isAgent() ) {
                 int agentId = envObj0->getObjectId();
                 
                 const EnvironmentObject* otherObj = envObj1;
                 if( !otherObj->ignoresCollision() ) {
                     collisionResult.addCollisionId(agentId, otherObj->getObjectId());
+
+                    if( otherObj->isAgent() ) {
+                        // Add inverted agent-agent collision id pair too.
+                        collisionResult.addCollisionId(otherObj->getObjectId(), agentId);
+                    }
                 }
             } else if( envObj1->isAgent() ) {
                 int agentId = envObj1->getObjectId();
@@ -262,6 +265,11 @@ void Environment::checkCollision(CollisionResult& collisionResult) {
                 const EnvironmentObject* otherObj = envObj0;
                 if( !otherObj->ignoresCollision() ) {
                     collisionResult.addCollisionId(agentId, otherObj->getObjectId());
+
+                    if( otherObj->isAgent() ) {
+                        // Add inverted agent-agent collision id pair too.
+                        collisionResult.addCollisionId(otherObj->getObjectId(), agentId);
+                    }
                 }
             }
         }
