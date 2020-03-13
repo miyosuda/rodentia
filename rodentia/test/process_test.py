@@ -34,7 +34,7 @@ def worker(conn):
 
         if command == COMMAND_ACTION:
             action = np.array([10, 0, 0], dtype=np.int32)
-            obs = env.step(action, num_steps=1)
+            obs = env.step(action)
             conn.send(obs)
         elif command == COMMAND_TERMINATE:
             break

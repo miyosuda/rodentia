@@ -174,7 +174,8 @@ public:
     bool getObjectInfo(int id, EnvironmentObjectInfo& info) const;
     void replaceObjectTextures(int id, const vector<string>& texturePathes);
 
-    void render(int cameraId, const Vector3f& pos, const Quat4f& rot);
+    void render(int cameraId, const Vector3f& pos, const Quat4f& rot,
+                const set<int> ignoreIds);
     const void* getFrameBuffer(int cameraId) const;
     int getFrameBufferWidth(int cameraId) const;
     int getFrameBufferHeight(int cameraId) const;

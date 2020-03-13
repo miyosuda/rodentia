@@ -237,11 +237,12 @@ class Environment(object):
         agent_info = self.get_agent_info()
         ret_render = self.render(self.main_camera_id,
                                  pos=agent_info["pos"],
-                                 rot=agent_info["rot"])
+                                 rot=agent_info["rot"],
+                                 ignore_ids=[self.agent_id])
         ret["screen"] = ret_render["screen"]
         return ret
 
-    def render(self, camera_id, pos, rot):
+    def render(self, camera_id, pos, rot, ignore_ids=[]):
         """Step environment process and returns result.
         Args:
           camera_id: Int array with 3 elements.
@@ -253,7 +254,9 @@ class Environment(object):
         return self.env.render(
             camera_id=camera_id,
             pos=to_nd_float_array(pos),
-            rot=to_nd_float_array_for_rot(rot))
+            rot=to_nd_float_array_for_rot(rot),
+            ignore_ids=to_nd_int_array(ignore_ids)
+        )
 
     def remove_obj(self, id):
         """Remove object from environment.

@@ -1,6 +1,7 @@
 #include <Python.h>
 
 #include <vector>
+#include <set>
 #include <string>
 using namespace std;
 
@@ -72,8 +73,9 @@ static void step(Environment* environment, CollisionResult& collisionResult) {
 
 static void render(Environment* environment, int cameraId,
                    const Vector3f& pos,
-                   const Quat4f& rot) {
-    environment->render(cameraId, pos, rot);
+                   const Quat4f& rot,
+                   const set<int> ignoreIds) {
+    environment->render(cameraId, pos, rot, ignoreIds);
 }
 
 static int addBox(Environment* environment,
@@ -455,14 +457,16 @@ static PyObject* Env_render(EnvObject* self, PyObject* args, PyObject* kwds) {
     int cameraId;
     PyObject* posObj = nullptr;
     PyObject* rotObj = nullptr;
+    PyObject* ignoreIdsObj = nullptr;
 
     // Get argument
-    const char* kwlist[] = {"camera_id", "pos", "rot", nullptr};
+    const char* kwlist[] = {"camera_id", "pos", "rot", "ignore_ids", nullptr};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "iO!O!", const_cast<char**>(kwlist),
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "iO!O!O!", const_cast<char**>(kwlist),
                                      &cameraId,
                                      &PyArray_Type, &posObj,
-                                     &PyArray_Type, &rotObj)) {
+                                     &PyArray_Type, &rotObj,
+                                     &PyArray_Type, &ignoreIdsObj)) {
         return nullptr;
     }
 
@@ -486,7 +490,27 @@ static PyObject* Env_render(EnvObject* self, PyObject* args, PyObject* kwds) {
     }
 
     Quat4f rot(rotArr[0], rotArr[1], rotArr[2], rotArr[3]);
+
+    // ignore_ids
+    PyArrayObject* ignoreIdsArray = (PyArrayObject*)ignoreIdsObj;
+    if (PyArray_NDIM(ignoreIdsArray) != 1 ) {
+        PyErr_Format(PyExc_ValueError, "%s must have shape (%d)", "ignore_ids", 1);
+        return nullptr;
+    }
+    int ignoreIdsLength = PyArray_DIM(ignoreIdsArray, 0);
+    const int* ignoreIds_ = getIntArrayData(ignoreIdsObj, ignoreIdsLength, "ignore_ids");
+    set<int> ignoreIds;
+    for(int i=0; i<ignoreIdsLength; ++i) {
+        ignoreIds.insert(ignoreIds_[i]);
+    }
+
+    // do render
+    render(self->environment, cameraId, pos, rot, ignoreIds);
     
+    int frameBufferWidth  = self->environment->getFrameBufferWidth(cameraId);
+    int frameBufferHeight = self->environment->getFrameBufferHeight(cameraId);
+    const void* frameBuffer = self->environment->getFrameBuffer(cameraId);
+
     // Create output dictionary
     PyObject* resultDic = PyDict_New();
     if (resultDic == nullptr) {
@@ -494,12 +518,6 @@ static PyObject* Env_render(EnvObject* self, PyObject* args, PyObject* kwds) {
         return nullptr;
     }
     
-    render(self->environment, cameraId, pos, rot);
-    
-    int frameBufferWidth  = self->environment->getFrameBufferWidth(cameraId);
-    int frameBufferHeight = self->environment->getFrameBufferHeight(cameraId);
-    const void* frameBuffer = self->environment->getFrameBuffer(cameraId);
-
     // Create screen output array
     long* screenDims = new long[3];
     screenDims[0] = frameBufferWidth;

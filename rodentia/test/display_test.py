@@ -286,7 +286,8 @@ class Display(object):
                     dtype=np.int32)
 
   def process_sub(self, action):
-    obs = self.env.step(action=action, num_steps=1)
+    
+    obs = self.env.step(action=action)
     self.step_num += 1
     
     screen = obs["screen"]

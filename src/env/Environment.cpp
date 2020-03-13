@@ -316,7 +316,8 @@ void Environment::step(CollisionResult& collisionResult) {
 
 void Environment::render(int cameraId,
                          const Vector3f& pos,
-                         const Quat4f& rot) {
+                         const Quat4f& rot,
+                         const set<int> ignoreIds) {
 
     // Set light direction, ambient color and shadow color rate to the shader
     // TODO: 本来はrender()毎ではなく、step()時に1回だけで良いはず.
@@ -365,7 +366,12 @@ void Environment::render(int cameraId,
     
     // Draw objects
     for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
-        EnvironmentObject* object = itr->second;
+        EnvironmentObject* object = itr->second;        
+        if( ignoreIds.find(object->getObjectId()) != ignoreIds.end() ) {
+            // Skip drawing
+            continue;
+        }
+        
         // Draw with normal shader
         object->draw(renderingContext);
     }
