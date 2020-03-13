@@ -354,6 +354,12 @@ void Environment::render(int cameraId,
     // Draw objects
     for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
         EnvironmentObject* object = itr->second;
+        
+        if( ignoreIds.find(object->getObjectId()) != ignoreIds.end() ) {
+            // Skip drawing
+            continue;
+        }
+        
         // Draw with shadow depth shader
         object->draw(renderingContext);
     }
@@ -366,7 +372,8 @@ void Environment::render(int cameraId,
     
     // Draw objects
     for(auto itr=objectMap.begin(); itr!=objectMap.end(); ++itr) {
-        EnvironmentObject* object = itr->second;        
+        EnvironmentObject* object = itr->second;
+        
         if( ignoreIds.find(object->getObjectId()) != ignoreIds.end() ) {
             // Skip drawing
             continue;
