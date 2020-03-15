@@ -307,7 +307,11 @@ BaseEnvironment wraps rodentia_module.Env class.</p>
             pos=to_nd_float_array(pos),
             rot=to_nd_float_array_for_rot(rot),
             ignore_ids=to_nd_int_array(ignore_ids)
-        )            </code></pre>
+        )
+
+    def close(self):
+        &#34;&#34;&#34; Release environment &#34;&#34;&#34;
+        self.env.release()</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -581,6 +585,20 @@ the agenet collides with this object.</dd>
         visible=visible)</code></pre>
 </details>
 </dd>
+<dt id="rodentia.BaseEnvironment.close"><code class="name flex">
+<span>def <span class="ident">close</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Release environment</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def close(self):
+    &#34;&#34;&#34; Release environment &#34;&#34;&#34;
+    self.env.release()</code></pre>
+</details>
+</dd>
 <dt id="rodentia.BaseEnvironment.get_obj_info"><code class="name flex">
 <span>def <span class="ident">get_obj_info</span></span>(<span>self, id)</span>
 </code></dt>
@@ -710,7 +728,7 @@ the rotation quaternion of the camera</dd>
         pos=to_nd_float_array(pos),
         rot=to_nd_float_array_for_rot(rot),
         ignore_ids=to_nd_int_array(ignore_ids)
-    )            </code></pre>
+    )</code></pre>
 </details>
 </dd>
 <dt id="rodentia.BaseEnvironment.replace_obj_texture"><code class="name flex">
@@ -994,6 +1012,7 @@ by applying list of texture pathes.</p>
 <li><code><a title="rodentia.core.BaseEnvironment.add_camera_view" href="core.html#rodentia.core.BaseEnvironment.add_camera_view">add_camera_view</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.add_model" href="core.html#rodentia.core.BaseEnvironment.add_model">add_model</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.add_sphere" href="core.html#rodentia.core.BaseEnvironment.add_sphere">add_sphere</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.close" href="core.html#rodentia.core.BaseEnvironment.close">close</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.get_obj_info" href="core.html#rodentia.core.BaseEnvironment.get_obj_info">get_obj_info</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.locate_object" href="core.html#rodentia.core.BaseEnvironment.locate_object">locate_object</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.remove_obj" href="core.html#rodentia.core.BaseEnvironment.remove_obj">remove_obj</a></code></li>
@@ -1244,6 +1263,7 @@ by applying list of texture pathes.</p>
 <li><code><a title="rodentia.core.BaseEnvironment.add_camera_view" href="core.html#rodentia.core.BaseEnvironment.add_camera_view">add_camera_view</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.add_model" href="core.html#rodentia.core.BaseEnvironment.add_model">add_model</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.add_sphere" href="core.html#rodentia.core.BaseEnvironment.add_sphere">add_sphere</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.close" href="core.html#rodentia.core.BaseEnvironment.close">close</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.get_obj_info" href="core.html#rodentia.core.BaseEnvironment.get_obj_info">get_obj_info</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.locate_object" href="core.html#rodentia.core.BaseEnvironment.locate_object">locate_object</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.remove_obj" href="core.html#rodentia.core.BaseEnvironment.remove_obj">remove_obj</a></code></li>
@@ -1279,6 +1299,7 @@ by applying list of texture pathes.</p>
 <li><code><a title="rodentia.BaseEnvironment.add_camera_view" href="#rodentia.BaseEnvironment.add_camera_view">add_camera_view</a></code></li>
 <li><code><a title="rodentia.BaseEnvironment.add_model" href="#rodentia.BaseEnvironment.add_model">add_model</a></code></li>
 <li><code><a title="rodentia.BaseEnvironment.add_sphere" href="#rodentia.BaseEnvironment.add_sphere">add_sphere</a></code></li>
+<li><code><a title="rodentia.BaseEnvironment.close" href="#rodentia.BaseEnvironment.close">close</a></code></li>
 <li><code><a title="rodentia.BaseEnvironment.get_obj_info" href="#rodentia.BaseEnvironment.get_obj_info">get_obj_info</a></code></li>
 <li><code><a title="rodentia.BaseEnvironment.locate_object" href="#rodentia.BaseEnvironment.locate_object">locate_object</a></code></li>
 <li><code><a title="rodentia.BaseEnvironment.remove_obj" href="#rodentia.BaseEnvironment.remove_obj">remove_obj</a></code></li>
