@@ -176,6 +176,16 @@ btCollisionShape* CollisionShapeManager::getCompoundModelShapeFromFile(
     }
     
     btCompoundShape* compoundShape = new btCompoundShape();
+
+    const BoundingBox& boundingBox = collisionMeshData.getBoundingBox();
+    
+    Vector3f center;
+    boundingBox.getCenter(center);
+
+    // This  center offset is used for rigidbody
+    center.x *= scale.x;
+    center.y *= scale.y;
+    center.z *= scale.z;
     
     string linebuf;
     while(is.peek() != -1) {
@@ -193,15 +203,16 @@ btCollisionShape* CollisionShapeManager::getCompoundModelShapeFromFile(
                 float halfExtentY = stof(tokens[5]);
                 float halfExtentZ = stof(tokens[6]);
                 
+
                 btCollisionShape* boxShape = getBoxShape(halfExtentX * scale.x,
                                                          halfExtentY * scale.y,
                                                          halfExtentZ * scale.z);
                 
                 btTransform transform;
                 transform.setIdentity();
-                transform.setOrigin(btVector3(posX * scale.x,
-                                              posY * scale.y,
-                                              posZ * scale.z));
+                transform.setOrigin(btVector3(posX * scale.x - center.x,
+                                              posY * scale.y - center.y,
+                                              posZ * scale.z - center.z));
                 compoundShape->addChildShape(transform, boxShape);
             }
         }
