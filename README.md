@@ -10,7 +10,7 @@
 - Shadow mapping
 
 
-[![preview](./doc/image/preview.png)](https://youtu.be/6thMDZlAzkk)
+[![preview](./docs/image/preview.png)](https://youtu.be/6thMDZlAzkk)
 
 
 ## Install with pip
@@ -92,4 +92,4 @@ And install with `rodentia` with pip
 
 ## API
 
-[Python API](doc/python_api.md)
+[Python API](docs/python_api.md)
