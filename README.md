@@ -8,7 +8,7 @@
 - Multi camera rendering
 - Rigidbody simulation
 - Shadow mapping
-
+- Multi agent
 
 [![preview](./docs/image/preview.png)](https://youtu.be/6thMDZlAzkk)
 
@@ -92,4 +92,4 @@ And install with `rodentia` with pip
 
 ## API
 
-[Python API](docs/python_api.md)
+[Python API](https://miyosuda.github.io/rodentia/)
