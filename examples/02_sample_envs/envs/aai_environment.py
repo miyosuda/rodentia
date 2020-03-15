@@ -1,18 +1,33 @@
-# -*- coding: utf-8 -*-
+import gym
+import gym.spaces
 import rodentia
 import os
-import math
 import random
 import numpy as np
 
 MAX_STEP_NUM = 60 * 60  # 60 seconds * 60 frames
 
 
-class AAIEnvironment(object):
-    def __init__(self, width, height):
+class AAIEnvironment(gym.Env):
+    """ Animal-AI Olympics compatible environment example """
+    
+    metadata = {'render.modes': []}
+
+    def __init__(self, width=84, height=84):
+        super().__init__()
+
+        # Gym setting
+        self.action_space = gym.spaces.MultiDiscrete((3,3,3))
+        self.observation_space = gym.spaces.Box(
+            low=0,
+            high=255,
+            shape=(84,84,3)
+        )
+        self.reward_range = [-1.0, 1.0]
+    
         # Where model and texture data are located
         self.data_path = os.path.dirname(
-            os.path.abspath(__file__)) + "/../data/"
+            os.path.abspath(__file__)) + "/../../data/"
 
         # Create environment
         self.env = rodentia.Environment(
@@ -172,7 +187,7 @@ class AAIEnvironment(object):
         self._locate_minus_reward_obj(x=-5, y=1, z=-10)
 
         # Locate agent to default position with randomized orientation
-        rot_y = 2.0 * math.pi * -0.25
+        rot_y = 2.0 * np.pi * -0.25
 
         self.env.locate_agent(pos=[0, 1, 0], rot_y=rot_y)
 
@@ -195,9 +210,19 @@ class AAIEnvironment(object):
         self.plus_obj_ids_set = set()
         self.minus_obj_ids_set = set()
 
-    def step(self, real_action):
+    def _convert_to_real_action(self, action):
+        real_action = np.clip(action, 0, 2) - 1
+        real_action[0] *= 6
+        real_action = real_action.astype(np.int32)
+        return real_action
+
+    def step(self, action):
+        # Get action value to set to environment
+        real_action = self._convert_to_real_action(action)
+
+        # Step environment
         obs = self.env.step(action=real_action)
-        self.step_num += 1
+        self.step_num += 1        
 
         screen = obs["screen"]
         collided = obs["collided"]
@@ -224,7 +249,7 @@ class AAIEnvironment(object):
         if (not terminal) and is_empty:
             screen = self._reset_sub()
 
-        return screen, reward, terminal
+        return screen, reward, terminal, {}
 
     def get_top_view(self):
         # Capture stage image from the top view

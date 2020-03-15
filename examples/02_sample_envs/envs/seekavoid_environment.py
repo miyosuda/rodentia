@@ -1,26 +1,33 @@
-# -*- coding: utf-8 -*-
+import gym
+import gym.spaces
 import rodentia
 import os
-import math
+import numpy as np
 import random
 
 MAX_STEP_NUM = 60 * 20  # 20 seconds * 60 frames
 
 
-class SeekAvoidEnvironment(object):
-    ACTION_LIST = [
-        [  6,  0,  0], # look_left
-        [ -6,  0,  0], # look_right
-        [  0,  1,  0], # strafe_left
-        [  0, -1,  0], # strafe_right
-        [  0,  0,  1], # forward
-        [  0,  0, -1], # backward
-    ]
-
-    def __init__(self, width, height):
+class SeekAvoidEnvironment(gym.Env):
+    """ DeepMind Lab compatible enviroment example """
+    
+    metadata = {'render.modes': []}
+    
+    def __init__(self, width=84, height=84):
+        super().__init__()
+        
+        # Gym setting
+        self.action_space = gym.spaces.MultiDiscrete((3,3,3))
+        self.observation_space = gym.spaces.Box(
+            low=0,
+            high=255,
+            shape=(84,84,3)
+        )
+        self.reward_range = [-1.0, 1.0]
+        
         # Where model and texture data are located
         self.data_path = os.path.dirname(
-            os.path.abspath(__file__)) + "/../data/"
+            os.path.abspath(__file__)) + "/../../data/"
 
         # Create environment
         self.env = rodentia.Environment(
@@ -35,9 +42,6 @@ class SeekAvoidEnvironment(object):
 
         # Reset stage
         self.reset()
-
-    def get_action_size(self):
-        return len(SeekAvoidEnvironment.ACTION_LIST)
 
     def _prepare_stage(self):
         # Floor
@@ -140,7 +144,7 @@ class SeekAvoidEnvironment(object):
         self._locate_minus_reward_obj(x=-248, z=216, rot=0.375)
 
         # Locate agent to default position with randomized orientation
-        rot_y = 2.0 * math.pi * random.random()
+        rot_y = 2.0 * np.pi * random.random()
 
         self.env.locate_agent(pos=[0, 0, 0], rot_y=rot_y)
 
@@ -163,10 +167,17 @@ class SeekAvoidEnvironment(object):
         self.plus_obj_ids_set = set()
         self.minus_obj_ids_set = set()
 
+    def _convert_to_real_action(self, action):
+        real_action = np.clip(action, 0, 2) - 1
+        real_action[0] *= 6
+        real_action = real_action.astype(np.int32)
+        return real_action
+
     def step(self, action):
         # Get action value to set to environment
-        real_action = SeekAvoidEnvironment.ACTION_LIST[action]
+        real_action = self._convert_to_real_action(action)
 
+        # Step environment
         obs = self.env.step(action=real_action)
         self.step_num += 1
 
@@ -195,4 +206,4 @@ class SeekAvoidEnvironment(object):
         if (not terminal) and is_empty:
             screen = self._reset_sub()
 
-        return screen, reward, terminal
+        return screen, reward, terminal, {}

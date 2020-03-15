@@ -1,28 +1,36 @@
-# -*- coding: utf-8 -*-
+import gym
+import gym.spaces
 import rodentia
 import os
-import math
+import numpy as np
 import random
 
 MAX_STEP_NUM = 60 * 60  # 60 seconds * 60 frames
 
 
-class NavMazeStaticEnvironment(object):
-    ACTION_LIST = [
-        [  6,  0,  0], # look_left
-        [ -6,  0,  0], # look_right
-        [  0,  1,  0], # strafe_left
-        [  0, -1,  0], # strafe_right
-        [  0,  0,  1], # forward
-        [  0,  0, -1], # backward
-    ]    
+class NavMazeStaticEnvironment(gym.Env):
+    """ DeepMind Lab compatible enviroment example """
+    
+    metadata = {'render.modes': []}
+    
+    def __init__(self, width=84, height=84):
+        # Gym setting
+        self.action_space = gym.spaces.MultiDiscrete((3,3,3))
+        self.observation_space = gym.spaces.Box(
+            low=0,
+            high=255,
+            shape=(84,84,3)
+        )
+        self.reward_range = [-1.0, 1.0]
 
-    def __init__(self, width, height):
+        # Where model and texture data are located
         self.data_path = os.path.dirname(
-            os.path.abspath(__file__)) + "/../data/"
+            os.path.abspath(__file__)) + "/../../data/"
 
+        # Create environment
         self.env = rodentia.Environment(
             width=width, height=height, bg_color=[0.66, 0.91, 0.98])
+        
         # Start pos
         self.start_pos_list = []
         self.start_pos_list.append([4, 0, 9])
@@ -64,9 +72,6 @@ class NavMazeStaticEnvironment(object):
 
         # Reset scene
         self.reset()
-
-    def get_action_size(self):
-        return len(NavMazeStaticEnvironment.ACTION_LIST)
 
     def _prepare_stage(self):
         # Floor
@@ -308,7 +313,7 @@ class NavMazeStaticEnvironment(object):
         # Choose random position and orientation for the agent.
         start_pos_index = random.randint(0, len(self.start_pos_list) - 1)
         start_pos = self.start_pos_list[start_pos_index]
-        rot_y = 2.0 * math.pi * random.random()
+        rot_y = 2.0 * np.pi * random.random()
         self.env.locate_agent(pos=start_pos, rot_y=rot_y)
 
     def _reset_sub(self):
@@ -327,13 +332,17 @@ class NavMazeStaticEnvironment(object):
         self.step_num = 0
         return self._reset_sub()
 
-    def step(self, action):
-        #if action == -1:
-        #  real_action = [0,0,0]
-        #else:
-        #  real_action = NavMazeStaticEnvironment.ACTION_LIST[action]
-        real_action = NavMazeStaticEnvironment.ACTION_LIST[action]
+    def _convert_to_real_action(self, action):
+        real_action = np.clip(action, 0, 2) - 1
+        real_action[0] *= 6
+        real_action = real_action.astype(np.int32)
+        return real_action
 
+    def step(self, action):
+        # Get action value to set to environment
+        real_action = self._convert_to_real_action(action)
+
+        # Step environment
         obs = self.env.step(action=real_action)
         self.step_num += 1
 
@@ -364,4 +373,4 @@ class NavMazeStaticEnvironment(object):
             # Reset rewards and locate agent to random position
             screen = self._reset_sub()
 
-        return screen, reward, terminal
+        return screen, reward, terminal, {}
