@@ -28,13 +28,13 @@ bool GLContext::init(int /*width*/, int /*height*/) {
     
     errorCode = CGLChoosePixelFormat(attributes, &pixelFormatObj, &numPixelFormats);
     if( errorCode != 0 ) {
-        printf("Failed: CGLChoosePixelFormat\n");
+        printf("Failed: CGLChoosePixelFormat: error code=%d\n", errorCode);
         return false;
     }
     
     errorCode = CGLCreateContext(pixelFormatObj, NULL, &context);
     if( errorCode != 0 ) {
-        printf("Failed: CGLCreateContext\n");
+        printf("Failed: CGLCreateContext: error code=%d\n", errorCode);
         CGLDestroyPixelFormat(pixelFormatObj);
         return false;
     }
@@ -43,7 +43,7 @@ bool GLContext::init(int /*width*/, int /*height*/) {
     
     errorCode = CGLSetCurrentContext(context);
     if( errorCode != 0 ) {
-        printf("Failed: CGLSetCurrentContext\n");
+        printf("Failed: CGLSetCurrentContext: error code=%d\n", errorCode);
         return false;
     }
 

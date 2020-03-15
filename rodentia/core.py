@@ -264,8 +264,11 @@ class BaseEnvironment:
             pos=to_nd_float_array(pos),
             rot=to_nd_float_array_for_rot(rot),
             ignore_ids=to_nd_int_array(ignore_ids)
-        )            
+        )
 
+    def close(self):
+        """ Release environment """
+        self.env.release()
 
 
 class Environment(BaseEnvironment):
