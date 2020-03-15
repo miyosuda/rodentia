@@ -1,0 +1,1788 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.5" />
+<title>rodentia.core API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>rodentia.core</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># -*- coding: utf-8 -*-
+from . import rodentia_module
+import numpy as np
+
+
+# rodentia_module.Env class requires numpy nd array for array objet, so 
+# float and int array have to be converted to ndarray.
+
+def to_nd_float_array(list_obj):
+    &#34;&#34;&#34; Convert list to numpy float ndarray &#34;&#34;&#34;
+    if isinstance(list_obj, np.ndarray):
+        return list_obj
+    else:
+        return np.array(list_obj, dtype=np.float32)
+
+
+def to_nd_float_array_for_rot(value):
+    &#34;&#34;&#34; Convert list or single float to numpy float ndarray for rotation&#34;&#34;&#34;
+    if isinstance(value, float) or isinstance(value, int):
+        # if value is a single float, then it is treated as Y rotation value.
+        value = [0.0, np.sin(value * 0.5), 0.0, np.cos(value * 0.5)]
+        # Otherwise treat it as a quaternion
+    return to_nd_float_array(value)
+
+
+def to_nd_int_array(list_obj):
+    &#34;&#34;&#34; Convert list to numpy int ndarray &#34;&#34;&#34;
+    if isinstance(list_obj, np.ndarray):
+        return list_obj
+    else:
+        return np.array(list_obj, dtype=np.int32)
+
+
+    
+class BaseEnvironment:
+    &#34;&#34;&#34;
+    Common super class for the plain Environment and MultiAgentEnvironment.
+    BaseEnvironment wraps rodentia_module.Env class.
+    &#34;&#34;&#34;
+    
+    def __init__(self,
+                 width,
+                 height,
+                 bg_color=[0.0, 0.0, 0.0]):
+        &#34;&#34;&#34;Create environment.
+        Args:
+          width: Screen width
+          height: Screen height
+          bg_color: Background color (RGB value with 0.0 ~ 1.0)
+        &#34;&#34;&#34;
+        self.env = rodentia_module.Env()
+        self.main_camera_id = self.add_camera_view(width, height, bg_color)
+
+    def add_camera_view(self,
+                        width,
+                        height,
+                        bg_color=[0.0, 0.0, 0.0],
+                        near=0.05,
+                        far=80.0,
+                        focal_length=50.0,
+                        shadow_buffer_width=0):
+        &#34;&#34;&#34;Add camera view.
+        Args:
+          width: Screen width
+          height: Screen height
+          bg_color: Background color (RGB value with 0.0 ~ 1.0)
+          near: Near clip distane (default 0.05)
+          far: Far clip distane (default 80.0)
+          focal_length: Focal length (default 50.0)
+          shadow_buffer_width: Shadow depth buffer width. (If 0 calculated automatically )
+                               (default 0)
+        Returns:
+          Int value for the camera id.
+        &#34;&#34;&#34;
+        return self.env.add_camera_view(width=width, height=height,
+                                        bg_color=to_nd_float_array(bg_color),
+                                        near=near, far=far, focal_length=focal_length,
+                                        shadow_buffer_width=shadow_buffer_width)
+
+    def add_box(self,
+                texture_path,
+                half_extent,
+                pos,
+                rot=0.0,
+                angle=0.0,
+                mass=0.0,
+                detect_collision=False,
+                visible=True):
+        &#34;&#34;&#34;Add box object.
+        Args:
+          texture_path: Path for the texture (.png file)
+          half_extent: (x,y,z) float values for half extent size of the box.
+          pos: (x,y,z) float values for the center of the box.
+          rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object
+               (in radian)
+          mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
+                but if mass &gt; 0, the object is physically simulated.
+          detect_collision: Whether the object is included for collision check result.
+                            If this argument is True, object&#39;s id is included when 
+                            the agenet collides with this object.
+          visible: Visibility of the object. If false, only collision will take effect.
+        Returns:
+          Int value for the object id.
+        &#34;&#34;&#34;
+        return self.env.add_box(
+            texture_path=texture_path,
+            half_extent=to_nd_float_array(half_extent),
+            pos=to_nd_float_array(pos),
+            rot=to_nd_float_array_for_rot(rot),
+            mass=mass,
+            detect_collision=detect_collision,
+            visible=visible)
+
+    def add_sphere(self,
+                   texture_path,
+                   radius,
+                   pos,
+                   rot=0.0,
+                   mass=0.0,
+                   detect_collision=False,
+                   visible=True):
+        &#34;&#34;&#34;Add sphere object.
+        Args:
+          texture_path: Path for the texture (.png file)
+          radius: float values for the raius of the shpere.
+          pos: (x,y,z) float values for the center of the sphere.
+          rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object
+               (in radian)
+          mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
+                but if mass &gt; 0, the object is physically simulated.
+          detect_collision: A bool value for indicating whether the object is included for collision
+                            check result. If this argument is True, object&#39;s id is included when 
+                            the agenet collides with this object.
+          visible: Visibility of the object. If false, only collision will take effect.
+        Returns:
+          Int value for the object id.
+        &#34;&#34;&#34;
+        return self.env.add_sphere(
+            texture_path=texture_path,
+            radius=radius,
+            pos=to_nd_float_array(pos),
+            rot=to_nd_float_array_for_rot(rot),
+            mass=mass,
+            detect_collision=detect_collision,
+            visible=visible)
+
+    def add_model(self,
+                  path,
+                  scale,
+                  pos,
+                  rot=0.0,
+                  mass=0.0,
+                  detect_collision=False,
+                  use_mesh_collision=False,
+                  visible=True):
+        &#34;&#34;&#34;Add model object with .obj format.
+        Args:
+          path: Path for the .obj file.
+          scale: (x,y,z) float values for the scaling of the object.
+          pos: (x,y,z) float values for the origin of the object.
+          rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the 
+               rotation quaternion of the object (in radian)
+               
+          mass: A float value for mass of the object. if mass == 0, the object is 
+                treated as static object, but if mass &gt; 0, the object is physically simulated.
+          detect_collision: Whether the object is included for collision check result.
+                            If this argument is True, object&#39;s id is included when 
+                            the agenet collides with this object.
+          use_mesh_collision: Whether to use mesh data for the collision.
+                              If false, box collision shape is cauculated based on the 
+                              bounding box.
+          visible: Visibility of the object. If false, only collision will take effect.
+        Returns:
+          Int value for the object id.
+        &#34;&#34;&#34;
+        return self.env.add_model(
+            path=path,
+            scale=to_nd_float_array(scale),
+            pos=to_nd_float_array(pos),
+            rot=to_nd_float_array_for_rot(rot),
+            mass=mass,
+            detect_collision=detect_collision,
+            use_mesh_collision=use_mesh_collision,
+            visible=visible)
+
+    def locate_object(self, id, pos, rot=0.0):
+        &#34;&#34;&#34;Locate object to given position and orientataion.
+        Args:
+          id: Int value for object&#39;s id
+          pos: (x,y,z) float values for agent&#39;s location.
+          rot: A float value for head (rot_y) angle or list (rx,ry,rz,rw) as the rotation 
+               quaternion of the object (in radian)
+        &#34;&#34;&#34;
+        self.env.locate_object(
+            id=id,
+            pos=to_nd_float_array(pos),
+            rot=to_nd_float_array_for_rot(rot))
+
+    def set_light(self,
+                  dir=[-0.5, -1.0, -0.4],
+                  color=[1.0, 1.0, 1.0],
+                  ambient_color=[0.4, 0.4, 0.4],
+                  shadow_rate=0.2):
+        &#34;&#34;&#34;Set light parameters.
+        Args:
+          dir: (x,y,z) float values for light direction.
+          color: (r,g,b) float values for light color.
+          ambient_color: (r,g,b) float values for ambient color.
+          shadow_rate: a float, shadow color rate
+        &#34;&#34;&#34;        
+        self.env.set_light(
+            dir=to_nd_float_array(dir),
+            color=to_nd_float_array(color),
+            ambient_color=to_nd_float_array(ambient_color),
+            shadow_rate=shadow_rate)
+
+    def remove_obj(self, id):
+        &#34;&#34;&#34;Remove object from environment.
+        Args:
+          id: Int value for deleting object&#39;s id
+        &#34;&#34;&#34;
+        self.env.remove_obj(id=id)
+
+    def get_obj_info(self, id):
+        &#34;&#34;&#34;Get object information.
+        Args:
+          id: Int value for object&#39;s id
+        Returns:
+          Dictionary which contains the object&#39;s current state info.
+            &#34;pos&#34;: numpy nd_array (float32)
+            &#34;velocity&#34; numpy nd_array (float32)
+            &#34;rot&#34; numpy nd_array (float32)
+        &#34;&#34;&#34;
+        return self.env.get_obj_info(id=id)
+
+    def replace_obj_texture(self, id, texture_path):
+        &#34;&#34;&#34;Replace object texture(s).
+           If object is consist of multiple meshes, textures of these meshes can be replaced 
+           by applying list of texture pathes.
+        Args:
+          id: Int value for object&#39;s id
+          texture_path: A string or list of string. path of the texture(s)
+        &#34;&#34;&#34;
+        if isinstance(texture_path, list):
+            self.env.replace_obj_texture(id, texture_path)
+        else:
+            self.env.replace_obj_texture(id, [texture_path])
+
+    def render(self, camera_id, pos, rot, ignore_ids=[]):
+        &#34;&#34;&#34;Step environment process and returns result.
+        Args:
+          camera_id: Int array with 3 elements.
+          pos: (x,y,z) Position of the camera
+          rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as 
+               the rotation quaternion of the camera
+          ignore_ids: Int list, oject id list to skip drawing
+          
+        Returns:
+          Dictionary which contains the result of this step calculation.
+            &#34;screen&#34;: numpy nd_array of width * height * 3 (uint8)
+        &#34;&#34;&#34;
+        return self.env.render(
+            camera_id=camera_id,
+            pos=to_nd_float_array(pos),
+            rot=to_nd_float_array_for_rot(rot),
+            ignore_ids=to_nd_int_array(ignore_ids)
+        )            
+
+
+
+class Environment(BaseEnvironment):
+    &#34;&#34;&#34;
+    Single agent environment.
+    &#34;&#34;&#34;
+    
+    def __init__(self, width, height, bg_color=[0.0, 0.0, 0.0]):
+        &#34;&#34;&#34;Create environment.
+        Args:
+          width: Screen width
+          height: Screen height
+          bg_color: Background color (RGB value with 0.0 ~ 1.0)
+        &#34;&#34;&#34;
+        super().__init__(width, height, bg_color)
+        
+        self.agent_id = self.env.add_agent(radius=1.0,
+                                           pos=to_nd_float_array([0,0,0]),
+                                           rot_y=0.0,
+                                           mass=1.0,
+                                           detect_collision=False,
+                                           color=to_nd_float_array([0,0,1]))
+
+    def locate_agent(self, pos, rot_y=0.0):
+        &#34;&#34;&#34;Locate agenet to given position and orientataion.
+        Args:
+          pos: (x,y,z) float values for agent&#39;s location.
+          rot_y: A float value for head angle of the model (in radian)
+        &#34;&#34;&#34;
+        self.env.locate_agent(id=self.agent_id, pos=to_nd_float_array(pos), rot_y=rot_y)
+
+    def step(self, action):
+        &#34;&#34;&#34;Step environment process and returns result.
+        Args:
+          action: Int array with 3 elements.
+        Returns:
+          Dictionary which contains the result of this step calculation.
+            &#34;collided&#34; Int list of object ids that collided with the agent.
+            &#34;screen&#34;: numpy nd_array of width * height * 3 (uint8)
+        &#34;&#34;&#34;
+        self.env.control(id=self.agent_id, action=to_nd_int_array(action))
+        collision_ids = self.env.step()
+        
+        ret = {}
+        if self.agent_id in collision_ids:
+            ret[&#34;collided&#34;] = collision_ids[self.agent_id]
+        else:
+            ret[&#34;collided&#34;] = []
+            
+        agent_info = self.get_agent_info()
+        ret_render = self.render(self.main_camera_id,
+                                 pos=agent_info[&#34;pos&#34;],
+                                 rot=agent_info[&#34;rot&#34;],
+                                 ignore_ids=[self.agent_id])
+        ret[&#34;screen&#34;] = ret_render[&#34;screen&#34;]
+        return ret
+
+    def get_agent_info(self):
+        &#34;&#34;&#34;Get agent information.
+        Returns:
+          Dictionary which contains the agent&#39;s current state info.
+            &#34;pos&#34;: numpy nd_array (float32)
+            &#34;velocity&#34; numpy nd_array (float32)
+            &#34;rot&#34; numpy nd_array (float32)
+            &#34;rot_y&#34; float
+        &#34;&#34;&#34;
+        ret = self.env.get_obj_info(self.agent_id)
+        rot = ret[&#34;rot&#34;]
+        # Calculate rotation around Y-axis
+        rot_y = np.arctan2(rot[1], rot[3]) * 2.0
+        ret[&#34;rot_y&#34;] = rot_y
+        return ret
+
+
+class MultiAgentEnvironment(BaseEnvironment):
+    &#34;&#34;&#34;
+    Multi agent environment.
+    &#34;&#34;&#34;
+    
+    def __init__(self, agent_size, width, height, bg_color=[0.0, 0.0, 0.0]):
+        &#34;&#34;&#34;Create environment.
+        Args:
+          width: Screen width
+          height: Screen height
+          bg_color: Background color (RGB value with 0.0 ~ 1.0)
+        &#34;&#34;&#34;
+        super().__init__(width, height, bg_color)
+
+        self.agent_ids = []
+
+        for i in range(agent_size):
+            agent_id = self.env.add_agent(radius=1.0,
+                                          pos=to_nd_float_array([0,0,i*2]),
+                                          rot_y=0.0,
+                                          mass=1.0,
+                                          detect_collision=True, # Detect agent-agent collision
+                                          color=to_nd_float_array([0,0,1]))
+            self.agent_ids.append(agent_id)
+
+    def locate_agent(self, agent_index, pos, rot_y=0.0):
+        &#34;&#34;&#34;Locate agenet to given position and orientataion.
+        Args:
+          pos: (x,y,z) float values for agent&#39;s location.
+          rot_y: A float value for head angle of the model (in radian)
+        &#34;&#34;&#34;
+        agent_id = self.agent_ids[agent_index]
+        self.env.locate_agent(id=agent_id, pos=to_nd_float_array(pos), rot_y=rot_y)
+
+    def step(self, action):
+        &#34;&#34;&#34;Step environment process and returns result.
+        Args:
+          action: Double Int array. Each array has 3 elements as the action.
+
+        Returns:
+          Dictionary which contains the result of this step calculation.
+            &#34;collided&#34; Int list of object ids that collided with the agent. # TODO:
+            &#34;screen&#34;: numpy nd_array of agent_size * width * height * 3 (uint8)
+        &#34;&#34;&#34;
+
+        for i, agent_id in enumerate(self.agent_ids):
+            self.env.control(id=agent_id, action=to_nd_int_array(action[i]))
+        collision_ids = self.env.step()
+
+        ret = {}
+        collided = []
+        
+        for agent_id in self.agent_ids:
+            if agent_id in collision_ids:
+                collided.append(collision_ids[agent_id])
+            else:
+                collided.append([])
+
+        ret[&#34;collided&#34;] = collided
+        
+        screen = []
+        for agent_index, agent_id in enumerate(self.agent_ids):
+            agent_info = self.get_agent_info(agent_index)
+            ret_render = self.render(self.main_camera_id,
+                                     pos=agent_info[&#34;pos&#34;],
+                                     rot=agent_info[&#34;rot&#34;],
+                                     ignore_ids=[agent_id])
+            screen.append(ret_render[&#34;screen&#34;])
+        
+        ret[&#34;screen&#34;] = screen
+        return ret
+
+    def get_agent_info(self, agent_index):
+        &#34;&#34;&#34;Get agent information.
+        Returns:
+          Dictionary which contains the agent&#39;s current state info.
+            &#34;pos&#34;: numpy nd_array (float32)
+            &#34;velocity&#34; numpy nd_array (float32)
+            &#34;rot&#34; numpy nd_array (float32)
+            &#34;rot_y&#34; float
+        &#34;&#34;&#34;
+        agent_id = self.agent_ids[agent_index]
+        ret = self.env.get_obj_info(agent_id)
+        rot = ret[&#34;rot&#34;]
+        # Calculate rotation around Y-axis
+        rot_y = np.arctan2(rot[1], rot[3]) * 2.0
+        ret[&#34;rot_y&#34;] = rot_y
+        return ret</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="rodentia.core.to_nd_float_array"><code class="name flex">
+<span>def <span class="ident">to_nd_float_array</span></span>(<span>list_obj)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Convert list to numpy float ndarray</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_nd_float_array(list_obj):
+    &#34;&#34;&#34; Convert list to numpy float ndarray &#34;&#34;&#34;
+    if isinstance(list_obj, np.ndarray):
+        return list_obj
+    else:
+        return np.array(list_obj, dtype=np.float32)</code></pre>
+</details>
+</dd>
+<dt id="rodentia.core.to_nd_float_array_for_rot"><code class="name flex">
+<span>def <span class="ident">to_nd_float_array_for_rot</span></span>(<span>value)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Convert list or single float to numpy float ndarray for rotation</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_nd_float_array_for_rot(value):
+    &#34;&#34;&#34; Convert list or single float to numpy float ndarray for rotation&#34;&#34;&#34;
+    if isinstance(value, float) or isinstance(value, int):
+        # if value is a single float, then it is treated as Y rotation value.
+        value = [0.0, np.sin(value * 0.5), 0.0, np.cos(value * 0.5)]
+        # Otherwise treat it as a quaternion
+    return to_nd_float_array(value)</code></pre>
+</details>
+</dd>
+<dt id="rodentia.core.to_nd_int_array"><code class="name flex">
+<span>def <span class="ident">to_nd_int_array</span></span>(<span>list_obj)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Convert list to numpy int ndarray</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_nd_int_array(list_obj):
+    &#34;&#34;&#34; Convert list to numpy int ndarray &#34;&#34;&#34;
+    if isinstance(list_obj, np.ndarray):
+        return list_obj
+    else:
+        return np.array(list_obj, dtype=np.int32)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="rodentia.core.BaseEnvironment"><code class="flex name class">
+<span>class <span class="ident">BaseEnvironment</span></span>
+<span>(</span><span>width, height, bg_color=[0.0, 0.0, 0.0])</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Common super class for the plain Environment and MultiAgentEnvironment.
+BaseEnvironment wraps rodentia_module.Env class.</p>
+<p>Create environment.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>width</code></strong></dt>
+<dd>Screen width</dd>
+<dt><strong><code>height</code></strong></dt>
+<dd>Screen height</dd>
+<dt><strong><code>bg_color</code></strong></dt>
+<dd>Background color (RGB value with 0.0 ~ 1.0)</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaseEnvironment:
+    &#34;&#34;&#34;
+    Common super class for the plain Environment and MultiAgentEnvironment.
+    BaseEnvironment wraps rodentia_module.Env class.
+    &#34;&#34;&#34;
+    
+    def __init__(self,
+                 width,
+                 height,
+                 bg_color=[0.0, 0.0, 0.0]):
+        &#34;&#34;&#34;Create environment.
+        Args:
+          width: Screen width
+          height: Screen height
+          bg_color: Background color (RGB value with 0.0 ~ 1.0)
+        &#34;&#34;&#34;
+        self.env = rodentia_module.Env()
+        self.main_camera_id = self.add_camera_view(width, height, bg_color)
+
+    def add_camera_view(self,
+                        width,
+                        height,
+                        bg_color=[0.0, 0.0, 0.0],
+                        near=0.05,
+                        far=80.0,
+                        focal_length=50.0,
+                        shadow_buffer_width=0):
+        &#34;&#34;&#34;Add camera view.
+        Args:
+          width: Screen width
+          height: Screen height
+          bg_color: Background color (RGB value with 0.0 ~ 1.0)
+          near: Near clip distane (default 0.05)
+          far: Far clip distane (default 80.0)
+          focal_length: Focal length (default 50.0)
+          shadow_buffer_width: Shadow depth buffer width. (If 0 calculated automatically )
+                               (default 0)
+        Returns:
+          Int value for the camera id.
+        &#34;&#34;&#34;
+        return self.env.add_camera_view(width=width, height=height,
+                                        bg_color=to_nd_float_array(bg_color),
+                                        near=near, far=far, focal_length=focal_length,
+                                        shadow_buffer_width=shadow_buffer_width)
+
+    def add_box(self,
+                texture_path,
+                half_extent,
+                pos,
+                rot=0.0,
+                angle=0.0,
+                mass=0.0,
+                detect_collision=False,
+                visible=True):
+        &#34;&#34;&#34;Add box object.
+        Args:
+          texture_path: Path for the texture (.png file)
+          half_extent: (x,y,z) float values for half extent size of the box.
+          pos: (x,y,z) float values for the center of the box.
+          rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object
+               (in radian)
+          mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
+                but if mass &gt; 0, the object is physically simulated.
+          detect_collision: Whether the object is included for collision check result.
+                            If this argument is True, object&#39;s id is included when 
+                            the agenet collides with this object.
+          visible: Visibility of the object. If false, only collision will take effect.
+        Returns:
+          Int value for the object id.
+        &#34;&#34;&#34;
+        return self.env.add_box(
+            texture_path=texture_path,
+            half_extent=to_nd_float_array(half_extent),
+            pos=to_nd_float_array(pos),
+            rot=to_nd_float_array_for_rot(rot),
+            mass=mass,
+            detect_collision=detect_collision,
+            visible=visible)
+
+    def add_sphere(self,
+                   texture_path,
+                   radius,
+                   pos,
+                   rot=0.0,
+                   mass=0.0,
+                   detect_collision=False,
+                   visible=True):
+        &#34;&#34;&#34;Add sphere object.
+        Args:
+          texture_path: Path for the texture (.png file)
+          radius: float values for the raius of the shpere.
+          pos: (x,y,z) float values for the center of the sphere.
+          rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object
+               (in radian)
+          mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
+                but if mass &gt; 0, the object is physically simulated.
+          detect_collision: A bool value for indicating whether the object is included for collision
+                            check result. If this argument is True, object&#39;s id is included when 
+                            the agenet collides with this object.
+          visible: Visibility of the object. If false, only collision will take effect.
+        Returns:
+          Int value for the object id.
+        &#34;&#34;&#34;
+        return self.env.add_sphere(
+            texture_path=texture_path,
+            radius=radius,
+            pos=to_nd_float_array(pos),
+            rot=to_nd_float_array_for_rot(rot),
+            mass=mass,
+            detect_collision=detect_collision,
+            visible=visible)
+
+    def add_model(self,
+                  path,
+                  scale,
+                  pos,
+                  rot=0.0,
+                  mass=0.0,
+                  detect_collision=False,
+                  use_mesh_collision=False,
+                  visible=True):
+        &#34;&#34;&#34;Add model object with .obj format.
+        Args:
+          path: Path for the .obj file.
+          scale: (x,y,z) float values for the scaling of the object.
+          pos: (x,y,z) float values for the origin of the object.
+          rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the 
+               rotation quaternion of the object (in radian)
+               
+          mass: A float value for mass of the object. if mass == 0, the object is 
+                treated as static object, but if mass &gt; 0, the object is physically simulated.
+          detect_collision: Whether the object is included for collision check result.
+                            If this argument is True, object&#39;s id is included when 
+                            the agenet collides with this object.
+          use_mesh_collision: Whether to use mesh data for the collision.
+                              If false, box collision shape is cauculated based on the 
+                              bounding box.
+          visible: Visibility of the object. If false, only collision will take effect.
+        Returns:
+          Int value for the object id.
+        &#34;&#34;&#34;
+        return self.env.add_model(
+            path=path,
+            scale=to_nd_float_array(scale),
+            pos=to_nd_float_array(pos),
+            rot=to_nd_float_array_for_rot(rot),
+            mass=mass,
+            detect_collision=detect_collision,
+            use_mesh_collision=use_mesh_collision,
+            visible=visible)
+
+    def locate_object(self, id, pos, rot=0.0):
+        &#34;&#34;&#34;Locate object to given position and orientataion.
+        Args:
+          id: Int value for object&#39;s id
+          pos: (x,y,z) float values for agent&#39;s location.
+          rot: A float value for head (rot_y) angle or list (rx,ry,rz,rw) as the rotation 
+               quaternion of the object (in radian)
+        &#34;&#34;&#34;
+        self.env.locate_object(
+            id=id,
+            pos=to_nd_float_array(pos),
+            rot=to_nd_float_array_for_rot(rot))
+
+    def set_light(self,
+                  dir=[-0.5, -1.0, -0.4],
+                  color=[1.0, 1.0, 1.0],
+                  ambient_color=[0.4, 0.4, 0.4],
+                  shadow_rate=0.2):
+        &#34;&#34;&#34;Set light parameters.
+        Args:
+          dir: (x,y,z) float values for light direction.
+          color: (r,g,b) float values for light color.
+          ambient_color: (r,g,b) float values for ambient color.
+          shadow_rate: a float, shadow color rate
+        &#34;&#34;&#34;        
+        self.env.set_light(
+            dir=to_nd_float_array(dir),
+            color=to_nd_float_array(color),
+            ambient_color=to_nd_float_array(ambient_color),
+            shadow_rate=shadow_rate)
+
+    def remove_obj(self, id):
+        &#34;&#34;&#34;Remove object from environment.
+        Args:
+          id: Int value for deleting object&#39;s id
+        &#34;&#34;&#34;
+        self.env.remove_obj(id=id)
+
+    def get_obj_info(self, id):
+        &#34;&#34;&#34;Get object information.
+        Args:
+          id: Int value for object&#39;s id
+        Returns:
+          Dictionary which contains the object&#39;s current state info.
+            &#34;pos&#34;: numpy nd_array (float32)
+            &#34;velocity&#34; numpy nd_array (float32)
+            &#34;rot&#34; numpy nd_array (float32)
+        &#34;&#34;&#34;
+        return self.env.get_obj_info(id=id)
+
+    def replace_obj_texture(self, id, texture_path):
+        &#34;&#34;&#34;Replace object texture(s).
+           If object is consist of multiple meshes, textures of these meshes can be replaced 
+           by applying list of texture pathes.
+        Args:
+          id: Int value for object&#39;s id
+          texture_path: A string or list of string. path of the texture(s)
+        &#34;&#34;&#34;
+        if isinstance(texture_path, list):
+            self.env.replace_obj_texture(id, texture_path)
+        else:
+            self.env.replace_obj_texture(id, [texture_path])
+
+    def render(self, camera_id, pos, rot, ignore_ids=[]):
+        &#34;&#34;&#34;Step environment process and returns result.
+        Args:
+          camera_id: Int array with 3 elements.
+          pos: (x,y,z) Position of the camera
+          rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as 
+               the rotation quaternion of the camera
+          ignore_ids: Int list, oject id list to skip drawing
+          
+        Returns:
+          Dictionary which contains the result of this step calculation.
+            &#34;screen&#34;: numpy nd_array of width * height * 3 (uint8)
+        &#34;&#34;&#34;
+        return self.env.render(
+            camera_id=camera_id,
+            pos=to_nd_float_array(pos),
+            rot=to_nd_float_array_for_rot(rot),
+            ignore_ids=to_nd_int_array(ignore_ids)
+        )            </code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="rodentia.core.Environment" href="#rodentia.core.Environment">Environment</a></li>
+<li><a title="rodentia.core.MultiAgentEnvironment" href="#rodentia.core.MultiAgentEnvironment">MultiAgentEnvironment</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="rodentia.core.BaseEnvironment.add_box"><code class="name flex">
+<span>def <span class="ident">add_box</span></span>(<span>self, texture_path, half_extent, pos, rot=0.0, angle=0.0, mass=0.0, detect_collision=False, visible=True)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Add box object.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>texture_path</code></strong></dt>
+<dd>Path for the texture (.png file)</dd>
+<dt><strong><code>half_extent</code></strong></dt>
+<dd>(x,y,z) float values for half extent size of the box.</dd>
+<dt><strong><code>pos</code></strong></dt>
+<dd>(x,y,z) float values for the center of the box.</dd>
+<dt><strong><code>rot</code></strong></dt>
+<dd>A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object
+(in radian)</dd>
+<dt><strong><code>mass</code></strong></dt>
+<dd>A float value for mass of the object. if mass == 0, the object is treated as static object,
+but if mass &gt; 0, the object is physically simulated.</dd>
+<dt><strong><code>detect_collision</code></strong></dt>
+<dd>Whether the object is included for collision check result.
+If this argument is True, object's id is included when
+the agenet collides with this object.</dd>
+<dt><strong><code>visible</code></strong></dt>
+<dd>Visibility of the object. If false, only collision will take effect.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Int value for the object id.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_box(self,
+            texture_path,
+            half_extent,
+            pos,
+            rot=0.0,
+            angle=0.0,
+            mass=0.0,
+            detect_collision=False,
+            visible=True):
+    &#34;&#34;&#34;Add box object.
+    Args:
+      texture_path: Path for the texture (.png file)
+      half_extent: (x,y,z) float values for half extent size of the box.
+      pos: (x,y,z) float values for the center of the box.
+      rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object
+           (in radian)
+      mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
+            but if mass &gt; 0, the object is physically simulated.
+      detect_collision: Whether the object is included for collision check result.
+                        If this argument is True, object&#39;s id is included when 
+                        the agenet collides with this object.
+      visible: Visibility of the object. If false, only collision will take effect.
+    Returns:
+      Int value for the object id.
+    &#34;&#34;&#34;
+    return self.env.add_box(
+        texture_path=texture_path,
+        half_extent=to_nd_float_array(half_extent),
+        pos=to_nd_float_array(pos),
+        rot=to_nd_float_array_for_rot(rot),
+        mass=mass,
+        detect_collision=detect_collision,
+        visible=visible)</code></pre>
+</details>
+</dd>
+<dt id="rodentia.core.BaseEnvironment.add_camera_view"><code class="name flex">
+<span>def <span class="ident">add_camera_view</span></span>(<span>self, width, height, bg_color=[0.0, 0.0, 0.0], near=0.05, far=80.0, focal_length=50.0, shadow_buffer_width=0)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Add camera view.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>width</code></strong></dt>
+<dd>Screen width</dd>
+<dt><strong><code>height</code></strong></dt>
+<dd>Screen height</dd>
+<dt><strong><code>bg_color</code></strong></dt>
+<dd>Background color (RGB value with 0.0 ~ 1.0)</dd>
+<dt><strong><code>near</code></strong></dt>
+<dd>Near clip distane (default 0.05)</dd>
+<dt><strong><code>far</code></strong></dt>
+<dd>Far clip distane (default 80.0)</dd>
+<dt><strong><code>focal_length</code></strong></dt>
+<dd>Focal length (default 50.0)</dd>
+<dt><strong><code>shadow_buffer_width</code></strong></dt>
+<dd>Shadow depth buffer width. (If 0 calculated automatically )
+(default 0)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Int value for the camera id.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_camera_view(self,
+                    width,
+                    height,
+                    bg_color=[0.0, 0.0, 0.0],
+                    near=0.05,
+                    far=80.0,
+                    focal_length=50.0,
+                    shadow_buffer_width=0):
+    &#34;&#34;&#34;Add camera view.
+    Args:
+      width: Screen width
+      height: Screen height
+      bg_color: Background color (RGB value with 0.0 ~ 1.0)
+      near: Near clip distane (default 0.05)
+      far: Far clip distane (default 80.0)
+      focal_length: Focal length (default 50.0)
+      shadow_buffer_width: Shadow depth buffer width. (If 0 calculated automatically )
+                           (default 0)
+    Returns:
+      Int value for the camera id.
+    &#34;&#34;&#34;
+    return self.env.add_camera_view(width=width, height=height,
+                                    bg_color=to_nd_float_array(bg_color),
+                                    near=near, far=far, focal_length=focal_length,
+                                    shadow_buffer_width=shadow_buffer_width)</code></pre>
+</details>
+</dd>
+<dt id="rodentia.core.BaseEnvironment.add_model"><code class="name flex">
+<span>def <span class="ident">add_model</span></span>(<span>self, path, scale, pos, rot=0.0, mass=0.0, detect_collision=False, use_mesh_collision=False, visible=True)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Add model object with .obj format.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>path</code></strong></dt>
+<dd>Path for the .obj file.</dd>
+<dt><strong><code>scale</code></strong></dt>
+<dd>(x,y,z) float values for the scaling of the object.</dd>
+<dt><strong><code>pos</code></strong></dt>
+<dd>(x,y,z) float values for the origin of the object.</dd>
+<dt><strong><code>rot</code></strong></dt>
+<dd>A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the
+rotation quaternion of the object (in radian)</dd>
+<dt><strong><code>mass</code></strong></dt>
+<dd>A float value for mass of the object. if mass == 0, the object is
+treated as static object, but if mass &gt; 0, the object is physically simulated.</dd>
+<dt><strong><code>detect_collision</code></strong></dt>
+<dd>Whether the object is included for collision check result.
+If this argument is True, object's id is included when
+the agenet collides with this object.</dd>
+<dt><strong><code>use_mesh_collision</code></strong></dt>
+<dd>Whether to use mesh data for the collision.
+If false, box collision shape is cauculated based on the
+bounding box.</dd>
+<dt><strong><code>visible</code></strong></dt>
+<dd>Visibility of the object. If false, only collision will take effect.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Int value for the object id.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_model(self,
+              path,
+              scale,
+              pos,
+              rot=0.0,
+              mass=0.0,
+              detect_collision=False,
+              use_mesh_collision=False,
+              visible=True):
+    &#34;&#34;&#34;Add model object with .obj format.
+    Args:
+      path: Path for the .obj file.
+      scale: (x,y,z) float values for the scaling of the object.
+      pos: (x,y,z) float values for the origin of the object.
+      rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the 
+           rotation quaternion of the object (in radian)
+           
+      mass: A float value for mass of the object. if mass == 0, the object is 
+            treated as static object, but if mass &gt; 0, the object is physically simulated.
+      detect_collision: Whether the object is included for collision check result.
+                        If this argument is True, object&#39;s id is included when 
+                        the agenet collides with this object.
+      use_mesh_collision: Whether to use mesh data for the collision.
+                          If false, box collision shape is cauculated based on the 
+                          bounding box.
+      visible: Visibility of the object. If false, only collision will take effect.
+    Returns:
+      Int value for the object id.
+    &#34;&#34;&#34;
+    return self.env.add_model(
+        path=path,
+        scale=to_nd_float_array(scale),
+        pos=to_nd_float_array(pos),
+        rot=to_nd_float_array_for_rot(rot),
+        mass=mass,
+        detect_collision=detect_collision,
+        use_mesh_collision=use_mesh_collision,
+        visible=visible)</code></pre>
+</details>
+</dd>
+<dt id="rodentia.core.BaseEnvironment.add_sphere"><code class="name flex">
+<span>def <span class="ident">add_sphere</span></span>(<span>self, texture_path, radius, pos, rot=0.0, mass=0.0, detect_collision=False, visible=True)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Add sphere object.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>texture_path</code></strong></dt>
+<dd>Path for the texture (.png file)</dd>
+<dt><strong><code>radius</code></strong></dt>
+<dd>float values for the raius of the shpere.</dd>
+<dt><strong><code>pos</code></strong></dt>
+<dd>(x,y,z) float values for the center of the sphere.</dd>
+<dt><strong><code>rot</code></strong></dt>
+<dd>A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object
+(in radian)</dd>
+<dt><strong><code>mass</code></strong></dt>
+<dd>A float value for mass of the object. if mass == 0, the object is treated as static object,
+but if mass &gt; 0, the object is physically simulated.</dd>
+<dt><strong><code>detect_collision</code></strong></dt>
+<dd>A bool value for indicating whether the object is included for collision
+check result. If this argument is True, object's id is included when
+the agenet collides with this object.</dd>
+<dt><strong><code>visible</code></strong></dt>
+<dd>Visibility of the object. If false, only collision will take effect.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Int value for the object id.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_sphere(self,
+               texture_path,
+               radius,
+               pos,
+               rot=0.0,
+               mass=0.0,
+               detect_collision=False,
+               visible=True):
+    &#34;&#34;&#34;Add sphere object.
+    Args:
+      texture_path: Path for the texture (.png file)
+      radius: float values for the raius of the shpere.
+      pos: (x,y,z) float values for the center of the sphere.
+      rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object
+           (in radian)
+      mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
+            but if mass &gt; 0, the object is physically simulated.
+      detect_collision: A bool value for indicating whether the object is included for collision
+                        check result. If this argument is True, object&#39;s id is included when 
+                        the agenet collides with this object.
+      visible: Visibility of the object. If false, only collision will take effect.
+    Returns:
+      Int value for the object id.
+    &#34;&#34;&#34;
+    return self.env.add_sphere(
+        texture_path=texture_path,
+        radius=radius,
+        pos=to_nd_float_array(pos),
+        rot=to_nd_float_array_for_rot(rot),
+        mass=mass,
+        detect_collision=detect_collision,
+        visible=visible)</code></pre>
+</details>
+</dd>
+<dt id="rodentia.core.BaseEnvironment.get_obj_info"><code class="name flex">
+<span>def <span class="ident">get_obj_info</span></span>(<span>self, id)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Get object information.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>id</code></strong></dt>
+<dd>Int value for object's id</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Dictionary which contains the object's current state info.
+"pos": numpy nd_array (float32)
+"velocity" numpy nd_array (float32)
+"rot" numpy nd_array (float32)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_obj_info(self, id):
+    &#34;&#34;&#34;Get object information.
+    Args:
+      id: Int value for object&#39;s id
+    Returns:
+      Dictionary which contains the object&#39;s current state info.
+        &#34;pos&#34;: numpy nd_array (float32)
+        &#34;velocity&#34; numpy nd_array (float32)
+        &#34;rot&#34; numpy nd_array (float32)
+    &#34;&#34;&#34;
+    return self.env.get_obj_info(id=id)</code></pre>
+</details>
+</dd>
+<dt id="rodentia.core.BaseEnvironment.locate_object"><code class="name flex">
+<span>def <span class="ident">locate_object</span></span>(<span>self, id, pos, rot=0.0)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Locate object to given position and orientataion.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>id</code></strong></dt>
+<dd>Int value for object's id</dd>
+<dt><strong><code>pos</code></strong></dt>
+<dd>(x,y,z) float values for agent's location.</dd>
+<dt><strong><code>rot</code></strong></dt>
+<dd>A float value for head (rot_y) angle or list (rx,ry,rz,rw) as the rotation
+quaternion of the object (in radian)</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def locate_object(self, id, pos, rot=0.0):
+    &#34;&#34;&#34;Locate object to given position and orientataion.
+    Args:
+      id: Int value for object&#39;s id
+      pos: (x,y,z) float values for agent&#39;s location.
+      rot: A float value for head (rot_y) angle or list (rx,ry,rz,rw) as the rotation 
+           quaternion of the object (in radian)
+    &#34;&#34;&#34;
+    self.env.locate_object(
+        id=id,
+        pos=to_nd_float_array(pos),
+        rot=to_nd_float_array_for_rot(rot))</code></pre>
+</details>
+</dd>
+<dt id="rodentia.core.BaseEnvironment.remove_obj"><code class="name flex">
+<span>def <span class="ident">remove_obj</span></span>(<span>self, id)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Remove object from environment.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>id</code></strong></dt>
+<dd>Int value for deleting object's id</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_obj(self, id):
+    &#34;&#34;&#34;Remove object from environment.
+    Args:
+      id: Int value for deleting object&#39;s id
+    &#34;&#34;&#34;
+    self.env.remove_obj(id=id)</code></pre>
+</details>
+</dd>
+<dt id="rodentia.core.BaseEnvironment.render"><code class="name flex">
+<span>def <span class="ident">render</span></span>(<span>self, camera_id, pos, rot, ignore_ids=[])</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Step environment process and returns result.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>camera_id</code></strong></dt>
+<dd>Int array with 3 elements.</dd>
+<dt><strong><code>pos</code></strong></dt>
+<dd>(x,y,z) Position of the camera</dd>
+<dt><strong><code>rot</code></strong></dt>
+<dd>A float value for head angle (rot_y) or list (rx,ry,rz,rw) as
+the rotation quaternion of the camera</dd>
+<dt><strong><code>ignore_ids</code></strong></dt>
+<dd>Int list, oject id list to skip drawing</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Dictionary which contains the result of this step calculation.
+"screen": numpy nd_array of width * height * 3 (uint8)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def render(self, camera_id, pos, rot, ignore_ids=[]):
+    &#34;&#34;&#34;Step environment process and returns result.
+    Args:
+      camera_id: Int array with 3 elements.
+      pos: (x,y,z) Position of the camera
+      rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as 
+           the rotation quaternion of the camera
+      ignore_ids: Int list, oject id list to skip drawing
+      
+    Returns:
+      Dictionary which contains the result of this step calculation.
+        &#34;screen&#34;: numpy nd_array of width * height * 3 (uint8)
+    &#34;&#34;&#34;
+    return self.env.render(
+        camera_id=camera_id,
+        pos=to_nd_float_array(pos),
+        rot=to_nd_float_array_for_rot(rot),
+        ignore_ids=to_nd_int_array(ignore_ids)
+    )            </code></pre>
+</details>
+</dd>
+<dt id="rodentia.core.BaseEnvironment.replace_obj_texture"><code class="name flex">
+<span>def <span class="ident">replace_obj_texture</span></span>(<span>self, id, texture_path)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Replace object texture(s).
+If object is consist of multiple meshes, textures of these meshes can be replaced
+by applying list of texture pathes.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>id</code></strong></dt>
+<dd>Int value for object's id</dd>
+<dt><strong><code>texture_path</code></strong></dt>
+<dd>A string or list of string. path of the texture(s)</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def replace_obj_texture(self, id, texture_path):
+    &#34;&#34;&#34;Replace object texture(s).
+       If object is consist of multiple meshes, textures of these meshes can be replaced 
+       by applying list of texture pathes.
+    Args:
+      id: Int value for object&#39;s id
+      texture_path: A string or list of string. path of the texture(s)
+    &#34;&#34;&#34;
+    if isinstance(texture_path, list):
+        self.env.replace_obj_texture(id, texture_path)
+    else:
+        self.env.replace_obj_texture(id, [texture_path])</code></pre>
+</details>
+</dd>
+<dt id="rodentia.core.BaseEnvironment.set_light"><code class="name flex">
+<span>def <span class="ident">set_light</span></span>(<span>self, dir=[-0.5, -1.0, -0.4], color=[1.0, 1.0, 1.0], ambient_color=[0.4, 0.4, 0.4], shadow_rate=0.2)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Set light parameters.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>dir</code></strong></dt>
+<dd>(x,y,z) float values for light direction.</dd>
+<dt><strong><code>color</code></strong></dt>
+<dd>(r,g,b) float values for light color.</dd>
+<dt><strong><code>ambient_color</code></strong></dt>
+<dd>(r,g,b) float values for ambient color.</dd>
+<dt><strong><code>shadow_rate</code></strong></dt>
+<dd>a float, shadow color rate</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_light(self,
+              dir=[-0.5, -1.0, -0.4],
+              color=[1.0, 1.0, 1.0],
+              ambient_color=[0.4, 0.4, 0.4],
+              shadow_rate=0.2):
+    &#34;&#34;&#34;Set light parameters.
+    Args:
+      dir: (x,y,z) float values for light direction.
+      color: (r,g,b) float values for light color.
+      ambient_color: (r,g,b) float values for ambient color.
+      shadow_rate: a float, shadow color rate
+    &#34;&#34;&#34;        
+    self.env.set_light(
+        dir=to_nd_float_array(dir),
+        color=to_nd_float_array(color),
+        ambient_color=to_nd_float_array(ambient_color),
+        shadow_rate=shadow_rate)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="rodentia.core.Environment"><code class="flex name class">
+<span>class <span class="ident">Environment</span></span>
+<span>(</span><span>width, height, bg_color=[0.0, 0.0, 0.0])</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Single agent environment.</p>
+<p>Create environment.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>width</code></strong></dt>
+<dd>Screen width</dd>
+<dt><strong><code>height</code></strong></dt>
+<dd>Screen height</dd>
+<dt><strong><code>bg_color</code></strong></dt>
+<dd>Background color (RGB value with 0.0 ~ 1.0)</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Environment(BaseEnvironment):
+    &#34;&#34;&#34;
+    Single agent environment.
+    &#34;&#34;&#34;
+    
+    def __init__(self, width, height, bg_color=[0.0, 0.0, 0.0]):
+        &#34;&#34;&#34;Create environment.
+        Args:
+          width: Screen width
+          height: Screen height
+          bg_color: Background color (RGB value with 0.0 ~ 1.0)
+        &#34;&#34;&#34;
+        super().__init__(width, height, bg_color)
+        
+        self.agent_id = self.env.add_agent(radius=1.0,
+                                           pos=to_nd_float_array([0,0,0]),
+                                           rot_y=0.0,
+                                           mass=1.0,
+                                           detect_collision=False,
+                                           color=to_nd_float_array([0,0,1]))
+
+    def locate_agent(self, pos, rot_y=0.0):
+        &#34;&#34;&#34;Locate agenet to given position and orientataion.
+        Args:
+          pos: (x,y,z) float values for agent&#39;s location.
+          rot_y: A float value for head angle of the model (in radian)
+        &#34;&#34;&#34;
+        self.env.locate_agent(id=self.agent_id, pos=to_nd_float_array(pos), rot_y=rot_y)
+
+    def step(self, action):
+        &#34;&#34;&#34;Step environment process and returns result.
+        Args:
+          action: Int array with 3 elements.
+        Returns:
+          Dictionary which contains the result of this step calculation.
+            &#34;collided&#34; Int list of object ids that collided with the agent.
+            &#34;screen&#34;: numpy nd_array of width * height * 3 (uint8)
+        &#34;&#34;&#34;
+        self.env.control(id=self.agent_id, action=to_nd_int_array(action))
+        collision_ids = self.env.step()
+        
+        ret = {}
+        if self.agent_id in collision_ids:
+            ret[&#34;collided&#34;] = collision_ids[self.agent_id]
+        else:
+            ret[&#34;collided&#34;] = []
+            
+        agent_info = self.get_agent_info()
+        ret_render = self.render(self.main_camera_id,
+                                 pos=agent_info[&#34;pos&#34;],
+                                 rot=agent_info[&#34;rot&#34;],
+                                 ignore_ids=[self.agent_id])
+        ret[&#34;screen&#34;] = ret_render[&#34;screen&#34;]
+        return ret
+
+    def get_agent_info(self):
+        &#34;&#34;&#34;Get agent information.
+        Returns:
+          Dictionary which contains the agent&#39;s current state info.
+            &#34;pos&#34;: numpy nd_array (float32)
+            &#34;velocity&#34; numpy nd_array (float32)
+            &#34;rot&#34; numpy nd_array (float32)
+            &#34;rot_y&#34; float
+        &#34;&#34;&#34;
+        ret = self.env.get_obj_info(self.agent_id)
+        rot = ret[&#34;rot&#34;]
+        # Calculate rotation around Y-axis
+        rot_y = np.arctan2(rot[1], rot[3]) * 2.0
+        ret[&#34;rot_y&#34;] = rot_y
+        return ret</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="rodentia.core.BaseEnvironment" href="#rodentia.core.BaseEnvironment">BaseEnvironment</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="rodentia.core.Environment.get_agent_info"><code class="name flex">
+<span>def <span class="ident">get_agent_info</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Get agent information.</p>
+<h2 id="returns">Returns</h2>
+<p>Dictionary which contains the agent's current state info.
+"pos": numpy nd_array (float32)
+"velocity" numpy nd_array (float32)
+"rot" numpy nd_array (float32)
+"rot_y" float</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_agent_info(self):
+    &#34;&#34;&#34;Get agent information.
+    Returns:
+      Dictionary which contains the agent&#39;s current state info.
+        &#34;pos&#34;: numpy nd_array (float32)
+        &#34;velocity&#34; numpy nd_array (float32)
+        &#34;rot&#34; numpy nd_array (float32)
+        &#34;rot_y&#34; float
+    &#34;&#34;&#34;
+    ret = self.env.get_obj_info(self.agent_id)
+    rot = ret[&#34;rot&#34;]
+    # Calculate rotation around Y-axis
+    rot_y = np.arctan2(rot[1], rot[3]) * 2.0
+    ret[&#34;rot_y&#34;] = rot_y
+    return ret</code></pre>
+</details>
+</dd>
+<dt id="rodentia.core.Environment.locate_agent"><code class="name flex">
+<span>def <span class="ident">locate_agent</span></span>(<span>self, pos, rot_y=0.0)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Locate agenet to given position and orientataion.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pos</code></strong></dt>
+<dd>(x,y,z) float values for agent's location.</dd>
+<dt><strong><code>rot_y</code></strong></dt>
+<dd>A float value for head angle of the model (in radian)</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def locate_agent(self, pos, rot_y=0.0):
+    &#34;&#34;&#34;Locate agenet to given position and orientataion.
+    Args:
+      pos: (x,y,z) float values for agent&#39;s location.
+      rot_y: A float value for head angle of the model (in radian)
+    &#34;&#34;&#34;
+    self.env.locate_agent(id=self.agent_id, pos=to_nd_float_array(pos), rot_y=rot_y)</code></pre>
+</details>
+</dd>
+<dt id="rodentia.core.Environment.step"><code class="name flex">
+<span>def <span class="ident">step</span></span>(<span>self, action)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Step environment process and returns result.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>action</code></strong></dt>
+<dd>Int array with 3 elements.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Dictionary which contains the result of this step calculation.
+"collided" Int list of object ids that collided with the agent.
+"screen": numpy nd_array of width * height * 3 (uint8)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def step(self, action):
+    &#34;&#34;&#34;Step environment process and returns result.
+    Args:
+      action: Int array with 3 elements.
+    Returns:
+      Dictionary which contains the result of this step calculation.
+        &#34;collided&#34; Int list of object ids that collided with the agent.
+        &#34;screen&#34;: numpy nd_array of width * height * 3 (uint8)
+    &#34;&#34;&#34;
+    self.env.control(id=self.agent_id, action=to_nd_int_array(action))
+    collision_ids = self.env.step()
+    
+    ret = {}
+    if self.agent_id in collision_ids:
+        ret[&#34;collided&#34;] = collision_ids[self.agent_id]
+    else:
+        ret[&#34;collided&#34;] = []
+        
+    agent_info = self.get_agent_info()
+    ret_render = self.render(self.main_camera_id,
+                             pos=agent_info[&#34;pos&#34;],
+                             rot=agent_info[&#34;rot&#34;],
+                             ignore_ids=[self.agent_id])
+    ret[&#34;screen&#34;] = ret_render[&#34;screen&#34;]
+    return ret</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="rodentia.core.BaseEnvironment" href="#rodentia.core.BaseEnvironment">BaseEnvironment</a></b></code>:
+<ul class="hlist">
+<li><code><a title="rodentia.core.BaseEnvironment.add_box" href="#rodentia.core.BaseEnvironment.add_box">add_box</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.add_camera_view" href="#rodentia.core.BaseEnvironment.add_camera_view">add_camera_view</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.add_model" href="#rodentia.core.BaseEnvironment.add_model">add_model</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.add_sphere" href="#rodentia.core.BaseEnvironment.add_sphere">add_sphere</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.get_obj_info" href="#rodentia.core.BaseEnvironment.get_obj_info">get_obj_info</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.locate_object" href="#rodentia.core.BaseEnvironment.locate_object">locate_object</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.remove_obj" href="#rodentia.core.BaseEnvironment.remove_obj">remove_obj</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.render" href="#rodentia.core.BaseEnvironment.render">render</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.replace_obj_texture" href="#rodentia.core.BaseEnvironment.replace_obj_texture">replace_obj_texture</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.set_light" href="#rodentia.core.BaseEnvironment.set_light">set_light</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="rodentia.core.MultiAgentEnvironment"><code class="flex name class">
+<span>class <span class="ident">MultiAgentEnvironment</span></span>
+<span>(</span><span>agent_size, width, height, bg_color=[0.0, 0.0, 0.0])</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Multi agent environment.</p>
+<p>Create environment.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>width</code></strong></dt>
+<dd>Screen width</dd>
+<dt><strong><code>height</code></strong></dt>
+<dd>Screen height</dd>
+<dt><strong><code>bg_color</code></strong></dt>
+<dd>Background color (RGB value with 0.0 ~ 1.0)</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MultiAgentEnvironment(BaseEnvironment):
+    &#34;&#34;&#34;
+    Multi agent environment.
+    &#34;&#34;&#34;
+    
+    def __init__(self, agent_size, width, height, bg_color=[0.0, 0.0, 0.0]):
+        &#34;&#34;&#34;Create environment.
+        Args:
+          width: Screen width
+          height: Screen height
+          bg_color: Background color (RGB value with 0.0 ~ 1.0)
+        &#34;&#34;&#34;
+        super().__init__(width, height, bg_color)
+
+        self.agent_ids = []
+
+        for i in range(agent_size):
+            agent_id = self.env.add_agent(radius=1.0,
+                                          pos=to_nd_float_array([0,0,i*2]),
+                                          rot_y=0.0,
+                                          mass=1.0,
+                                          detect_collision=True, # Detect agent-agent collision
+                                          color=to_nd_float_array([0,0,1]))
+            self.agent_ids.append(agent_id)
+
+    def locate_agent(self, agent_index, pos, rot_y=0.0):
+        &#34;&#34;&#34;Locate agenet to given position and orientataion.
+        Args:
+          pos: (x,y,z) float values for agent&#39;s location.
+          rot_y: A float value for head angle of the model (in radian)
+        &#34;&#34;&#34;
+        agent_id = self.agent_ids[agent_index]
+        self.env.locate_agent(id=agent_id, pos=to_nd_float_array(pos), rot_y=rot_y)
+
+    def step(self, action):
+        &#34;&#34;&#34;Step environment process and returns result.
+        Args:
+          action: Double Int array. Each array has 3 elements as the action.
+
+        Returns:
+          Dictionary which contains the result of this step calculation.
+            &#34;collided&#34; Int list of object ids that collided with the agent. # TODO:
+            &#34;screen&#34;: numpy nd_array of agent_size * width * height * 3 (uint8)
+        &#34;&#34;&#34;
+
+        for i, agent_id in enumerate(self.agent_ids):
+            self.env.control(id=agent_id, action=to_nd_int_array(action[i]))
+        collision_ids = self.env.step()
+
+        ret = {}
+        collided = []
+        
+        for agent_id in self.agent_ids:
+            if agent_id in collision_ids:
+                collided.append(collision_ids[agent_id])
+            else:
+                collided.append([])
+
+        ret[&#34;collided&#34;] = collided
+        
+        screen = []
+        for agent_index, agent_id in enumerate(self.agent_ids):
+            agent_info = self.get_agent_info(agent_index)
+            ret_render = self.render(self.main_camera_id,
+                                     pos=agent_info[&#34;pos&#34;],
+                                     rot=agent_info[&#34;rot&#34;],
+                                     ignore_ids=[agent_id])
+            screen.append(ret_render[&#34;screen&#34;])
+        
+        ret[&#34;screen&#34;] = screen
+        return ret
+
+    def get_agent_info(self, agent_index):
+        &#34;&#34;&#34;Get agent information.
+        Returns:
+          Dictionary which contains the agent&#39;s current state info.
+            &#34;pos&#34;: numpy nd_array (float32)
+            &#34;velocity&#34; numpy nd_array (float32)
+            &#34;rot&#34; numpy nd_array (float32)
+            &#34;rot_y&#34; float
+        &#34;&#34;&#34;
+        agent_id = self.agent_ids[agent_index]
+        ret = self.env.get_obj_info(agent_id)
+        rot = ret[&#34;rot&#34;]
+        # Calculate rotation around Y-axis
+        rot_y = np.arctan2(rot[1], rot[3]) * 2.0
+        ret[&#34;rot_y&#34;] = rot_y
+        return ret</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="rodentia.core.BaseEnvironment" href="#rodentia.core.BaseEnvironment">BaseEnvironment</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="rodentia.core.MultiAgentEnvironment.get_agent_info"><code class="name flex">
+<span>def <span class="ident">get_agent_info</span></span>(<span>self, agent_index)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Get agent information.</p>
+<h2 id="returns">Returns</h2>
+<p>Dictionary which contains the agent's current state info.
+"pos": numpy nd_array (float32)
+"velocity" numpy nd_array (float32)
+"rot" numpy nd_array (float32)
+"rot_y" float</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_agent_info(self, agent_index):
+    &#34;&#34;&#34;Get agent information.
+    Returns:
+      Dictionary which contains the agent&#39;s current state info.
+        &#34;pos&#34;: numpy nd_array (float32)
+        &#34;velocity&#34; numpy nd_array (float32)
+        &#34;rot&#34; numpy nd_array (float32)
+        &#34;rot_y&#34; float
+    &#34;&#34;&#34;
+    agent_id = self.agent_ids[agent_index]
+    ret = self.env.get_obj_info(agent_id)
+    rot = ret[&#34;rot&#34;]
+    # Calculate rotation around Y-axis
+    rot_y = np.arctan2(rot[1], rot[3]) * 2.0
+    ret[&#34;rot_y&#34;] = rot_y
+    return ret</code></pre>
+</details>
+</dd>
+<dt id="rodentia.core.MultiAgentEnvironment.locate_agent"><code class="name flex">
+<span>def <span class="ident">locate_agent</span></span>(<span>self, agent_index, pos, rot_y=0.0)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Locate agenet to given position and orientataion.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pos</code></strong></dt>
+<dd>(x,y,z) float values for agent's location.</dd>
+<dt><strong><code>rot_y</code></strong></dt>
+<dd>A float value for head angle of the model (in radian)</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def locate_agent(self, agent_index, pos, rot_y=0.0):
+    &#34;&#34;&#34;Locate agenet to given position and orientataion.
+    Args:
+      pos: (x,y,z) float values for agent&#39;s location.
+      rot_y: A float value for head angle of the model (in radian)
+    &#34;&#34;&#34;
+    agent_id = self.agent_ids[agent_index]
+    self.env.locate_agent(id=agent_id, pos=to_nd_float_array(pos), rot_y=rot_y)</code></pre>
+</details>
+</dd>
+<dt id="rodentia.core.MultiAgentEnvironment.step"><code class="name flex">
+<span>def <span class="ident">step</span></span>(<span>self, action)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Step environment process and returns result.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>action</code></strong></dt>
+<dd>Double Int array. Each array has 3 elements as the action.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Dictionary which contains the result of this step calculation.
+"collided" Int list of object ids that collided with the agent. # TODO:
+"screen": numpy nd_array of agent_size * width * height * 3 (uint8)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def step(self, action):
+    &#34;&#34;&#34;Step environment process and returns result.
+    Args:
+      action: Double Int array. Each array has 3 elements as the action.
+
+    Returns:
+      Dictionary which contains the result of this step calculation.
+        &#34;collided&#34; Int list of object ids that collided with the agent. # TODO:
+        &#34;screen&#34;: numpy nd_array of agent_size * width * height * 3 (uint8)
+    &#34;&#34;&#34;
+
+    for i, agent_id in enumerate(self.agent_ids):
+        self.env.control(id=agent_id, action=to_nd_int_array(action[i]))
+    collision_ids = self.env.step()
+
+    ret = {}
+    collided = []
+    
+    for agent_id in self.agent_ids:
+        if agent_id in collision_ids:
+            collided.append(collision_ids[agent_id])
+        else:
+            collided.append([])
+
+    ret[&#34;collided&#34;] = collided
+    
+    screen = []
+    for agent_index, agent_id in enumerate(self.agent_ids):
+        agent_info = self.get_agent_info(agent_index)
+        ret_render = self.render(self.main_camera_id,
+                                 pos=agent_info[&#34;pos&#34;],
+                                 rot=agent_info[&#34;rot&#34;],
+                                 ignore_ids=[agent_id])
+        screen.append(ret_render[&#34;screen&#34;])
+    
+    ret[&#34;screen&#34;] = screen
+    return ret</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="rodentia.core.BaseEnvironment" href="#rodentia.core.BaseEnvironment">BaseEnvironment</a></b></code>:
+<ul class="hlist">
+<li><code><a title="rodentia.core.BaseEnvironment.add_box" href="#rodentia.core.BaseEnvironment.add_box">add_box</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.add_camera_view" href="#rodentia.core.BaseEnvironment.add_camera_view">add_camera_view</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.add_model" href="#rodentia.core.BaseEnvironment.add_model">add_model</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.add_sphere" href="#rodentia.core.BaseEnvironment.add_sphere">add_sphere</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.get_obj_info" href="#rodentia.core.BaseEnvironment.get_obj_info">get_obj_info</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.locate_object" href="#rodentia.core.BaseEnvironment.locate_object">locate_object</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.remove_obj" href="#rodentia.core.BaseEnvironment.remove_obj">remove_obj</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.render" href="#rodentia.core.BaseEnvironment.render">render</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.replace_obj_texture" href="#rodentia.core.BaseEnvironment.replace_obj_texture">replace_obj_texture</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.set_light" href="#rodentia.core.BaseEnvironment.set_light">set_light</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="rodentia" href="index.html">rodentia</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="rodentia.core.to_nd_float_array" href="#rodentia.core.to_nd_float_array">to_nd_float_array</a></code></li>
+<li><code><a title="rodentia.core.to_nd_float_array_for_rot" href="#rodentia.core.to_nd_float_array_for_rot">to_nd_float_array_for_rot</a></code></li>
+<li><code><a title="rodentia.core.to_nd_int_array" href="#rodentia.core.to_nd_int_array">to_nd_int_array</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="rodentia.core.BaseEnvironment" href="#rodentia.core.BaseEnvironment">BaseEnvironment</a></code></h4>
+<ul class="two-column">
+<li><code><a title="rodentia.core.BaseEnvironment.add_box" href="#rodentia.core.BaseEnvironment.add_box">add_box</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.add_camera_view" href="#rodentia.core.BaseEnvironment.add_camera_view">add_camera_view</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.add_model" href="#rodentia.core.BaseEnvironment.add_model">add_model</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.add_sphere" href="#rodentia.core.BaseEnvironment.add_sphere">add_sphere</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.get_obj_info" href="#rodentia.core.BaseEnvironment.get_obj_info">get_obj_info</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.locate_object" href="#rodentia.core.BaseEnvironment.locate_object">locate_object</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.remove_obj" href="#rodentia.core.BaseEnvironment.remove_obj">remove_obj</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.render" href="#rodentia.core.BaseEnvironment.render">render</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.replace_obj_texture" href="#rodentia.core.BaseEnvironment.replace_obj_texture">replace_obj_texture</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.set_light" href="#rodentia.core.BaseEnvironment.set_light">set_light</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="rodentia.core.Environment" href="#rodentia.core.Environment">Environment</a></code></h4>
+<ul class="">
+<li><code><a title="rodentia.core.Environment.get_agent_info" href="#rodentia.core.Environment.get_agent_info">get_agent_info</a></code></li>
+<li><code><a title="rodentia.core.Environment.locate_agent" href="#rodentia.core.Environment.locate_agent">locate_agent</a></code></li>
+<li><code><a title="rodentia.core.Environment.step" href="#rodentia.core.Environment.step">step</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="rodentia.core.MultiAgentEnvironment" href="#rodentia.core.MultiAgentEnvironment">MultiAgentEnvironment</a></code></h4>
+<ul class="">
+<li><code><a title="rodentia.core.MultiAgentEnvironment.get_agent_info" href="#rodentia.core.MultiAgentEnvironment.get_agent_info">get_agent_info</a></code></li>
+<li><code><a title="rodentia.core.MultiAgentEnvironment.locate_agent" href="#rodentia.core.MultiAgentEnvironment.locate_agent">locate_agent</a></code></li>
+<li><code><a title="rodentia.core.MultiAgentEnvironment.step" href="#rodentia.core.MultiAgentEnvironment.step">step</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.5</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
