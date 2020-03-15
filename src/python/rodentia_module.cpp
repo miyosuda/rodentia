@@ -218,6 +218,7 @@ typedef struct {
 static void EnvObject_dealloc(EnvObject* self) {
     if( self->environment != nullptr ) {
         releaseEnvironment(self->environment);
+        self->environment = nullptr;
     }
 
     (((PyObject*)(self))->ob_type)->tp_free((PyObject*)self);
@@ -257,6 +258,22 @@ static int Env_init(EnvObject* self, PyObject* args, PyObject* kwds) {
     }
 
     return 0;
+}
+
+static PyObject* Env_release(EnvObject* self, PyObject* args, PyObject* kwds) {
+    if (self->environment == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+        return nullptr;
+    }
+
+    // Release environment
+    releaseEnvironment(self->environment);
+
+    // Set self environment null
+    self->environment = nullptr;
+    
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 static PyObject* Env_add_camera_view(EnvObject* self, PyObject* args, PyObject* kwds) { 
@@ -1032,6 +1049,7 @@ static PyObject* Env_replace_obj_texture(EnvObject* self, PyObject* args, PyObje
 // dic get_object_info(id)
 // void set_light(dir, color, ambient_color, shadow_rate)
 // void replace_obj_texture(id, string[])
+// void release()
 
 static PyMethodDef EnvObject_methods[] = {
     {"add_camera_view", (PyCFunction)Env_add_camera_view, METH_VARARGS | METH_KEYWORDS,
@@ -1062,6 +1080,8 @@ static PyMethodDef EnvObject_methods[] = {
      "Set light parameters"},
     {"replace_obj_texture", (PyCFunction)Env_replace_obj_texture, METH_VARARGS | METH_KEYWORDS,
      "Replace object textures"},
+    {"release", (PyCFunction)Env_release, METH_VARARGS | METH_KEYWORDS,
+     "Release environment"},
     {nullptr}
 };
 
