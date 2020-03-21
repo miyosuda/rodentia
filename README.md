@@ -86,8 +86,16 @@ And install with `rodentia` with pip
 
 ## How to run example
 
+### Ubuntu
+    $ pip3 install pygame Pillow
+    $ python3 examples/01_seekavoid_arena/main.py
+
+
+### MacOSX 
     $ pip3 install pygame==2.0.0.dev6 Pillow
     $ python3 examples/01_seekavoid_arena/main.py
+
+Note: MacOSX requires pygame with dev version.
 
 
 ## API
