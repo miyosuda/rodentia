@@ -76,6 +76,7 @@ public:
     virtual bool isAgent() const override {
         return false;
     }
+    void applyImpulse(const Vector3f& impulse);
 };
 
 //---------------------------

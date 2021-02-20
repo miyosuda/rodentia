@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import unittest
 import numpy as np
@@ -22,9 +21,9 @@ def imsave(path, image):
 
 class RodentiaModuleTest(unittest.TestCase):
   def testVersion(self):
-      version = rodentia.rodentia_module.version();
+      version = rodentia.rodentia_module.version()
       self.assertEqual(version, rodentia.__version__)
-
+      
   def testEnv(self):
       width  = 84 * 4
       height = 84 * 4
@@ -48,6 +47,7 @@ class RodentiaModuleTest(unittest.TestCase):
       # Check setup interfaces
       # Add box
       env.add_box(texture_path="",
+                  color=to_nd_float_array([0.0, 0.0, 0.0]),
                   half_extent=to_nd_float_array([30.0, 1.0, 30.0]),
                   pos=to_nd_float_array([0.0, -1.0, 0.0]),
                   rot=to_nd_float_array([0.0, 0.0, 0.0, 1.0]),
@@ -57,6 +57,7 @@ class RodentiaModuleTest(unittest.TestCase):
 
       # Add Sphere
       sphere_id = env.add_sphere(texture_path="",
+                                 color=to_nd_float_array([0.0, 0.0, 0.0]),
                                  radius=1.0,
                                  pos=to_nd_float_array([0.0, 2.0, -5.0]),
                                  rot=to_nd_float_array([0.0, 0.0, 0.0, 1.0]),
@@ -127,6 +128,10 @@ class RodentiaModuleTest(unittest.TestCase):
       # Replace object texture
       texture_path = [""]
       env.replace_obj_texture(sphere_id, texture_path)
+
+      # Apply impulse
+      env.apply_impulse(sphere_id, to_nd_float_array([1, 0, 0]))
+      
     
 
 if __name__ == '__main__':

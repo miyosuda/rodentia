@@ -141,6 +141,7 @@ public:
                  const Vector3f& color);
     void release();
     void control(int id, const Action& action);
+    void applyImpulse(int id, const Vector3f& impulse);
     void step(CollisionResult& collisionResult);
     int addBox(const char* texturePath,
                const Vector3f& color,

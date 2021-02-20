@@ -234,6 +234,14 @@ class BaseEnvironment:
         """
         self.env.remove_obj(id=id)
 
+    def apply_impulse(self, id, impulse):
+        """Apply impulse to the  object.
+        Args:
+          id: Int value for object's id
+          impulse: (x,y,z) float values for the impulse
+        """
+        self.env.apply_impulse(id=id, impulse=to_nd_float_array(impulse))
+
     def get_obj_info(self, id):
         """Get object information.
         Args:

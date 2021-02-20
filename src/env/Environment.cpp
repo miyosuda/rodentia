@@ -305,6 +305,19 @@ void Environment::control(int id, const Action& action) {
     }
 }
 
+void Environment::applyImpulse(int id, const Vector3f& impulse) {
+    if(!world) {
+        return;
+    }
+
+    EnvironmentObject* envObj = findObject(id);
+    
+    if( envObj != nullptr && !envObj->isAgent() ) {
+        StageObject* stageObj = (StageObject*)envObj;
+        stageObj->applyImpulse(impulse);
+    }
+}
+
 void Environment::step(CollisionResult& collisionResult) {
     if(!world) {
         return;

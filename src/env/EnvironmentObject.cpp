@@ -106,6 +106,10 @@ StageObject::StageObject(const Vector3f& pos,
     }
 }
 
+void StageObject::applyImpulse(const Vector3f& impulse) {
+    rigidBodyComponent->applyImpulse(impulse);
+}
+
 //---------------------------
 //      [AgentObject]
 //---------------------------

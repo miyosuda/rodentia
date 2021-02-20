@@ -107,6 +107,12 @@ void RigidBodyComponent::locate(const Vector3f& pos, const Quat4f& rot) {
     body->setWorldTransform(rigidBodyTransform);
 }
 
+void RigidBodyComponent::applyImpulse(const Vector3f& impulse) {
+    // Apply impulse at the center of sphere.
+    btVector3 impulse_(impulse.x, impulse.y, impulse.z);
+    body->applyImpulse(impulse_, btVector3(0.0f, 0.0f, 0.0f));
+}
+
 
 //---------------------------
 // [AgentRigidBodyComponent]

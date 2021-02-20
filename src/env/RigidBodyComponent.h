@@ -30,6 +30,7 @@ public:
     virtual void getMat(Matrix4f& mat) const;
     void getVeclocity(Vector3f& velocity) const;
     virtual void locate(const Vector3f& pos, const Quat4f& rot);
+    void applyImpulse(const Vector3f& impulse);
 };
 
 class AgentRigidBodyComponent : public RigidBodyComponent {

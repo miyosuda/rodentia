@@ -67,6 +67,10 @@ static void control(Environment* environment, int id, const Action& action) {
     environment->control(id, action);
 }
 
+static void applyImpulse(Environment* environment, int id, const Vector3f& impulse) {
+    environment->applyImpulse(id, impulse);
+}
+
 static void step(Environment* environment, CollisionResult& collisionResult) {
     environment->step(collisionResult);
 }
@@ -428,6 +432,38 @@ static PyObject* Env_control(EnvObject* self, PyObject* args, PyObject* kwds) {
     return Py_None;
 }
 
+static PyObject* Env_apply_impulse(EnvObject* self, PyObject* args, PyObject* kwds) {
+    int id;
+    PyObject* impulseObj = nullptr;
+
+    // Get argument
+    const char* kwlist[] = {"id", "impulse", nullptr};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "iO!", const_cast<char**>(kwlist),
+                                     &id,
+                                     &PyArray_Type, &impulseObj)) {
+        return nullptr;
+    }
+    
+    if (self->environment == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
+        return nullptr;
+    }
+
+    // impulse
+    const float* impulseArr = getFloatArrayData(impulseObj, 3, "impulse");
+    if( impulseArr == nullptr ) {
+        return nullptr;
+    }
+    Vector3f impulse(impulseArr[0], impulseArr[1], impulseArr[2]);    
+
+    // Apply impulse
+    applyImpulse(self->environment, id, impulseArr);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 static PyObject* Env_step(EnvObject* self, PyObject* args, PyObject* kwds) {
     if (self->environment == nullptr) {
         PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
@@ -566,27 +602,27 @@ static PyObject* Env_render(EnvObject* self, PyObject* args, PyObject* kwds) {
 }
 
 static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
+    const char* texturePath = "";
+    PyObject* colorObj = nullptr;    
     PyObject* halfExtentObj = nullptr;
     PyObject* posObj = nullptr;
     PyObject* rotObj = nullptr;    
     float mass;
-    const char* texturePath = "";
-    PyObject* colorObj = nullptr;
     int detectCollision;
     int visible;
 
     // Get argument
-    const char* kwlist[] = {"half_extent", "pos", "rot", "mass",
-                            "texture_path", "color",
+    const char* kwlist[] = {"texture_path", "color",
+                            "half_extent", "pos", "rot", "mass",
                             "detect_collision", "visible",
                             nullptr};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!O!O!sO!fii", const_cast<char**>(kwlist),
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!O!fii", const_cast<char**>(kwlist),
+                                     &texturePath,
+                                     &PyArray_Type, &colorObj,
                                      &PyArray_Type, &halfExtentObj,
                                      &PyArray_Type, &posObj,
                                      &PyArray_Type, &rotObj,
-                                     &texturePath,
-                                     &PyArray_Type, &colorObj,
                                      &mass,
                                      &detectCollision,
                                      &visible)) {
@@ -597,6 +633,14 @@ static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
         PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
         return nullptr;
     }
+
+    // color
+    const float* colorArr = getFloatArrayData(colorObj, 3, "color");
+    if( colorArr == nullptr ) {
+        return nullptr;
+    }
+
+    Vector3f color(colorArr[0], colorArr[1], colorArr[2]);
 
     // half_extent
     const float* halfExtentArr = getFloatArrayData(halfExtentObj, 3, "half_extent");
@@ -621,14 +665,6 @@ static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
     }
     
     Quat4f rot(rotArr[0], rotArr[1], rotArr[2], rotArr[3]);
-
-    // color
-    const float* colorArr = getFloatArrayData(colorObj, 3, "color");
-    if( colorArr == nullptr ) {
-        return nullptr;
-    }
-
-    Vector3f color(colorArr[0], colorArr[1], colorArr[2]);
     
     int id = addBox(self->environment,
                     texturePath,
@@ -645,28 +681,28 @@ static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
 }
 
 static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds) {
+    const char* texturePath = "";
+    PyObject* colorObj = nullptr;
     float radius;
     PyObject* posObj = nullptr;
     PyObject* rotObj = nullptr;
     float mass;
-    const char* texturePath = "";
-    PyObject* colorObj = nullptr;
     int detectCollision;
     int visible;
 
     // Get argument
-    const char* kwlist[] = {"radius", "pos", "rot", "mass",
-                            "texture_path", "color",
+    const char* kwlist[] = {"texture_path", "color",
+                            "radius", "pos", "rot", "mass",
                             "detect_collision", "visible",
                             nullptr};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "fO!O!fsO!ii", const_cast<char**>(kwlist),
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!fO!O!fii", const_cast<char**>(kwlist),
+                                     &texturePath,
+                                     &PyArray_Type, &colorObj,
                                      &radius,
                                      &PyArray_Type, &posObj,
                                      &PyArray_Type, &rotObj,
-                                     &mass,                                     
-                                     &texturePath,
-                                     &PyArray_Type, &colorObj,
+                                     &mass,
                                      &detectCollision,
                                      &visible)) {
         return nullptr;
@@ -717,28 +753,27 @@ static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds)
 
 static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) {
     const char* path = "";
+    PyObject* colorObj = nullptr;    
     PyObject* scaleObj = nullptr;
     PyObject* posObj = nullptr;
     PyObject* rotObj = nullptr;
     float mass;
-    PyObject* colorObj = nullptr;
     int detectCollision;
     int useMeshCollision;
     int visible;
 
     // Get argument
-    const char* kwlist[] = {"path", "scale", "pos", "rot", "mass",
-                            "color",
+    const char* kwlist[] = {"path", "color", "scale", "pos", "rot", "mass",
                             "detect_collision", "use_mesh_collision", "visible",
                             nullptr};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!fO!iii", const_cast<char**>(kwlist),
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!O!fiii", const_cast<char**>(kwlist),
                                      &path,
+                                     &PyArray_Type, &colorObj,
                                      &PyArray_Type, &scaleObj,
                                      &PyArray_Type, &posObj,
                                      &PyArray_Type, &rotObj,
                                      &mass,
-                                     &PyArray_Type, &colorObj,
                                      &detectCollision,
                                      &useMeshCollision,
                                      &visible)) {
@@ -749,6 +784,14 @@ static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) 
         PyErr_SetString(PyExc_RuntimeError, "rodentia environment not setup");
         return nullptr;
     }
+
+    // color
+    const float* colorArr = getFloatArrayData(colorObj, 3, "color");
+    if( colorArr == nullptr ) {
+        return nullptr;
+    }
+
+    Vector3f color(colorArr[0], colorArr[1], colorArr[2]);
 
     // scale
     const float* scaleArr = getFloatArrayData(scaleObj, 3, "scale");
@@ -773,14 +816,6 @@ static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) 
     }
 
     Quat4f rot(rotArr[0], rotArr[1], rotArr[2], rotArr[3]);
-
-    // color
-    const float* colorArr = getFloatArrayData(colorObj, 3, "color");
-    if( colorArr == nullptr ) {
-        return nullptr;
-    }
-
-    Vector3f color(colorArr[0], colorArr[1], colorArr[2]);
     
     int id = addModel(self->environment,
                       path,
@@ -1080,6 +1115,7 @@ static PyObject* Env_replace_obj_texture(EnvObject* self, PyObject* args, PyObje
 // int add_camera_view(width, height, bg_color, near, far, focal_length, shadow_buffer_width)
 // int add_agent(radius, pos, rot_y, mass, detect_collision, color)
 // void control(id, action)
+// void applyImpulse(id, impulse)
 // dic step()
 // dic render(camera_id, pos, rot)
 // int add_box(half_extent, pos, rot, detect_collision)
@@ -1099,7 +1135,9 @@ static PyMethodDef EnvObject_methods[] = {
     {"add_agent", (PyCFunction)Env_add_agent, METH_VARARGS | METH_KEYWORDS,
      "Add agent"},
     {"control", (PyCFunction)Env_control, METH_VARARGS | METH_KEYWORDS,
-     "Control agent"},    
+     "Control agent"},
+    {"apply_impulse", (PyCFunction)Env_apply_impulse, METH_VARARGS | METH_KEYWORDS,
+     "Apply impulse"},
     {"step", (PyCFunction)Env_step, METH_VARARGS | METH_KEYWORDS,
      "Advance the environment"},
     {"render", (PyCFunction)Env_render, METH_VARARGS | METH_KEYWORDS,
