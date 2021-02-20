@@ -493,16 +493,16 @@ int Environment::addModel(const char* path,
     Mesh* mesh = nullptr;
     
     // Load mesh from .obj data file
-    if( color.x < 0 && color.y < 0 && color.z < 0 ) {
+    if( color.x < 0 || color.y < 0 || color.z < 0 ) {
+        // When replacing texture was not specified
+        mesh = meshManager.getModelMesh(path, textureManager, nullptr, shaderManager);
+    } else {
         // When replacing texture was specified
         Texture* texture = textureManager.getColorTexture(color.x, color.y, color.z);
         Shader* shader = shaderManager.getDiffuseShader();
         Shader* shadowDepthShader = shaderManager.getShadowDepthShader();
         Material* replacingMaterial = new Material(texture, shader, shadowDepthShader);
         mesh = meshManager.getModelMesh(path, textureManager, replacingMaterial, shaderManager);
-    } else {
-        // When replacing texture was not specified
-        mesh = meshManager.getModelMesh(path, textureManager, nullptr, shaderManager);
     }
     
     if( mesh == nullptr ) {
