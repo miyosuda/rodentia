@@ -263,11 +263,16 @@ Mesh* MeshManager::getSphereMesh(Material* material) {
  */
 Mesh* MeshManager::getModelMesh(const char* path,
                                 TextureManager& textureManager,
+                                Material* replacingMaterial,
                                 ShaderManager& shaderManager) {
     auto itr = modelMeshDataMap.find(path);
     if( itr != modelMeshDataMap.end() ) {
         MeshData* meshData = itr->second;
-        return meshData->toMesh(textureManager, shaderManager);
+        if( replacingMaterial != nullptr ) {
+            return meshData->toMesh(replacingMaterial);
+        } else {
+            return meshData->toMesh(textureManager, shaderManager);
+        }
     }
     
     MeshData* meshData = ObjImporter::import(path);
@@ -277,7 +282,11 @@ Mesh* MeshManager::getModelMesh(const char* path,
 
     modelMeshDataMap[path] = meshData;
     
-    return meshData->toMesh(textureManager, shaderManager);
+    if( replacingMaterial != nullptr ) {
+        return meshData->toMesh(replacingMaterial);
+    } else {    
+        return meshData->toMesh(textureManager, shaderManager);
+    }
 }
 
 /**

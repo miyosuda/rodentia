@@ -143,6 +143,7 @@ public:
     void control(int id, const Action& action);
     void step(CollisionResult& collisionResult);
     int addBox(const char* texturePath,
+               const Vector3f& color,
                const Vector3f& halfExtent,
                const Vector3f& pos,
                const Quat4f& rot,
@@ -150,6 +151,7 @@ public:
                bool detectCollision,
                bool visible);
     int addSphere(const char* texturePath,
+                  const Vector3f& color,
                   float radius,
                   const Vector3f& pos,
                   const Quat4f& rot,
@@ -157,6 +159,7 @@ public:
                   bool detectCollision,
                   bool visible);
     int addModel(const char* path,
+                 const Vector3f& color,
                  const Vector3f& sale,
                  const Vector3f& pos,
                  const Quat4f& rot,

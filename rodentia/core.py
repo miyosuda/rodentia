@@ -31,7 +31,7 @@ def to_nd_int_array(list_obj):
         return np.array(list_obj, dtype=np.int32)
 
 
-    
+
 class BaseEnvironment:
     """
     Common super class for the plain Environment and MultiAgentEnvironment.
@@ -47,6 +47,7 @@ class BaseEnvironment:
           width: Screen width
           height: Screen height
           bg_color: Background color (RGB value with 0.0 ~ 1.0)
+          agent_raidus: Radius of the agent sphere
         """
         self.env = rodentia_module.Env()
         self.main_camera_id = self.add_camera_view(width, height, bg_color)
@@ -78,23 +79,25 @@ class BaseEnvironment:
                                         shadow_buffer_width=shadow_buffer_width)
 
     def add_box(self,
-                texture_path,
                 half_extent,
                 pos,
                 rot=0.0,
                 angle=0.0,
                 mass=0.0,
+                texture_path="",
+                color=[1,1,1],
                 detect_collision=False,
                 visible=True):
         """Add box object.
         Args:
-          texture_path: Path for the texture (.png file)
           half_extent: (x,y,z) float values for half extent size of the box.
           pos: (x,y,z) float values for the center of the box.
           rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object
                (in radian)
           mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
                 but if mass > 0, the object is physically simulated.
+          texture_path: Path for the texture (.png file)
+          color: Color when texture_path was not specified.
           detect_collision: Whether the object is included for collision check result.
                             If this argument is True, object's id is included when 
                             the agenet collides with this object.
@@ -104,6 +107,7 @@ class BaseEnvironment:
         """
         return self.env.add_box(
             texture_path=texture_path,
+            color=to_nd_float_array(color),
             half_extent=to_nd_float_array(half_extent),
             pos=to_nd_float_array(pos),
             rot=to_nd_float_array_for_rot(rot),
@@ -112,22 +116,24 @@ class BaseEnvironment:
             visible=visible)
 
     def add_sphere(self,
-                   texture_path,
                    radius,
                    pos,
                    rot=0.0,
                    mass=0.0,
+                   texture_path="",
+                   color=[1,1,1],
                    detect_collision=False,
                    visible=True):
         """Add sphere object.
         Args:
-          texture_path: Path for the texture (.png file)
           radius: float values for the raius of the shpere.
           pos: (x,y,z) float values for the center of the sphere.
           rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object
                (in radian)
           mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
                 but if mass > 0, the object is physically simulated.
+          texture_path: Path for the texture (.png file)
+          color: Color when texture_path was not specified.
           detect_collision: A bool value for indicating whether the object is included for collision
                             check result. If this argument is True, object's id is included when 
                             the agenet collides with this object.
@@ -137,6 +143,7 @@ class BaseEnvironment:
         """
         return self.env.add_sphere(
             texture_path=texture_path,
+            color=to_nd_float_array(color),
             radius=radius,
             pos=to_nd_float_array(pos),
             rot=to_nd_float_array_for_rot(rot),
@@ -150,6 +157,7 @@ class BaseEnvironment:
                   pos,
                   rot=0.0,
                   mass=0.0,
+                  color=None,
                   detect_collision=False,
                   use_mesh_collision=False,
                   visible=True):
@@ -163,6 +171,7 @@ class BaseEnvironment:
                
           mass: A float value for mass of the object. if mass == 0, the object is 
                 treated as static object, but if mass > 0, the object is physically simulated.
+          color: Color to override texture specified in the .obj file.
           detect_collision: Whether the object is included for collision check result.
                             If this argument is True, object's id is included when 
                             the agenet collides with this object.
@@ -173,8 +182,12 @@ class BaseEnvironment:
         Returns:
           Int value for the object id.
         """
+        if color == None:
+            color = [-1,-1,-1]
+            
         return self.env.add_model(
             path=path,
+            color=to_nd_float_array(color),
             scale=to_nd_float_array(scale),
             pos=to_nd_float_array(pos),
             rot=to_nd_float_array_for_rot(rot),

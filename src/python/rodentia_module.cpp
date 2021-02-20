@@ -14,7 +14,7 @@ using namespace std;
 #include "Matrix4f.h"
 #include "EnvironmentObject.h"
 
-#define RODENTIA_MODULE_VERSION "0.0.7"
+#define RODENTIA_MODULE_VERSION "0.0.8"
 
 
 //---------------------------------------------------------
@@ -80,6 +80,7 @@ static void render(Environment* environment, int cameraId,
 
 static int addBox(Environment* environment,
                   const char* texturePath,
+                  const Vector3f& color,
                   const Vector3f& halfExtent,
                   const Vector3f& pos,
                   const Quat4f& rot,
@@ -87,6 +88,7 @@ static int addBox(Environment* environment,
                   bool detectCollision,
                   bool visible) {
     return environment->addBox(texturePath,
+                               color,
                                halfExtent, pos, rot,
                                mass,
                                detectCollision,
@@ -95,6 +97,7 @@ static int addBox(Environment* environment,
 
 static int addSphere(Environment* environment,
                      const char* texturePath,
+                     const Vector3f& color,
                      float radius,
                      const Vector3f& pos,
                      const Quat4f& rot,
@@ -102,6 +105,7 @@ static int addSphere(Environment* environment,
                      bool detectCollision,
                      bool visible) {
     return environment->addSphere(texturePath,
+                                  color,
                                   radius,
                                   pos, rot,
                                   mass,
@@ -111,6 +115,7 @@ static int addSphere(Environment* environment,
 
 static int addModel(Environment* environment,
                     const char* path,
+                    const Vector3f& color,
                     const Vector3f& scale,
                     const Vector3f& pos,
                     const Quat4f& rot,
@@ -119,6 +124,7 @@ static int addModel(Environment* environment,
                     bool useMeshCollision,
                     bool visible) {
     return environment->addModel(path,
+                                 color,
                                  scale, pos, rot, 
                                  mass,
                                  detectCollision,
@@ -560,24 +566,27 @@ static PyObject* Env_render(EnvObject* self, PyObject* args, PyObject* kwds) {
 }
 
 static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
-    const char* texturePath = "";
     PyObject* halfExtentObj = nullptr;
     PyObject* posObj = nullptr;
-    PyObject* rotObj = nullptr;
+    PyObject* rotObj = nullptr;    
     float mass;
+    const char* texturePath = "";
+    PyObject* colorObj = nullptr;
     int detectCollision;
     int visible;
 
     // Get argument
-    const char* kwlist[] = {"texture_path", "half_extent", "pos", "rot", "mass", 
+    const char* kwlist[] = {"half_extent", "pos", "rot", "mass",
+                            "texture_path", "color",
                             "detect_collision", "visible",
                             nullptr};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!fii", const_cast<char**>(kwlist),
-                                     &texturePath,
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!O!O!sO!fii", const_cast<char**>(kwlist),
                                      &PyArray_Type, &halfExtentObj,
                                      &PyArray_Type, &posObj,
                                      &PyArray_Type, &rotObj,
+                                     &texturePath,
+                                     &PyArray_Type, &colorObj,
                                      &mass,
                                      &detectCollision,
                                      &visible)) {
@@ -612,12 +621,21 @@ static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
     }
     
     Quat4f rot(rotArr[0], rotArr[1], rotArr[2], rotArr[3]);
+
+    // color
+    const float* colorArr = getFloatArrayData(colorObj, 3, "color");
+    if( colorArr == nullptr ) {
+        return nullptr;
+    }
+
+    Vector3f color(colorArr[0], colorArr[1], colorArr[2]);
     
     int id = addBox(self->environment,
                     texturePath,
+                    color,
                     halfExtent, pos, rot,
                     mass,
-                    detectCollision != 0,
+                    detectCollision != 0,                    
                     visible != 0);
     
     // Returning object ID
@@ -627,25 +645,28 @@ static PyObject* Env_add_box(EnvObject* self, PyObject* args, PyObject* kwds) {
 }
 
 static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds) {
-    const char* texturePath = "";
     float radius;
     PyObject* posObj = nullptr;
     PyObject* rotObj = nullptr;
     float mass;
+    const char* texturePath = "";
+    PyObject* colorObj = nullptr;
     int detectCollision;
     int visible;
 
     // Get argument
-    const char* kwlist[] = {"texture_path", "radius", "pos", "rot", "mass",
+    const char* kwlist[] = {"radius", "pos", "rot", "mass",
+                            "texture_path", "color",
                             "detect_collision", "visible",
                             nullptr};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sfO!O!fii", const_cast<char**>(kwlist),
-                                     &texturePath,
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "fO!O!fsO!ii", const_cast<char**>(kwlist),
                                      &radius,
                                      &PyArray_Type, &posObj,
                                      &PyArray_Type, &rotObj,
-                                     &mass,
+                                     &mass,                                     
+                                     &texturePath,
+                                     &PyArray_Type, &colorObj,
                                      &detectCollision,
                                      &visible)) {
         return nullptr;
@@ -670,10 +691,19 @@ static PyObject* Env_add_sphere(EnvObject* self, PyObject* args, PyObject* kwds)
         return nullptr;
     }
 
-    Quat4f rot(rotArr[0], rotArr[1], rotArr[2], rotArr[3]);    
+    Quat4f rot(rotArr[0], rotArr[1], rotArr[2], rotArr[3]);
+
+    // color
+    const float* colorArr = getFloatArrayData(colorObj, 3, "color");
+    if( colorArr == nullptr ) {
+        return nullptr;
+    }
+
+    Vector3f color(colorArr[0], colorArr[1], colorArr[2]);
     
     int id = addSphere(self->environment,
                        texturePath,
+                       color,
                        radius,
                        pos, rot,
                        mass,
@@ -691,21 +721,24 @@ static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) 
     PyObject* posObj = nullptr;
     PyObject* rotObj = nullptr;
     float mass;
+    PyObject* colorObj = nullptr;
     int detectCollision;
     int useMeshCollision;
     int visible;
 
     // Get argument
-    const char* kwlist[] = {"path", "scale", "pos", "rot", "mass", 
+    const char* kwlist[] = {"path", "scale", "pos", "rot", "mass",
+                            "color",
                             "detect_collision", "use_mesh_collision", "visible",
                             nullptr};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!fiii", const_cast<char**>(kwlist),
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!fO!iii", const_cast<char**>(kwlist),
                                      &path,
                                      &PyArray_Type, &scaleObj,
                                      &PyArray_Type, &posObj,
                                      &PyArray_Type, &rotObj,
                                      &mass,
+                                     &PyArray_Type, &colorObj,
                                      &detectCollision,
                                      &useMeshCollision,
                                      &visible)) {
@@ -740,9 +773,18 @@ static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) 
     }
 
     Quat4f rot(rotArr[0], rotArr[1], rotArr[2], rotArr[3]);
+
+    // color
+    const float* colorArr = getFloatArrayData(colorObj, 3, "color");
+    if( colorArr == nullptr ) {
+        return nullptr;
+    }
+
+    Vector3f color(colorArr[0], colorArr[1], colorArr[2]);
     
     int id = addModel(self->environment,
                       path,
+                      color,
                       scale, pos, rot,
                       mass,
                       detectCollision != 0,

@@ -396,6 +396,7 @@ void Environment::render(int cameraId,
 }
 
 int Environment::addBox(const char* texturePath,
+                        const Vector3f& color,
                         const Vector3f& halfExtent,
                         const Vector3f& pos,
                         const Quat4f& rot,
@@ -412,9 +413,11 @@ int Environment::addBox(const char* texturePath,
         const string texturePathStr(texturePath);
         if( texturePathStr != "" ) {
             texture = textureManager.loadTexture(texturePath);
-        }
-        if( texture == nullptr ) {
-            texture = textureManager.getColorTexture(1.0f, 1.0f, 1.0f);
+            if( texture == nullptr ) {
+                texture = textureManager.getColorTexture(1.0f, 1.0f, 1.0f);
+            }
+        } else {
+            texture = textureManager.getColorTexture(color.x, color.y, color.z);
         }
         
         Shader* shader = shaderManager.getDiffuseShader();
@@ -430,6 +433,7 @@ int Environment::addBox(const char* texturePath,
 }
 
 int Environment::addSphere(const char* texturePath,
+                           const Vector3f& color,
                            float radius,
                            const Vector3f& pos,
                            const Quat4f& rot,
@@ -441,11 +445,14 @@ int Environment::addSphere(const char* texturePath,
     
     if( visible ) {
         Texture* texture = nullptr;
-        if( texturePath != nullptr ) {
+        const string texturePathStr(texturePath);
+        if( texturePathStr != "" ) {
             texture = textureManager.loadTexture(texturePath);
-        }
-        if( texture == nullptr ) {
-            texture = textureManager.getColorTexture(1.0f, 1.0f, 1.0f);
+            if( texture == nullptr ) {
+                texture = textureManager.getColorTexture(1.0f, 1.0f, 1.0f);
+            }
+        } else {
+            texture = textureManager.getColorTexture(color.x, color.y, color.z);
         }
         
         Shader* shader = shaderManager.getDiffuseShader();
@@ -461,6 +468,7 @@ int Environment::addSphere(const char* texturePath,
 }
 
 int Environment::addModel(const char* path,
+                          const Vector3f& color,
                           const Vector3f& scale,
                           const Vector3f& pos,
                           const Quat4f& rot,
@@ -468,9 +476,22 @@ int Environment::addModel(const char* path,
                           bool detectCollision,
                           bool useMeshCollision,
                           bool visible) {
+
+    Mesh* mesh = nullptr;
     
     // Load mesh from .obj data file
-    Mesh* mesh = meshManager.getModelMesh(path, textureManager, shaderManager);
+    if( color.x < 0 && color.y < 0 && color.z < 0 ) {
+        // When replacing texture was specified
+        Texture* texture = textureManager.getColorTexture(color.x, color.y, color.z);
+        Shader* shader = shaderManager.getDiffuseShader();
+        Shader* shadowDepthShader = shaderManager.getShadowDepthShader();
+        Material* replacingMaterial = new Material(texture, shader, shadowDepthShader);
+        mesh = meshManager.getModelMesh(path, textureManager, replacingMaterial, shaderManager);
+    } else {
+        // When replacing texture was not specified
+        mesh = meshManager.getModelMesh(path, textureManager, nullptr, shaderManager);
+    }
+    
     if( mesh == nullptr ) {
         return -1;
     }

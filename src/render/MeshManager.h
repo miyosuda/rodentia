@@ -30,7 +30,9 @@ public:
                      const Vector3f& textureLoopSize);
     Mesh* getSphereMesh(Material* material);
     Mesh* getModelMesh(const char* path,
-                       TextureManager& textureManager, ShaderManager& shaderManager);
+                       TextureManager& textureManager,
+                       Material* replacingMaterial,
+                       ShaderManager& shaderManager);
     const CollisionMeshData* getCollisionMeshData(const char* path) const;
 };
 
