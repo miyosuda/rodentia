@@ -39,34 +39,34 @@ class BilliardEnvironment(object):
         floor_texture_path = self.data_path + "floor1.png"
 
         self.env.add_box(
-            texture_path=floor_texture_path,
             half_extent=[17, 1.0, 17],
             pos=[0.0, -1.0, 0.0],
             rot=0.0,
-            detect_collision=False)
-        self.env.add_box(
             texture_path=floor_texture_path,
+            detect_collision=False)
+        self.env.add_box(            
             half_extent=[17, 1.0, 1.0],
             pos=[0.0, -1.0, -18],
             rot=0.0,
+            texture_path=floor_texture_path,
             detect_collision=False)
         self.env.add_box(
-            texture_path=floor_texture_path,
             half_extent=[17, 1.0, 1.0],
             pos=[0.0, -1.0, 18],
             rot=0.0,
+            texture_path=floor_texture_path,
             detect_collision=False)
         self.env.add_box(
-            texture_path=floor_texture_path,
             half_extent=[1.0, 1.0, 17],
             pos=[-18, -1.0, 0.0],
             rot=0.0,
+            texture_path=floor_texture_path,
             detect_collision=False)
         self.env.add_box(
-            texture_path=floor_texture_path,
             half_extent=[1.0, 1.0, 17],
             pos=[18, -1.0, 0.0],
             rot=0.0,
+            texture_path=floor_texture_path,
             detect_collision=False)
 
         # Wall
@@ -75,31 +75,31 @@ class BilliardEnvironment(object):
 
         # -Z
         self.env.add_box(
-            texture_path=wall_texture_path,
             half_extent=[wall_distance, 1.0, 1.0],
             pos=[0.0, 1.0, -wall_distance],
             rot=0.0,
+            texture_path=wall_texture_path,
             detect_collision=False)
         # +Z
         self.env.add_box(
-            texture_path=wall_texture_path,
             half_extent=[wall_distance, 1.0, 1.0],
             pos=[0.0, 1.0, wall_distance],
             rot=0.0,
+            texture_path=wall_texture_path,
             detect_collision=False)
         # -X
         self.env.add_box(
-            texture_path=wall_texture_path,
             half_extent=[1.0, 1.0, wall_distance],
             pos=[-wall_distance, 1.0, 0.0],
             rot=0.0,
+            texture_path=wall_texture_path,
             detect_collision=False)
         # +X
         self.env.add_box(
-            texture_path=wall_texture_path,
             half_extent=[1.0, 1.0, wall_distance],
             pos=[wall_distance, 1.0, 0.0],
             rot=0.0,
+            texture_path=wall_texture_path,
             detect_collision=False)
 
     def _locate_ball_obj(self, x, z):
@@ -109,11 +109,11 @@ class BilliardEnvironment(object):
         # If the object's mass is not 0, the it is simulated as a rigid body object.
         ball_mass = 0.5
         obj_id = self.env.add_sphere(
-            texture_path=texture_path,
             radius=1.0,
             pos=pos,
             rot=0.0,
             mass=ball_mass,
+            texture_path=texture_path,
             detect_collision=False)
         self.ball_obj_id_list.append(obj_id)
 

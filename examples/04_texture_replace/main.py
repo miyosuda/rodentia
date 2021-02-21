@@ -141,25 +141,25 @@ def main():
     # Prepare wall and floor objects
     floor_texture_path = data_path + "floor1.png"
     floor_id = env.add_box(
-        texture_path=floor_texture_path,
         half_extent=[30.0, 1.0, 30.0],
-        pos=[0.0, -1.0, 0.0])
+        pos=[0.0, -1.0, 0.0],
+        texture_path=floor_texture_path)
 
     wall_texture_path = data_path + "wall1.png"
     wall_id0 = env.add_box(
-        texture_path=wall_texture_path,
         half_extent=[3.0, 1.0, 1.0],
-        pos=[0.0, 1.0, -20.0])
+        pos=[0.0, 1.0, -20.0],
+        texture_path=wall_texture_path)
 
     wall_id1 = env.add_box(
-        texture_path=wall_texture_path,
         half_extent=[0.01, 1.0, 10.0],
-        pos=[1.0, 1.0, -10.0])
+        pos=[1.0, 1.0, -10.0],
+        texture_path=wall_texture_path)
 
     wall_id2 = env.add_box(
-        texture_path=wall_texture_path,
         half_extent=[0.01, 1.0, 10.0],
-        pos=[-1.0, 1.0, -10.0])
+        pos=[-1.0, 1.0, -10.0],
+        texture_path=wall_texture_path)
 
     env.set_light(
         dir=[0.0, -1.0, -1.0],

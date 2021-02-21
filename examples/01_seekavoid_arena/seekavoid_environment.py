@@ -44,10 +44,10 @@ class SeekAvoidEnvironment(object):
         floor_texture_path = self.data_path + "floor1.png"
 
         self.env.add_box(
-            texture_path=floor_texture_path,
             half_extent=[30.0, 1.0, 30.0],
             pos=[0.0, -1.0, 0.0],
             rot=0.0,
+            texture_path=floor_texture_path,
             detect_collision=False)
 
         # Wall
@@ -57,31 +57,31 @@ class SeekAvoidEnvironment(object):
 
         # -Z
         self.env.add_box(
-            texture_path=wall_texture_path,
             half_extent=[wall_distance, 1.0, 1.0],
             pos=[0.0, 1.0, -wall_distance],
             rot=0.0,
+            texture_path=wall_texture_path,
             detect_collision=False)
         # +Z
         self.env.add_box(
-            texture_path=wall_texture_path,
             half_extent=[wall_distance, 1.0, 1.0],
             pos=[0.0, 1.0, wall_distance],
             rot=0.0,
+            texture_path=wall_texture_path,
             detect_collision=False)
         # -X
         self.env.add_box(
-            texture_path=wall_texture_path,
             half_extent=[1.0, 1.0, wall_distance],
             pos=[-wall_distance, 1.0, 0.0],
             rot=0.0,
+            texture_path=wall_texture_path,
             detect_collision=False)
         # +X
         self.env.add_box(
-            texture_path=wall_texture_path,
             half_extent=[1.0, 1.0, wall_distance],
             pos=[wall_distance, 1.0, 0.0],
             rot=0.0,
+            texture_path=wall_texture_path,
             detect_collision=False)
 
     def _locate_plus_reward_obj(self, x, z, rot):

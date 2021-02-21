@@ -16,7 +16,8 @@ class AAIEnvironment(object):
 
         # Create environment
         self.env = rodentia.Environment(
-            width=width, height=height, bg_color=[0.19, 0.3, 0.47])
+            width=width, height=height, bg_color=[0.19, 0.3, 0.47],
+            agent_radius=0.5)
 
         # Prepare stage objects
         self._prepare_stage()
@@ -53,64 +54,64 @@ class AAIEnvironment(object):
 
         # -Z
         self.env.add_box(
-            texture_path=wall_texture_path,
             half_extent=[wall_distance+1, 1.0, 1.0],
             pos=[0.0, 1.0, -wall_distance],
             rot=0.0,
+            texture_path=wall_texture_path,
             detect_collision=False)
         # +Z
         self.env.add_box(
-            texture_path=wall_texture_path,
             half_extent=[wall_distance+1, 1.0, 1.0],
             pos=[0.0, 1.0, wall_distance],
             rot=0.0,
+            texture_path=wall_texture_path,
             detect_collision=False)
         # -X
         self.env.add_box(
-            texture_path=wall_texture_path,
             half_extent=[1.0, 1.0, wall_distance+1],
             pos=[-wall_distance, 1.0, 0.0],
             rot=0.0,
+            texture_path=wall_texture_path,
             detect_collision=False)
         # +X
         self.env.add_box(
-            texture_path=wall_texture_path,
             half_extent=[1.0, 1.0, wall_distance+1],
             pos=[wall_distance, 1.0, 0.0],
             rot=0.0,
+            texture_path=wall_texture_path,
             detect_collision=False)
 
         invisible_wall_half_height = 10.0
         # -Z (invisible)
         self.env.add_box(
-            texture_path=wall_texture_path,
             half_extent=[wall_distance+1, invisible_wall_half_height, 1.0],
             pos=[0.0, invisible_wall_half_height, -wall_distance],
             rot=0.0,
+            texture_path=wall_texture_path,
             detect_collision=False,
             visible=False)
         # +Z (invisible)
         self.env.add_box(
-            texture_path=wall_texture_path,
             half_extent=[wall_distance+1, invisible_wall_half_height, 1.0],
             pos=[0.0, invisible_wall_half_height, wall_distance],
             rot=0.0,
+            texture_path=wall_texture_path,
             detect_collision=False,
             visible=False)
         # -X (invisible)
         self.env.add_box(
-            texture_path=wall_texture_path,
             half_extent=[1.0, invisible_wall_half_height, wall_distance+1],
             pos=[-wall_distance, invisible_wall_half_height, 0.0],
             rot=0.0,
+            texture_path=wall_texture_path,
             detect_collision=False,
             visible=False)
         # +X (invisible)
         self.env.add_box(
-            texture_path=wall_texture_path,
             half_extent=[1.0, invisible_wall_half_height, wall_distance+1],
             pos=[wall_distance, invisible_wall_half_height, 0.0],
             rot=0.0,
+            texture_path=wall_texture_path,
             detect_collision=False,
             visible=False)
         
@@ -140,11 +141,11 @@ class AAIEnvironment(object):
         # If the object's mass is not 0, the it is simulated as a rigid body object.
         ball_mass = 0.5
         obj_id = self.env.add_sphere(
-            texture_path=texture_path,
             radius=1.0,
             pos=pos,
             rot=0.0,
             mass=ball_mass,
+            texture_path=texture_path,
             detect_collision=True)
         self.plus_obj_ids_set.add(obj_id)
         
@@ -155,11 +156,11 @@ class AAIEnvironment(object):
         # If the object's mass is not 0, the it is simulated as a rigid body object.
         ball_mass = 0.5
         obj_id = self.env.add_sphere(
-            texture_path=texture_path,
             radius=1.0,
             pos=pos,
             rot=0.0,
             mass=ball_mass,
+            texture_path=texture_path,
             detect_collision=True)
         self.minus_obj_ids_set.add(obj_id)
 
