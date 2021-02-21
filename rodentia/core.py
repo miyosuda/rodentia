@@ -41,15 +41,30 @@ class BaseEnvironment:
     def __init__(self,
                  width,
                  height,
-                 bg_color=[0.0, 0.0, 0.0]):
+                 bg_color=[0.0, 0.0, 0.0],
+                 near=0.05,
+                 far=80.0,
+                 focal_length=50.0,
+                 shadow_buffer_width=0):
         """Create environment.
         Args:
           width: Screen width
           height: Screen height
           bg_color: Background color (RGB value with 0.0 ~ 1.0)
+          near: Near clip distane (default 0.05)
+          far: Far clip distane (default 80.0)
+          focal_length: Focal length (default 50.0)
+          shadow_buffer_width: Shadow depth buffer width. (If 0 calculated automatically )
+                               (default 0)
         """
         self.env = rodentia_module.Env()
-        self.main_camera_id = self.add_camera_view(width, height, bg_color)
+        self.main_camera_id = self.add_camera_view(width,
+                                                   height,
+                                                   bg_color,
+                                                   near,
+                                                   far,
+                                                   focal_length,
+                                                   shadow_buffer_width)
 
     def add_camera_view(self,
                         width,
@@ -296,16 +311,34 @@ class Environment(BaseEnvironment):
     Single agent environment.
     """
     
-    def __init__(self, width, height, bg_color=[0.0, 0.0, 0.0], agent_radius=1.0):
+    def __init__(self,
+                 width,
+                 height,
+                 bg_color=[0.0, 0.0, 0.0],
+                 near=0.05,
+                 far=80.0,
+                 focal_length=50.0,
+                 shadow_buffer_width=0,
+                 agent_radius=1.0):
         """Create environment.
         Args:
           width: Screen width
           height: Screen height
           bg_color: Background color (RGB value with 0.0 ~ 1.0)
+          near: Near clip distane (default 0.05)
+          far: Far clip distane (default 80.0)
+          focal_length: Focal length (default 50.0)
+          shadow_buffer_width: Shadow depth buffer width. (If 0 calculated automatically )
+                               (default 0)
           agent_radius: Radius of the agent sphere
         """
-        super().__init__(width, height, bg_color)
-        
+        super().__init__(width,
+                         height,
+                         bg_color,
+                         near,
+                         far,
+                         focal_length,
+                         shadow_buffer_width)
         self.agent_id = self.env.add_agent(radius=agent_radius,
                                            pos=to_nd_float_array([0,0,0]),
                                            rot_y=0.0,
@@ -369,16 +402,35 @@ class MultiAgentEnvironment(BaseEnvironment):
     Multi agent environment.
     """
     
-    def __init__(self, agent_size, width, height, bg_color=[0.0, 0.0, 0.0], agent_radius=1.0):
+    def __init__(self,
+                 agent_size,
+                 width,
+                 height,
+                 bg_color=[0.0, 0.0, 0.0],
+                 near=0.05,
+                 far=80.0,
+                 focal_length=50.0,
+                 shadow_buffer_width=0,                 
+                 agent_radius=1.0):
         """Create environment.
         Args:
           width: Screen width
           height: Screen height
           bg_color: Background color (RGB value with 0.0 ~ 1.0)
+          near: Near clip distane (default 0.05)
+          far: Far clip distane (default 80.0)
+          focal_length: Focal length (default 50.0)
+          shadow_buffer_width: Shadow depth buffer width. (If 0 calculated automatically )
+                               (default 0)
           agent_radius: Radius of the agent sphere
         """
-        super().__init__(width, height, bg_color)
-
+        super().__init__(width,
+                         height,
+                         bg_color,
+                         near,
+                         far,
+                         focal_length,
+                         shadow_buffer_width)
         self.agent_ids = []
 
         for i in range(agent_size):
