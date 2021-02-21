@@ -121,23 +121,25 @@ BaseEnvironment wraps rodentia_module.Env class.</p>
                                         shadow_buffer_width=shadow_buffer_width)
 
     def add_box(self,
-                texture_path,
                 half_extent,
                 pos,
                 rot=0.0,
                 angle=0.0,
                 mass=0.0,
+                texture_path=&#34;&#34;,
+                color=[1,1,1],
                 detect_collision=False,
                 visible=True):
         &#34;&#34;&#34;Add box object.
         Args:
-          texture_path: Path for the texture (.png file)
           half_extent: (x,y,z) float values for half extent size of the box.
           pos: (x,y,z) float values for the center of the box.
           rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object
                (in radian)
           mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
                 but if mass &gt; 0, the object is physically simulated.
+          texture_path: Path for the texture (.png file)
+          color: Color when texture_path was not specified.
           detect_collision: Whether the object is included for collision check result.
                             If this argument is True, object&#39;s id is included when 
                             the agenet collides with this object.
@@ -147,6 +149,7 @@ BaseEnvironment wraps rodentia_module.Env class.</p>
         &#34;&#34;&#34;
         return self.env.add_box(
             texture_path=texture_path,
+            color=to_nd_float_array(color),
             half_extent=to_nd_float_array(half_extent),
             pos=to_nd_float_array(pos),
             rot=to_nd_float_array_for_rot(rot),
@@ -155,22 +158,24 @@ BaseEnvironment wraps rodentia_module.Env class.</p>
             visible=visible)
 
     def add_sphere(self,
-                   texture_path,
                    radius,
                    pos,
                    rot=0.0,
                    mass=0.0,
+                   texture_path=&#34;&#34;,
+                   color=[1,1,1],
                    detect_collision=False,
                    visible=True):
         &#34;&#34;&#34;Add sphere object.
         Args:
-          texture_path: Path for the texture (.png file)
           radius: float values for the raius of the shpere.
           pos: (x,y,z) float values for the center of the sphere.
           rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object
                (in radian)
           mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
                 but if mass &gt; 0, the object is physically simulated.
+          texture_path: Path for the texture (.png file)
+          color: Color when texture_path was not specified.
           detect_collision: A bool value for indicating whether the object is included for collision
                             check result. If this argument is True, object&#39;s id is included when 
                             the agenet collides with this object.
@@ -180,6 +185,7 @@ BaseEnvironment wraps rodentia_module.Env class.</p>
         &#34;&#34;&#34;
         return self.env.add_sphere(
             texture_path=texture_path,
+            color=to_nd_float_array(color),
             radius=radius,
             pos=to_nd_float_array(pos),
             rot=to_nd_float_array_for_rot(rot),
@@ -193,6 +199,7 @@ BaseEnvironment wraps rodentia_module.Env class.</p>
                   pos,
                   rot=0.0,
                   mass=0.0,
+                  color=None,
                   detect_collision=False,
                   use_mesh_collision=False,
                   visible=True):
@@ -206,6 +213,7 @@ BaseEnvironment wraps rodentia_module.Env class.</p>
                
           mass: A float value for mass of the object. if mass == 0, the object is 
                 treated as static object, but if mass &gt; 0, the object is physically simulated.
+          color: Color to override texture specified in the .obj file.
           detect_collision: Whether the object is included for collision check result.
                             If this argument is True, object&#39;s id is included when 
                             the agenet collides with this object.
@@ -216,8 +224,12 @@ BaseEnvironment wraps rodentia_module.Env class.</p>
         Returns:
           Int value for the object id.
         &#34;&#34;&#34;
+        if color == None:
+            color = [-1,-1,-1]
+            
         return self.env.add_model(
             path=path,
+            color=to_nd_float_array(color),
             scale=to_nd_float_array(scale),
             pos=to_nd_float_array(pos),
             rot=to_nd_float_array_for_rot(rot),
@@ -263,6 +275,14 @@ BaseEnvironment wraps rodentia_module.Env class.</p>
           id: Int value for deleting object&#39;s id
         &#34;&#34;&#34;
         self.env.remove_obj(id=id)
+
+    def apply_impulse(self, id, impulse):
+        &#34;&#34;&#34;Apply impulse to the  object.
+        Args:
+          id: Int value for object&#39;s id
+          impulse: (x,y,z) float values of the impulse
+        &#34;&#34;&#34;
+        self.env.apply_impulse(id=id, impulse=to_nd_float_array(impulse))
 
     def get_obj_info(self, id):
         &#34;&#34;&#34;Get object information.
@@ -321,14 +341,12 @@ BaseEnvironment wraps rodentia_module.Env class.</p>
 <h3>Methods</h3>
 <dl>
 <dt id="rodentia.BaseEnvironment.add_box"><code class="name flex">
-<span>def <span class="ident">add_box</span></span>(<span>self, texture_path, half_extent, pos, rot=0.0, angle=0.0, mass=0.0, detect_collision=False, visible=True)</span>
+<span>def <span class="ident">add_box</span></span>(<span>self, half_extent, pos, rot=0.0, angle=0.0, mass=0.0, texture_path='', color=[1, 1, 1], detect_collision=False, visible=True)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Add box object.</p>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>texture_path</code></strong></dt>
-<dd>Path for the texture (.png file)</dd>
 <dt><strong><code>half_extent</code></strong></dt>
 <dd>(x,y,z) float values for half extent size of the box.</dd>
 <dt><strong><code>pos</code></strong></dt>
@@ -339,6 +357,10 @@ BaseEnvironment wraps rodentia_module.Env class.</p>
 <dt><strong><code>mass</code></strong></dt>
 <dd>A float value for mass of the object. if mass == 0, the object is treated as static object,
 but if mass &gt; 0, the object is physically simulated.</dd>
+<dt><strong><code>texture_path</code></strong></dt>
+<dd>Path for the texture (.png file)</dd>
+<dt><strong><code>color</code></strong></dt>
+<dd>Color when texture_path was not specified.</dd>
 <dt><strong><code>detect_collision</code></strong></dt>
 <dd>Whether the object is included for collision check result.
 If this argument is True, object's id is included when
@@ -353,23 +375,25 @@ the agenet collides with this object.</dd>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def add_box(self,
-            texture_path,
             half_extent,
             pos,
             rot=0.0,
             angle=0.0,
             mass=0.0,
+            texture_path=&#34;&#34;,
+            color=[1,1,1],
             detect_collision=False,
             visible=True):
     &#34;&#34;&#34;Add box object.
     Args:
-      texture_path: Path for the texture (.png file)
       half_extent: (x,y,z) float values for half extent size of the box.
       pos: (x,y,z) float values for the center of the box.
       rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object
            (in radian)
       mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
             but if mass &gt; 0, the object is physically simulated.
+      texture_path: Path for the texture (.png file)
+      color: Color when texture_path was not specified.
       detect_collision: Whether the object is included for collision check result.
                         If this argument is True, object&#39;s id is included when 
                         the agenet collides with this object.
@@ -379,6 +403,7 @@ the agenet collides with this object.</dd>
     &#34;&#34;&#34;
     return self.env.add_box(
         texture_path=texture_path,
+        color=to_nd_float_array(color),
         half_extent=to_nd_float_array(half_extent),
         pos=to_nd_float_array(pos),
         rot=to_nd_float_array_for_rot(rot),
@@ -444,7 +469,7 @@ the agenet collides with this object.</dd>
 </details>
 </dd>
 <dt id="rodentia.BaseEnvironment.add_model"><code class="name flex">
-<span>def <span class="ident">add_model</span></span>(<span>self, path, scale, pos, rot=0.0, mass=0.0, detect_collision=False, use_mesh_collision=False, visible=True)</span>
+<span>def <span class="ident">add_model</span></span>(<span>self, path, scale, pos, rot=0.0, mass=0.0, color=None, detect_collision=False, use_mesh_collision=False, visible=True)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Add model object with .obj format.</p>
@@ -462,6 +487,8 @@ rotation quaternion of the object (in radian)</dd>
 <dt><strong><code>mass</code></strong></dt>
 <dd>A float value for mass of the object. if mass == 0, the object is
 treated as static object, but if mass &gt; 0, the object is physically simulated.</dd>
+<dt><strong><code>color</code></strong></dt>
+<dd>Color to override texture specified in the .obj file.</dd>
 <dt><strong><code>detect_collision</code></strong></dt>
 <dd>Whether the object is included for collision check result.
 If this argument is True, object's id is included when
@@ -485,6 +512,7 @@ bounding box.</dd>
               pos,
               rot=0.0,
               mass=0.0,
+              color=None,
               detect_collision=False,
               use_mesh_collision=False,
               visible=True):
@@ -498,6 +526,7 @@ bounding box.</dd>
            
       mass: A float value for mass of the object. if mass == 0, the object is 
             treated as static object, but if mass &gt; 0, the object is physically simulated.
+      color: Color to override texture specified in the .obj file.
       detect_collision: Whether the object is included for collision check result.
                         If this argument is True, object&#39;s id is included when 
                         the agenet collides with this object.
@@ -508,8 +537,12 @@ bounding box.</dd>
     Returns:
       Int value for the object id.
     &#34;&#34;&#34;
+    if color == None:
+        color = [-1,-1,-1]
+        
     return self.env.add_model(
         path=path,
+        color=to_nd_float_array(color),
         scale=to_nd_float_array(scale),
         pos=to_nd_float_array(pos),
         rot=to_nd_float_array_for_rot(rot),
@@ -520,14 +553,12 @@ bounding box.</dd>
 </details>
 </dd>
 <dt id="rodentia.BaseEnvironment.add_sphere"><code class="name flex">
-<span>def <span class="ident">add_sphere</span></span>(<span>self, texture_path, radius, pos, rot=0.0, mass=0.0, detect_collision=False, visible=True)</span>
+<span>def <span class="ident">add_sphere</span></span>(<span>self, radius, pos, rot=0.0, mass=0.0, texture_path='', color=[1, 1, 1], detect_collision=False, visible=True)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Add sphere object.</p>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>texture_path</code></strong></dt>
-<dd>Path for the texture (.png file)</dd>
 <dt><strong><code>radius</code></strong></dt>
 <dd>float values for the raius of the shpere.</dd>
 <dt><strong><code>pos</code></strong></dt>
@@ -538,6 +569,10 @@ bounding box.</dd>
 <dt><strong><code>mass</code></strong></dt>
 <dd>A float value for mass of the object. if mass == 0, the object is treated as static object,
 but if mass &gt; 0, the object is physically simulated.</dd>
+<dt><strong><code>texture_path</code></strong></dt>
+<dd>Path for the texture (.png file)</dd>
+<dt><strong><code>color</code></strong></dt>
+<dd>Color when texture_path was not specified.</dd>
 <dt><strong><code>detect_collision</code></strong></dt>
 <dd>A bool value for indicating whether the object is included for collision
 check result. If this argument is True, object's id is included when
@@ -552,22 +587,24 @@ the agenet collides with this object.</dd>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def add_sphere(self,
-               texture_path,
                radius,
                pos,
                rot=0.0,
                mass=0.0,
+               texture_path=&#34;&#34;,
+               color=[1,1,1],
                detect_collision=False,
                visible=True):
     &#34;&#34;&#34;Add sphere object.
     Args:
-      texture_path: Path for the texture (.png file)
       radius: float values for the raius of the shpere.
       pos: (x,y,z) float values for the center of the sphere.
       rot: A float value for head angle (rot_y) or list (rx,ry,rz,rw) as the rotation quaternion of the object
            (in radian)
       mass: A float value for mass of the object. if mass == 0, the object is treated as static object,
             but if mass &gt; 0, the object is physically simulated.
+      texture_path: Path for the texture (.png file)
+      color: Color when texture_path was not specified.
       detect_collision: A bool value for indicating whether the object is included for collision
                         check result. If this argument is True, object&#39;s id is included when 
                         the agenet collides with this object.
@@ -577,12 +614,39 @@ the agenet collides with this object.</dd>
     &#34;&#34;&#34;
     return self.env.add_sphere(
         texture_path=texture_path,
+        color=to_nd_float_array(color),
         radius=radius,
         pos=to_nd_float_array(pos),
         rot=to_nd_float_array_for_rot(rot),
         mass=mass,
         detect_collision=detect_collision,
         visible=visible)</code></pre>
+</details>
+</dd>
+<dt id="rodentia.BaseEnvironment.apply_impulse"><code class="name flex">
+<span>def <span class="ident">apply_impulse</span></span>(<span>self, id, impulse)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Apply impulse to the
+object.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>id</code></strong></dt>
+<dd>Int value for object's id</dd>
+<dt><strong><code>impulse</code></strong></dt>
+<dd>(x,y,z) float values of the impulse</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_impulse(self, id, impulse):
+    &#34;&#34;&#34;Apply impulse to the  object.
+    Args:
+      id: Int value for object&#39;s id
+      impulse: (x,y,z) float values of the impulse
+    &#34;&#34;&#34;
+    self.env.apply_impulse(id=id, impulse=to_nd_float_array(impulse))</code></pre>
 </details>
 </dd>
 <dt id="rodentia.BaseEnvironment.close"><code class="name flex">
@@ -806,7 +870,7 @@ by applying list of texture pathes.</p>
 </dd>
 <dt id="rodentia.Environment"><code class="flex name class">
 <span>class <span class="ident">Environment</span></span>
-<span>(</span><span>width, height, bg_color=[0.0, 0.0, 0.0])</span>
+<span>(</span><span>width, height, bg_color=[0.0, 0.0, 0.0], agent_radius=1.0)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Single agent environment.</p>
@@ -819,6 +883,8 @@ by applying list of texture pathes.</p>
 <dd>Screen height</dd>
 <dt><strong><code>bg_color</code></strong></dt>
 <dd>Background color (RGB value with 0.0 ~ 1.0)</dd>
+<dt><strong><code>agent_radius</code></strong></dt>
+<dd>Radius of the agent sphere</dd>
 </dl></section>
 <details class="source">
 <summary>
@@ -829,16 +895,17 @@ by applying list of texture pathes.</p>
     Single agent environment.
     &#34;&#34;&#34;
     
-    def __init__(self, width, height, bg_color=[0.0, 0.0, 0.0]):
+    def __init__(self, width, height, bg_color=[0.0, 0.0, 0.0], agent_radius=1.0):
         &#34;&#34;&#34;Create environment.
         Args:
           width: Screen width
           height: Screen height
           bg_color: Background color (RGB value with 0.0 ~ 1.0)
+          agent_radius: Radius of the agent sphere
         &#34;&#34;&#34;
         super().__init__(width, height, bg_color)
         
-        self.agent_id = self.env.add_agent(radius=1.0,
+        self.agent_id = self.env.add_agent(radius=agent_radius,
                                            pos=to_nd_float_array([0,0,0]),
                                            rot_y=0.0,
                                            mass=1.0,
@@ -1012,6 +1079,7 @@ by applying list of texture pathes.</p>
 <li><code><a title="rodentia.core.BaseEnvironment.add_camera_view" href="core.html#rodentia.core.BaseEnvironment.add_camera_view">add_camera_view</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.add_model" href="core.html#rodentia.core.BaseEnvironment.add_model">add_model</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.add_sphere" href="core.html#rodentia.core.BaseEnvironment.add_sphere">add_sphere</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.apply_impulse" href="core.html#rodentia.core.BaseEnvironment.apply_impulse">apply_impulse</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.close" href="core.html#rodentia.core.BaseEnvironment.close">close</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.get_obj_info" href="core.html#rodentia.core.BaseEnvironment.get_obj_info">get_obj_info</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.locate_object" href="core.html#rodentia.core.BaseEnvironment.locate_object">locate_object</a></code></li>
@@ -1025,7 +1093,7 @@ by applying list of texture pathes.</p>
 </dd>
 <dt id="rodentia.MultiAgentEnvironment"><code class="flex name class">
 <span>class <span class="ident">MultiAgentEnvironment</span></span>
-<span>(</span><span>agent_size, width, height, bg_color=[0.0, 0.0, 0.0])</span>
+<span>(</span><span>agent_size, width, height, bg_color=[0.0, 0.0, 0.0], agent_radius=1.0)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Multi agent environment.</p>
@@ -1038,6 +1106,8 @@ by applying list of texture pathes.</p>
 <dd>Screen height</dd>
 <dt><strong><code>bg_color</code></strong></dt>
 <dd>Background color (RGB value with 0.0 ~ 1.0)</dd>
+<dt><strong><code>agent_radius</code></strong></dt>
+<dd>Radius of the agent sphere</dd>
 </dl></section>
 <details class="source">
 <summary>
@@ -1048,19 +1118,20 @@ by applying list of texture pathes.</p>
     Multi agent environment.
     &#34;&#34;&#34;
     
-    def __init__(self, agent_size, width, height, bg_color=[0.0, 0.0, 0.0]):
+    def __init__(self, agent_size, width, height, bg_color=[0.0, 0.0, 0.0], agent_radius=1.0):
         &#34;&#34;&#34;Create environment.
         Args:
           width: Screen width
           height: Screen height
           bg_color: Background color (RGB value with 0.0 ~ 1.0)
+          agent_radius: Radius of the agent sphere
         &#34;&#34;&#34;
         super().__init__(width, height, bg_color)
 
         self.agent_ids = []
 
         for i in range(agent_size):
-            agent_id = self.env.add_agent(radius=1.0,
+            agent_id = self.env.add_agent(radius=agent_radius,
                                           pos=to_nd_float_array([0,0,i*2]),
                                           rot_y=0.0,
                                           mass=1.0,
@@ -1263,6 +1334,7 @@ by applying list of texture pathes.</p>
 <li><code><a title="rodentia.core.BaseEnvironment.add_camera_view" href="core.html#rodentia.core.BaseEnvironment.add_camera_view">add_camera_view</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.add_model" href="core.html#rodentia.core.BaseEnvironment.add_model">add_model</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.add_sphere" href="core.html#rodentia.core.BaseEnvironment.add_sphere">add_sphere</a></code></li>
+<li><code><a title="rodentia.core.BaseEnvironment.apply_impulse" href="core.html#rodentia.core.BaseEnvironment.apply_impulse">apply_impulse</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.close" href="core.html#rodentia.core.BaseEnvironment.close">close</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.get_obj_info" href="core.html#rodentia.core.BaseEnvironment.get_obj_info">get_obj_info</a></code></li>
 <li><code><a title="rodentia.core.BaseEnvironment.locate_object" href="core.html#rodentia.core.BaseEnvironment.locate_object">locate_object</a></code></li>
@@ -1299,6 +1371,7 @@ by applying list of texture pathes.</p>
 <li><code><a title="rodentia.BaseEnvironment.add_camera_view" href="#rodentia.BaseEnvironment.add_camera_view">add_camera_view</a></code></li>
 <li><code><a title="rodentia.BaseEnvironment.add_model" href="#rodentia.BaseEnvironment.add_model">add_model</a></code></li>
 <li><code><a title="rodentia.BaseEnvironment.add_sphere" href="#rodentia.BaseEnvironment.add_sphere">add_sphere</a></code></li>
+<li><code><a title="rodentia.BaseEnvironment.apply_impulse" href="#rodentia.BaseEnvironment.apply_impulse">apply_impulse</a></code></li>
 <li><code><a title="rodentia.BaseEnvironment.close" href="#rodentia.BaseEnvironment.close">close</a></code></li>
 <li><code><a title="rodentia.BaseEnvironment.get_obj_info" href="#rodentia.BaseEnvironment.get_obj_info">get_obj_info</a></code></li>
 <li><code><a title="rodentia.BaseEnvironment.locate_object" href="#rodentia.BaseEnvironment.locate_object">locate_object</a></code></li>

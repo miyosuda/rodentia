@@ -47,7 +47,6 @@ class BaseEnvironment:
           width: Screen width
           height: Screen height
           bg_color: Background color (RGB value with 0.0 ~ 1.0)
-          agent_raidus: Radius of the agent sphere
         """
         self.env = rodentia_module.Env()
         self.main_camera_id = self.add_camera_view(width, height, bg_color)
@@ -238,7 +237,7 @@ class BaseEnvironment:
         """Apply impulse to the  object.
         Args:
           id: Int value for object's id
-          impulse: (x,y,z) float values for the impulse
+          impulse: (x,y,z) float values of the impulse
         """
         self.env.apply_impulse(id=id, impulse=to_nd_float_array(impulse))
 
