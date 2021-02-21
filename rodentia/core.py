@@ -297,16 +297,17 @@ class Environment(BaseEnvironment):
     Single agent environment.
     """
     
-    def __init__(self, width, height, bg_color=[0.0, 0.0, 0.0]):
+    def __init__(self, width, height, bg_color=[0.0, 0.0, 0.0], agent_radius=1.0):
         """Create environment.
         Args:
           width: Screen width
           height: Screen height
           bg_color: Background color (RGB value with 0.0 ~ 1.0)
+          agent_radius: Radius of the agent sphere
         """
         super().__init__(width, height, bg_color)
         
-        self.agent_id = self.env.add_agent(radius=1.0,
+        self.agent_id = self.env.add_agent(radius=agent_radius,
                                            pos=to_nd_float_array([0,0,0]),
                                            rot_y=0.0,
                                            mass=1.0,
@@ -369,19 +370,20 @@ class MultiAgentEnvironment(BaseEnvironment):
     Multi agent environment.
     """
     
-    def __init__(self, agent_size, width, height, bg_color=[0.0, 0.0, 0.0]):
+    def __init__(self, agent_size, width, height, bg_color=[0.0, 0.0, 0.0], agent_radius=1.0):
         """Create environment.
         Args:
           width: Screen width
           height: Screen height
           bg_color: Background color (RGB value with 0.0 ~ 1.0)
+          agent_radius: Radius of the agent sphere
         """
         super().__init__(width, height, bg_color)
 
         self.agent_ids = []
 
         for i in range(agent_size):
-            agent_id = self.env.add_agent(radius=1.0,
+            agent_id = self.env.add_agent(radius=agent_radius,
                                           pos=to_nd_float_array([0,0,i*2]),
                                           rot_y=0.0,
                                           mass=1.0,
