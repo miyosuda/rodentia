@@ -17,6 +17,7 @@ using namespace std;
 #include "RenderingContext.h"
 #include "glinc.h"
 #include "GLContext.h"
+#include "CollisionShapeManager.h"
 
 class Action;
 class Matrix4f;
@@ -26,28 +27,7 @@ class EnvironmentObject;
 class EnvironmentObjectInfo;
 class AgentObject;
 class CameraView;
-class CollisionMeshData;
 
-
-class CollisionShapeManager {
-private:
-    map<size_t, btCollisionShape*> collisionShapeMap; // <hash, btCollisionShape>
-    
-    size_t getHash(const string& str, float v0, float v1=0, float v2=0);
-    btCollisionShape* getShape(size_t hash);
-    void addShape(size_t hash, btCollisionShape* shape);
-
-public:
-    ~CollisionShapeManager();
-    
-    btCollisionShape* getSphereShape(float radius);
-    btCollisionShape* getBoxShape(float halfExtentX,
-                                  float halfExtentY,
-                                  float halfExtentZ);
-    btCollisionShape* getModelShape(const string& path,
-                                    const CollisionMeshData& collisionMeshData,
-                                    const Vector3f& scale);
-};
 
 
 class CollisionResult {
@@ -167,6 +147,7 @@ public:
                  float mass,
                  bool detectCollision,
                  bool useMeshCollision,
+                 bool useCollisionFile,
                  bool visible);
     void removeObject(int id);
     void locateObject(int id, const Vector3f& pos, const Quat4f& rot);

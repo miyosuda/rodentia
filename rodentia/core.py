@@ -174,6 +174,7 @@ class BaseEnvironment:
                   color=None,
                   detect_collision=False,
                   use_mesh_collision=False,
+                  use_collision_file=False,
                   visible=True):
         """Add model object with .obj format.
         Args:
@@ -192,6 +193,8 @@ class BaseEnvironment:
           use_mesh_collision: Whether to use mesh data for the collision.
                               If false, box collision shape is cauculated based on the 
                               bounding box.
+                              (Only valid for static object with mass=0)
+          use_collision_file: Whether to use collision definition file.
           visible: Visibility of the object. If false, only collision will take effect.
         Returns:
           Int value for the object id.
@@ -208,6 +211,7 @@ class BaseEnvironment:
             mass=mass,
             detect_collision=detect_collision,
             use_mesh_collision=use_mesh_collision,
+            use_collision_file=use_collision_file,
             visible=visible)
 
     def locate_object(self, id, pos, rot=0.0):

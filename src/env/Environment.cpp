@@ -16,114 +16,6 @@
 #include "CollisionMeshData.h"
 
 
-//---------------------------
-//  [CollisionShapeManager]
-//---------------------------
-
-CollisionShapeManager::~CollisionShapeManager() {
-    // Delete collision shapes
-    for(auto itr=collisionShapeMap.begin(); itr!=collisionShapeMap.end(); ++itr) {
-        auto shape = itr->second;
-        delete shape;
-    }
-}
-
-size_t CollisionShapeManager::getHash(const string& str, float v0, float v1, float v2) {
-    size_t hashStr = std::hash<string>()(str);
-    size_t hashV0 = std::hash<float>()(v0);
-    size_t hashV1 = std::hash<float>()(v1);
-    size_t hashV2 = std::hash<float>()(v2);
-    return hashStr + 1009 * hashV0 + 2131 * hashV1 + 3571 * hashV2;
-}
-
-btCollisionShape* CollisionShapeManager::getShape(size_t hash) {
-    auto itr = collisionShapeMap.find(hash);
-    if( itr != collisionShapeMap.end() ) {
-        return collisionShapeMap[hash];
-    } else {
-        return nullptr;
-    }
-}
-
-void CollisionShapeManager::addShape(size_t hash, btCollisionShape* shape) {
-    collisionShapeMap[hash] = shape;
-}
-
-btCollisionShape* CollisionShapeManager::getSphereShape(float radius) {
-    size_t hash = getHash("@sphere", radius);
-    btCollisionShape* shape = getShape(hash);
-    if( shape != nullptr ) {
-        return shape;
-    }
-    
-    shape = new btSphereShape(radius);
-    addShape(hash, shape);
-    return shape;
-}
-
-btCollisionShape* CollisionShapeManager::getBoxShape(float halfExtentX,
-                                                     float halfExtentY,
-                                                     float halfExtentZ) {
-    size_t hash = getHash("@box", halfExtentX, halfExtentY, halfExtentZ);
-    btCollisionShape* shape = getShape(hash);
-    if( shape != nullptr ) {
-        return shape;
-    }
-    
-    shape = new btBoxShape(btVector3(halfExtentX,
-                                     halfExtentY,
-                                     halfExtentZ));
-    addShape(hash, shape);
-    return shape;
-}
-
-btCollisionShape* CollisionShapeManager::getModelShape(
-    const string& path,
-    const CollisionMeshData& collisionMeshData,
-    const Vector3f& scale) {
-
-    size_t hash = getHash(path, scale.x, scale.y, scale.z);
-    btCollisionShape* shape = getShape(hash);
-    if( shape != nullptr ) {
-        return shape;
-    }
-    
-    const BoundingBox& boundingBox = collisionMeshData.getBoundingBox();
-    
-    Vector3f center;
-    boundingBox.getCenter(center);
-
-    // This  center offset is used for rigidbody
-    center.x *= scale.x;
-    center.y *= scale.y;
-    center.z *= scale.z;
-
-    btTriangleMesh* trimesh = new btTriangleMesh();
-        
-    auto triangles = collisionMeshData.getTriangles();
-    for(auto itr=triangles.begin(); itr!=triangles.end(); ++itr) {
-        trimesh->addTriangle(btVector3(itr->x0 * scale.x - center.x,
-                                       itr->y0 * scale.y - center.y,
-                                       itr->z0 * scale.z - center.z),
-                             btVector3(itr->x1 * scale.x - center.x,
-                                       itr->y1 * scale.y - center.y,
-                                       itr->z1 * scale.z - center.z),
-                             btVector3(itr->x2 * scale.x - center.x,
-                                       itr->y2 * scale.y - center.y,
-                                       itr->z2 * scale.z - center.z));
-    }
-
-    // TODO: use convex collision if possible.
-    bool useQuantizedBvhTree = true;
-    shape = new btBvhTriangleMeshShape(trimesh, useQuantizedBvhTree);
-    addShape(hash, shape);
-    return shape;
-}
-
-//---------------------------
-//      [Environment]
-//---------------------------
-
 bool Environment::init() {
     // Setup the basic world
     configuration = new btDefaultCollisionConfiguration();
@@ -488,6 +380,7 @@ int Environment::addModel(const char* path,
                           float mass,
                           bool detectCollision,
                           bool useMeshCollision,
+                          bool useCollisionFile,
                           bool visible) {
 
     Mesh* mesh = nullptr;
@@ -530,13 +423,18 @@ int Environment::addModel(const char* path,
     // This relative center offset is used for rigidbody
     relativeCenter.x *= scale.x;
     relativeCenter.y *= scale.y;
-    relativeCenter.z *= scale.z;    
+    relativeCenter.z *= scale.z;
 
     btCollisionShape* shape;
 
     if(useMeshCollision) {
         // Get collision with mesh shape
         shape = collisionShapeManager.getModelShape(path, *collisionMeshData, scale);
+    } else if(useCollisionFile) {
+        // Get compound collision from collision definition file.
+        shape = collisionShapeManager.getCompoundModelShapeFromFile(path,
+                                                                    *collisionMeshData,
+                                                                    scale);
     } else {
         // Get box collision with the bounding box
         Vector3f halfExtent;

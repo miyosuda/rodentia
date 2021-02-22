@@ -13,6 +13,7 @@ add_library(rodentia_code STATIC
 	env/Environment.cpp
 	env/RigidBodyComponent.cpp
 	env/EnvironmentObject.cpp
+    env/CollisionShapeManager.cpp
 	render/DebugDrawer.cpp
 	render/DiffuseShader.cpp
 	render/Image.cpp

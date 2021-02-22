@@ -126,6 +126,7 @@ static int addModel(Environment* environment,
                     float mass,
                     bool detectCollision,
                     bool useMeshCollision,
+                    bool useCollisionFile,
                     bool visible) {
     return environment->addModel(path,
                                  color,
@@ -133,6 +134,7 @@ static int addModel(Environment* environment,
                                  mass,
                                  detectCollision,
                                  useMeshCollision,
+                                 useCollisionFile,
                                  visible);
 }
 
@@ -760,14 +762,16 @@ static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) 
     float mass;
     int detectCollision;
     int useMeshCollision;
+    int useCollisionFile;
     int visible;
 
     // Get argument
     const char* kwlist[] = {"path", "color", "scale", "pos", "rot", "mass",
-                            "detect_collision", "use_mesh_collision", "visible",
+                            "detect_collision", "use_mesh_collision", "use_collision_file",
+                            "visible",
                             nullptr};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!O!fiii", const_cast<char**>(kwlist),
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!O!O!O!fiiii", const_cast<char**>(kwlist),
                                      &path,
                                      &PyArray_Type, &colorObj,
                                      &PyArray_Type, &scaleObj,
@@ -776,6 +780,7 @@ static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) 
                                      &mass,
                                      &detectCollision,
                                      &useMeshCollision,
+                                     &useCollisionFile,
                                      &visible)) {
         return nullptr;
     }
@@ -824,6 +829,7 @@ static PyObject* Env_add_model(EnvObject* self, PyObject* args, PyObject* kwds) 
                       mass,
                       detectCollision != 0,
                       useMeshCollision != 0,
+                      useCollisionFile != 0,
                       visible != 0);
 
     // Returning object ID
