@@ -67,15 +67,30 @@ class BaseEnvironment:
     def __init__(self,
                  width,
                  height,
-                 bg_color=[0.0, 0.0, 0.0]):
+                 bg_color=[0.0, 0.0, 0.0],
+                 near=0.05,
+                 far=80.0,
+                 focal_length=50.0,
+                 shadow_buffer_width=0):
         &#34;&#34;&#34;Create environment.
         Args:
           width: Screen width
           height: Screen height
           bg_color: Background color (RGB value with 0.0 ~ 1.0)
+          near: Near clip distane (default 0.05)
+          far: Far clip distane (default 80.0)
+          focal_length: Focal length (default 50.0)
+          shadow_buffer_width: Shadow depth buffer width. (If 0 calculated automatically )
+                               (default 0)
         &#34;&#34;&#34;
         self.env = rodentia_module.Env()
-        self.main_camera_id = self.add_camera_view(width, height, bg_color)
+        self.main_camera_id = self.add_camera_view(width,
+                                                   height,
+                                                   bg_color,
+                                                   near,
+                                                   far,
+                                                   focal_length,
+                                                   shadow_buffer_width)
 
     def add_camera_view(self,
                         width,
@@ -185,6 +200,7 @@ class BaseEnvironment:
                   color=None,
                   detect_collision=False,
                   use_mesh_collision=False,
+                  use_collision_file=False,
                   visible=True):
         &#34;&#34;&#34;Add model object with .obj format.
         Args:
@@ -203,6 +219,8 @@ class BaseEnvironment:
           use_mesh_collision: Whether to use mesh data for the collision.
                               If false, box collision shape is cauculated based on the 
                               bounding box.
+                              (Only valid for static object with mass=0)
+          use_collision_file: Whether to use collision definition file.
           visible: Visibility of the object. If false, only collision will take effect.
         Returns:
           Int value for the object id.
@@ -219,6 +237,7 @@ class BaseEnvironment:
             mass=mass,
             detect_collision=detect_collision,
             use_mesh_collision=use_mesh_collision,
+            use_collision_file=use_collision_file,
             visible=visible)
 
     def locate_object(self, id, pos, rot=0.0):
@@ -322,16 +341,34 @@ class Environment(BaseEnvironment):
     Single agent environment.
     &#34;&#34;&#34;
     
-    def __init__(self, width, height, bg_color=[0.0, 0.0, 0.0], agent_radius=1.0):
+    def __init__(self,
+                 width,
+                 height,
+                 bg_color=[0.0, 0.0, 0.0],
+                 near=0.05,
+                 far=80.0,
+                 focal_length=50.0,
+                 shadow_buffer_width=0,
+                 agent_radius=1.0):
         &#34;&#34;&#34;Create environment.
         Args:
           width: Screen width
           height: Screen height
           bg_color: Background color (RGB value with 0.0 ~ 1.0)
+          near: Near clip distane (default 0.05)
+          far: Far clip distane (default 80.0)
+          focal_length: Focal length (default 50.0)
+          shadow_buffer_width: Shadow depth buffer width. (If 0 calculated automatically )
+                               (default 0)
           agent_radius: Radius of the agent sphere
         &#34;&#34;&#34;
-        super().__init__(width, height, bg_color)
-        
+        super().__init__(width,
+                         height,
+                         bg_color,
+                         near,
+                         far,
+                         focal_length,
+                         shadow_buffer_width)
         self.agent_id = self.env.add_agent(radius=agent_radius,
                                            pos=to_nd_float_array([0,0,0]),
                                            rot_y=0.0,
@@ -395,16 +432,35 @@ class MultiAgentEnvironment(BaseEnvironment):
     Multi agent environment.
     &#34;&#34;&#34;
     
-    def __init__(self, agent_size, width, height, bg_color=[0.0, 0.0, 0.0], agent_radius=1.0):
+    def __init__(self,
+                 agent_size,
+                 width,
+                 height,
+                 bg_color=[0.0, 0.0, 0.0],
+                 near=0.05,
+                 far=80.0,
+                 focal_length=50.0,
+                 shadow_buffer_width=0,                 
+                 agent_radius=1.0):
         &#34;&#34;&#34;Create environment.
         Args:
           width: Screen width
           height: Screen height
           bg_color: Background color (RGB value with 0.0 ~ 1.0)
+          near: Near clip distane (default 0.05)
+          far: Far clip distane (default 80.0)
+          focal_length: Focal length (default 50.0)
+          shadow_buffer_width: Shadow depth buffer width. (If 0 calculated automatically )
+                               (default 0)
           agent_radius: Radius of the agent sphere
         &#34;&#34;&#34;
-        super().__init__(width, height, bg_color)
-
+        super().__init__(width,
+                         height,
+                         bg_color,
+                         near,
+                         far,
+                         focal_length,
+                         shadow_buffer_width)
         self.agent_ids = []
 
         for i in range(agent_size):
@@ -547,7 +603,7 @@ class MultiAgentEnvironment(BaseEnvironment):
 <dl>
 <dt id="rodentia.core.BaseEnvironment"><code class="flex name class">
 <span>class <span class="ident">BaseEnvironment</span></span>
-<span>(</span><span>width, height, bg_color=[0.0, 0.0, 0.0])</span>
+<span>(</span><span>width, height, bg_color=[0.0, 0.0, 0.0], near=0.05, far=80.0, focal_length=50.0, shadow_buffer_width=0)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Common super class for the plain Environment and MultiAgentEnvironment.
@@ -561,6 +617,15 @@ BaseEnvironment wraps rodentia_module.Env class.</p>
 <dd>Screen height</dd>
 <dt><strong><code>bg_color</code></strong></dt>
 <dd>Background color (RGB value with 0.0 ~ 1.0)</dd>
+<dt><strong><code>near</code></strong></dt>
+<dd>Near clip distane (default 0.05)</dd>
+<dt><strong><code>far</code></strong></dt>
+<dd>Far clip distane (default 80.0)</dd>
+<dt><strong><code>focal_length</code></strong></dt>
+<dd>Focal length (default 50.0)</dd>
+<dt><strong><code>shadow_buffer_width</code></strong></dt>
+<dd>Shadow depth buffer width. (If 0 calculated automatically )
+(default 0)</dd>
 </dl></section>
 <details class="source">
 <summary>
@@ -575,15 +640,30 @@ BaseEnvironment wraps rodentia_module.Env class.</p>
     def __init__(self,
                  width,
                  height,
-                 bg_color=[0.0, 0.0, 0.0]):
+                 bg_color=[0.0, 0.0, 0.0],
+                 near=0.05,
+                 far=80.0,
+                 focal_length=50.0,
+                 shadow_buffer_width=0):
         &#34;&#34;&#34;Create environment.
         Args:
           width: Screen width
           height: Screen height
           bg_color: Background color (RGB value with 0.0 ~ 1.0)
+          near: Near clip distane (default 0.05)
+          far: Far clip distane (default 80.0)
+          focal_length: Focal length (default 50.0)
+          shadow_buffer_width: Shadow depth buffer width. (If 0 calculated automatically )
+                               (default 0)
         &#34;&#34;&#34;
         self.env = rodentia_module.Env()
-        self.main_camera_id = self.add_camera_view(width, height, bg_color)
+        self.main_camera_id = self.add_camera_view(width,
+                                                   height,
+                                                   bg_color,
+                                                   near,
+                                                   far,
+                                                   focal_length,
+                                                   shadow_buffer_width)
 
     def add_camera_view(self,
                         width,
@@ -693,6 +773,7 @@ BaseEnvironment wraps rodentia_module.Env class.</p>
                   color=None,
                   detect_collision=False,
                   use_mesh_collision=False,
+                  use_collision_file=False,
                   visible=True):
         &#34;&#34;&#34;Add model object with .obj format.
         Args:
@@ -711,6 +792,8 @@ BaseEnvironment wraps rodentia_module.Env class.</p>
           use_mesh_collision: Whether to use mesh data for the collision.
                               If false, box collision shape is cauculated based on the 
                               bounding box.
+                              (Only valid for static object with mass=0)
+          use_collision_file: Whether to use collision definition file.
           visible: Visibility of the object. If false, only collision will take effect.
         Returns:
           Int value for the object id.
@@ -727,6 +810,7 @@ BaseEnvironment wraps rodentia_module.Env class.</p>
             mass=mass,
             detect_collision=detect_collision,
             use_mesh_collision=use_mesh_collision,
+            use_collision_file=use_collision_file,
             visible=visible)
 
     def locate_object(self, id, pos, rot=0.0):
@@ -960,7 +1044,7 @@ the agenet collides with this object.</dd>
 </details>
 </dd>
 <dt id="rodentia.core.BaseEnvironment.add_model"><code class="name flex">
-<span>def <span class="ident">add_model</span></span>(<span>self, path, scale, pos, rot=0.0, mass=0.0, color=None, detect_collision=False, use_mesh_collision=False, visible=True)</span>
+<span>def <span class="ident">add_model</span></span>(<span>self, path, scale, pos, rot=0.0, mass=0.0, color=None, detect_collision=False, use_mesh_collision=False, use_collision_file=False, visible=True)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Add model object with .obj format.</p>
@@ -987,7 +1071,10 @@ the agenet collides with this object.</dd>
 <dt><strong><code>use_mesh_collision</code></strong></dt>
 <dd>Whether to use mesh data for the collision.
 If false, box collision shape is cauculated based on the
-bounding box.</dd>
+bounding box.
+(Only valid for static object with mass=0)</dd>
+<dt><strong><code>use_collision_file</code></strong></dt>
+<dd>Whether to use collision definition file.</dd>
 <dt><strong><code>visible</code></strong></dt>
 <dd>Visibility of the object. If false, only collision will take effect.</dd>
 </dl>
@@ -1006,6 +1093,7 @@ bounding box.</dd>
               color=None,
               detect_collision=False,
               use_mesh_collision=False,
+              use_collision_file=False,
               visible=True):
     &#34;&#34;&#34;Add model object with .obj format.
     Args:
@@ -1024,6 +1112,8 @@ bounding box.</dd>
       use_mesh_collision: Whether to use mesh data for the collision.
                           If false, box collision shape is cauculated based on the 
                           bounding box.
+                          (Only valid for static object with mass=0)
+      use_collision_file: Whether to use collision definition file.
       visible: Visibility of the object. If false, only collision will take effect.
     Returns:
       Int value for the object id.
@@ -1040,6 +1130,7 @@ bounding box.</dd>
         mass=mass,
         detect_collision=detect_collision,
         use_mesh_collision=use_mesh_collision,
+        use_collision_file=use_collision_file,
         visible=visible)</code></pre>
 </details>
 </dd>
@@ -1361,7 +1452,7 @@ by applying list of texture pathes.</p>
 </dd>
 <dt id="rodentia.core.Environment"><code class="flex name class">
 <span>class <span class="ident">Environment</span></span>
-<span>(</span><span>width, height, bg_color=[0.0, 0.0, 0.0], agent_radius=1.0)</span>
+<span>(</span><span>width, height, bg_color=[0.0, 0.0, 0.0], near=0.05, far=80.0, focal_length=50.0, shadow_buffer_width=0, agent_radius=1.0)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Single agent environment.</p>
@@ -1374,6 +1465,15 @@ by applying list of texture pathes.</p>
 <dd>Screen height</dd>
 <dt><strong><code>bg_color</code></strong></dt>
 <dd>Background color (RGB value with 0.0 ~ 1.0)</dd>
+<dt><strong><code>near</code></strong></dt>
+<dd>Near clip distane (default 0.05)</dd>
+<dt><strong><code>far</code></strong></dt>
+<dd>Far clip distane (default 80.0)</dd>
+<dt><strong><code>focal_length</code></strong></dt>
+<dd>Focal length (default 50.0)</dd>
+<dt><strong><code>shadow_buffer_width</code></strong></dt>
+<dd>Shadow depth buffer width. (If 0 calculated automatically )
+(default 0)</dd>
 <dt><strong><code>agent_radius</code></strong></dt>
 <dd>Radius of the agent sphere</dd>
 </dl></section>
@@ -1386,16 +1486,34 @@ by applying list of texture pathes.</p>
     Single agent environment.
     &#34;&#34;&#34;
     
-    def __init__(self, width, height, bg_color=[0.0, 0.0, 0.0], agent_radius=1.0):
+    def __init__(self,
+                 width,
+                 height,
+                 bg_color=[0.0, 0.0, 0.0],
+                 near=0.05,
+                 far=80.0,
+                 focal_length=50.0,
+                 shadow_buffer_width=0,
+                 agent_radius=1.0):
         &#34;&#34;&#34;Create environment.
         Args:
           width: Screen width
           height: Screen height
           bg_color: Background color (RGB value with 0.0 ~ 1.0)
+          near: Near clip distane (default 0.05)
+          far: Far clip distane (default 80.0)
+          focal_length: Focal length (default 50.0)
+          shadow_buffer_width: Shadow depth buffer width. (If 0 calculated automatically )
+                               (default 0)
           agent_radius: Radius of the agent sphere
         &#34;&#34;&#34;
-        super().__init__(width, height, bg_color)
-        
+        super().__init__(width,
+                         height,
+                         bg_color,
+                         near,
+                         far,
+                         focal_length,
+                         shadow_buffer_width)
         self.agent_id = self.env.add_agent(radius=agent_radius,
                                            pos=to_nd_float_array([0,0,0]),
                                            rot_y=0.0,
@@ -1584,7 +1702,7 @@ by applying list of texture pathes.</p>
 </dd>
 <dt id="rodentia.core.MultiAgentEnvironment"><code class="flex name class">
 <span>class <span class="ident">MultiAgentEnvironment</span></span>
-<span>(</span><span>agent_size, width, height, bg_color=[0.0, 0.0, 0.0], agent_radius=1.0)</span>
+<span>(</span><span>agent_size, width, height, bg_color=[0.0, 0.0, 0.0], near=0.05, far=80.0, focal_length=50.0, shadow_buffer_width=0, agent_radius=1.0)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Multi agent environment.</p>
@@ -1597,6 +1715,15 @@ by applying list of texture pathes.</p>
 <dd>Screen height</dd>
 <dt><strong><code>bg_color</code></strong></dt>
 <dd>Background color (RGB value with 0.0 ~ 1.0)</dd>
+<dt><strong><code>near</code></strong></dt>
+<dd>Near clip distane (default 0.05)</dd>
+<dt><strong><code>far</code></strong></dt>
+<dd>Far clip distane (default 80.0)</dd>
+<dt><strong><code>focal_length</code></strong></dt>
+<dd>Focal length (default 50.0)</dd>
+<dt><strong><code>shadow_buffer_width</code></strong></dt>
+<dd>Shadow depth buffer width. (If 0 calculated automatically )
+(default 0)</dd>
 <dt><strong><code>agent_radius</code></strong></dt>
 <dd>Radius of the agent sphere</dd>
 </dl></section>
@@ -1609,16 +1736,35 @@ by applying list of texture pathes.</p>
     Multi agent environment.
     &#34;&#34;&#34;
     
-    def __init__(self, agent_size, width, height, bg_color=[0.0, 0.0, 0.0], agent_radius=1.0):
+    def __init__(self,
+                 agent_size,
+                 width,
+                 height,
+                 bg_color=[0.0, 0.0, 0.0],
+                 near=0.05,
+                 far=80.0,
+                 focal_length=50.0,
+                 shadow_buffer_width=0,                 
+                 agent_radius=1.0):
         &#34;&#34;&#34;Create environment.
         Args:
           width: Screen width
           height: Screen height
           bg_color: Background color (RGB value with 0.0 ~ 1.0)
+          near: Near clip distane (default 0.05)
+          far: Far clip distane (default 80.0)
+          focal_length: Focal length (default 50.0)
+          shadow_buffer_width: Shadow depth buffer width. (If 0 calculated automatically )
+                               (default 0)
           agent_radius: Radius of the agent sphere
         &#34;&#34;&#34;
-        super().__init__(width, height, bg_color)
-
+        super().__init__(width,
+                         height,
+                         bg_color,
+                         near,
+                         far,
+                         focal_length,
+                         shadow_buffer_width)
         self.agent_ids = []
 
         for i in range(agent_size):
