@@ -25,6 +25,6 @@ add_subdirectory( bullet3-2.86.1/src/LinearMath )
 
 ### LIBPNG ###
 
-set(PNG_ARM_NEON "off")
+set(PNG_ARM_NEON off)
 
 add_subdirectory(libpng-1.6.37)
