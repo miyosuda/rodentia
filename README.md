@@ -90,11 +90,11 @@ And install with `rodentia` with pip
     $ pip3 install pygame==1.9.6 Pillow
     $ python3 examples/01_seekavoid_arena/main.py
 
-Note: Rodentia does not use pygame, but the sample code uses pygame and latest pygame version (2.0.1) has problem running rodentia. So version 1.9.6 should be used to run examples.
+Note: Rodentia does not use pygame, but the sample code uses pygame and latest pygame version (2.1.0) has problem running rodentia. So version 1.9.6 should be used to run examples.
 
 
 ### MacOSX 
-    $ pip3 install pygame==2.0.1 Pillow
+    $ pip3 install pygame==2.1.0 Pillow
     $ python3 examples/01_seekavoid_arena/main.py
 
 
