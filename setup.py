@@ -4,6 +4,9 @@ import os
 from pathlib import Path
 import subprocess
 from setuptools.command.build_ext import build_ext
+import distutils.sysconfig as sysconfig
+import platform
+
 
 NAME = 'rodentia'
 VERSION = None
@@ -49,6 +52,20 @@ class CMakeBuild(build_ext):
         env = os.environ.copy()
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
+
+        # Workaround for Apple silicon
+        if 'arm64' in platform.platform():
+            include_path = sysconfig.get_python_inc()
+    
+            lib_dir       = sysconfig.get_config_var('LIBDIR')
+            library       = sysconfig.get_config_var('LIBRARY')
+            lib_file_name = library[:library.find('.a')] + '.dylib'
+            lib_path = os.path.join(lib_dir, lib_file_name)
+
+            cmake_args += [
+                '-DPYTHON_INCLUDE_DIR=' + include_path,
+                '-DPYTHON_LIBRARY=' + lib_path,
+            ]
 
         # CMakeLists.txt is in the same directory as this setup.py file
         cmake_list_dir = os.path.abspath(os.path.dirname(__file__))
@@ -111,6 +128,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
     ],
 
     # What does your project relate to?
